@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -eu
+
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+L10N_HOME=$(cd $(dirname $SCRIPT_DIR); pwd)
+cd $L10N_HOME
+
+source config/l10n-kit.conf
+
+git add $TMX_FILE_PATH
+
+set +e
+git diff --cached --exit-code --quiet
+
+if [[ $? -eq 1 ]] ; then
+  set -e
+  git commit -m "Update tmx"
+  git fetch
+  git rebase origin/master
+  git push origin master
+fi
+set -e
