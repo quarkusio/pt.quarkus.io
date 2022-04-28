@@ -17,9 +17,9 @@ Puede consultar el estado de traducción de cada archivo desde [aquí](l10n/stat
 
 ## Declaración para iniciar la traducción
 
-Al iniciar el trabajo de traducción, para evitar el desperdicio causado por varios miembros que trabajan en el mismo archivo al mismo tiempo y la duplicación del trabajo.
-Indique en qué archivo y rango desea comenzar a trabajar en GitHub Issue.
-Por el contrario, cuando haga un problema, verifique si alguien ya ha declarado trabajo en el objetivo en el problema existente.
+Al iniciar el trabajo de traducción, para evitar los inconvenientes causados cuando varios miembros que trabajan en el mismo archivo al mismo tiempo o la duplicación del trabajo.
+Indique en qué archivo y rango desea comenzar a trabajar con una GitHub Issue.
+Por el contrario, cuando haga un GitHub Issue, verifique si alguien ya ha declarado el trabajo en el objetivo de una GitHub Issue existente.
 
 ### Trabajo de traducción
 
