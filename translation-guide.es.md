@@ -1,6 +1,6 @@
-# quarkus.io Proyecto de traducción - Guía de traducción
+# es.quarkus.io Proyecto de traducción - Guía de traducción
 
-Proyecto de traducción de quarkus.io se está trabajando en la traducción de [quarkus.io](https://quarkus.io).
+El proyecto de traducción es.quarkus.io está trabajando en la traducción de [quarkus.io](https://quarkus.io) al español.
 
 ## Método de traducción
 
@@ -17,24 +17,21 @@ Puede consultar el estado de traducción de cada archivo desde [aquí](l10n/stat
 
 ## Declaración para iniciar la traducción
 
-Al iniciar el trabajo de traducción, para evitar los inconvenientes causados cuando varios miembros que trabajan en el mismo archivo al mismo tiempo o la duplicación del trabajo.
+Para evitar inconvenientes, como cuando varios miembros trabajan en el mismo archivo al mismo tiempo o la duplicación del trabajo.
 Indique en qué archivo y rango desea comenzar a trabajar con una GitHub Issue.
 Por el contrario, cuando haga un GitHub Issue, verifique si alguien ya ha declarado el trabajo en el objetivo de una GitHub Issue existente.
 
 ### Trabajo de traducción
 
-El archivo .po es un archivo de texto, pero varias herramientas de ayuda a la traducción admiten la edición. Por ejemplo, [POEdit](https://poedit.net/)
+El archivo .po es un archivo de texto, pero varias herramientas de ayuda en la edición. Por ejemplo, [POEdit](https://poedit.net/)
 Es compatible con la ejecución en Windows/Mac/Linux y tiene abundantes teclas de atajos, por lo que es cómodo de usar al editar.
 
 ### Importación y traducción automáticas de objetivos de traducción
 
-Cuando se actualice [quarkus.io](https://quarkus.io), los archivos que se traducirán se agregarán periódicamente a este repositorio mediante el flujo de trabajo de GitHub Actions.
-Se importará automáticamente y se creará un archivo .po. El archivo .po contiene traducciones existentes almacenadas en la memoria de traducción y
-Usando [quarkus-adoc-po-translator](https://github.com/doc-l10n-kit/quarkus-adoc-po-translator)
-Se insertará el texto traducido automáticamente por la API de DeepL, así que utilícelo como una traducción aproximada al traducir.
+Cuando se actualice [quarkus.io](https://quarkus.io), los archivos a traducir se importan automáticamente a este repositorio mediante el flujo de trabajo de GitHub Actions y se creará un archivo .po. El archivo .po contiene traducciones existentes almacenadas en la memoria de traducción y usando [quarkus-adoc-po-translator](https://github.com/doc-l10n-kit/quarkus-adoc-po-translator) se insertará el texto traducido automáticamente por la API de DeepL, así que utilícelo como una traducción aproximada.
 
-Sin embargo, dado que es una traducción automática hasta el final, hay muchas partes no naturales como teniwoha, y está marcado como "confirmación requerida" (borroso), y no se reflejará como una traducción a menos que la marca "confirmación requerida" se elimina...
-Revise y corrija la traducción y elimine la marca de "confirmación requerida".
+Sin embargo, dado que es una traducción automática, hay muchas partes erroneas, y está marcado como "confirmación requerida" (fuzzy), y no se reflejará la traducción a menos que la marca "fuzzy" se elimine...
+Revise y corrija la traducción y elimine la marca de "fuzzy".
 
 ### Archivo traducido
 
@@ -48,7 +45,7 @@ En ese caso, no hay necesidad de copiar el texto original tal como está. Por fa
 
 ### Vista previa de los resultados de la traducción
 
-Si traduce el archivo .po y obtiene un Pull-Request, el sitio se construirá automáticamente con GitHub Actions, y la URL donde puede visitar el sitio temporalmente será enviada como un comentario en el Pull-Request en GitHub en aproximadamente 5 minutos.
+Si traduce el archivo .po y crea un Pull-Request, el sitio se construirá automáticamente con GitHub Actions, y la URL donde puede visitar el sitio temporalmente será enviada como un comentario en el Pull-Request en GitHub en aproximadamente 5 minutos.
 Puede revisar la vista previa del resultado de la traducción en ese sitio temporal, así que por favor utilícelo.
 
 ### Soporte/traducción de actualización de plantillas HTML
