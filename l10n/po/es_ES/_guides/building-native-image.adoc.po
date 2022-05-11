@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-04-22 09:22+0000\n"
+"POT-Creation-Date: 2022-05-11 10:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,7 +45,7 @@ msgstr "Empaquetar el ejecutable nativo en un contenedor"
 
 #. type: Title ==
 #: upstream/_guides/building-native-image.adoc:15
-#: upstream/_guides/building-native-image.adoc:724
+#: upstream/_guides/building-native-image.adoc:726
 #, fuzzy, no-wrap
 msgid "Debugging native executable"
 msgstr "Depuración del ejecutable nativo"
@@ -867,7 +867,7 @@ msgstr "Y por último, ejecútalo con:"
 
 #. type: delimited block -
 #: upstream/_guides/building-native-image.adoc:493
-#: upstream/_guides/building-native-image.adoc:605
+#: upstream/_guides/building-native-image.adoc:607
 #, no-wrap
 msgid "docker run -i --rm -p 8080:8080 quarkus-quickstart/getting-started\n"
 msgstr ""
@@ -991,7 +991,7 @@ msgstr ""
 
 #. type: delimited block -
 #: upstream/_guides/building-native-image.adoc:555
-#: upstream/_guides/building-native-image.adoc:636
+#: upstream/_guides/building-native-image.adoc:638
 #, no-wrap
 msgid "CMD [\"./application\", \"-Dquarkus.http.host=0.0.0.0\"]\n"
 msgstr ""
@@ -1015,11 +1015,13 @@ msgid "Sample Dockerfile for building with Gradle:"
 msgstr "Ejemplo de Dockerfile para construir con Gradle:"
 
 #. type: delimited block -
-#: upstream/_guides/building-native-image.adoc:578
+#: upstream/_guides/building-native-image.adoc:580
 #, no-wrap
 msgid ""
 "## Stage 1 : build with maven builder image with native capabilities\n"
 "FROM quay.io/quarkus/ubi-quarkus-native-image:{graalvm-flavor} AS build\n"
+"USER root\n"
+"RUN microdnf install findutils\n"
 "COPY --chown=quarkus:quarkus gradlew /code/gradlew\n"
 "COPY --chown=quarkus:quarkus gradle /code/gradle\n"
 "COPY --chown=quarkus:quarkus build.gradle /code/\n"
@@ -1028,11 +1030,11 @@ msgid ""
 "USER quarkus\n"
 "WORKDIR /code\n"
 "COPY src /code/src\n"
-"RUN gradle -b /code/build.gradle buildNative\n"
+"RUN ./gradlew build -Dquarkus.package.type=native\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/building-native-image.adoc:586
+#: upstream/_guides/building-native-image.adoc:588
 #, no-wrap
 msgid ""
 "## Stage 2 : create the docker final image\n"
@@ -1045,73 +1047,73 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:589
+#: upstream/_guides/building-native-image.adoc:591
 #, fuzzy
 msgid "If you are using Gradle in your project, you can use this sample Dockerfile.  Save it in `src/main/docker/Dockerfile.multistage`."
 msgstr "Si estás usando Gradle en tu proyecto, puedes usar este Dockerfile de ejemplo. Guárdalo en `src/main/docker/Dockerfile.multistage`."
 
 #. type: delimited block =
-#: upstream/_guides/building-native-image.adoc:593
+#: upstream/_guides/building-native-image.adoc:595
 #, fuzzy
 msgid "Before launching our Docker build, we need to update the default `.dockerignore` file as it filters everything except the `target` directory. As we plan to build inside a container, we need to copy the `src` directory. Thus, edit your `.dockerignore` and update the content."
 msgstr "Antes de lanzar nuestra construcción Docker, necesitamos actualizar el archivo por defecto `.dockerignore` ya que filtra todo excepto el directorio `target`. Como planeamos construir dentro de un contenedor, necesitamos copiar el directorio `src`. Por lo tanto, edita tu `.dockerignore` y actualiza el contenido."
 
 #. type: delimited block -
-#: upstream/_guides/building-native-image.adoc:598
+#: upstream/_guides/building-native-image.adoc:600
 #, no-wrap
 msgid "docker build -f src/main/docker/Dockerfile.multistage -t quarkus-quickstart/getting-started .\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:601
+#: upstream/_guides/building-native-image.adoc:603
 #, fuzzy
 msgid "And, finally, run it with:"
 msgstr "Y, por último, ejecutarlo con:"
 
 #. type: delimited block =
-#: upstream/_guides/building-native-image.adoc:610
+#: upstream/_guides/building-native-image.adoc:612
 #, fuzzy
 msgid "If you need SSL support in your native executable, you can easily include the necessary libraries in your Docker image."
 msgstr "Si necesita soporte SSL en su ejecutable nativo, puede incluir fácilmente las bibliotecas necesarias en su imagen Docker."
 
 #. type: delimited block =
-#: upstream/_guides/building-native-image.adoc:612
+#: upstream/_guides/building-native-image.adoc:614
 #, fuzzy
 msgid "Please see xref:native-and-ssl.adoc#working-with-containers[our Using SSL With Native Executables guide] for more information."
 msgstr "Para más información, consulte  link:native-and-ssl.html#working-with-containers[nuestra guía sobre el uso de SSL con ejecutables nativos]."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:616
+#: upstream/_guides/building-native-image.adoc:618
 #, fuzzy
 msgid "To use Mandrel instead of GraalVM CE, update the `FROM` clause to: `FROM quay.io/quarkus/ubi-quarkus-mandrel:$TAG AS build`.  `$TAG` can be found on the https://quay.io/repository/quarkus/ubi-quarkus-mandrel?tab=tags[Quarkus Mandrel Images Tags page]."
 msgstr "Para utilizar Mandrel en lugar de GraalVM CE, actualice la cláusula `FROM` a: `FROM quay.io/quarkus/ubi-quarkus-mandrel:$TAG AS build`. `$TAG` se puede encontrar en la  link:https://quay.io/repository/quarkus/ubi-quarkus-mandrel?tab=tags[página de etiquetas de imágenes de Quarkus] Mandrel."
 
 #. type: Title ===
-#: upstream/_guides/building-native-image.adoc:617
+#: upstream/_guides/building-native-image.adoc:619
 #, fuzzy, no-wrap
 msgid "Using a Distroless base image"
 msgstr "Utilización de una imagen base sin distorsión"
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:620
+#: upstream/_guides/building-native-image.adoc:622
 #, fuzzy
 msgid "Distroless image support is experimental."
 msgstr "El soporte de imágenes sin distro es experimental."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:623
+#: upstream/_guides/building-native-image.adoc:625
 #, fuzzy
 msgid "If you are looking for small container images, the https://github.com/GoogleContainerTools/distroless[distroless] approach reduces the size of the base layer.  The idea behind _distroless_ is the usage of a single and minimal base image containing all the requirements, and sometimes even the application itself."
 msgstr "Si lo que se busca son imágenes contenedoras pequeñas, el enfoque  link:https://github.com/GoogleContainerTools/distroless[distroless] reduce el tamaño de la capa base. La idea detrás de _distroless_ es el uso de una única y mínima imagen base que contenga todos los requisitos, y a veces incluso la propia aplicación."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:626
+#: upstream/_guides/building-native-image.adoc:628
 #, fuzzy
 msgid "Quarkus provides a distroless base image that you can use in your `Dockerfile`.  You only need to copy your application, and you are done:"
 msgstr "Quarkus proporciona una imagen base sin distro que puedes utilizar en tu `Dockerfile`. Sólo tienes que copiar tu aplicación, y ya está:"
 
 #. type: delimited block -
-#: upstream/_guides/building-native-image.adoc:631
+#: upstream/_guides/building-native-image.adoc:633
 #, no-wrap
 msgid ""
 "FROM quay.io/quarkus/quarkus-distroless-image:1.0\n"
@@ -1119,7 +1121,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/building-native-image.adoc:634
+#: upstream/_guides/building-native-image.adoc:636
 #, no-wrap
 msgid ""
 "EXPOSE 8080\n"
@@ -1127,55 +1129,55 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:641
+#: upstream/_guides/building-native-image.adoc:643
 #, fuzzy
 msgid "Quarkus provides the `quay.io/quarkus/quarkus-distroless-image:1.0` image.  It contains the required packages to run a native executable and is only **9Mb**.  Just add your application on top of this image, and you will get a tiny container image."
 msgstr "Quarkus proporciona la imagen `quay.io/quarkus/quarkus-distroless-image:1.0`. Contiene los paquetes necesarios para ejecutar un ejecutable nativo y sólo ocupa *9Mb*. Sólo tienes que añadir tu aplicación encima de esta imagen, y obtendrás una diminuta imagen contenedora."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:643
+#: upstream/_guides/building-native-image.adoc:645
 #, fuzzy
 msgid "Distroless images should not be used in production without rigorous testing."
 msgstr "Las imágenes sin distro no deben utilizarse en producción sin una prueba rigurosa."
 
 #. type: Title ===
-#: upstream/_guides/building-native-image.adoc:644
+#: upstream/_guides/building-native-image.adoc:646
 #, fuzzy, no-wrap
 msgid "Native executable compression"
 msgstr "Compresión nativa de ejecutables"
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:648
+#: upstream/_guides/building-native-image.adoc:650
 #, fuzzy
 msgid "Quarkus can compress the produced native executable using UPX.  More details on xref:./upx.adoc[UPX Compression documentation]."
 msgstr "Quarkus puede comprimir el ejecutable nativo producido usando UPX. Más detalles en la  link:./upx.html[documentación de compresión UP]X."
 
 #. type: Title ===
-#: upstream/_guides/building-native-image.adoc:649
+#: upstream/_guides/building-native-image.adoc:651
 #, fuzzy, no-wrap
 msgid "Separating Java and native image compilation"
 msgstr "Separación de la compilación de imágenes Java y nativas"
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:655
+#: upstream/_guides/building-native-image.adoc:657
 #, fuzzy
 msgid "In certain circumstances, you may want to build the native image in a separate step.  For example, in a CI/CD pipeline, you may want to have one step to generate the source that will be used for the native image generation and another step to use these sources to actually build the native executable.  For this use case, you can set the `quarkus.package.type=native-sources`.  This will execute the java compilation as if you would have started native compilation (`-Pnative`), but stops before triggering the actual call to GraalVM's `native-image`."
 msgstr "En ciertas circunstancias, puede querer construir la imagen nativa en un paso separado. Por ejemplo, en una canalización CI/CD, es posible que quieras tener un paso para generar el código fuente que se utilizará para la generación de la imagen nativa y otro paso para utilizar estos códigos fuente para construir realmente el ejecutable nativo. Para este caso de uso, puede establecer el `quarkus.package.type=native-sources`. Esto ejecutará la compilación de java como si hubiera iniciado la compilación nativa ( `-Pnative`), pero se detiene antes de desencadenar la llamada real a `native-image` de GraalVM."
 
 #. type: delimited block -
-#: upstream/_guides/building-native-image.adoc:659
+#: upstream/_guides/building-native-image.adoc:661
 #, no-wrap
 msgid "$ ./mvnw clean package -Dquarkus.package.type=native-sources\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:662
+#: upstream/_guides/building-native-image.adoc:664
 #, fuzzy
 msgid "After compilation has finished, you find the build artifact in `target/native-sources`:"
 msgstr "Una vez finalizada la compilación, encontrará el artefacto de compilación en `target/native-sources`:"
 
 #. type: delimited block -
-#: upstream/_guides/building-native-image.adoc:668
+#: upstream/_guides/building-native-image.adoc:670
 #, no-wrap
 msgid ""
 "$ cd target/native-sources\n"
@@ -1184,13 +1186,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:673
+#: upstream/_guides/building-native-image.adoc:675
 #, fuzzy
 msgid "From the output above one can see that, in addition to the produced jar file and the associated lib directory, a text file named `native-image.args` was created.  This file holds all parameters (including the name of the JAR to compile) to pass along to GraalVM's `native-image` command.  If you have GraalVM installed, you can start the native compilation by executing:"
 msgstr "De la salida anterior se puede ver que, además del archivo jar producido y el directorio lib asociado, se creó un archivo de texto llamado `native-image.args`. Este archivo contiene todos los parámetros (incluyendo el nombre del JAR a compilar) para pasar al comando `native-image` de GraalVM. Si tienes GraalVM instalado, puedes iniciar la compilación nativa ejecutando"
 
 #. type: delimited block -
-#: upstream/_guides/building-native-image.adoc:684
+#: upstream/_guides/building-native-image.adoc:686
 #, no-wrap
 msgid ""
 "$ cd target/native-source\n"
@@ -1204,19 +1206,19 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:687
+#: upstream/_guides/building-native-image.adoc:689
 #, fuzzy
 msgid "The process for Gradle is analogous."
 msgstr "El proceso para Gradle es análogo."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:689
+#: upstream/_guides/building-native-image.adoc:691
 #, fuzzy
 msgid "Running the build process in a container is also possible:"
 msgstr "También es posible ejecutar el proceso de construcción en un contenedor:"
 
 #. type: delimited block -
-#: upstream/_guides/building-native-image.adoc:701
+#: upstream/_guides/building-native-image.adoc:703
 #, no-wrap
 msgid ""
 "cd target/native-image\n"
@@ -1231,91 +1233,91 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:704
+#: upstream/_guides/building-native-image.adoc:706
 #, fuzzy
 msgid "Mount the host's directory `target/native-image` to the container's `/work`. Thus, the generated binary will also be written to this directory."
 msgstr "Monte el directorio del host `target/native-image` en el contenedor `/work`. Así, el binario generado también se escribirá en este directorio."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:705
+#: upstream/_guides/building-native-image.adoc:707
 #, fuzzy
 msgid "Switch the working directory to `/work`, which we have mounted in <1>."
 msgstr "Cambia el directorio de trabajo a `/work`, que hemos montado en &lt;1&gt;."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:706
+#: upstream/_guides/building-native-image.adoc:708
 #, fuzzy
 msgid "Use the `quay.io/quarkus/ubi-quarkus-native-image:{graalvm-flavor}` docker image introduced in <<#multistage-docker,Using a multi-stage Docker build>> to build the native image."
 msgstr "Utilice la imagen docker `quay.io/quarkus/ubi-quarkus-native-image:{graalvm-flavor}` introducida en  link:#multistage-docker[Using a multi-stage Docker build] para construir la imagen nativa."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:707
+#: upstream/_guides/building-native-image.adoc:709
 #, fuzzy
 msgid "Call `native-image` with the content of file `native-image.args` as arguments. We also supply an additional argument to limit the process's maximum memory to 4 Gigabytes (this may vary depending on the project being built and the machine building it)."
 msgstr "Llama a `native-image` con el contenido del archivo `native-image.args` como argumentos. También suministramos un argumento adicional para limitar la memoria máxima del proceso a 4 gigabytes (esto puede variar dependiendo del proyecto que se construya y de la máquina que lo haga)."
 
 #. type: delimited block =
-#: upstream/_guides/building-native-image.adoc:712
+#: upstream/_guides/building-native-image.adoc:714
 #, fuzzy
 msgid "If you are running on a Windows machine, please keep in mind that the binary was created within a Linux docker container.  Hence, the binary will not be executable on the host Windows machine."
 msgstr "Si está ejecutando en una máquina Windows, tenga en cuenta que el binario fue creado dentro de un contenedor docker de Linux. Por lo tanto, el binario no será ejecutable en la máquina Windows anfitriona."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:715
+#: upstream/_guides/building-native-image.adoc:717
 #, fuzzy
 msgid "A high level overview of what the various steps of a CI/CD pipeline would look is the following:"
 msgstr "Una visión general de alto nivel de lo que serían los distintos pasos de un pipeline de CI/CD es la siguiente:"
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:717
+#: upstream/_guides/building-native-image.adoc:719
 #, fuzzy
 msgid "Register the output of the step executing `./mvnw ...` command (i.e. directory `target/native-image`) as a build artifact,"
 msgstr "Registre la salida del paso que ejecuta el comando `./mvnw …​` (es decir, el directorio `target/native-image`) como un artefacto de construcción,"
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:718
+#: upstream/_guides/building-native-image.adoc:720
 #, fuzzy
 msgid "Require this artifact in the step executing the `native-image ...` command, and"
 msgstr "Requerir este artefacto en el paso que ejecuta el comando `native-image …​`, y"
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:719
+#: upstream/_guides/building-native-image.adoc:721
 #, fuzzy
 msgid "Register the output of the step executing the `native-image ...` command (i.e. files matching `target/*runner`) as build artifact."
 msgstr "Registrar la salida del paso que ejecuta el comando `native-image …​` (es decir, los archivos que coinciden con `target/*runner`) como artefacto de construcción."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:721
+#: upstream/_guides/building-native-image.adoc:723
 #, fuzzy
 msgid "The environment executing step `1` only needs Java and Maven (or Gradle) installed, while the environment executing step `3` only needs a GraalVM installation (including the `native-image` feature)."
 msgstr "El entorno que ejecuta el paso `1` sólo necesita tener instalado Java y Maven (o Gradle), mientras que el entorno que ejecuta el paso `3` sólo necesita una instalación de GraalVM (incluyendo la función `native-image` )."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:723
+#: upstream/_guides/building-native-image.adoc:725
 #, fuzzy
 msgid "Depending on what the final desired output of the CI/CD pipeline is, the generated binary might then be used to create a container image."
 msgstr "Dependiendo de cuál sea el resultado final deseado de la canalización CI/CD, el binario generado podría utilizarse para crear una imagen de contenedor."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:730
+#: upstream/_guides/building-native-image.adoc:732
 #, fuzzy
 msgid "Starting with Oracle GraalVM 20.2 or Mandrel 20.1, debug symbols for native executables can be generated for Linux environments (Windows support is still under development, macOS is not supported).  These symbols can be used to debug native executables with tools such as `gdb`."
 msgstr "A partir de Oracle GraalVM 20.2 o Mandrel 20.1, se pueden generar símbolos de depuración para los ejecutables nativos en entornos Linux (el soporte de Windows aún está en desarrollo, no se soporta macOS). Estos símbolos pueden utilizarse para depurar ejecutables nativos con herramientas como `gdb`."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:734
+#: upstream/_guides/building-native-image.adoc:736
 #, fuzzy
 msgid "To generate debug symbols, add `-Dquarkus.native.debug.enabled=true` flag when generating the native executable.  You will find the debug symbols for the native executable in a `.debug` file next to the native executable."
 msgstr "Para generar símbolos de depuración, añada la bandera `-Dquarkus.native.debug.enabled=true` al generar el ejecutable nativo. Encontrarás los símbolos de depuración para el ejecutable nativo en un archivo `.debug` junto al ejecutable nativo."
 
 #. type: delimited block =
-#: upstream/_guides/building-native-image.adoc:739
+#: upstream/_guides/building-native-image.adoc:741
 #, fuzzy
 msgid "The generation of the `.debug` file depends on `objcopy`.  On common Linux distributions you will need to install the `binutils` package:"
 msgstr "La generación del archivo `.debug` depende de `objcopy`. En las distribuciones comunes de Linux es necesario instalar el paquete `binutils`:"
 
 #. type: delimited block -
-#: upstream/_guides/building-native-image.adoc:746
+#: upstream/_guides/building-native-image.adoc:748
 #, no-wrap
 msgid ""
 "# dnf (rpm-based)\n"
@@ -1325,109 +1327,109 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:749
+#: upstream/_guides/building-native-image.adoc:751
 #, fuzzy
 msgid "When `objcopy` is not available debug symbols are embedded in the executable."
 msgstr "Cuando `objcopy` no está disponible, los símbolos de depuración se incrustan en el ejecutable."
 
 #. type: delimited block =
-#: upstream/_guides/building-native-image.adoc:757
+#: upstream/_guides/building-native-image.adoc:759
 #, fuzzy
 msgid "Aside from debug symbols, setting `-Dquarkus.native.debug.enabled=true` flag generates a cache of source files for any JDK runtime classes, GraalVM classes and application classes resolved during native executable generation.  This source cache is useful for native debugging tools, to establish the link between the symbols and matching source code.  It provides a convenient way of making just the necessary sources available to the debugger/IDE when debugging a native executable."
 msgstr "Aparte de los símbolos de depuración, la configuración de la bandera `-Dquarkus.native.debug.enabled=true` genera una caché de archivos fuente para cualquier clase de tiempo de ejecución del JDK, clases de GraalVM y clases de aplicación resueltas durante la generación del ejecutable nativo. Esta caché de fuentes es útil para las herramientas de depuración nativa, para establecer el vínculo entre los símbolos y el código fuente correspondiente. Proporciona una manera conveniente de hacer sólo las fuentes necesarias disponibles para el depurador/IDE cuando se depura un ejecutable nativo."
 
 #. type: delimited block =
-#: upstream/_guides/building-native-image.adoc:763
+#: upstream/_guides/building-native-image.adoc:765
 #, fuzzy
 msgid "Sources for third party jar dependencies, including Quarkus source code, are not added to the source cache by default.  To include those, make sure you invoke `mvn dependency:sources` first.  This step is required in order to pull the sources for these dependencies, and get them included in the source cache."
 msgstr "Las fuentes de las dependencias de jar de terceros, incluyendo el código fuente de Quarkus, no se añaden a la caché de fuentes por defecto. Para incluirlos, asegúrate de invocar primero `mvn dependency:sources`. Este paso es necesario para extraer las fuentes de estas dependencias, y conseguir que se incluyan en la caché de fuentes."
 
 #. type: delimited block =
-#: upstream/_guides/building-native-image.adoc:765
+#: upstream/_guides/building-native-image.adoc:767
 #, fuzzy
 msgid "The source cache is located in the `target/sources` folder."
 msgstr "El caché de origen se encuentra en la carpeta `target/sources`."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:769
+#: upstream/_guides/building-native-image.adoc:771
 #, fuzzy
 msgid "If running `gdb` from a different directory than `target`, then the sources can be loaded by running:"
 msgstr "Si se ejecuta `gdb` desde un directorio diferente al de `target`, se pueden cargar las fuentes ejecutando:"
 
 #. type: delimited block -
-#: upstream/_guides/building-native-image.adoc:773
+#: upstream/_guides/building-native-image.adoc:775
 #, no-wrap
 msgid "directory path/to/target\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:776
+#: upstream/_guides/building-native-image.adoc:778
 #, fuzzy
 msgid "in the `gdb` prompt."
 msgstr "en la dirección `gdb`."
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:778
+#: upstream/_guides/building-native-image.adoc:780
 #, fuzzy
 msgid "Or start `gdb` with:"
 msgstr "O empezar con `gdb`:"
 
 #. type: delimited block -
-#: upstream/_guides/building-native-image.adoc:782
+#: upstream/_guides/building-native-image.adoc:784
 #, no-wrap
 msgid "gdb -ex 'directory path/to/target' path/to/target/{project.name}-{project.version}-runner\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/building-native-image.adoc:785
+#: upstream/_guides/building-native-image.adoc:787
 #, fuzzy
 msgid "e.g.,"
 msgstr "Por ejemplo,"
 
 #. type: delimited block -
-#: upstream/_guides/building-native-image.adoc:788
+#: upstream/_guides/building-native-image.adoc:790
 #, no-wrap
 msgid "gdb -ex 'directory ./target' ./target/getting-started-1.0.0-SNAPSHOT-runner\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_guides/building-native-image.adoc:792
+#: upstream/_guides/building-native-image.adoc:794
 #, fuzzy
 msgid "For a more detailed guide about debugging native images please refer to the xref:native-reference.adoc[Native Reference Guide]."
 msgstr "Para una guía más detallada sobre la depuración de imágenes nativas, consulte la  link:native-reference.html[Guía de Referencia Nativa]."
 
 #. type: Title ==
-#: upstream/_guides/building-native-image.adoc:794
+#: upstream/_guides/building-native-image.adoc:796
 #, fuzzy, no-wrap
 msgid "Configuring the Native Executable"
 msgstr "Configuración del ejecutable nativo"
 
 #. type: delimited block =
-#: upstream/_guides/building-native-image.adoc:798
+#: upstream/_guides/building-native-image.adoc:800
 #, fuzzy
 msgid "There are a lot of different configuration options that can affect how the native executable is generated.  These are provided in `application.properties` the same as any other config property."
 msgstr "Hay un montón de opciones de configuración que pueden afectar a la forma en que se genera el ejecutable nativo. Estas se proporcionan en `application.properties` al igual que cualquier otra propiedad de configuración."
 
 #. type: delimited block =
-#: upstream/_guides/building-native-image.adoc:800
+#: upstream/_guides/building-native-image.adoc:802
 #, fuzzy
 msgid "The properties are shown below:"
 msgstr "Las propiedades se muestran a continuación:"
 
 #. type: Title ==
-#: upstream/_guides/building-native-image.adoc:803
+#: upstream/_guides/building-native-image.adoc:805
 #, fuzzy, no-wrap
 msgid "What's next?"
 msgstr "¿Qué es lo siguiente?"
 
 #. type: delimited block =
-#: upstream/_guides/building-native-image.adoc:808
+#: upstream/_guides/building-native-image.adoc:810
 #, fuzzy
 msgid "This guide covered the creation of a native (binary) executable for your application.  It provides an application exhibiting a swift startup time and consuming less memory.  However, there is much more."
 msgstr "Esta guía cubre la creación de un ejecutable nativo (binario) para su aplicación. Proporciona una aplicación que muestra un tiempo de inicio rápido y consume menos memoria. Sin embargo, hay mucho más."
 
 #. type: delimited block =
-#: upstream/_guides/building-native-image.adoc:809
+#: upstream/_guides/building-native-image.adoc:811
 #, fuzzy
 msgid "We recommend continuing the journey with the xref:deploying-to-kubernetes.adoc[deployment to Kubernetes and OpenShift]."
 msgstr "Recomendamos continuar el viaje con el  link:deploying-to-kubernetes.html[despliegue en Kubernetes y OpenShift]."
