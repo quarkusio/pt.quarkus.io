@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-06-17 02:55+0000\n"
+"POT-Creation-Date: 2022-06-28 02:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -271,7 +271,7 @@ msgstr ""
 #: upstream/_versions/main/guides/kafka.adoc:1866
 #: upstream/_versions/main/guides/kafka.adoc:2242
 #: upstream/_versions/main/guides/kafka.adoc:2322
-#: upstream/_versions/main/guides/kafka.adoc:2350
+#: upstream/_versions/main/guides/kafka.adoc:2353
 #, no-wrap
 msgid "}\n"
 msgstr ""
@@ -1455,7 +1455,7 @@ msgstr ""
 #: upstream/_versions/main/guides/kafka.adoc:810
 #: upstream/_versions/main/guides/kafka.adoc:2152
 #: upstream/_versions/main/guides/kafka.adoc:2200
-#: upstream/_versions/main/guides/kafka.adoc:2417
+#: upstream/_versions/main/guides/kafka.adoc:2422
 #, no-wrap
 msgid ""
 "import org.eclipse.microprofile.reactive.messaging.Channel;\n"
@@ -1559,7 +1559,7 @@ msgstr ""
 #. type: delimited block -
 #: upstream/_versions/main/guides/kafka.adoc:889
 #: upstream/_versions/main/guides/kafka.adoc:1066
-#: upstream/_versions/main/guides/kafka.adoc:2454
+#: upstream/_versions/main/guides/kafka.adoc:2459
 #, no-wrap
 msgid "import org.eclipse.microprofile.reactive.messaging.Channel;\n"
 msgstr ""
@@ -2444,7 +2444,7 @@ msgstr ""
 #. type: delimited block -
 #: upstream/_versions/main/guides/kafka.adoc:1427
 #: upstream/_versions/main/guides/kafka.adoc:2281
-#: upstream/_versions/main/guides/kafka.adoc:2367
+#: upstream/_versions/main/guides/kafka.adoc:2372
 #, no-wrap
 msgid "import io.quarkus.kafka.client.serialization.ObjectMapperDeserializer;\n"
 msgstr ""
@@ -2452,7 +2452,7 @@ msgstr ""
 #. type: delimited block -
 #: upstream/_versions/main/guides/kafka.adoc:1433
 #: upstream/_versions/main/guides/kafka.adoc:2287
-#: upstream/_versions/main/guides/kafka.adoc:2373
+#: upstream/_versions/main/guides/kafka.adoc:2378
 #, no-wrap
 msgid ""
 "public class FruitDeserializer extends ObjectMapperDeserializer<Fruit> {\n"
@@ -3816,10 +3816,10 @@ msgstr ""
 #: upstream/_versions/main/guides/kafka.adoc:2279
 #: upstream/_versions/main/guides/kafka.adoc:2311
 #: upstream/_versions/main/guides/kafka.adoc:2330
-#: upstream/_versions/main/guides/kafka.adoc:2365
-#: upstream/_versions/main/guides/kafka.adoc:2408
-#: upstream/_versions/main/guides/kafka.adoc:2449
-#: upstream/_versions/main/guides/kafka.adoc:2556
+#: upstream/_versions/main/guides/kafka.adoc:2370
+#: upstream/_versions/main/guides/kafka.adoc:2413
+#: upstream/_versions/main/guides/kafka.adoc:2454
+#: upstream/_versions/main/guides/kafka.adoc:2561
 #, no-wrap
 msgid "package org.acme;\n"
 msgstr ""
@@ -3827,7 +3827,7 @@ msgstr ""
 #. type: delimited block -
 #: upstream/_versions/main/guides/kafka.adoc:2144
 #: upstream/_versions/main/guides/kafka.adoc:2192
-#: upstream/_versions/main/guides/kafka.adoc:2410
+#: upstream/_versions/main/guides/kafka.adoc:2415
 #, no-wrap
 msgid "import java.util.concurrent.CompletionStage;\n"
 msgstr ""
@@ -3846,7 +3846,7 @@ msgstr ""
 #. type: delimited block -
 #: upstream/_versions/main/guides/kafka.adoc:2155
 #: upstream/_versions/main/guides/kafka.adoc:2205
-#: upstream/_versions/main/guides/kafka.adoc:2420
+#: upstream/_versions/main/guides/kafka.adoc:2425
 #, no-wrap
 msgid ""
 "@Path(\"/\")\n"
@@ -4058,13 +4058,13 @@ msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/kafka.adoc:2290
-#: upstream/_versions/main/guides/kafka.adoc:2376
+#: upstream/_versions/main/guides/kafka.adoc:2381
 msgid "The associated configuration would be:"
 msgstr ""
 
 #. type: delimited block -
 #: upstream/_versions/main/guides/kafka.adoc:2295
-#: upstream/_versions/main/guides/kafka.adoc:2381
+#: upstream/_versions/main/guides/kafka.adoc:2386
 #, no-wrap
 msgid ""
 "mp.messaging.incoming.fruits.connector=smallrye-kafka\n"
@@ -4073,7 +4073,7 @@ msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/kafka.adoc:2299
-#: upstream/_versions/main/guides/kafka.adoc:2385
+#: upstream/_versions/main/guides/kafka.adoc:2390
 msgid "Check <<jackson-serialization>> for more detail about the usage of Jackson with Kafka.  You can also use Avro."
 msgstr ""
 
@@ -4116,91 +4116,109 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2348
+#: upstream/_versions/main/guides/kafka.adoc:2343
 #, no-wrap
 msgid ""
-"    @Incoming(\"fruits\")\n"
-"    public Uni<Void> persist(Fruit fruit) {\n"
-"        return Panache.withTransaction(() ->  // <1>\n"
-"            fruit.persist()                   // <2>\n"
-"                .map(persisted -> null)       // <3>\n"
-"        );\n"
+"    @Inject\n"
+"    Mutiny.Session session;                    // <1>\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/kafka.adoc:2351
+#, no-wrap
+msgid ""
+"    @Incoming(\"in\")\n"
+"    public Uni<Void> consume(Fruit fruit) {\n"
+"        return session.withTransaction(t -> {  // <2>\n"
+"            return entity.persistAndFlush()    // <3>\n"
+"                    .replaceWithVoid();        // <4>\n"
+"        }).onTermination().call(() -> session.close()); // <5>\n"
 "    }\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2352
-msgid "Instruct Panache to run the given (asynchronous) action in a transaction. The transaction completes when the action completes."
+#: upstream/_versions/main/guides/kafka.adoc:2355
+msgid "Inject the Hibernate Reactive `Session`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2353
+#: upstream/_versions/main/guides/kafka.adoc:2356
+msgid "Requests a new transaction. The transaction completes when the passed action completes."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/kafka.adoc:2357
 msgid "Persist the entity. It returns a `Uni<Fruit>`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2354
+#: upstream/_versions/main/guides/kafka.adoc:2358
 msgid "Switch back to a `Uni<Void>`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2358
-msgid "Unlike with _classic_ Hibernate, you can't use `@Transactional`.  Instead, we use `Panache.withTransaction` and persist our entity.  The `map` is used to return a `Uni<Void>` and not a `Uni<Fruit>`."
+#: upstream/_versions/main/guides/kafka.adoc:2359
+msgid "Close the session - this is close the connection with the database. The connection can then be recycled."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2361
+#: upstream/_versions/main/guides/kafka.adoc:2363
+msgid "Unlike with _classic_ Hibernate, you can't use `@Transactional`.  Instead, we use `session.withTransaction` and persist our entity.  The `map` is used to return a `Uni<Void>` and not a `Uni<Fruit>`."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/kafka.adoc:2366
 msgid "You need a deserializer that can create a `Fruit` from the record.  This can be done using a Jackson deserializer:"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/kafka.adoc:2386
+#: upstream/_versions/main/guides/kafka.adoc:2391
 #, no-wrap
 msgid "Writing entities managed by Hibernate to Kafka"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2389
+#: upstream/_versions/main/guides/kafka.adoc:2394
 msgid "Let's imagine the following process:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2391
+#: upstream/_versions/main/guides/kafka.adoc:2396
 msgid "You receive an HTTP request with a payload,"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2392
+#: upstream/_versions/main/guides/kafka.adoc:2397
 msgid "You create an Hibernate entity instance from this payload,"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2393
+#: upstream/_versions/main/guides/kafka.adoc:2398
 msgid "You persist that entity into a database,"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2394
+#: upstream/_versions/main/guides/kafka.adoc:2399
 msgid "You send the entity to a Kafka topic"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2396
+#: upstream/_versions/main/guides/kafka.adoc:2401
 msgid "If you use Hibernate Reactive, look at <<writing-entities-managed-by-hibernate-reactive-to-kafka>>."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2402
+#: upstream/_versions/main/guides/kafka.adoc:2407
 msgid "Because we write to a database, we must run this method in a transaction.  Yet, sending the entity to Kafka happens asynchronously.  The operation returns a `CompletionStage` (or a `Uni` if you use a `MutinyEmitter`) reporting when the operation completes.  We must be sure that the transaction is still running until the object is written.  Otherwise, you may access the object outside the transaction, which is not allowed."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2404
+#: upstream/_versions/main/guides/kafka.adoc:2409
 msgid "To implement this process, you need the following approach:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2414
+#: upstream/_versions/main/guides/kafka.adoc:2419
 #, no-wrap
 msgid ""
 "import javax.transaction.Transactional;\n"
@@ -4209,13 +4227,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2422
+#: upstream/_versions/main/guides/kafka.adoc:2427
 #, no-wrap
 msgid "    @Channel(\"kafka\") Emitter<Fruit> emitter;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2431
+#: upstream/_versions/main/guides/kafka.adoc:2436
 #, no-wrap
 msgid ""
 "    @POST\n"
@@ -4229,48 +4247,48 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2433
+#: upstream/_versions/main/guides/kafka.adoc:2438
 msgid "As we are writing to the database, make sure we run inside a transaction"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2434
+#: upstream/_versions/main/guides/kafka.adoc:2439
 msgid "The method receives the fruit instance to persist. It returns a `CompletionStage` which is used for the transaction demarcation. The transaction is committed when the return `CompletionStage` completes. In our case, it's when the message is written to Kafka."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2435
+#: upstream/_versions/main/guides/kafka.adoc:2440
 msgid "Send the managed instance to Kafka. Make sure we wait for the message to complete before closing the transaction."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/kafka.adoc:2437
+#: upstream/_versions/main/guides/kafka.adoc:2442
 #, no-wrap
 msgid "Writing entities managed by Hibernate Reactive to Kafka"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2440
+#: upstream/_versions/main/guides/kafka.adoc:2445
 msgid "To send to Kafka entities managed by Hibernate Reactive, we recommend using:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2442
+#: upstream/_versions/main/guides/kafka.adoc:2447
 msgid "RESTEasy Reactive to serve HTTP requests"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2443
+#: upstream/_versions/main/guides/kafka.adoc:2448
 msgid "A `MutinyEmitter` to send message to a channel, so it can be easily integrated with the Mutiny API exposed by Hibernate Reactive or Hibernate Reactive with Panache."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2445
+#: upstream/_versions/main/guides/kafka.adoc:2450
 msgid "The following example demonstrates how to receive a payload, store it in the database using Hibernate Reactive with Panache, and send the persisted entity to Kafka:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2452
+#: upstream/_versions/main/guides/kafka.adoc:2457
 #, no-wrap
 msgid ""
 "import javax.ws.rs.POST;\n"
@@ -4278,7 +4296,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2458
+#: upstream/_versions/main/guides/kafka.adoc:2463
 #, no-wrap
 msgid ""
 "import io.quarkus.hibernate.reactive.panache.Panache;\n"
@@ -4287,7 +4305,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2461
+#: upstream/_versions/main/guides/kafka.adoc:2466
 #, no-wrap
 msgid ""
 "@Path(\"/\")\n"
@@ -4295,13 +4313,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2463
+#: upstream/_versions/main/guides/kafka.adoc:2468
 #, no-wrap
 msgid "    @Channel(\"kafka\") MutinyEmitter<Fruit> emitter;     // <1>\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2473
+#: upstream/_versions/main/guides/kafka.adoc:2478
 #, no-wrap
 msgid ""
 "    @POST\n"
@@ -4316,54 +4334,54 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2475
+#: upstream/_versions/main/guides/kafka.adoc:2480
 msgid "Inject a `MutinyEmitter` which exposes a Mutiny API. It simplifies the integration with the Mutiny API exposed by Hibernate Reactive with Panache."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2476
+#: upstream/_versions/main/guides/kafka.adoc:2481
 msgid "The HTTP method receiving the payload returns a `Uni<Void>`. The HTTP response is written when the operation completes (the entity is persisted and written to Kafka)."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2477
+#: upstream/_versions/main/guides/kafka.adoc:2482
 msgid "We need to write the entity into the database in a transaction."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2478
+#: upstream/_versions/main/guides/kafka.adoc:2483
 msgid "Once the persist operation completes, we send the entity to Kafka. The `send` method returns a `Uni<Void>`."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/kafka.adoc:2480
+#: upstream/_versions/main/guides/kafka.adoc:2485
 #, no-wrap
 msgid "Streaming Kafka topics as server-sent events"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2483
+#: upstream/_versions/main/guides/kafka.adoc:2488
 msgid "Streaming a Kafka topic as server-sent events (SSE) is straightforward:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2485
+#: upstream/_versions/main/guides/kafka.adoc:2490
 msgid "You inject the channel representing the Kafka topic in your HTTP endpoint"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2486
+#: upstream/_versions/main/guides/kafka.adoc:2491
 msgid "You return that channel as a `Publisher` or a `Multi` from the HTTP method"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2488
+#: upstream/_versions/main/guides/kafka.adoc:2493
 msgid "The following code provides an example:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2493
-#: upstream/_versions/main/guides/kafka.adoc:2508
+#: upstream/_versions/main/guides/kafka.adoc:2498
+#: upstream/_versions/main/guides/kafka.adoc:2513
 #, no-wrap
 msgid ""
 "@Channel(\"fruits\")\n"
@@ -4371,7 +4389,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2499
+#: upstream/_versions/main/guides/kafka.adoc:2504
 #, no-wrap
 msgid ""
 "@GET\n"
@@ -4382,12 +4400,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2503
+#: upstream/_versions/main/guides/kafka.adoc:2508
 msgid "Some environment cuts the SSE connection when there is not enough activity.  The workaround consists of sending _ping_ messages (or empty objects) periodically."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2511
+#: upstream/_versions/main/guides/kafka.adoc:2516
 #, no-wrap
 msgid ""
 "@Inject\n"
@@ -4395,7 +4413,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2521
+#: upstream/_versions/main/guides/kafka.adoc:2526
 #, no-wrap
 msgid ""
 "@GET\n"
@@ -4410,7 +4428,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2526
+#: upstream/_versions/main/guides/kafka.adoc:2531
 #, no-wrap
 msgid ""
 "Multi<String> emitAPeriodicPing() {\n"
@@ -4420,7 +4438,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2534
+#: upstream/_versions/main/guides/kafka.adoc:2539
 #, no-wrap
 msgid ""
 "private String toJson(Fruit f) {\n"
@@ -4433,53 +4451,53 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2538
+#: upstream/_versions/main/guides/kafka.adoc:2543
 msgid "The workaround is a bit more complex as besides sending the fruits coming from Kafka, we need to send pings periodically.  To achieve this we merge the stream coming from Kafka and a periodic stream emitting `{}` every 10 seconds."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/kafka.adoc:2540
+#: upstream/_versions/main/guides/kafka.adoc:2545
 #, no-wrap
 msgid "Chaining Kafka Transactions with Hibernate Reactive transactions"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2544
+#: upstream/_versions/main/guides/kafka.adoc:2549
 msgid "By chaining a Kafka transaction with a Hibernate Reactive transaction you can send records to a Kafka transaction, perform database updates and commit the Kafka transaction only if the database transaction is successful."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2546
+#: upstream/_versions/main/guides/kafka.adoc:2551
 msgid "The following example demonstrates:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2548
+#: upstream/_versions/main/guides/kafka.adoc:2553
 msgid "Receive a payload by serving HTTP requests using RESTEasy Reactive,"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2549
+#: upstream/_versions/main/guides/kafka.adoc:2554
 msgid "Limit concurrency of that HTTP endpoint using Smallrye Fault Tolerance,"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2550
+#: upstream/_versions/main/guides/kafka.adoc:2555
 msgid "Start a Kafka transaction and send the payload to Kafka record,"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2551
+#: upstream/_versions/main/guides/kafka.adoc:2556
 msgid "Store the payload in the database using Hibernate Reactive with Panache,"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2552
+#: upstream/_versions/main/guides/kafka.adoc:2557
 msgid "Commit the Kafka transaction only if the entity is persisted successfully."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2561
+#: upstream/_versions/main/guides/kafka.adoc:2566
 #, no-wrap
 msgid ""
 "import javax.ws.rs.Consumes;\n"
@@ -4489,8 +4507,8 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2565
-#: upstream/_versions/main/guides/kafka.adoc:2615
+#: upstream/_versions/main/guides/kafka.adoc:2570
+#: upstream/_versions/main/guides/kafka.adoc:2620
 #, no-wrap
 msgid ""
 "import org.eclipse.microprofile.faulttolerance.Bulkhead;\n"
@@ -4499,7 +4517,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2569
+#: upstream/_versions/main/guides/kafka.adoc:2574
 #, no-wrap
 msgid ""
 "import io.quarkus.hibernate.reactive.panache.Panache;\n"
@@ -4508,8 +4526,8 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2572
-#: upstream/_versions/main/guides/kafka.adoc:2623
+#: upstream/_versions/main/guides/kafka.adoc:2577
+#: upstream/_versions/main/guides/kafka.adoc:2628
 #, no-wrap
 msgid ""
 "@Path(\"/\")\n"
@@ -4517,13 +4535,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2574
+#: upstream/_versions/main/guides/kafka.adoc:2579
 #, no-wrap
 msgid "    @Channel(\"kafka\") KafkaTransactions<Fruit> kafkaTx; // <1>\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2588
+#: upstream/_versions/main/guides/kafka.adoc:2593
 #, no-wrap
 msgid ""
 "    @POST\n"
@@ -4542,53 +4560,53 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2591
+#: upstream/_versions/main/guides/kafka.adoc:2596
 msgid "Inject a `KafkaTransactions` which exposes a Mutiny API. It allows the integration with the Mutiny API exposed by Hibernate Reactive with Panache."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2592
+#: upstream/_versions/main/guides/kafka.adoc:2597
 msgid "Limit the concurrency of the HTTP endpoint to \"1\", preventing starting multiple transactions at a given time."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2593
+#: upstream/_versions/main/guides/kafka.adoc:2598
 msgid "The HTTP method receiving the payload returns a `Uni<Void>`. The HTTP response is written when the operation completes (the entity is persisted and Kafka transaction is committed)."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2594
-#: upstream/_versions/main/guides/kafka.adoc:2647
+#: upstream/_versions/main/guides/kafka.adoc:2599
+#: upstream/_versions/main/guides/kafka.adoc:2652
 msgid "Begin a Kafka transaction."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2595
+#: upstream/_versions/main/guides/kafka.adoc:2600
 msgid "Send the payload to Kafka inside the Kafka transaction."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2596
+#: upstream/_versions/main/guides/kafka.adoc:2601
 msgid "Persist the entity into the database in a Hibernate Reactive transaction."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2598
+#: upstream/_versions/main/guides/kafka.adoc:2603
 msgid "Once the persist operation completes, and there is no errors, the Kafka transaction is committed.  The result is omitted and returned as the HTTP response."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2601
+#: upstream/_versions/main/guides/kafka.adoc:2606
 msgid "In the previous example the database transaction (inner) will commit followed by the Kafka transaction (outer).  If you wish to commit the Kafka transaction first and the database transaction second, you need to nest them in the reverse order."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2603
+#: upstream/_versions/main/guides/kafka.adoc:2608
 msgid "The next example demonstrates that using the Hibernate Reactive API (without Panache):"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2611
+#: upstream/_versions/main/guides/kafka.adoc:2616
 #, no-wrap
 msgid ""
 "import javax.inject.Inject;\n"
@@ -4599,7 +4617,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2620
+#: upstream/_versions/main/guides/kafka.adoc:2625
 #, no-wrap
 msgid ""
 "import io.smallrye.mutiny.Uni;\n"
@@ -4609,19 +4627,19 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2625
+#: upstream/_versions/main/guides/kafka.adoc:2630
 #, no-wrap
 msgid "    @Channel(\"kafka\") KafkaTransactions<Fruit> kafkaTx;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2627
+#: upstream/_versions/main/guides/kafka.adoc:2632
 #, no-wrap
 msgid "    @Inject Mutiny.SessionFactory sf; // <1>\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2641
+#: upstream/_versions/main/guides/kafka.adoc:2646
 #, no-wrap
 msgid ""
 "    @POST\n"
@@ -4640,63 +4658,63 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2644
+#: upstream/_versions/main/guides/kafka.adoc:2649
 msgid "Inject the Hibernate Reactive `SessionFactory`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2645
+#: upstream/_versions/main/guides/kafka.adoc:2650
 msgid "Capture the caller Vert.x context."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2646
+#: upstream/_versions/main/guides/kafka.adoc:2651
 msgid "Begin a Hibernate Reactive transaction."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2648
+#: upstream/_versions/main/guides/kafka.adoc:2653
 msgid "Persist the payload and send the entity to Kafka."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2650
+#: upstream/_versions/main/guides/kafka.adoc:2655
 msgid "The Kafka transaction terminates on the Kafka producer sender thread.  We need to switch to the Vert.x context previously captured in order to terminate the Hibernate Reactive transaction on the same context we started it."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/kafka.adoc:2651
+#: upstream/_versions/main/guides/kafka.adoc:2656
 #, no-wrap
 msgid "Logging"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2654
+#: upstream/_versions/main/guides/kafka.adoc:2659
 msgid "To reduce the amount of log written by the Kafka client, Quarkus sets the level of the following log categories to `WARNING`:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2656
+#: upstream/_versions/main/guides/kafka.adoc:2661
 msgid "`org.apache.kafka.clients`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2657
+#: upstream/_versions/main/guides/kafka.adoc:2662
 msgid "`org.apache.kafka.common.utils`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2658
+#: upstream/_versions/main/guides/kafka.adoc:2663
 msgid "`org.apache.kafka.common.metrics`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2660
+#: upstream/_versions/main/guides/kafka.adoc:2665
 msgid "You can override the configuration by adding the following lines to the `application.properties`:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2666
+#: upstream/_versions/main/guides/kafka.adoc:2671
 #, no-wrap
 msgid ""
 "quarkus.log.category.\"org.apache.kafka.clients\".level=INFO\n"
@@ -4705,39 +4723,39 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/kafka.adoc:2668
+#: upstream/_versions/main/guides/kafka.adoc:2673
 #, no-wrap
 msgid "Connecting to Managed Kafka clusters"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2671
+#: upstream/_versions/main/guides/kafka.adoc:2676
 msgid "This section explains how to connect to notorious Kafka Cloud Services."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/kafka.adoc:2672
+#: upstream/_versions/main/guides/kafka.adoc:2677
 #, no-wrap
 msgid "Azure Event Hub"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2675
+#: upstream/_versions/main/guides/kafka.adoc:2680
 msgid "https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-for-kafka-ecosystem-overview[Azure Event Hub] provides an endpoint compatible with Apache Kafka."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2679
+#: upstream/_versions/main/guides/kafka.adoc:2684
 msgid "Azure Event Hubs for Kafka is not available in the _basic_ tier.  You need at least the _standard_ tier to use Kafka.  See https://azure.microsoft.com/en-us/pricing/details/event-hubs/[Azure Event Hubs Pricing] to see the other options."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2681
+#: upstream/_versions/main/guides/kafka.adoc:2686
 msgid "To connect to Azure Event Hub, using the Kafka protocol with TLS, you need the following configuration:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2690
+#: upstream/_versions/main/guides/kafka.adoc:2695
 #, no-wrap
 msgid ""
 "kafka.bootstrap.servers=my-event-hub.servicebus.windows.net:9093 # <1>\n"
@@ -4749,32 +4767,32 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2692
+#: upstream/_versions/main/guides/kafka.adoc:2697
 msgid "The port is `9093`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2693
+#: upstream/_versions/main/guides/kafka.adoc:2698
 msgid "You need to use the JAAS `PlainLoginModule`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2694
+#: upstream/_versions/main/guides/kafka.adoc:2699
 msgid "The username is the `$ConnectionString` string."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2695
+#: upstream/_versions/main/guides/kafka.adoc:2700
 msgid "The Event Hub connection string given by Azure."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2699
+#: upstream/_versions/main/guides/kafka.adoc:2704
 msgid "Replace `<YOUR.EVENTHUBS.CONNECTION.STRING>` with the connection string for your Event Hubs namespace.  For instructions on getting the connection string, see https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string[Get an Event Hubs connection string].  The result would be something like:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2705
+#: upstream/_versions/main/guides/kafka.adoc:2710
 #, no-wrap
 msgid ""
 "kafka.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required \\\n"
@@ -4783,12 +4801,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2708
+#: upstream/_versions/main/guides/kafka.adoc:2713
 msgid "This configuration can be global (as above), or set in the channel configuration:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2717
+#: upstream/_versions/main/guides/kafka.adoc:2722
 #, no-wrap
 msgid ""
 "mp.messaging.incoming.$channel.bootstrap.servers=my-event-hub.servicebus.windows.net:9093\n"
@@ -4800,23 +4818,23 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/kafka.adoc:2719
+#: upstream/_versions/main/guides/kafka.adoc:2724
 #, no-wrap
 msgid "Red Hat OpenShift Streams for Apache Kafka"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2724
+#: upstream/_versions/main/guides/kafka.adoc:2729
 msgid "https://cloud.redhat.com/[Red Hat OpenShift Streams for Apache Kafka] provides managed Kafka brokers.  First, follow the instructions from https://access.redhat.com/documentation/en-us/red_hat_openshift_streams_for_apache_kafka/1/guide/88e1487a-2a14-4b35-85b9-a7a2d67a37f3[Getting started with the `rhoas` CLI for Red Hat OpenShift Streams for Apache Kafka] to create your Kafka broker instance.  Make sure you copied the client id and client secret associated with the _ServiceAccount_ you created."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2726
+#: upstream/_versions/main/guides/kafka.adoc:2731
 msgid "Then, you can configure the Quarkus application to connect to the broker as follows:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2735
+#: upstream/_versions/main/guides/kafka.adoc:2740
 #, no-wrap
 msgid ""
 "kafka.bootstrap.servers=<connection url> # <1>\n"
@@ -4828,37 +4846,37 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2737
+#: upstream/_versions/main/guides/kafka.adoc:2742
 msgid "The connection string, given on the admin console, such as `demo-c--bjsv-ldd-cvavkc-a.bf2.kafka.rhcloud.com:443`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2738
+#: upstream/_versions/main/guides/kafka.adoc:2743
 msgid "The kafka username (the client id from the service account)"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2739
+#: upstream/_versions/main/guides/kafka.adoc:2744
 msgid "the kafka password (the client secret from the service account)"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2741
+#: upstream/_versions/main/guides/kafka.adoc:2746
 msgid "In general, these properties are prefixed using `%prod` to enable them only when running in production mode."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2744
+#: upstream/_versions/main/guides/kafka.adoc:2749
 msgid "As explained in https://access.redhat.com/documentation/en-us/red_hat_openshift_streams_for_apache_kafka/1/guide/88e1487a-2a14-4b35-85b9-a7a2d67a37f3[Getting started with the rhoas CLI for Red Hat OpenShift Streams for Apache Kafka], to use Red Hat OpenShift Streams for Apache Kafka, you must create the topic beforehand, create a _Service Account_, and provide permissions to read and write to your topic from that service account.  The authentication data (client id and secret) relates to the service account, which means you can implement fine-grain permissions and restrict access to the topic."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2746
+#: upstream/_versions/main/guides/kafka.adoc:2751
 msgid "When using Kubernetes, it is recommended to set the client id and secret in a Kubernetes secret:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2756
+#: upstream/_versions/main/guides/kafka.adoc:2761
 #, no-wrap
 msgid ""
 "apiVersion: v1\n"
@@ -4871,61 +4889,61 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2759
+#: upstream/_versions/main/guides/kafka.adoc:2764
 msgid "To allow your Quarkus application to use that secret, add the following line to the `application.properties` file:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2763
+#: upstream/_versions/main/guides/kafka.adoc:2768
 #, no-wrap
 msgid "%prod.quarkus.openshift.env.secrets=kafka-credentials\n"
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/kafka.adoc:2765
+#: upstream/_versions/main/guides/kafka.adoc:2770
 #, no-wrap
 msgid "Red Hat OpenShift Service Registry"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2769
+#: upstream/_versions/main/guides/kafka.adoc:2774
 msgid "https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-service-registry[Red Hat OpenShift Service Registry] provides fully managed service registry for handling Kafka schemas."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2773
+#: upstream/_versions/main/guides/kafka.adoc:2778
 msgid "You can follow the instructions from https://access.redhat.com/documentation/en-us/red_hat_openshift_service_registry/1/guide/ab1894d1-cae0-4d11-b185-81d62b4aabc7#_60472331-fa00-48ec-a621-bbd039500c7d[Getting started with Red Hat OpenShift Service Registry], or use the `rhoas` CLI to create a new service registry instance:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2777
+#: upstream/_versions/main/guides/kafka.adoc:2782
 #, no-wrap
 msgid "rhoas service-registry create --name my-schema-registry\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2782
+#: upstream/_versions/main/guides/kafka.adoc:2787
 msgid "Make sure to note the _Registry URL_ of the instance created.  For authentication, you can use the same _ServiceAccount_ you created previously.  You need to make sure that it has the necessary permissions to access the service registry."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2784
+#: upstream/_versions/main/guides/kafka.adoc:2789
 msgid "For example, using the `rhoas` CLI, you can grant the `MANAGER` role to the service account:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2788
+#: upstream/_versions/main/guides/kafka.adoc:2793
 #, no-wrap
 msgid "rhoas service-registry role add --role manager --service-account [SERVICE_ACCOUNT_CLIENT_ID]\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2791
+#: upstream/_versions/main/guides/kafka.adoc:2796
 msgid "Then, you can configure the Quarkus application to connect to the schema registry as follows:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2798
+#: upstream/_versions/main/guides/kafka.adoc:2803
 #, no-wrap
 msgid ""
 "mp.messaging.connector.smallrye-kafka.apicurio.registry.url=${RHOAS_SERVICE_REGISTRY_URL} <1>\n"
@@ -4935,59 +4953,59 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2800
+#: upstream/_versions/main/guides/kafka.adoc:2805
 msgid "The service registry URL, given on the admin console, such as `https://bu98.serviceregistry.rhcloud.com/t/0e95af2c-6e11-475e-82ee-f13bd782df24/apis/registry/v2`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2801
+#: upstream/_versions/main/guides/kafka.adoc:2806
 msgid "The OAuth token endpoint URL, such as `https://identity.api.openshift.com/auth/realms/rhoas/protocol/openid-connect/token`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2802
+#: upstream/_versions/main/guides/kafka.adoc:2807
 msgid "The client id (from the service account)"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2803
+#: upstream/_versions/main/guides/kafka.adoc:2808
 msgid "The client secret (from the service account)"
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/kafka.adoc:2804
+#: upstream/_versions/main/guides/kafka.adoc:2809
 #, no-wrap
 msgid "Binding Red Hat OpenShift managed services to Quarkus application using the Service Binding Operator"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2808
+#: upstream/_versions/main/guides/kafka.adoc:2813
 msgid "If your Quarkus application is deployed on a Kubernetes or OpenShift cluster with link:https://github.com/redhat-developer/service-binding-operator[Service Binding Operator] and link:https://github.com/redhat-developer/app-services-operator/tree/main/docs[OpenShift Application Services] operators installed, configurations necessary to access Red Hat OpenShift Streams for Apache Kafka and Service Registry can be injected to the application using xref:deploying-to-kubernetes.adoc#service_binding[Kubernetes Service Binding]."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2811
+#: upstream/_versions/main/guides/kafka.adoc:2816
 msgid "In order to set up the Service Binding, you need first to connect OpenShift managed services to your cluster.  For an OpenShift cluster you can follow the instructions from link:https://github.com/redhat-developer/app-services-guides/tree/main/docs/registry/service-binding-registry#connecting-a-kafka-and-service-registry-instance-to-your-openshift-cluster[Connecting a Kafka and Service Registry instance to your OpenShift cluster]."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2813
+#: upstream/_versions/main/guides/kafka.adoc:2818
 msgid "Once you've connected your cluster with the RHOAS Kafka and Service Registry instances, make sure you've granted necessary permissions to the newly created service account."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2816
+#: upstream/_versions/main/guides/kafka.adoc:2821
 msgid "Then, using the xref:deploying-to-kubernetes.adoc#service_binding[Kubernetes Service Binding] extension, you can configure the Quarkus application to generate `ServiceBinding` resources for those services:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2820
+#: upstream/_versions/main/guides/kafka.adoc:2825
 #, no-wrap
 msgid "quarkus.kubernetes-service-binding.detect-binding-resources=true\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2824
+#: upstream/_versions/main/guides/kafka.adoc:2829
 #, no-wrap
 msgid ""
 "quarkus.kubernetes-service-binding.services.kafka.api-version=rhoas.redhat.com/v1alpha1\n"
@@ -4996,7 +5014,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2828
+#: upstream/_versions/main/guides/kafka.adoc:2833
 #, no-wrap
 msgid ""
 "quarkus.kubernetes-service-binding.services.serviceregistry.api-version=rhoas.redhat.com/v1alpha1\n"
@@ -5005,12 +5023,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2831
+#: upstream/_versions/main/guides/kafka.adoc:2836
 msgid "For this example Quarkus build will generate the following `ServiceBinding` resources:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2851
+#: upstream/_versions/main/guides/kafka.adoc:2856
 #, no-wrap
 msgid ""
 "apiVersion: binding.operators.coreos.com/v1alpha1\n"
@@ -5034,7 +5052,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/kafka.adoc:2869
+#: upstream/_versions/main/guides/kafka.adoc:2874
 #, no-wrap
 msgid ""
 "apiVersion: binding.operators.coreos.com/v1alpha1\n"
@@ -5057,22 +5075,22 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2873
+#: upstream/_versions/main/guides/kafka.adoc:2878
 msgid "You can follow xref:deploying-to-kubernetes.adoc#openshift[Deploying to OpenShift] to deploy your application, including generated `ServiceBinding` resources.  The configuration properties necessary to access the Kafka and Schema Registry instances will be injected to the application automatically at deployment."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/kafka.adoc:2874
+#: upstream/_versions/main/guides/kafka.adoc:2879
 #, no-wrap
 msgid "Going further"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2878
+#: upstream/_versions/main/guides/kafka.adoc:2883
 msgid "This guide has shown how you can interact with Kafka using Quarkus.  It utilizes SmallRye Reactive Messaging to build data streaming applications."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/kafka.adoc:2879
+#: upstream/_versions/main/guides/kafka.adoc:2884
 msgid "If you want to go further, check the documentation of https://smallrye.io/smallrye-reactive-messaging[SmallRye Reactive Messaging], the implementation used in Quarkus."
 msgstr ""
