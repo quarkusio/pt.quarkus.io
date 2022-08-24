@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-06-29 15:36+0000\n"
+"POT-Creation-Date: 2022-08-24 13:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,7 +69,7 @@ msgstr "GraalVM impone una serie de restricciones y hacer que su aplicación sea
 
 #. type: Title ===
 #: upstream/_guides/writing-native-applications-tips.adoc:23
-#: upstream/_guides/writing-native-applications-tips.adoc:381
+#: upstream/_guides/writing-native-applications-tips.adoc:397
 #, fuzzy, no-wrap
 msgid "Including resources"
 msgstr "Incluidos los recursos"
@@ -448,10 +448,10 @@ msgstr ""
 
 #. type: delimited block -
 #: upstream/_guides/writing-native-applications-tips.adoc:222
-#: upstream/_guides/writing-native-applications-tips.adoc:374
-#: upstream/_guides/writing-native-applications-tips.adoc:395
-#: upstream/_guides/writing-native-applications-tips.adoc:417
-#: upstream/_guides/writing-native-applications-tips.adoc:441
+#: upstream/_guides/writing-native-applications-tips.adoc:390
+#: upstream/_guides/writing-native-applications-tips.adoc:411
+#: upstream/_guides/writing-native-applications-tips.adoc:433
+#: upstream/_guides/writing-native-applications-tips.adoc:457
 #, no-wrap
 msgid "}\n"
 msgstr ""
@@ -554,121 +554,142 @@ msgstr ""
 
 #. type: Plain text
 #: upstream/_guides/writing-native-applications-tips.adoc:307
+msgid "Another common source of errors is when the image heap taken by GraalVM contains a `Random`/`SplittableRandom` instance:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/writing-native-applications-tips.adoc:311
+#, no-wrap
+msgid "Error: com.oracle.graal.pointsto.constraints.UnsupportedFeatureException: Detected an instance of Random/SplittableRandom class in the image heap. Instances created during image generation have cached seed values and don't behave as expected.\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/writing-native-applications-tips.adoc:315
+msgid "Which is more often than not caused by Quarkus initializing at build time a class with a static `Random`/`SplittableRandom` field, causing this particular instance to be tentatively included in the image heap."
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_guides/writing-native-applications-tips.adoc:319
+msgid "You can find detailed information about this `Random`/`SplittableRandom` issue in https://foivos.zakkak.net/tutorials/working-with-randoms-native-images/[this blog post]."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/writing-native-applications-tips.adoc:323
 #, fuzzy
-msgid "If you need to delay the initialization of a class, you can use the `--initialize-at-run-time=<package or class>` configuration knob."
+msgid "In these cases, delaying the infringing class initialization at runtime might be the solution and, to achieve that, you can use the `--initialize-at-run-time=<package or class>` configuration knob."
 msgstr "Si necesita retrasar la inicialización de una clase, puede utilizar el mando de configuración `--initialize-at-run-time=&amp;lt;package or class&amp;gt;`."
 
 #. type: Plain text
-#: upstream/_guides/writing-native-applications-tips.adoc:309
+#: upstream/_guides/writing-native-applications-tips.adoc:325
 #, fuzzy
 msgid "It should be added to the `native-image` configuration using the `quarkus.native.additional-build-args` configuration property as shown in the examples above."
 msgstr "Debe añadirse a la configuración de `native-image` utilizando la propiedad de configuración `quarkus.native.additional-build-args` como se muestra en los ejemplos anteriores."
 
 #. type: delimited block =
-#: upstream/_guides/writing-native-applications-tips.adoc:313
+#: upstream/_guides/writing-native-applications-tips.adoc:329
 #, fuzzy
 msgid "You can find more information about all this in https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/ClassInitialization.md[the GraalVM documentation]."
 msgstr "Puedes encontrar más información sobre todo esto en  link:https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/ClassInitialization.md[la documentación de GraalVM]."
 
 #. type: delimited block =
-#: upstream/_guides/writing-native-applications-tips.adoc:319
+#: upstream/_guides/writing-native-applications-tips.adoc:335
 #, fuzzy
 msgid "When multiple classes or packages need to be specified via the `quarkus.native.additional-build-args` configuration property, the `,` symbol needs to be escaped.  An example of this is the following:"
 msgstr "Cuando es necesario especificar varias clases o paquetes a través de la propiedad de configuración `quarkus.native.additional-build-args`, es necesario escapar el símbolo `,`. Un ejemplo de esto es lo siguiente:"
 
 #. type: delimited block -
-#: upstream/_guides/writing-native-applications-tips.adoc:323
+#: upstream/_guides/writing-native-applications-tips.adoc:339
 #, no-wrap
 msgid "quarkus.native.additional-build-args=--initialize-at-run-time=com.example.SomeClass\\\\,org.acme.SomeOtherClass\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/writing-native-applications-tips.adoc:326
+#: upstream/_guides/writing-native-applications-tips.adoc:342
 #, fuzzy
 msgid "and in the case of using the Maven configuration instead of `application.properties`:"
 msgstr "y en el caso de utilizar la configuración de Maven en lugar de `application.properties`:"
 
 #. type: delimited block -
-#: upstream/_guides/writing-native-applications-tips.adoc:330
+#: upstream/_guides/writing-native-applications-tips.adoc:346
 #, no-wrap
 msgid "<quarkus.native.additional-build-args>--initialize-at-run-time=com.example.SomeClass\\,org.acme.SomeOtherClass</quarkus.native.additional-build-args>\n"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/writing-native-applications-tips.adoc:333
-#: upstream/_guides/writing-native-applications-tips.adoc:426
+#: upstream/_guides/writing-native-applications-tips.adoc:349
+#: upstream/_guides/writing-native-applications-tips.adoc:442
 #, fuzzy, no-wrap
 msgid "Managing Proxy Classes"
 msgstr "Gestión de las clases de proxy"
 
 #. type: delimited block =
-#: upstream/_guides/writing-native-applications-tips.adoc:336
+#: upstream/_guides/writing-native-applications-tips.adoc:352
 #, fuzzy
 msgid "While writing native application you'll need to define proxy classes at image build time by specifying the list of interfaces that they implement."
 msgstr "Al escribir una aplicación nativa tendrás que definir las clases proxy en el momento de la construcción de la imagen especificando la lista de interfaces que implementan."
 
 #. type: delimited block =
-#: upstream/_guides/writing-native-applications-tips.adoc:338
+#: upstream/_guides/writing-native-applications-tips.adoc:354
 #, fuzzy
 msgid "In such a situation, the error you might encounter is:"
 msgstr "En tal situación, el error que puede encontrar es:"
 
 #. type: delimited block -
-#: upstream/_guides/writing-native-applications-tips.adoc:342
+#: upstream/_guides/writing-native-applications-tips.adoc:358
 #, no-wrap
 msgid "com.oracle.svm.core.jdk.UnsupportedFeatureError: Proxy class defined by interfaces [interface org.apache.http.conn.HttpClientConnectionManager, interface org.apache.http.pool.ConnPoolControl, interface com.amazonaws.http.conn.Wrapped] not found. Generating proxy classes at runtime is not supported. Proxy classes need to be defined at image build time by specifying the list of interfaces that they implement. To define proxy classes use -H:DynamicProxyConfigurationFiles=<comma-separated-config-files> and -H:DynamicProxyConfigurationResources=<comma-separated-config-resources> options.\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/writing-native-applications-tips.adoc:346
+#: upstream/_guides/writing-native-applications-tips.adoc:362
 #, fuzzy
 msgid "Solving this issue requires adding the `-H:DynamicProxyConfigurationResources=<comma-separated-config-resources>` option and to provide a dynamic proxy configuration file.  You can find all the information about the format of this file in https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/DynamicProxy.md#manual-configuration[the GraalVM documentation]."
 msgstr "Para resolver este problema es necesario añadir la opción `-H:DynamicProxyConfigurationResources=&amp;lt;comma-separated-config-resources&amp;gt;` y proporcionar un archivo de configuración de proxy dinámico. Puedes encontrar toda la información sobre el formato de este archivo en  link:https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/DynamicProxy.md#manual-configuration[la documentación de GraalVM]."
 
 #. type: Title ==
-#: upstream/_guides/writing-native-applications-tips.adoc:348
+#: upstream/_guides/writing-native-applications-tips.adoc:364
 #, fuzzy, no-wrap
 msgid "Supporting native in a Quarkus extension"
 msgstr "Apoyo a los nativos en una extensión de Quarkus"
 
 #. type: Plain text
-#: upstream/_guides/writing-native-applications-tips.adoc:351
+#: upstream/_guides/writing-native-applications-tips.adoc:367
 #, fuzzy
 msgid "Supporting native in a Quarkus extension is even easier as Quarkus provides a lot of tools to simplify all this."
 msgstr "Apoyar a los nativos en una extensión de Quarkus es aún más fácil, ya que Quarkus proporciona un montón de herramientas para simplificar todo esto."
 
 #. type: delimited block =
-#: upstream/_guides/writing-native-applications-tips.adoc:355
+#: upstream/_guides/writing-native-applications-tips.adoc:371
 #, fuzzy
 msgid "Everything described here will only work in the context of Quarkus extensions, it won't work in an application."
 msgstr "Todo lo descrito aquí sólo funcionará en el contexto de las extensiones de Quarkus, no funcionará en una aplicación."
 
 #. type: Title ===
-#: upstream/_guides/writing-native-applications-tips.adoc:357
+#: upstream/_guides/writing-native-applications-tips.adoc:373
 #, fuzzy, no-wrap
 msgid "Register reflection"
 msgstr "Registro de reflexión"
 
 #. type: Plain text
-#: upstream/_guides/writing-native-applications-tips.adoc:360
+#: upstream/_guides/writing-native-applications-tips.adoc:376
 #, fuzzy
 msgid "Quarkus makes registration of reflection in an extension a breeze by using `ReflectiveClassBuildItem`, thus eliminating the need for a JSON configuration file."
 msgstr "Quarkus hace que el registro de la reflexión en una extensión sea una brisa usando `ReflectiveClassBuildItem`, eliminando así la necesidad de un archivo de configuración JSON."
 
 #. type: Plain text
-#: upstream/_guides/writing-native-applications-tips.adoc:362
+#: upstream/_guides/writing-native-applications-tips.adoc:378
 #, fuzzy
 msgid "To register a class for reflection, one would need to create a Quarkus processor class and add a build step that registers reflection:"
 msgstr "Para registrar una clase para la reflexión, habría que crear una clase de procesador Quarkus y añadir un paso de construcción que registre la reflexión:"
 
 #. type: delimited block -
-#: upstream/_guides/writing-native-applications-tips.adoc:366
+#: upstream/_guides/writing-native-applications-tips.adoc:382
 #, no-wrap
 msgid "public class SaxParserProcessor {\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/writing-native-applications-tips.adoc:372
+#: upstream/_guides/writing-native-applications-tips.adoc:388
 #, no-wrap
 msgid ""
 "    @BuildStep\n"
@@ -679,25 +700,25 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_guides/writing-native-applications-tips.adoc:379
+#: upstream/_guides/writing-native-applications-tips.adoc:395
 #, fuzzy
 msgid "More information about reflection in GraalVM can be found https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/Reflection.md[here]."
 msgstr "Puede encontrar más información sobre la reflexión en GraalVM  link:https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/Reflection.md[aquí]."
 
 #. type: Plain text
-#: upstream/_guides/writing-native-applications-tips.adoc:384
+#: upstream/_guides/writing-native-applications-tips.adoc:400
 #, fuzzy
 msgid "In the context of an extension, Quarkus eliminates the need for a JSON configuration file by allowing extension authors to specify a `NativeImageResourceBuildItem`:"
 msgstr "En el contexto de una extensión, Quarkus elimina la necesidad de un archivo de configuración JSON permitiendo a los autores de la extensión especificar un `NativeImageResourceBuildItem`:"
 
 #. type: delimited block -
-#: upstream/_guides/writing-native-applications-tips.adoc:388
+#: upstream/_guides/writing-native-applications-tips.adoc:404
 #, no-wrap
 msgid "public class ResourcesProcessor {\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/writing-native-applications-tips.adoc:393
+#: upstream/_guides/writing-native-applications-tips.adoc:409
 #, no-wrap
 msgid ""
 "    @BuildStep\n"
@@ -707,32 +728,32 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_guides/writing-native-applications-tips.adoc:400
+#: upstream/_guides/writing-native-applications-tips.adoc:416
 #, fuzzy
 msgid "For more information about GraalVM resource handling in native executables please refer to https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/Resources.md[the GraalVM documentation]."
 msgstr "Para más información sobre el manejo de los recursos de GraalVM en los ejecutables nativos, consulte  link:https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/Resources.md[la documentación de GraalVM]."
 
 #. type: Title ==
-#: upstream/_guides/writing-native-applications-tips.adoc:403
+#: upstream/_guides/writing-native-applications-tips.adoc:419
 #, fuzzy, no-wrap
 msgid "Delay class initialization"
 msgstr "Retrasar la inicialización de la clase"
 
 #. type: Plain text
-#: upstream/_guides/writing-native-applications-tips.adoc:406
+#: upstream/_guides/writing-native-applications-tips.adoc:422
 #, fuzzy
 msgid "Quarkus simplifies things by allowing extensions authors to simply register a `RuntimeInitializedClassBuildItem`. A simple example of doing so could be:"
 msgstr "Quarkus simplifica las cosas permitiendo a los autores de extensiones simplemente registrar un `RuntimeInitializedClassBuildItem`. Un ejemplo sencillo de hacerlo podría ser:"
 
 #. type: delimited block -
-#: upstream/_guides/writing-native-applications-tips.adoc:410
-#: upstream/_guides/writing-native-applications-tips.adoc:433
+#: upstream/_guides/writing-native-applications-tips.adoc:426
+#: upstream/_guides/writing-native-applications-tips.adoc:449
 #, no-wrap
 msgid "public class S3Processor {\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/writing-native-applications-tips.adoc:415
+#: upstream/_guides/writing-native-applications-tips.adoc:431
 #, no-wrap
 msgid ""
 "    @BuildStep\n"
@@ -742,25 +763,25 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/writing-native-applications-tips.adoc:420
+#: upstream/_guides/writing-native-applications-tips.adoc:436
 #, fuzzy
 msgid "Using such a construct means that a `--initialize-at-run-time` option will automatically be added to the `native-image` command line."
 msgstr "El uso de esta construcción significa que la opción `--initialize-at-run-time` se añadirá automáticamente a la línea de comandos `native-image`."
 
 #. type: delimited block =
-#: upstream/_guides/writing-native-applications-tips.adoc:424
+#: upstream/_guides/writing-native-applications-tips.adoc:440
 #, fuzzy
 msgid "For more information about `--initialize-at-run-time`, please read https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/ClassInitialization.md[the GraalVM documentation]."
 msgstr "Para más información sobre `--initialize-at-run-time`, lea  link:https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/ClassInitialization.md[la documentación de GraalVM]."
 
 #. type: Plain text
-#: upstream/_guides/writing-native-applications-tips.adoc:429
+#: upstream/_guides/writing-native-applications-tips.adoc:445
 #, fuzzy
 msgid "Very similarly, Quarkus allows extensions authors to register a `NativeImageProxyDefinitionBuildItem`. An example of doing so is:"
 msgstr "De forma muy similar, Quarkus permite a los autores de extensiones registrar un `NativeImageProxyDefinitionBuildItem`. Un ejemplo de ello es:"
 
 #. type: delimited block -
-#: upstream/_guides/writing-native-applications-tips.adoc:439
+#: upstream/_guides/writing-native-applications-tips.adoc:455
 #, no-wrap
 msgid ""
 "    @BuildStep\n"
@@ -771,31 +792,31 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/writing-native-applications-tips.adoc:444
+#: upstream/_guides/writing-native-applications-tips.adoc:460
 #, fuzzy
 msgid "Using such a construct means that a `-H:DynamicProxyConfigurationResources` option will automatically be added to the `native-image` command line."
 msgstr "El uso de esta construcción significa que la opción `-H:DynamicProxyConfigurationResources` se añadirá automáticamente a la línea de comandos `native-image`."
 
 #. type: delimited block =
-#: upstream/_guides/writing-native-applications-tips.adoc:448
+#: upstream/_guides/writing-native-applications-tips.adoc:464
 #, fuzzy
 msgid "For more information about Proxy Classes you can read https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/DynamicProxy.md[the GraalVM documentation]."
 msgstr "Para más información sobre las Clases Proxy puedes leer  link:https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/DynamicProxy.md[la documentación de GraalVM]."
 
 #. type: Title ===
-#: upstream/_guides/writing-native-applications-tips.adoc:450
+#: upstream/_guides/writing-native-applications-tips.adoc:466
 #, fuzzy, no-wrap
 msgid "Logging with Native Image"
 msgstr "Registro con imagen nativa"
 
 #. type: Plain text
-#: upstream/_guides/writing-native-applications-tips.adoc:453
+#: upstream/_guides/writing-native-applications-tips.adoc:469
 #, fuzzy
 msgid "If you are using dependencies that require logging components such as Apache Commons Logging or Log4j and are experiencing a `ClassNotFoundException` when building the native executable, you can resolve this by excluding the logging library and adding the corresponding JBoss Logging adapter."
 msgstr "Si utiliza dependencias que requieren componentes de registro como Apache Commons Logging o Log4j y experimenta un `ClassNotFoundException` al construir el ejecutable nativo, puede resolverlo excluyendo la biblioteca de registro y añadiendo el adaptador de JBoss Logging correspondiente."
 
 #. type: Plain text
-#: upstream/_guides/writing-native-applications-tips.adoc:454
+#: upstream/_guides/writing-native-applications-tips.adoc:470
 #, fuzzy
 msgid "For more details please refer to the xref:logging.adoc#logging-adapters[Logging guide]."
 msgstr "Para más detalles, consulte la  link:logging.html#logging-adapters[guía de registro]."
