@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-08-02 09:15+0000\n"
+"POT-Creation-Date: 2022-08-31 11:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,7 +45,7 @@ msgstr "Acceso a un clúster Kubernetes (Minikube es una opción viable)"
 
 #. type: Block title
 #: upstream/_guides/deploying-to-kubernetes.adoc:22
-#: upstream/_guides/deploying-to-kubernetes.adoc:693
+#: upstream/_guides/deploying-to-kubernetes.adoc:763
 #, fuzzy, no-wrap
 msgid "Kubernetes"
 msgstr "Kubernetes"
@@ -65,8 +65,8 @@ msgstr "Esto añadió las siguientes dependencias al archivo de compilación:"
 #. type: Block title
 #: upstream/_guides/deploying-to-kubernetes.adoc:34
 #: upstream/_guides/deploying-to-kubernetes.adoc:518
-#: upstream/_guides/deploying-to-kubernetes.adoc:598
-#: upstream/_guides/deploying-to-kubernetes.adoc:627
+#: upstream/_guides/deploying-to-kubernetes.adoc:668
+#: upstream/_guides/deploying-to-kubernetes.adoc:697
 #, fuzzy, no-wrap
 msgid "pom.xml"
 msgstr "pom.xml"
@@ -92,8 +92,8 @@ msgstr ""
 #. type: Block title
 #: upstream/_guides/deploying-to-kubernetes.adoc:51
 #: upstream/_guides/deploying-to-kubernetes.adoc:527
-#: upstream/_guides/deploying-to-kubernetes.adoc:607
-#: upstream/_guides/deploying-to-kubernetes.adoc:636
+#: upstream/_guides/deploying-to-kubernetes.adoc:677
+#: upstream/_guides/deploying-to-kubernetes.adoc:706
 #, fuzzy, no-wrap
 msgid "build.gradle"
 msgstr "build.gradle"
@@ -1031,7 +1031,7 @@ msgstr "Para ajustar el retardo inicial de la sonda a 20 segundos y el periodo a
 
 #. type: delimited block -
 #: upstream/_guides/deploying-to-kubernetes.adoc:542
-#: upstream/_guides/deploying-to-kubernetes.adoc:704
+#: upstream/_guides/deploying-to-kubernetes.adoc:774
 #, no-wrap
 msgid ""
 "quarkus.kubernetes.readiness-probe.initial-delay=20s\n"
@@ -1121,18 +1121,120 @@ msgstr ""
 
 #. type: Title ===
 #: upstream/_guides/deploying-to-kubernetes.adoc:593
+#, no-wrap
+msgid "Exposing with Secured Ingress"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/deploying-to-kubernetes.adoc:596
+#, fuzzy
+msgid "Kubernetes exposes applications using https://kubernetes.io/docs/concepts/services-networking/ingress[Ingress resources]. To generate the Ingress resource, just apply the following configuration:"
+msgstr "Para añadir entradas al archivo `/etc/hosts` de un Pod (se puede encontrar más información en  link:https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/[la documentación de Kubernetes]), basta con aplicar la siguiente configuración:"
+
+#. type: delimited block -
+#: upstream/_guides/deploying-to-kubernetes.adoc:600
+#, fuzzy, no-wrap
+msgid "quarkus.kubernetes.ingress.expose=true\n"
+msgstr "quarkus.kubernetes.ingress.expose"
+
+#. type: Plain text
+#: upstream/_guides/deploying-to-kubernetes.adoc:603
+#, fuzzy
+msgid "This would generate the following Ingress resource:"
+msgstr "Esto generaría lo siguiente en la sección `env` de su contenedor:"
+
+#. type: delimited block -
+#: upstream/_guides/deploying-to-kubernetes.adoc:627
+#, no-wrap
+msgid ""
+"apiVersion: networking.k8s.io/v1\n"
+"kind: Ingress\n"
+"metadata:\n"
+"  annotations:\n"
+"    app.quarkus.io/commit-id: a58d2211c86f07a47d4b073ea9ce000d2c6828d5\n"
+"    app.quarkus.io/build-timestamp: 2022-06-29 - 13:22:41 +0000\n"
+"  labels:\n"
+"    app.kubernetes.io/name: kubernetes-with-ingress\n"
+"    app.kubernetes.io/version: 0.1-SNAPSHOT\n"
+"  name: kubernetes-with-ingress\n"
+"spec:\n"
+"  rules:\n"
+"    - http:\n"
+"        paths:\n"
+"          - backend:\n"
+"              service:\n"
+"                name: kubernetes-with-ingress\n"
+"                port:\n"
+"                  name: http\n"
+"            path: /\n"
+"            pathType: Prefix\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/deploying-to-kubernetes.adoc:630
+msgid "After deploying these resources to Kubernetes, the Ingress resource will allow unsecured connections to reach out your application."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/deploying-to-kubernetes.adoc:632
+msgid "To secure the incoming connections, Kubernetes allows enabling https://kubernetes.io/docs/concepts/services-networking/ingress/#tls[TLS] within the Ingress resource by specifying a Secret that contains a TLS private key and certificate. You can generate a secured Ingress resource by simply adding the \"tls.secret-name\" properties:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/deploying-to-kubernetes.adoc:638
+#, no-wrap
+msgid ""
+"quarkus.kubernetes.ingress.expose=true\n"
+"## Ingress TLS configuration:\n"
+"quarkus.kubernetes.ingress.tls.my-secret.enabled=true\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/deploying-to-kubernetes.adoc:641
+#, fuzzy
+msgid "This configuration will generate the following secured Ingress resource:"
+msgstr "Esto generaría la siguiente entrada en la sección `container`:"
+
+#. type: delimited block -
+#: upstream/_guides/deploying-to-kubernetes.adoc:654
+#, no-wrap
+msgid ""
+"apiVersion: networking.k8s.io/v1\n"
+"kind: Ingress\n"
+"metadata:\n"
+"  ...\n"
+"  name: kubernetes-with-secure-ingress\n"
+"spec:\n"
+"  rules:\n"
+"    ...\n"
+"  tls:\n"
+"    - secretName: my-secret\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/deploying-to-kubernetes.adoc:657
+msgid "Now, Kubernetes will validate all the incoming connections using SSL with the certificates provided within the secret with name \"my-secret\"."
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_guides/deploying-to-kubernetes.adoc:661
+msgid "More information about how to create the secret in https://kubernetes.io/docs/concepts/services-networking/ingress/#tls[here]."
+msgstr ""
+
+#. type: Title ===
+#: upstream/_guides/deploying-to-kubernetes.adoc:663
 #, fuzzy, no-wrap
 msgid "Using the Kubernetes client"
 msgstr "Uso del cliente Kubernetes"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:596
+#: upstream/_guides/deploying-to-kubernetes.adoc:666
 #, fuzzy
 msgid "Applications that are deployed to Kubernetes and need to access the API server will usually make use of the `kubernetes-client` extension:"
 msgstr "Las aplicaciones que se despliegan en Kubernetes y necesitan acceder al servidor de la API suelen hacer uso de la extensión `kubernetes-client`:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:604
+#: upstream/_guides/deploying-to-kubernetes.adoc:674
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -1142,37 +1244,37 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:610
+#: upstream/_guides/deploying-to-kubernetes.adoc:680
 #, no-wrap
 msgid "implementation(\"io.quarkus:quarkus-kubernetes-client\")\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:615
+#: upstream/_guides/deploying-to-kubernetes.adoc:685
 #, fuzzy
 msgid "To access the API server from within a Kubernetes cluster, some RBAC related resources are required (e.g. a ServiceAccount, a RoleBinding).  So, when the `kubernetes-client` extension is present, the `kubernetes` extension is going to create those resources automatically, so that application will be granted the `view` role.  If more roles are required, they will have to be added manually."
 msgstr "Para acceder al servidor de la API desde un clúster de Kubernetes, se necesitan algunos recursos relacionados con RBAC (por ejemplo, una ServiceAccount, un RoleBinding, etc.). Por lo tanto, cuando la extensión `kubernetes-client` está presente, la extensión `kubernetes` va a crear esos recursos automáticamente, por lo que a esa aplicación se le concederá el rol `view`. Si se necesitan más roles, habrá que añadirlos manualmente."
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:619
+#: upstream/_guides/deploying-to-kubernetes.adoc:689
 #, fuzzy
 msgid "You can disable the RBAC resources generation using the property `quarkus.kubernetes-client.generate-rbac=false`."
 msgstr "Puede desactivar la generación de recursos RBAC mediante la propiedad `quarkus.kubernetes-client.generate-rbac=false`."
 
 #. type: Title ===
-#: upstream/_guides/deploying-to-kubernetes.adoc:621
+#: upstream/_guides/deploying-to-kubernetes.adoc:691
 #, fuzzy, no-wrap
 msgid "Deploying to Minikube"
 msgstr "Despliegue en Minikube"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:625
+#: upstream/_guides/deploying-to-kubernetes.adoc:695
 #, fuzzy
 msgid "https://github.com/kubernetes/minikube[Minikube] is quite popular when a Kubernetes cluster is needed for development purposes. To make the deployment to Minikube experience as frictionless as possible, Quarkus provides the `quarkus-minikube` extension. This extension can be added to a project like so:"
 msgstr "link:https://github.com/kubernetes/minikube[Minikube] es bastante popular cuando se necesita un clúster Kubernetes para fines de desarrollo. Para que la experiencia de despliegue en Minikube sea lo más sencilla posible, Quarkus proporciona la extensión `quarkus-minikube`. Esta extensión puede ser añadida a un proyecto así:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:633
+#: upstream/_guides/deploying-to-kubernetes.adoc:703
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -1182,73 +1284,73 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:639
+#: upstream/_guides/deploying-to-kubernetes.adoc:709
 #, no-wrap
 msgid "implementation(\"io.quarkus:quarkus-minikube\")\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:643
+#: upstream/_guides/deploying-to-kubernetes.adoc:713
 #, fuzzy
 msgid "The purpose of this extension is to generate Kubernetes manifests (`minikube.yaml` and `minikube.json`) that are tailored to Minikube.  This extension assumes a couple of things:"
 msgstr "El propósito de esta extensión es generar manifiestos de Kubernetes ( `minikube.yaml` y `minikube.json`) adaptados a Minikube. Esta extensión asume un par de cosas:"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:646
+#: upstream/_guides/deploying-to-kubernetes.adoc:716
 #, fuzzy
 msgid "Users won't be using an image registry and will instead make their container image accessible to the Kubernetes cluster by building it directly into Minikube's Docker daemon. To use Minikube's Docker daemon you must first execute:"
 msgstr "Los usuarios no utilizarán un registro de imágenes y en su lugar harán que su imagen de contenedor sea accesible para el clúster Kubernetes construyéndola directamente en el demonio Docker de Minikube. Para utilizar el demonio Docker de Minikube primero debe ejecutar:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:650
+#: upstream/_guides/deploying-to-kubernetes.adoc:720
 #, no-wrap
 msgid "eval $(minikube -p minikube docker-env)\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:654
+#: upstream/_guides/deploying-to-kubernetes.adoc:724
 #, fuzzy
 msgid "Applications deployed to Kubernetes won't be accessed via a Kubernetes `Ingress`, but rather as a `NodePort` `Service`.  The advantage of doing this is that the URL of an application can be retrieved trivially by executing:"
 msgstr "No se accederá a las aplicaciones desplegadas en Kubernetes a través de Kubernetes `Ingress`, sino como `NodePort` `Service` . La ventaja de hacer esto es que la URL de una aplicación puede ser recuperada trivialmente mediante la ejecución:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:658
+#: upstream/_guides/deploying-to-kubernetes.adoc:728
 #, no-wrap
 msgid "minikube service list\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:662
+#: upstream/_guides/deploying-to-kubernetes.adoc:732
 #, fuzzy
 msgid "To control the https://kubernetes.io/docs/concepts/services-networking/service/#nodeport[nodePort] that is used in this case, users can set `quarkus.kubernetes.node-port`.  Note however that this configuration is entirely optional because Quarkus will automatically use a proper (and non-changing) value if none is set."
 msgstr "Para controlar el  link:https://kubernetes.io/docs/concepts/services-networking/service/#nodeport[nodePort] que se utiliza en este caso, los usuarios pueden establecer `quarkus.kubernetes.node-port`. Tenga en cuenta, sin embargo, que esta configuración es totalmente opcional porque Quarkus utilizará automáticamente un valor adecuado (y no cambiante) si no se establece ninguno."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:665
+#: upstream/_guides/deploying-to-kubernetes.adoc:735
 #, fuzzy
 msgid "It is highly discouraged to use the manifests generated by the Minikube extension when deploying to production as these manifests are intended for development purposes only. When deploying to production, consider using the vanilla Kubernetes manifests (or the OpenShift ones when targeting OpenShift)."
 msgstr "Se desaconseja encarecidamente utilizar los manifiestos generados por la extensión Minikube al desplegar en producción, ya que estos manifiestos están pensados únicamente para fines de desarrollo. Al desplegar en producción, considere el uso de los manifiestos de Kubernetes (o los de OpenShift si se trata de OpenShift)."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:668
+#: upstream/_guides/deploying-to-kubernetes.adoc:738
 #, fuzzy
 msgid "If the assumptions the Minikube extension makes don't fit your workflow, nothing prevents you from using the regular Kubernetes extension to generate Kubernetes manifests and apply those to your Minikube cluster."
 msgstr "Si las suposiciones que hace la extensión de Minikube no se ajustan a su flujo de trabajo, nada le impide utilizar la extensión regular de Kubernetes para generar manifiestos de Kubernetes y aplicarlos a su clúster de Minikube."
 
 #. type: Title ===
-#: upstream/_guides/deploying-to-kubernetes.adoc:669
+#: upstream/_guides/deploying-to-kubernetes.adoc:739
 #, fuzzy, no-wrap
 msgid "Deploying to Kind"
 msgstr "Despliegue a la medida"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:672
+#: upstream/_guides/deploying-to-kubernetes.adoc:742
 #, fuzzy
 msgid "https://kind.sigs.k8s.io/[Kind] is another popular tool used as a Kubernetes cluster for development purposes. To make the deployment to Kind experience as frictionless as possible, Quarkus provides the `quarkus-kind` extension. This extension can be added to a project like so:"
 msgstr "link:https://kind.sigs.k8s.io/[Kind] es otra herramienta popular utilizada como clúster de Kubernetes para fines de desarrollo. Para que la experiencia de despliegue en Kind sea lo más fluida posible, Quarkus proporciona la extensión `quarkus-kind`. Esta extensión puede ser añadida a un proyecto así:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:679
+#: upstream/_guides/deploying-to-kubernetes.adoc:749
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -1258,98 +1360,98 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:683
+#: upstream/_guides/deploying-to-kubernetes.adoc:753
 #, fuzzy
 msgid "The purpose of this extension is to generate Kubernetes manifests (`kind.yaml` and `kind.json`) that are tailored to Kind and also to automate the process of loading images to the cluster when performing container image builds. The tailor made manifests will be pretty similar (they share the same rules) with Minikube (see above)."
 msgstr "El propósito de esta extensión es generar manifiestos de Kubernetes ( `kind.yaml` y `kind.json`) a la medida de Kind y también automatizar el proceso de carga de imágenes al cluster cuando se realizan construcciones de imágenes de contenedores. Los manifiestos hechos a medida serán bastante similares (comparten las mismas reglas) con Minikube (ver arriba)."
 
 #. type: Title ==
-#: upstream/_guides/deploying-to-kubernetes.adoc:684
+#: upstream/_guides/deploying-to-kubernetes.adoc:754
 #, fuzzy, no-wrap
 msgid "Tuning the generated resources using application.properties"
 msgstr "Ajuste de los recursos generados mediante application.properties"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:688
+#: upstream/_guides/deploying-to-kubernetes.adoc:758
 #, fuzzy
 msgid "The Kubernetes extension allows tuning the generated manifest, using the `application.properties` file.  Here are some examples:"
 msgstr "La extensión de Kubernetes permite ajustar el manifiesto generado, utilizando el archivo `application.properties`. Estos son algunos ejemplos:"
 
 #. type: Title ===
-#: upstream/_guides/deploying-to-kubernetes.adoc:689
+#: upstream/_guides/deploying-to-kubernetes.adoc:759
 #, fuzzy, no-wrap
 msgid "Configuration options"
 msgstr "Opciones de configuración"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:692
+#: upstream/_guides/deploying-to-kubernetes.adoc:762
 #, fuzzy
 msgid "The table below describe all the available configuration options."
 msgstr "La siguiente tabla describe todas las opciones de configuración disponibles."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:699
+#: upstream/_guides/deploying-to-kubernetes.adoc:769
 #, fuzzy
 msgid "Properties that use non-standard types, can be referenced by expanding the property.  For example to define a `kubernetes-readiness-probe` which is of type `Probe`:"
 msgstr "Las propiedades que utilizan tipos no estándar, pueden ser referenciadas expandiendo la propiedad. Por ejemplo, para definir un `kubernetes-readiness-probe` que es del tipo `Probe`:"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:708
+#: upstream/_guides/deploying-to-kubernetes.adoc:778
 #, fuzzy
 msgid "In this example `initial-delay` and `period` are fields of the type `Probe`.  Below you will find tables describing all available types."
 msgstr "En este ejemplo `initial-delay` y `period` son campos del tipo `Probe`. A continuación encontrará tablas que describen todos los tipos disponibles."
 
 #. type: Title ====
-#: upstream/_guides/deploying-to-kubernetes.adoc:709
+#: upstream/_guides/deploying-to-kubernetes.adoc:779
 #, fuzzy, no-wrap
 msgid "Client Connection Configuration"
 msgstr "Configuración de la conexión del cliente"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:712
+#: upstream/_guides/deploying-to-kubernetes.adoc:782
 #, fuzzy
 msgid "You may need to configure the connection to your Kubernetes cluster.  By default, it automatically uses the active _context_ used by `kubectl`."
 msgstr "Es posible que tenga que configurar la conexión con su clúster de Kubernetes. Por defecto, utiliza automáticamente el _contexto_ activo utilizado por `kubectl`."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:714
+#: upstream/_guides/deploying-to-kubernetes.adoc:784
 #, fuzzy
 msgid "For instance, if your cluster API endpoint uses a self-signed SSL Certificate you need to explicitly configure the client to trust it. You can achieve this by defining the following property:"
 msgstr "Por ejemplo, si su punto final de la API del clúster utiliza un certificado SSL autofirmado, debe configurar explícitamente el cliente para que confíe en él. Puede conseguirlo definiendo la siguiente propiedad:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:718
+#: upstream/_guides/deploying-to-kubernetes.adoc:788
 #, no-wrap
 msgid "quarkus.kubernetes-client.trust-certs=true\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:721
+#: upstream/_guides/deploying-to-kubernetes.adoc:791
 #, fuzzy
 msgid "The full list of the Kubernetes client configuration properties is provided below."
 msgstr "La lista completa de las propiedades de configuración del cliente Kuberneters se proporciona a continuación."
 
 #. type: Block title
-#: upstream/_guides/deploying-to-kubernetes.adoc:726
-#: upstream/_guides/deploying-to-kubernetes.adoc:816
+#: upstream/_guides/deploying-to-kubernetes.adoc:796
+#: upstream/_guides/deploying-to-kubernetes.adoc:886
 #, fuzzy, no-wrap
 msgid "OpenShift"
 msgstr "OpenShift"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:729
+#: upstream/_guides/deploying-to-kubernetes.adoc:799
 #, fuzzy
 msgid "One way to deploy an application to OpenShift is to use s2i (source to image) to create an image stream from the source and then deploy the image stream:"
 msgstr "Una forma de desplegar una aplicación en OpenShift es utilizar s2i (source to image) para crear un flujo de imágenes desde el origen y luego desplegar el flujo de imágenes:"
 
 #. type: Block title
-#: upstream/_guides/deploying-to-kubernetes.adoc:731
+#: upstream/_guides/deploying-to-kubernetes.adoc:801
 #, fuzzy, no-wrap
 msgid "CLI"
 msgstr "CLI"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:735
+#: upstream/_guides/deploying-to-kubernetes.adoc:805
 #, no-wrap
 msgid ""
 "quarkus extension remove kubernetes,jib\n"
@@ -1357,7 +1459,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:738
+#: upstream/_guides/deploying-to-kubernetes.adoc:808
 #, no-wrap
 msgid ""
 "oc new-project quarkus-project\n"
@@ -1365,9 +1467,9 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:743
-#: upstream/_guides/deploying-to-kubernetes.adoc:758
-#: upstream/_guides/deploying-to-kubernetes.adoc:773
+#: upstream/_guides/deploying-to-kubernetes.adoc:813
+#: upstream/_guides/deploying-to-kubernetes.adoc:828
+#: upstream/_guides/deploying-to-kubernetes.adoc:843
 #, no-wrap
 msgid ""
 "oc new-app --name=greeting  quarkus-project/kubernetes-quickstart:1.0.0-SNAPSHOT\n"
@@ -1377,13 +1479,13 @@ msgid ""
 msgstr ""
 
 #. type: Block title
-#: upstream/_guides/deploying-to-kubernetes.adoc:746
+#: upstream/_guides/deploying-to-kubernetes.adoc:816
 #, fuzzy, no-wrap
 msgid "Maven"
 msgstr "Maven"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:750
+#: upstream/_guides/deploying-to-kubernetes.adoc:820
 #, no-wrap
 msgid ""
 "./mvnw quarkus:remove-extension -Dextensions=\"kubernetes, jib\"\n"
@@ -1391,7 +1493,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:753
+#: upstream/_guides/deploying-to-kubernetes.adoc:823
 #, no-wrap
 msgid ""
 "oc new-project quarkus-project\n"
@@ -1399,13 +1501,13 @@ msgid ""
 msgstr ""
 
 #. type: Block title
-#: upstream/_guides/deploying-to-kubernetes.adoc:761
+#: upstream/_guides/deploying-to-kubernetes.adoc:831
 #, fuzzy, no-wrap
 msgid "Gradle"
 msgstr "Gradle"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:765
+#: upstream/_guides/deploying-to-kubernetes.adoc:835
 #, no-wrap
 msgid ""
 "./gradlew removeExtension --extensions=\"kubernetes, jib\"\n"
@@ -1413,7 +1515,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:768
+#: upstream/_guides/deploying-to-kubernetes.adoc:838
 #, no-wrap
 msgid ""
 "oc new-project quarkus-project\n"
@@ -1421,122 +1523,122 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:776
+#: upstream/_guides/deploying-to-kubernetes.adoc:846
 #, fuzzy
 msgid "See further information in xref:deploying-to-openshift.adoc[Deploying to OpenShift]."
 msgstr "Consulte más información en  link:deploying-to-openshift.html[Despliegue en OpenShift]."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:778
+#: upstream/_guides/deploying-to-kubernetes.adoc:848
 #, fuzzy, no-wrap
 msgid "A description of OpenShift resources and customisable properties is given below alongside Kubernetes resources to show similarities where applicable.   This includes an alternative to  `oc new-app ...` above, i.e. `oc apply -f target/kubernetes/openshift.json` .\n"
 msgstr "A continuación se ofrece una descripción de los recursos de OpenShift y de las propiedades personalizables junto con los recursos de Kubernetes para mostrar las similitudes cuando corresponda. Esto incluye una alternativa a `oc new-app …​` anterior, es decir, `oc apply -f target/kubernetes/openshift.json`."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:780
+#: upstream/_guides/deploying-to-kubernetes.adoc:850
 #, fuzzy
 msgid "To enable the generation of OpenShift resources, you need to include OpenShift in the target platforms:"
 msgstr "Para habilitar la generación de recursos de OpenShift, es necesario incluir OpenShift en las plataformas de destino:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:784
+#: upstream/_guides/deploying-to-kubernetes.adoc:854
 #, no-wrap
 msgid "quarkus.kubernetes.deployment-target=openshift\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:787
+#: upstream/_guides/deploying-to-kubernetes.adoc:857
 #, fuzzy
 msgid "If you need to generate resources for both platforms (vanilla Kubernetes and OpenShift), then you need to include both (comma separated)."
 msgstr "Si necesita generar recursos para ambas plataformas (vanilla Kubernetes y OpenShift), entonces debe incluir ambas (separadas por comas)."
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:791
+#: upstream/_guides/deploying-to-kubernetes.adoc:861
 #, no-wrap
 msgid "quarkus.kubernetes.deployment-target=kubernetes,openshift\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:795
+#: upstream/_guides/deploying-to-kubernetes.adoc:865
 #, fuzzy
 msgid "Following the execution of `./mvnw package -Dquarkus.container-image.build=true` you will notice amongst the other files that are created, two files named `openshift.json` and `openshift.yml` in the `target/kubernetes/` directory."
 msgstr "Tras la ejecución de `./mvnw package -Dquarkus.container-image.build=true` observará, entre los demás archivos que se crean, dos archivos llamados `openshift.json` y `openshift.yml` en el directorio `target/kubernetes/`."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:797
+#: upstream/_guides/deploying-to-kubernetes.adoc:867
 #, fuzzy
 msgid "These manifests can be deployed as is to a running cluster, using `kubectl`:"
 msgstr "Estos manifiestos pueden desplegarse tal cual en un clúster en funcionamiento, utilizando `kubectl`:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:801
+#: upstream/_guides/deploying-to-kubernetes.adoc:871
 #, no-wrap
 msgid "kubectl apply -f target/kubernetes/openshift.json\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:804
+#: upstream/_guides/deploying-to-kubernetes.adoc:874
 #, fuzzy
 msgid "OpenShift's users might want to use `oc` rather than `kubectl`:"
 msgstr "Los usuarios de OpenShift podrían querer utilizar `oc` en lugar de `kubectl`:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:808
+#: upstream/_guides/deploying-to-kubernetes.adoc:878
 #, no-wrap
 msgid "oc apply -f target/kubernetes/openshift.json\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:813
+#: upstream/_guides/deploying-to-kubernetes.adoc:883
 #, fuzzy
 msgid "Quarkus also provides the xref:deploying-to-openshift.adoc[OpenShift] extension. This extension is basically a wrapper around the Kubernetes extension and relieves OpenShift users of the necessity of setting the `deployment-target` property to `openshift`"
 msgstr "Quarkus también proporciona la extensión  link:deploying-to-openshift.html[OpenShift]. Esta extensión es básicamente una envoltura alrededor de la extensión de Kubernetes y libera a los usuarios de OpenShift de la necesidad de establecer la propiedad `deployment-target` a `openshift`"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:815
+#: upstream/_guides/deploying-to-kubernetes.adoc:885
 #, fuzzy
 msgid "The OpenShift resources can be customized in a similar approach with Kubernetes."
 msgstr "Los recursos de OpenShift se pueden personalizar con un enfoque similar al de Kubernetes."
 
 #. type: Block title
-#: upstream/_guides/deploying-to-kubernetes.adoc:821
-#: upstream/_guides/deploying-to-kubernetes.adoc:881
+#: upstream/_guides/deploying-to-kubernetes.adoc:891
+#: upstream/_guides/deploying-to-kubernetes.adoc:951
 #, fuzzy, no-wrap
 msgid "Knative"
 msgstr "Knative"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:824
+#: upstream/_guides/deploying-to-kubernetes.adoc:894
 #, fuzzy
 msgid "To enable the generation of Knative resources, you need to include Knative in the target platforms:"
 msgstr "Para permitir la generación de recursos Knative, es necesario incluir Knative en las plataformas de destino:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:828
+#: upstream/_guides/deploying-to-kubernetes.adoc:898
 #, no-wrap
 msgid "quarkus.kubernetes.deployment-target=knative\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:832
+#: upstream/_guides/deploying-to-kubernetes.adoc:902
 #, fuzzy
 msgid "Following the execution of `./mvnw package` you will notice amongst the other files that are created, two files named `knative.json` and `knative.yml` in the `target/kubernetes/` directory."
 msgstr "Tras la ejecución de `./mvnw package` observará, entre los demás archivos que se crean, dos archivos llamados `knative.json` y `knative.yml` en el directorio `target/kubernetes/`."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:834
+#: upstream/_guides/deploying-to-kubernetes.adoc:904
 #, fuzzy
 msgid "If you look at either file you will see that it contains a Knative `Service`."
 msgstr "Si mira cualquiera de los dos archivos verá que contiene un Knative `Service`."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:836
+#: upstream/_guides/deploying-to-kubernetes.adoc:906
 #, fuzzy
 msgid "The full source of the `knative.json` file looks something like this:"
 msgstr "La fuente completa del archivo `knative.json` es algo así:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:870
+#: upstream/_guides/deploying-to-kubernetes.adoc:940
 #, no-wrap
 msgid ""
 "{\n"
@@ -1573,103 +1675,103 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:873
+#: upstream/_guides/deploying-to-kubernetes.adoc:943
 #, fuzzy
 msgid "The generated manifest can be deployed as is to a running cluster, using `kubectl`:"
 msgstr "El manifiesto generado puede desplegarse tal cual en un clúster en funcionamiento, utilizando `kubectl`:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:877
+#: upstream/_guides/deploying-to-kubernetes.adoc:947
 #, no-wrap
 msgid "kubectl apply -f target/kubernetes/knative.json\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:880
+#: upstream/_guides/deploying-to-kubernetes.adoc:950
 #, fuzzy
 msgid "The generated service can be customized using the following properties:"
 msgstr "El servicio generado se puede personalizar utilizando las siguientes propiedades:"
 
 #. type: Title ===
-#: upstream/_guides/deploying-to-kubernetes.adoc:885
+#: upstream/_guides/deploying-to-kubernetes.adoc:955
 #, fuzzy, no-wrap
 msgid "Deployment targets"
 msgstr "Objetivos de despliegue"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:889
+#: upstream/_guides/deploying-to-kubernetes.adoc:959
 #, fuzzy
 msgid "Mentioned in the previous sections was the concept of `deployment-target`. This concept allows users to control which Kubernetes manifests will be generated and deployed to a cluster (if `quarkus.kubernetes.deploy` has been set to `true`)."
 msgstr "En las secciones anteriores se mencionó el concepto de `deployment-target`. Este concepto permite a los usuarios controlar qué manifiestos de Kubernetes se generarán y desplegarán en un clúster (si `quarkus.kubernetes.deploy` se ha configurado como `true`)."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:893
+#: upstream/_guides/deploying-to-kubernetes.adoc:963
 #, fuzzy
 msgid "By default, when no `deployment-target` is set, then only vanilla Kubernetes resources are generated and deployed. When multiple values are set (for example `quarkus.kubernetes.deployment-target=kubernetes,openshift`) then the resources for all targets are generated, but only the resources that correspond to the *first* target are applied to the cluster (if deployment is enabled)."
 msgstr "Por defecto, cuando no se establece ningún `deployment-target`, entonces sólo se generan y despliegan los recursos vanilla Kubernetes. Cuando se establecen varios valores (por ejemplo, `quarkus.kubernetes.deployment-target=kubernetes,openshift`), entonces se generan los recursos para todos los objetivos, pero solo se aplican al clúster los recursos que corresponden al *primer* objetivo (si el despliegue está activado)."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:898
+#: upstream/_guides/deploying-to-kubernetes.adoc:968
 #, fuzzy
 msgid "In the case of wrapper extensions like OpenShift and Minikube, when these extensions have been explicitly added to the project, the default `deployment-target` is set by those extensions. For example if `quarkus-minikube` has been added to a project, then `minikube` becomes the default deployment target and its resources will be applied to the Kubernetes cluster when deployment via `quarkus.kubernetes.deploy` has been set.  Users can still override the deployment-targets manually using `quarkus.kubernetes.deployment-target`."
 msgstr "En el caso de las extensiones de envoltura como OpenShift y Minikube, cuando estas extensiones se han añadido explícitamente al proyecto, el `deployment-target` predeterminado es establecido por esas extensiones. Por ejemplo, si se ha añadido `quarkus-minikube` a un proyecto, entonces `minikube` se convierte en el objetivo de despliegue por defecto y sus recursos se aplicarán al clúster Kubernetes cuando se haya establecido el despliegue a través de `quarkus.kubernetes.deploy`. Los usuarios aún pueden anular los objetivos de despliegue manualmente utilizando `quarkus.kubernetes.deployment-target`."
 
 #. type: Title ===
-#: upstream/_guides/deploying-to-kubernetes.adoc:899
+#: upstream/_guides/deploying-to-kubernetes.adoc:969
 #, fuzzy, no-wrap
 msgid "Deprecated configuration"
 msgstr "Configuración obsoleta"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:902
+#: upstream/_guides/deploying-to-kubernetes.adoc:972
 #, fuzzy
 msgid "The following categories of configuration properties have been deprecated."
 msgstr "Las siguientes categorías de propiedades de configuración han quedado obsoletas."
 
 #. type: Title ====
-#: upstream/_guides/deploying-to-kubernetes.adoc:903
+#: upstream/_guides/deploying-to-kubernetes.adoc:973
 #, fuzzy, no-wrap
 msgid "Properties without the quarkus prefix"
 msgstr "Propiedades sin el prefijo quarkus"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:906
+#: upstream/_guides/deploying-to-kubernetes.adoc:976
 #, fuzzy
 msgid "In earlier versions of the extension, the `quarkus.` was missing from those properties. These properties are now deprecated."
 msgstr "En versiones anteriores de la extensión, faltaba el `quarkus.` en esas propiedades. Estas propiedades están ahora obsoletas."
 
 #. type: Title ====
-#: upstream/_guides/deploying-to-kubernetes.adoc:907
+#: upstream/_guides/deploying-to-kubernetes.adoc:977
 #, fuzzy, no-wrap
 msgid "Docker and S2i properties"
 msgstr "Propiedades de Docker y S2i"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:910
+#: upstream/_guides/deploying-to-kubernetes.adoc:980
 #, fuzzy
 msgid "The properties for configuring `docker` and `s2i` are also deprecated in favor of the new container-image extensions."
 msgstr "Las propiedades para configurar `docker` y `s2i` también están obsoletas en favor de las nuevas extensiones container-image."
 
 #. type: Title ====
-#: upstream/_guides/deploying-to-kubernetes.adoc:911
+#: upstream/_guides/deploying-to-kubernetes.adoc:981
 #, fuzzy, no-wrap
 msgid "Config group arrays"
 msgstr "Configurar matrices de grupos"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:914
+#: upstream/_guides/deploying-to-kubernetes.adoc:984
 #, fuzzy
 msgid "Properties referring to config group arrays (e.g. `kubernetes.labels[0]`, `kubernetes.env-vars[0]` etc) have been converted to Maps to align with the rest of the Quarkus ecosystem."
 msgstr "Las propiedades que se refieren a las matrices de grupos de configuración (por ejemplo, `kubernetes.labels[0]`, `kubernetes.env-vars[0]` etc) se han convertido en mapas, para alinearse con el resto del ecosistema de Quarkus."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:916
+#: upstream/_guides/deploying-to-kubernetes.adoc:986
 #, fuzzy
 msgid "The code below demonstrates the change in `labels` config:"
 msgstr "El código siguiente demuestra el cambio en `labels` config:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:922
+#: upstream/_guides/deploying-to-kubernetes.adoc:992
 #, no-wrap
 msgid ""
 "# Old labels config:\n"
@@ -1678,7 +1780,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:925
+#: upstream/_guides/deploying-to-kubernetes.adoc:995
 #, no-wrap
 msgid ""
 "# New labels\n"
@@ -1686,13 +1788,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:928
+#: upstream/_guides/deploying-to-kubernetes.adoc:998
 #, fuzzy
 msgid "The code below demonstrates the change in `env-vars` config:"
 msgstr "El código siguiente demuestra el cambio en `env-vars` config:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:934
+#: upstream/_guides/deploying-to-kubernetes.adoc:1004
 #, no-wrap
 msgid ""
 "# Old env-vars config:\n"
@@ -1701,7 +1803,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:937
+#: upstream/_guides/deploying-to-kubernetes.adoc:1007
 #, no-wrap
 msgid ""
 "# New env-vars\n"
@@ -1709,163 +1811,163 @@ msgid ""
 msgstr ""
 
 #. type: Title ====
-#: upstream/_guides/deploying-to-kubernetes.adoc:939
+#: upstream/_guides/deploying-to-kubernetes.adoc:1009
 #, fuzzy, no-wrap
 msgid "`env-vars` properties"
 msgstr "`env-vars` propiedades"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:943
+#: upstream/_guides/deploying-to-kubernetes.adoc:1013
 #, fuzzy
 msgid "`quarkus.kubernetes.env-vars` are deprecated (though still currently supported as of this writing) and the new declaration style should be used instead.  See <<#env-vars>> and more specifically <<env-vars-backwards>> for more details."
 msgstr "`quarkus.kubernetes.env-vars` están obsoletos (aunque todavía se admiten en el momento de escribir este artículo) y en su lugar debe utilizarse el nuevo estilo de declaración. Vea  link:#env-vars[[env-vars]] y más específicamente  link:#env-vars-backwards[[env-vars-backwards]] para más detalles."
 
 #. type: Title ==
-#: upstream/_guides/deploying-to-kubernetes.adoc:944
+#: upstream/_guides/deploying-to-kubernetes.adoc:1014
 #, fuzzy, no-wrap
 msgid "Deployment"
 msgstr "Despliegue"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:948
+#: upstream/_guides/deploying-to-kubernetes.adoc:1018
 #, fuzzy
 msgid "To trigger building and deploying a container image you need to enable the `quarkus.kubernetes.deploy` flag (the flag is disabled by default - furthermore it has no effect during test runs or dev mode).  This can be easily done with the command line:"
 msgstr "Para desencadenar la construcción y el despliegue de una imagen de contenedor es necesario activar la bandera `quarkus.kubernetes.deploy` (la bandera está desactivada por defecto - además no tiene efecto durante las ejecuciones de prueba o el modo dev). Esto se puede hacer fácilmente con la línea de comandos:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:952
+#: upstream/_guides/deploying-to-kubernetes.adoc:1022
 #, no-wrap
 msgid "./mvnw clean package -Dquarkus.kubernetes.deploy=true\n"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/deploying-to-kubernetes.adoc:954
+#: upstream/_guides/deploying-to-kubernetes.adoc:1024
 #, fuzzy, no-wrap
 msgid "Building a container image"
 msgstr "Creación de una imagen de contenedor"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:957
+#: upstream/_guides/deploying-to-kubernetes.adoc:1027
 #, fuzzy
 msgid "Building a container image is possible, using any of the 3 available `container-image` extensions:"
 msgstr "Es posible construir una imagen de contenedor, utilizando cualquiera de las 3 extensiones disponibles en `container-image`:"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:959
+#: upstream/_guides/deploying-to-kubernetes.adoc:1029
 #, fuzzy
 msgid "xref:container-image.adoc#docker[Docker]"
 msgstr "link:container-image.html#docker[Docker]"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:960
+#: upstream/_guides/deploying-to-kubernetes.adoc:1030
 #, fuzzy
 msgid "xref:container-image.adoc#jib[Jib]"
 msgstr "link:container-image.html#jib[Jib]"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:961
+#: upstream/_guides/deploying-to-kubernetes.adoc:1031
 #, fuzzy
 msgid "xref:container-image.adoc#s2i[s2i]"
 msgstr "link:container-image.html#s2i[s2i]"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:963
+#: upstream/_guides/deploying-to-kubernetes.adoc:1033
 #, fuzzy
 msgid "Each time deployment is requested, a container image build will be implicitly triggered (no additional properties are required when the Kubernetes deployment has been enabled)."
 msgstr "Cada vez que se solicite el despliegue, se desencadenará implícitamente una construcción de imagen de contenedor (no se requieren propiedades adicionales cuando se ha habilitado el despliegue de Kubernetes)."
 
 #. type: Title ===
-#: upstream/_guides/deploying-to-kubernetes.adoc:964
+#: upstream/_guides/deploying-to-kubernetes.adoc:1034
 #, fuzzy, no-wrap
 msgid "Deploying"
 msgstr "Desplegando"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:969
+#: upstream/_guides/deploying-to-kubernetes.adoc:1039
 #, fuzzy
 msgid "When deployment is enabled, the Kubernetes extension will select the resources specified by `quarkus.kubernetes.deployment-target` and deploy them.  This assumes that a `.kube/config` is available in your user directory that points to the target Kubernetes cluster.  In other words the extension will use whatever cluster `kubectl` uses. The same applies to credentials."
 msgstr "Cuando se activa el despliegue, la extensión de Kubernetes seleccionará los recursos especificados por `quarkus.kubernetes.deployment-target` y los desplegará. Esto supone que hay un `.kube/config` disponible en su directorio de usuario que apunta al clúster de Kubernetes de destino. En otras palabras, la extensión utilizará cualquier clúster que utilice `kubectl`. Lo mismo se aplica a las credenciales."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:971
+#: upstream/_guides/deploying-to-kubernetes.adoc:1041
 #, fuzzy
 msgid "At the moment no additional options are provided for further customization."
 msgstr "Por el momento no se ofrecen opciones adicionales para una mayor personalización."
 
 #. type: Title ===
-#: upstream/_guides/deploying-to-kubernetes.adoc:972
+#: upstream/_guides/deploying-to-kubernetes.adoc:1042
 #, fuzzy, no-wrap
 msgid "Remote Debugging"
 msgstr "Depuración remota"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:975
+#: upstream/_guides/deploying-to-kubernetes.adoc:1045
 #, fuzzy
 msgid "To remotely debug applications that are running on a kubernetes environment, we need to deploy the application as described in the previous section and add as new property: `quarkus.kubernetes.remote-debug.enabled=true`. This property will automatically configure the Java application to append the java agent configuration (for example: `-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005`) and also the service resource to listen using the java agent port."
 msgstr "Para depurar remotamente las aplicaciones que se ejecutan en un entorno kubernetes, necesitamos desplegar la aplicación como se describe en la sección anterior y añadir como nueva propiedad: `quarkus.kubernetes.remote-debug.enabled=true`. Esta propiedad configurará automáticamente la aplicación Java para añadir la configuración del agente java (por ejemplo: `-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005`) y también el recurso de servicio para escuchar utilizando el puerto del agente java."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:977
+#: upstream/_guides/deploying-to-kubernetes.adoc:1047
 #, fuzzy
 msgid "After your application has been deployed with the debug enabled, next you need to tunnel the traffic from your local host machine to the specified port of the java agent:"
 msgstr "Después de que su aplicación haya sido desplegada con la depuración habilitada, lo siguiente que necesita es tunelizar el tráfico desde su máquina anfitriona local al puerto especificado del agente java:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:981
+#: upstream/_guides/deploying-to-kubernetes.adoc:1051
 #, no-wrap
 msgid "kubectl port-forward svc/<application name> 5005:5005\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:984
+#: upstream/_guides/deploying-to-kubernetes.adoc:1054
 #, fuzzy
 msgid "Using this command, you'll forward the traffic from the \"localhost:5005\" to the kubernetes service running the java agent using the port \"5005\" which is the one that the java agent uses by default for remote debugging. You can also configure another java agent port using the property `quarkus.kubernetes.remote-debug.address-port`."
 msgstr "Usando este comando, reenviará el tráfico desde el \"localhost:5005\" al servicio kubernetes que ejecuta el agente java usando el puerto \"5005\" que es el que el agente java usa por defecto para la depuración remota. También se puede configurar otro puerto del agente java utilizando la propiedad `quarkus.kubernetes.remote-debug.address-port`."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:986
+#: upstream/_guides/deploying-to-kubernetes.adoc:1056
 #, fuzzy
 msgid "Finally, all you need to do is to configure your favorite IDE to attach the java agent process that is forwarded to `localhost:5005` and start to debug your application. For example, in IntelliJ IDEA, you can follow https://www.jetbrains.com/help/idea/tutorial-remote-debug.html:[this tutorial] to debug remote applications."
 msgstr "Finalmente, todo lo que necesitas hacer es configurar tu IDE favorito para adjuntar el proceso del agente java que se reenvía a `localhost:5005` y empezar a depurar tu aplicación. Por ejemplo, en IntelliJ IDEA, puedes seguir  link:https://www.jetbrains.com/help/idea/tutorial-remote-debug.html:[este tutorial] para depurar aplicaciones remotas."
 
 #. type: Title ==
-#: upstream/_guides/deploying-to-kubernetes.adoc:987
+#: upstream/_guides/deploying-to-kubernetes.adoc:1057
 #, fuzzy, no-wrap
 msgid "Using existing resources"
 msgstr "Utilización de los recursos existentes"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:993
+#: upstream/_guides/deploying-to-kubernetes.adoc:1063
 #, fuzzy
 msgid "Sometimes it's desirable to either provide additional resources (e.g. a ConfigMap, a Secret, a Deployment for a database) or provide custom ones that will be used as a `base` for the generation process.  Those resources can be added under `src/main/kubernetes` directory and can be named after the target environment (e.g. kubernetes.json, openshift.json, knative.json, or the yml equivalents). The correlation between provided and generated files is done by file name.  So, a `kubernetes.json`/`kubernetes.yml` file added in `src/main/kubernetes` will only affect the generated `kubernetes.json`/`kubernetes.yml`. An `openshift.json`/`openshift.yml` file added in `src/main/kubernetes` will only affect the generated `openshift.json`/`openshift.yml`.  A `knative.json`/`knative.yml` file added in `src/main/kubernetes` will only affect the generated `knative.json`/`knative.yml` and so on. The provided file may be either in json or yaml format and may contain one or more resources. These resources will end up in both generated formats (json and yaml). For example, a secret added in `src/main/kubernetes/kubernetes.yml` will be added to both the generated `kubernetes.yml` and `kubernetes.json`."
 msgstr "A veces es deseable proporcionar recursos adicionales (por ejemplo, un ConfigMap, un Secret, un Deployment para una base de datos, etc.) o proporcionar otros personalizados que se utilizarán como `base` para el proceso de generación. Estos recursos pueden ser añadidos en el directorio `src/main/kubernetes` y pueden ser nombrados según el entorno de destino (por ejemplo, kubernetes.json, openshift.json, knative.json, o los equivalentes yml). La correlación entre los archivos proporcionados y los generados se realiza por el nombre del archivo. Así, un archivo `kubernetes.json`/ `kubernetes.yml` añadido en `src/main/kubernetes` sólo afectará a los generados `kubernetes.json`/ `kubernetes.yml`. Un archivo `openshift.json`/ `openshift.yml` añadido en `src/main/kubernetes` sólo afectará a los generados `openshift.json`/ `openshift.yml`. Un archivo `knative.json`/ `knative.yml` añadido en `src/main/kubernetes` sólo afectará a los generados `knative.json`/ `knative.yml` y así sucesivamente. El archivo proporcionado puede estar en formato json o yaml y puede contener uno o más recursos. Estos recursos terminarán en ambos formatos generados (json y yaml). Por ejemplo, un secreto añadido en `src/main/kubernetes/kubernetes.yml` se añadirá a los dos formatos generados `kubernetes.yml` y `kubernetes.json`."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:995
+#: upstream/_guides/deploying-to-kubernetes.adoc:1065
 #, fuzzy
 msgid "Note: At the time of writing there is no mechanism in place that allows a one-to-many relationship between provided and generated files. Minikube is not an exception to the rule above, so if you want to customize the generated minikube manifests, the file placed under `src/main/kubernetes` will have to be named `minikube.json` or `minikube.yml` (naming it `kubernetes.yml` or `kubernetes.json` will result in having only the generated `kubernetes.yml` and `kubernetes.json` affected)."
 msgstr "Nota: En el momento de escribir este artículo no existe ningún mecanismo que permita una relación de uno a varios entre los archivos proporcionados y los generados. Minikube no es una excepción a la regla anterior, por lo que si quiere personalizar los manifiestos generados de minikube, el archivo colocado bajo `src/main/kubernetes` tendrá que llamarse `minikube.json` o `minikube.yml` (si lo nombra `kubernetes.yml` o `kubernetes.json` sólo se verán afectados los generados `kubernetes.yml` y `kubernetes.json` )."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:998
+#: upstream/_guides/deploying-to-kubernetes.adoc:1068
 #, fuzzy
 msgid "Any resource found will be added in the generated manifests. Global modifications (e.g. labels, annotations) will also be applied to those resources.  If one of the provided resources has the same name as one of the generated ones, then the generated resource will be created on top of the provided resource, respecting existing content when possible (e.g. existing labels, annotations, environment variables, mounts, replicas etc)."
 msgstr "Cualquier recurso encontrado se añadirá en los manifiestos generados. Las modificaciones globales (por ejemplo, etiquetas, anotaciones, etc.) también se aplicarán a esos recursos. Si uno de los recursos proporcionados tiene el mismo nombre que uno de los generados, entonces el recurso generado se creará sobre el recurso proporcionado, respetando el contenido existente cuando sea posible (por ejemplo, etiquetas, anotaciones, variables de entorno, montajes, réplicas, etc.)."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1000
+#: upstream/_guides/deploying-to-kubernetes.adoc:1070
 #, fuzzy
 msgid "The name of the resource is determined by the application name and may be overridden by `quarkus.kubernetes.name`, `quarkus.openshift.name` and `quarkus.knative.name`."
 msgstr "El nombre del recurso viene determinado por el nombre de la aplicación y puede ser anulado por `quarkus.kubernetes.name`, `quarkus.openshift.name` y `quarkus.knative.name`."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1002
+#: upstream/_guides/deploying-to-kubernetes.adoc:1072
 #, fuzzy
 msgid "For example, in the `kubernetes-quickstart` application, we can add a `kubernetes.yml` file in the `src/main/kubernetes` that looks like:"
 msgstr "Por ejemplo, en la aplicación `kubernetes-quickstart`, podemos añadir un archivo `kubernetes.yml` en el `src/main/kubernetes` que tiene el aspecto siguiente:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:1029
+#: upstream/_guides/deploying-to-kubernetes.adoc:1099
 #, no-wrap
 msgid ""
 "apiVersion: apps/v1\n"
@@ -1895,13 +1997,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1032
+#: upstream/_guides/deploying-to-kubernetes.adoc:1102
 #, fuzzy
 msgid "The generated `kubernetes.yml` will look like:"
 msgstr "El `kubernetes.yml` generado tendrá el aspecto siguiente:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:1068
+#: upstream/_guides/deploying-to-kubernetes.adoc:1138
 #, no-wrap
 msgid ""
 "apiVersion: \"apps/v1\"\n"
@@ -1940,205 +2042,205 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1071
+#: upstream/_guides/deploying-to-kubernetes.adoc:1141
 #, fuzzy
 msgid "The provided replicas <1>, labels <2> and environment variables <3> were retained. However, the image <4> and container port <5> were modified. Moreover, the default annotations have been added."
 msgstr "Las réplicas proporcionadas &lt;1&gt;, las etiquetas &lt;2&gt; y las variables de entorno &lt;3&gt; se mantuvieron. Sin embargo, la imagen &lt;4&gt; y el puerto contenedor &lt;5&gt; fueron modificados. Además, se han añadido las anotaciones por defecto."
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1075
+#: upstream/_guides/deploying-to-kubernetes.adoc:1145
 #, fuzzy
 msgid "When the resource name does not match the application name (or the overridden name) rather than reusing the resource a new one will be added. Same goes for the container."
 msgstr "Cuando el nombre del recurso no coincide con el nombre de la aplicación (o el nombre anulado) en lugar de reutilizar el recurso se añadirá uno nuevo. Lo mismo ocurre con el contenedor."
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1077
+#: upstream/_guides/deploying-to-kubernetes.adoc:1147
 #, fuzzy
 msgid "When the name of the container does not match the application name (or the overridden name), container specific configuration will be ignored."
 msgstr "Cuando el nombre del contenedor no coincide con el nombre de la aplicación (o el nombre anulado), se ignorará la configuración específica del contenedor."
 
 #. type: Title ==
-#: upstream/_guides/deploying-to-kubernetes.adoc:1079
+#: upstream/_guides/deploying-to-kubernetes.adoc:1149
 #, fuzzy, no-wrap
 msgid "Service Binding [[service_binding]]"
 msgstr "Vinculación de servicios  link:[, id=service_binding]"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1082
+#: upstream/_guides/deploying-to-kubernetes.adoc:1152
 #, fuzzy
 msgid "Quarkus supports the link:https://github.com/servicebinding/spec[Service Binding Specification for Kubernetes] to bind services to applications."
 msgstr "Quarkus es compatible con la  link:https://github.com/k8s-service-bindings/spec[Especificación de Vinculación de Servicios para Kubernetes] para vincular los servicios a las aplicaciones."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1084
+#: upstream/_guides/deploying-to-kubernetes.adoc:1154
 #, fuzzy
 msgid "Specifically, Quarkus implements the link:https://github.com/servicebinding/spec#workload-projection[Workload Projection] part of the specification, therefore allowing applications to bind to services, such as a Database or a Broker, without the need for user configuration."
 msgstr "En concreto, Quarkus implementa la parte de la especificación relativa  link:https://github.com/k8s-service-bindings/spec#workload-projection[a la proyección de la carga de trabajo], lo que permite que las aplicaciones se vinculen a servicios, como una base de datos o un corredor, sin necesidad de que el usuario los configure."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1086
+#: upstream/_guides/deploying-to-kubernetes.adoc:1156
 #, fuzzy
 msgid "To enable Service Binding for supported extensions, add the `quarkus-kubernetes-service-binding` extension to the application dependencies."
 msgstr "Para habilitar la vinculación de servicios para las extensiones compatibles, añada la extensión `quarkus-kubernetes-service-binding` a las dependencias de la aplicación."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1088
+#: upstream/_guides/deploying-to-kubernetes.adoc:1158
 #, fuzzy
 msgid "The following extensions can be used with Service Binding and are supported for Workload Projection:"
 msgstr "Las siguientes extensiones pueden utilizarse con Service Binding y son compatibles con Workload Projection:"
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1091
+#: upstream/_guides/deploying-to-kubernetes.adoc:1161
 #, fuzzy
 msgid "`quarkus-jdbc-mariadb`"
 msgstr "`quarkus-jdbc-mariadb`"
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1092
+#: upstream/_guides/deploying-to-kubernetes.adoc:1162
 #, fuzzy
 msgid "`quarkus-jdbc-mssql`"
 msgstr "`quarkus-jdbc-mssql`"
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1093
+#: upstream/_guides/deploying-to-kubernetes.adoc:1163
 #, fuzzy
 msgid "`quarkus-jdbc-mysql`"
 msgstr "`quarkus-jdbc-mysql`"
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1094
+#: upstream/_guides/deploying-to-kubernetes.adoc:1164
 #, fuzzy
 msgid "`quarkus-jdbc-postgresql`"
 msgstr "`quarkus-jdbc-postgresql`"
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1095
+#: upstream/_guides/deploying-to-kubernetes.adoc:1165
 #, fuzzy
 msgid "`quarkus-mongo-client`"
 msgstr "`quarkus-mongo-client`"
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1097
+#: upstream/_guides/deploying-to-kubernetes.adoc:1167
 #, fuzzy
 msgid "`quarkus-kafka-client`"
 msgstr "`quarkus-kafka-client`"
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1098
+#: upstream/_guides/deploying-to-kubernetes.adoc:1168
 #, fuzzy
 msgid "`quarkus-smallrye-reactive-messaging-kafka`"
 msgstr "`quarkus-smallrye-reactive-messaging-kafka`"
 
 #. type: Title ===
-#: upstream/_guides/deploying-to-kubernetes.adoc:1101
+#: upstream/_guides/deploying-to-kubernetes.adoc:1171
 #, fuzzy, no-wrap
 msgid "Workload Projection"
 msgstr "Proyección de la carga de trabajo"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1104
+#: upstream/_guides/deploying-to-kubernetes.adoc:1174
 #, fuzzy
 msgid "Workload Projection is a process of obtaining the configuration for services from the Kubernetes cluster. This configuration takes the form of directory structures that follow certain conventions and is attached to an application or to a service as a mounted volume. The `kubernetes-service-binding` extension uses this directory structure to create configuration sources, which allows you to configure additional modules, such as databases or message brokers."
 msgstr "La proyección de la carga de trabajo es un proceso de obtención de la configuración de los servicios del clúster de Kubernetes. Esta configuración toma la forma de estructuras de directorio que siguen ciertas convenciones y se adjunta a una aplicación o a un servicio como un volumen montado. La extensión `kubernetes-service-binding` utiliza esta estructura de directorios para crear fuentes de configuración, lo que permite configurar módulos adicionales, como bases de datos o corredores de mensajes."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1106
+#: upstream/_guides/deploying-to-kubernetes.adoc:1176
 #, fuzzy
 msgid "During application development, users can use workload projection to connect their application to a development database, or other locally-run services, without changing the actual application code or configuration."
 msgstr "Durante el desarrollo de la aplicación, los usuarios pueden utilizar la proyección de la carga de trabajo para conectar su aplicación a una base de datos de desarrollo, o a otros servicios ejecutados localmente, sin cambiar el código o la configuración de la aplicación real."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1108
+#: upstream/_guides/deploying-to-kubernetes.adoc:1178
 #, fuzzy
 msgid "For an example of a workload projection where the directory structure is included in the test resources and passed to integration test, see the link:https://github.com/quarkusio/quarkus/tree/e7efe6b3efba91b9c4ae26f9318f8397e23e7505/integration-tests/kubernetes-service-binding-jdbc/src/test/resources/k8s-sb[Kubernetes Service Binding datasource] GitHub repository."
 msgstr "Para ver un ejemplo de proyección de carga de trabajo en el que la estructura de directorios se incluye en los recursos de prueba y se pasa a la prueba de integración, consulte el repositorio GitHub de  link:https://github.com/quarkusio/quarkus/tree/e7efe6b3efba91b9c4ae26f9318f8397e23e7505/integration-tests/kubernetes-service-binding-jdbc/src/test/resources/k8s-sb[Kubernetes Service Binding datasource]."
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1112
+#: upstream/_guides/deploying-to-kubernetes.adoc:1182
 #, fuzzy
 msgid "The `k8s-sb` directory is the root of all service bindings. In this example, only one database called `fruit-db` is intended to be bound. This binding database has the `type` file, that indicates `postgresql` as the database type, while the other files in the directory provide the necessary information to establish the connection."
 msgstr "El directorio `k8s-sb` es la raíz de todos los enlaces de servicio. En este ejemplo, sólo se pretende vincular una base de datos llamada `fruit-db`. Esta base de datos vinculante tiene el archivo `type`, que indica `postgresql` como tipo de base de datos, mientras que los demás archivos del directorio proporcionan la información necesaria para establecer la conexión."
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1114
+#: upstream/_guides/deploying-to-kubernetes.adoc:1184
 #, fuzzy
 msgid "After your Quarkus project obtains information from `SERVICE_BINDING_ROOT` environment variables that are set by OpenShift, you can locate generated configuration files that are present in the file system and use them to map the configuration-file values to properties of certain extensions."
 msgstr "Después de que su proyecto Quarkus obtenga información de las variables de entorno `SERVICE_BINDING_ROOT` que son establecidas por OpenShift, puede localizar los archivos de configuración generados que están presentes en el sistema de archivos y utilizarlos para asignar los valores del archivo de configuración a las propiedades de ciertas extensiones."
 
 #. type: Title ==
-#: upstream/_guides/deploying-to-kubernetes.adoc:1117
+#: upstream/_guides/deploying-to-kubernetes.adoc:1187
 #, fuzzy, no-wrap
 msgid "Introduction to the Service Binding Operator"
 msgstr "Introducción al operador de vinculación de servicios"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1120
+#: upstream/_guides/deploying-to-kubernetes.adoc:1190
 #, fuzzy
 msgid "The link:https://github.com/redhat-developer/service-binding-operator[Service Binding Operator] is an Operator that implements link:https://github.com/servicebinding/spec[Service Binding Specification for Kubernetes] and is meant to simplify the binding of services to an application. Containerized applications that support link:https://github.com/servicebinding/spec#workload-projection[Workload Projection] obtain service binding information in the form of volume mounts. The Service Binding Operator reads binding service information and mounts it to the application containers that need it."
 msgstr "El operador de vinculación de  link:https://github.com/redhat-developer/service-binding-operator[servicios] es un operador que implementa  link:https://github.com/k8s-service-bindings/spec[la especificación de vinculación de servicios para Kubernetes] y está destinado a simplificar la vinculación de servicios a una aplicación. Las aplicaciones en contenedores que admiten la  link:https://github.com/k8s-service-bindings/spec#workload-projection[proyección de carga de] trabajo obtienen información de vinculación de servicios en forma de montajes de volumen. El Operador de Vinculación de Servicios lee la información de vinculación de servicios y la monta en los contenedores de aplicaciones que la necesitan."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1122
+#: upstream/_guides/deploying-to-kubernetes.adoc:1192
 #, fuzzy
 msgid "The correlation between application and bound services is expressed through the `ServiceBinding` resources, which declares the intent of what services are meant to be bound to what application."
 msgstr "La correlación entre la aplicación y los servicios vinculados se expresa a través de los recursos de `ServiceBinding`, que declara la intención de qué servicios deben estar vinculados a qué aplicación."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1124
+#: upstream/_guides/deploying-to-kubernetes.adoc:1194
 #, fuzzy
 msgid "The Service Binding Operator watches for `ServiceBinding` resources, which inform the Operator what applications are meant to be bound with what services. When a listed application is deployed, the Service Binding Operator collects all the binding information that must be passed to the application, then upgrades the application container by attaching a volume mount with the binding information."
 msgstr "El Operador de Vinculación de Servicios busca los recursos de `ServiceBinding`, que informan al Operador de qué aplicaciones deben vincularse con qué servicios. Cuando se despliega una aplicación de la lista, el Operador de Vinculación de Servicios recopila toda la información de vinculación que debe pasarse a la aplicación y, a continuación, actualiza el contenedor de la aplicación adjuntando un volumen de montaje con la información de vinculación."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1126
+#: upstream/_guides/deploying-to-kubernetes.adoc:1196
 #, fuzzy
 msgid "The Service Binding Operator completes the following actions:"
 msgstr "El operador de vinculación de servicios realiza las siguientes acciones:"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1128
+#: upstream/_guides/deploying-to-kubernetes.adoc:1198
 #, fuzzy
 msgid "Observes `ServiceBinding` resources for workloads intended to be bound to a particular service"
 msgstr "Observa `ServiceBinding` los recursos para las cargas de trabajo destinadas a un servicio concreto"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1129
+#: upstream/_guides/deploying-to-kubernetes.adoc:1199
 #, fuzzy
 msgid "Applies the binding information to the workload using volume mounts"
 msgstr "Aplica la información de enlace a la carga de trabajo utilizando montajes de volumen"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1131
+#: upstream/_guides/deploying-to-kubernetes.adoc:1201
 #, fuzzy
 msgid "The following chapter describes the automatic and semi-automatic service binding approaches and their use cases. With either approach, the `kubernetes-service-binding` extension generates a `ServiceBinding` resource. With the semi-automatic approach, users must provide a configuration for target services manually. With the automatic approach, for a limited set of services generating the `ServiceBinding` resource, no additional configuration is needed."
 msgstr "El siguiente capítulo describe los enfoques de vinculación de servicios automático y semiautomático y sus casos de uso. Con cualquiera de los dos enfoques, la extensión `kubernetes-service-binding` genera un recurso `ServiceBinding`. Con el enfoque semiautomático, los usuarios deben proporcionar manualmente una configuración para los servicios de destino. Con el enfoque automático, para un conjunto limitado de servicios que generan el recurso `ServiceBinding`, no se necesita ninguna configuración adicional."
 
 #. type: Title ===
-#: upstream/_guides/deploying-to-kubernetes.adoc:1133
+#: upstream/_guides/deploying-to-kubernetes.adoc:1203
 #, fuzzy, no-wrap
 msgid "Semi-automatic service binding"
 msgstr "Servicio de encuadernación semiautomática"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1136
+#: upstream/_guides/deploying-to-kubernetes.adoc:1206
 #, fuzzy
 msgid "A service binding process starts with a user specification of required services that will be bound to a certain application. This expression is summarized in the `ServiceBinding` resource that is generated by the `kubernetes-service-binding` extension. The use of the `kubernetes-service-binding` extensions helps users to generate `ServiceBinding` resources with minimal configuration, therefore simplifying the process overall."
 msgstr "Un proceso de vinculación de servicios comienza con la especificación por parte del usuario de los servicios necesarios que se vincularán a una determinada aplicación. Esta expresión se resume en el recurso `ServiceBinding` que es generado por la extensión `kubernetes-service-binding`. El uso de las extensiones `kubernetes-service-binding` ayuda a los usuarios a generar recursos `ServiceBinding` con una configuración mínima, lo que simplifica el proceso en general."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1138
+#: upstream/_guides/deploying-to-kubernetes.adoc:1208
 #, fuzzy
 msgid "The Service Binding Operator responsible for the binding process then reads the information from the `ServiceBinding` resource and mounts the required files to a container accordingly."
 msgstr "A continuación, el Operador de Vinculación de Servicios responsable del proceso de vinculación lee la información del recurso `ServiceBinding` y monta los archivos necesarios en un contenedor en consecuencia."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1141
+#: upstream/_guides/deploying-to-kubernetes.adoc:1211
 #, fuzzy
 msgid "An example of the `ServiceBinding` resource:"
 msgstr "Un ejemplo del recurso `ServiceBinding`:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:1161
+#: upstream/_guides/deploying-to-kubernetes.adoc:1231
 #, no-wrap
 msgid ""
 "apiVersion: binding.operators.coreos.com/v1beta1\n"
@@ -2161,13 +2263,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1166
+#: upstream/_guides/deploying-to-kubernetes.adoc:1236
 #, fuzzy
 msgid "The `quarkus-kubernetes-service-binding` extension provides a more compact way of expressing the same information. For example:"
 msgstr "La extensión `quarkus-kubernetes-service-binding` proporciona una forma más compacta de expresar la misma información. Por ejemplo:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:1171
+#: upstream/_guides/deploying-to-kubernetes.adoc:1241
 #, no-wrap
 msgid ""
 "quarkus.kubernetes-service-binding.services.db-demo.api-version=postgres-operator.crunchydata.com/v1beta1\n"
@@ -2175,31 +2277,31 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1175
+#: upstream/_guides/deploying-to-kubernetes.adoc:1245
 #, fuzzy
 msgid "After adding the earlier configuration properties inside your `application.properties`, the `quarkus-kubernetes`, in combination with the `quarkus-kubernetes-service-binding` extension, automatically generates the `ServiceBinding` resource."
 msgstr "Después de añadir las propiedades de configuración anteriores dentro de su `application.properties`, el `quarkus-kubernetes`, en combinación con la extensión `quarkus-kubernetes-service-binding`, genera automáticamente el recurso `ServiceBinding`."
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1177
+#: upstream/_guides/deploying-to-kubernetes.adoc:1247
 #, fuzzy
 msgid "The earlier mentioned `db-demo` property-configuration identifier now has a double role and also completes the following actions:"
 msgstr "El identificador de propiedad-configuración `db-demo` mencionado anteriormente tiene ahora un doble papel y también completa las siguientes acciones:"
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1179
+#: upstream/_guides/deploying-to-kubernetes.adoc:1249
 #, fuzzy
 msgid "Correlates and groups `api-version` and `kind` properties together"
 msgstr "Correlaciona y agrupa `api-version` y `kind` propiedades"
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1180
+#: upstream/_guides/deploying-to-kubernetes.adoc:1250
 #, fuzzy
 msgid "Defines the `name` property for the custom resource with a possibility for a later edit. For example:"
 msgstr "Define la propiedad `name` para el recurso personalizado con la posibilidad de una edición posterior. Por ejemplo:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:1186
+#: upstream/_guides/deploying-to-kubernetes.adoc:1256
 #, no-wrap
 msgid ""
 "quarkus.kubernetes-service-binding.services.db-demo.api-version=postgres-operator.crunchydata.com/v1beta1\n"
@@ -2208,176 +2310,176 @@ msgid ""
 msgstr ""
 
 #. type: Block title
-#: upstream/_guides/deploying-to-kubernetes.adoc:1188
-#: upstream/_guides/deploying-to-kubernetes.adoc:1324
+#: upstream/_guides/deploying-to-kubernetes.adoc:1258
+#: upstream/_guides/deploying-to-kubernetes.adoc:1394
 #, fuzzy, no-wrap
 msgid "Additional resources"
 msgstr "Recursos adicionales"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1191
+#: upstream/_guides/deploying-to-kubernetes.adoc:1261
 #, fuzzy
 msgid "For a semi-automatic service binding demonstration, see link:https://developers.redhat.com/articles/2021/12/22/how-use-quarkus-service-binding-operator#create_the_quarkus_application[How to use Quarkus with the Service Binding Operator]"
 msgstr "Para una demostración de vinculación de servicios semiautomática, véase  link:https://developers.redhat.com/articles/2021/12/22/how-use-quarkus-service-binding-operator#create_the_quarkus_application[Cómo utilizar Quarkus con el operador de vinculación de servicios]"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1193
+#: upstream/_guides/deploying-to-kubernetes.adoc:1263
 #, fuzzy
 msgid "link:https://github.com/redhat-developer/service-binding-operator#known-bindable-operators[List of bindable Operators]"
 msgstr "Lista de  link:https://github.com/redhat-developer/service-binding-operator#known-bindable-operators[operadores vinculables]"
 
 #. type: Title ===
-#: upstream/_guides/deploying-to-kubernetes.adoc:1195
+#: upstream/_guides/deploying-to-kubernetes.adoc:1265
 #, fuzzy, no-wrap
 msgid "Automatic service binding"
 msgstr "Vinculación automática del servicio"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1198
+#: upstream/_guides/deploying-to-kubernetes.adoc:1268
 #, fuzzy
 msgid "The `quarkus-kubernetes-service-binding` extension can generate the `ServiceBinding` resource automatically after detecting that an application requires access to the external services that are provided by available bindable Operators."
 msgstr "La extensión `quarkus-kubernetes-service-binding` puede generar el recurso `ServiceBinding` automáticamente después de detectar que una aplicación requiere acceso a los servicios externos que son proporcionados por los Operadores enlazables disponibles."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1200
+#: upstream/_guides/deploying-to-kubernetes.adoc:1270
 #, fuzzy
 msgid "Automatic service binding can be generated for a limited number of service types. To be consistent with established terminology for Kubernetes and Quarkus services, this chapter refers to these service types as kinds."
 msgstr "La vinculación automática de servicios puede generarse para un número limitado de tipos de servicio. Para ser coherente con la terminología establecida para los servicios de Kubernetes y Quarkus, este capítulo se refiere a estos tipos de servicio como clases."
 
 #. type: Block title
-#: upstream/_guides/deploying-to-kubernetes.adoc:1201
+#: upstream/_guides/deploying-to-kubernetes.adoc:1271
 #, fuzzy, no-wrap
 msgid "Operators that support the service auto-binding"
 msgstr "Operadores que admiten la autovinculación de servicios"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1204
+#: upstream/_guides/deploying-to-kubernetes.adoc:1274
 #, fuzzy, no-wrap
 msgid "Operator"
 msgstr "Operador"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1204
+#: upstream/_guides/deploying-to-kubernetes.adoc:1274
 #, fuzzy, no-wrap
 msgid "API Version"
 msgstr "Versión de la API"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1205
+#: upstream/_guides/deploying-to-kubernetes.adoc:1275
 #, fuzzy, no-wrap
 msgid "Kind"
 msgstr "Amable"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1205
+#: upstream/_guides/deploying-to-kubernetes.adoc:1275
 #, fuzzy, no-wrap
 msgid "`postgresql`"
 msgstr "`postgresql`"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1205
+#: upstream/_guides/deploying-to-kubernetes.adoc:1275
 #, fuzzy, no-wrap
 msgid "link:https://operatorhub.io/operator/postgresql[CrunchyData Postgres]"
 msgstr "link:https://operatorhub.io/operator/postgresql[CrunchyData Postgres]"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1205
+#: upstream/_guides/deploying-to-kubernetes.adoc:1275
 #, fuzzy, no-wrap
 msgid "postgres-operator.crunchydata.com/v1beta1"
 msgstr "postgres-operator.crunchydata.com/v1beta1"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1206
+#: upstream/_guides/deploying-to-kubernetes.adoc:1276
 #, fuzzy, no-wrap
 msgid "PostgresCluster"
 msgstr "PostgresCluster"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1206
+#: upstream/_guides/deploying-to-kubernetes.adoc:1276
 #, fuzzy, no-wrap
 msgid "`mysql`"
 msgstr "`mysql`"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1206
+#: upstream/_guides/deploying-to-kubernetes.adoc:1276
 #, fuzzy, no-wrap
 msgid "link:https://operatorhub.io/operator/percona-xtradb-cluster-operator[Percona XtraDB Cluster]"
 msgstr "link:https://operatorhub.io/operator/percona-xtradb-cluster-operator[Clúster Percona XtraDB]"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1206
+#: upstream/_guides/deploying-to-kubernetes.adoc:1276
 #, fuzzy, no-wrap
 msgid "pxc.percona.com/v1-9-0"
 msgstr "pxc.percona.com/v1-9-0"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1207
+#: upstream/_guides/deploying-to-kubernetes.adoc:1277
 #, fuzzy, no-wrap
 msgid "PerconaXtraDBCluster"
 msgstr "PerconaXtraDBCluster"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1207
+#: upstream/_guides/deploying-to-kubernetes.adoc:1277
 #, fuzzy, no-wrap
 msgid "`mongo`"
 msgstr "`mongo`"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1207
+#: upstream/_guides/deploying-to-kubernetes.adoc:1277
 #, fuzzy, no-wrap
 msgid "link:https://operatorhub.io/operator/percona-server-mongodb-operator[Percona Mongo]"
 msgstr "link:https://operatorhub.io/operator/percona-server-mongodb-operator[Percona Mongo]"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1207
+#: upstream/_guides/deploying-to-kubernetes.adoc:1277
 #, fuzzy, no-wrap
 msgid "psmdb.percona.com/v1-9-0"
 msgstr "psmdb.percona.com/v1-9-0"
 
 #. type: Table
-#: upstream/_guides/deploying-to-kubernetes.adoc:1208
+#: upstream/_guides/deploying-to-kubernetes.adoc:1278
 #, fuzzy, no-wrap
 msgid "PerconaServerMongoDB"
 msgstr "PerconaServerMongoDB"
 
 #. type: Title ===
-#: upstream/_guides/deploying-to-kubernetes.adoc:1211
+#: upstream/_guides/deploying-to-kubernetes.adoc:1281
 #, fuzzy, no-wrap
 msgid "Automatic datasource binding"
 msgstr "Vinculación automática de fuentes de datos"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1214
+#: upstream/_guides/deploying-to-kubernetes.adoc:1284
 #, fuzzy
 msgid "For traditional databases, automatic binding is initiated whenever a datasource is configured as follows:"
 msgstr "En el caso de las bases de datos tradicionales, la vinculación automática se inicia cuando se configura una fuente de datos de la siguiente manera:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:1218
+#: upstream/_guides/deploying-to-kubernetes.adoc:1288
 #, no-wrap
 msgid "quarkus.datasource.db-kind=postgresql\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1221
+#: upstream/_guides/deploying-to-kubernetes.adoc:1291
 #, fuzzy
 msgid "The previous configuration, combined with the presence of `quarkus-datasource`, `quarkus-jdbc-postgresql`, `quarkus-kubernetes`, and `quarkus-kubernetes-service-binding` properties in the application, results in the generation of the `ServiceBinding` resource for the `postgresql` database type."
 msgstr "La configuración anterior, combinada con la presencia de las propiedades `quarkus-datasource`, `quarkus-jdbc-postgresql`, `quarkus-kubernetes`, y `quarkus-kubernetes-service-binding` en la aplicación, da como resultado la generación del recurso `ServiceBinding` para el tipo de base de datos `postgresql`."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1223
+#: upstream/_guides/deploying-to-kubernetes.adoc:1293
 #, fuzzy
 msgid "By using the `apiVersion` and `kind` properties of the Operator resource, which matches the used `postgresql` Operator, the generated `ServiceBinding` resource binds the service or resource to the application."
 msgstr "Utilizando las propiedades `apiVersion` y `kind` del recurso Operator, que coincide con el Operator `postgresql` utilizado, el recurso `ServiceBinding` generado vincula el servicio o recurso a la aplicación."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1225
+#: upstream/_guides/deploying-to-kubernetes.adoc:1295
 #, fuzzy
 msgid "When you do not specify a name for your database service, the the value of the `db-kind` property is used as the default name."
 msgstr "Cuando no se especifica un nombre para el servicio de base de datos, se utiliza el valor de la propiedad `db-kind` como nombre por defecto."
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:1232
+#: upstream/_guides/deploying-to-kubernetes.adoc:1302
 #, no-wrap
 msgid ""
 " services:\n"
@@ -2387,26 +2489,26 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1235
+#: upstream/_guides/deploying-to-kubernetes.adoc:1305
 #, fuzzy
 msgid "Specified the name of the datasource as follows:"
 msgstr "Especifica el nombre de la fuente de datos como sigue:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:1239
-#: upstream/_guides/deploying-to-kubernetes.adoc:1312
+#: upstream/_guides/deploying-to-kubernetes.adoc:1309
+#: upstream/_guides/deploying-to-kubernetes.adoc:1382
 #, no-wrap
 msgid "quarkus.datasource.fruits-db.db-kind=postgresql\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1242
+#: upstream/_guides/deploying-to-kubernetes.adoc:1312
 #, fuzzy
 msgid "The `service` in the generated `ServiceBinding` then displays as follows:"
 msgstr "El `service` en el `ServiceBinding` generado se muestra entonces de la siguiente manera:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:1249
+#: upstream/_guides/deploying-to-kubernetes.adoc:1319
 #, no-wrap
 msgid ""
 " services:\n"
@@ -2416,25 +2518,25 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1252
+#: upstream/_guides/deploying-to-kubernetes.adoc:1322
 #, fuzzy
 msgid "Similarly, if you use `mysql`, the name of the datasource can be specified as follows:"
 msgstr "Del mismo modo, si se utiliza `mysql`, el nombre de la fuente de datos se puede especificar como sigue:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:1256
+#: upstream/_guides/deploying-to-kubernetes.adoc:1326
 #, no-wrap
 msgid "quarkus.datasource.fruits-db.db-kind=mysql\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1259
+#: upstream/_guides/deploying-to-kubernetes.adoc:1329
 #, fuzzy
 msgid "The generated `service` contains the following:"
 msgstr "El `service` generado contiene lo siguiente:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:1266
+#: upstream/_guides/deploying-to-kubernetes.adoc:1336
 #, no-wrap
 msgid ""
 " services:\n"
@@ -2444,97 +2546,97 @@ msgid ""
 msgstr ""
 
 #. type: Title ====
-#: upstream/_guides/deploying-to-kubernetes.adoc:1269
+#: upstream/_guides/deploying-to-kubernetes.adoc:1339
 #, fuzzy, no-wrap
 msgid "Customizing Automatic Service Binding"
 msgstr "Personalización de la vinculación automática de servicios"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1272
+#: upstream/_guides/deploying-to-kubernetes.adoc:1342
 #, fuzzy
 msgid "Even though automatic binding was developed to eliminate as much manual configuration as possible, there are cases where modifying the generated `ServiceBinding` resource might still be needed. The generation process exclusively relies on information extracted from the application and the knowledge of the supported Operators, which may not reflect what is deployed in the cluster. The generated resource is based purely on the knowledge of the supported bindable Operators for popular service kinds and a set of conventions that were developed to prevent possible mismatches, such as:"
 msgstr "Aunque la vinculación automática se desarrolló para eliminar la mayor cantidad posible de configuraciones manuales, hay casos en los que todavía puede ser necesario modificar el recurso `ServiceBinding` generado. El proceso de generación se basa exclusivamente en la información extraída de la aplicación y en el conocimiento de los Operadores soportados, lo que puede no reflejar lo que está desplegado en el cluster. El recurso generado se basa exclusivamente en el conocimiento de los Operadores bindables soportados para los tipos de servicio más populares y en un conjunto de convenciones que se desarrollaron para evitar posibles desajustes, como por ejemplo:"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1274
+#: upstream/_guides/deploying-to-kubernetes.adoc:1344
 #, fuzzy
 msgid "The target resource name does not match the datasource name"
 msgstr "El nombre del recurso de destino no coincide con el nombre de la fuente de datos"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1275
+#: upstream/_guides/deploying-to-kubernetes.adoc:1345
 #, fuzzy
 msgid "A specific Operator needs to be used rather than the default Operator for that service kind"
 msgstr "Es necesario utilizar un operador específico en lugar del operador por defecto para ese tipo de servicio"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1276
+#: upstream/_guides/deploying-to-kubernetes.adoc:1346
 #, fuzzy
 msgid "Version conflicts that occur when a user needs to use any other version than default or latest"
 msgstr "Conflictos de versión que se producen cuando un usuario necesita utilizar cualquier otra versión que no sea la predeterminada o la más reciente"
 
 #. type: Block title
-#: upstream/_guides/deploying-to-kubernetes.adoc:1277
+#: upstream/_guides/deploying-to-kubernetes.adoc:1347
 #, fuzzy, no-wrap
 msgid "Conventions"
 msgstr "Convenios"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1280
+#: upstream/_guides/deploying-to-kubernetes.adoc:1350
 #, fuzzy
 msgid "The target resource coordinates are determined based on the type of Operator and the kind of service."
 msgstr "Las coordenadas del recurso objetivo se determinan en función del tipo de Operador y del tipo de servicio."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1281
+#: upstream/_guides/deploying-to-kubernetes.adoc:1351
 #, fuzzy
 msgid "The target resource name is set by default to match the service kind, such as `postgresql`, `mysql`, `mongo`."
 msgstr "El nombre del recurso de destino se establece por defecto para que coincida con el tipo de servicio, como `postgresql`, `mysql`, `mongo`."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1282
+#: upstream/_guides/deploying-to-kubernetes.adoc:1352
 #, fuzzy
 msgid "For named datasources, the name of the datasource is used."
 msgstr "Para las fuentes de datos con nombre, se utiliza el nombre de la fuente de datos."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1283
+#: upstream/_guides/deploying-to-kubernetes.adoc:1353
 #, fuzzy
 msgid "For named `mongo` clients, the name of the client is used."
 msgstr "Para los clientes con nombre `mongo`, se utiliza el nombre del cliente."
 
 #. type: Block title
-#: upstream/_guides/deploying-to-kubernetes.adoc:1285
+#: upstream/_guides/deploying-to-kubernetes.adoc:1355
 #, fuzzy, no-wrap
 msgid "Example 1 - Name mismatch"
 msgstr "Ejemplo 1 - Falta de coincidencia de nombres"
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1288
+#: upstream/_guides/deploying-to-kubernetes.adoc:1358
 #, fuzzy
 msgid "For cases in which you need to modify the generated `ServiceBinding` to fix a name mismatch, use the `quarkus.kubernetes-service-binding.services` properties and specify the service's name as the service key."
 msgstr "Para los casos en los que necesite modificar el `ServiceBinding` generado para arreglar una falta de coincidencia de nombres, utilice las propiedades de `quarkus.kubernetes-service-binding.services` y especifique el nombre del servicio como clave de servicio."
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1290
+#: upstream/_guides/deploying-to-kubernetes.adoc:1360
 #, fuzzy
 msgid "The `service key` is usually the name of the service, for example the name of the datasource, or the name of the `mongo` client. When this value is not available, the datasource type, such as `postgresql`, `mysql`, `mongo`, is used instead."
 msgstr "El `service key` suele ser el nombre del servicio, por ejemplo el nombre de la fuente de datos, o el nombre del cliente `mongo`. Cuando este valor no está disponible, se utiliza en su lugar el tipo de fuente de datos, como `postgresql`, `mysql`, `mongo`."
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1292
+#: upstream/_guides/deploying-to-kubernetes.adoc:1362
 #, fuzzy
 msgid "To avoid naming conflicts between different types of services, prefix the `service key` with a specific datasource type, such as `postgresql-__<person>__`."
 msgstr "Para evitar conflictos de nombres entre diferentes tipos de servicios, anteponga a `service key` un tipo de fuente de datos específico, como `postgresql- _&amp;amp;lt;person&amp;amp;gt;_`."
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1294
+#: upstream/_guides/deploying-to-kubernetes.adoc:1364
 #, fuzzy
 msgid "The following example shows how to customize the `apiVersion` property of the `PostgresCluster` resource:"
 msgstr "El siguiente ejemplo muestra cómo personalizar la propiedad `apiVersion` del recurso `PostgresCluster`:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:1299
+#: upstream/_guides/deploying-to-kubernetes.adoc:1369
 #, no-wrap
 msgid ""
 "quarkus.datasource.db-kind=postgresql\n"
@@ -2542,31 +2644,31 @@ msgid ""
 msgstr ""
 
 #. type: Block title
-#: upstream/_guides/deploying-to-kubernetes.adoc:1303
+#: upstream/_guides/deploying-to-kubernetes.adoc:1373
 #, fuzzy, no-wrap
 msgid "Example 2: Application of a custom name for a datasource"
 msgstr "Ejemplo 2: Aplicación de un nombre personalizado para una fuente de datos"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1306
+#: upstream/_guides/deploying-to-kubernetes.adoc:1376
 #, fuzzy
 msgid "In Example 1, the `db-kind`(`postgresql`) was used as a service key. In this example, because the datasource is named, according to convention, the datasource name (`fruits-db`) is used instead."
 msgstr "En el ejemplo 1, se utilizó el `db-kind`( `postgresql`) como clave de servicio. En este ejemplo, como la fuente de datos tiene nombre, según la convención, se utiliza en su lugar el nombre de la fuente de datos ( `fruits-db`)."
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1308
+#: upstream/_guides/deploying-to-kubernetes.adoc:1378
 #, fuzzy
 msgid "The following example shows that for a named datasource, the datasource name is used as the name of the target resource:"
 msgstr "El siguiente ejemplo muestra que para una fuente de datos con nombre, el nombre de la fuente de datos se utiliza como nombre del recurso de destino:"
 
 #. type: Plain text
-#: upstream/_guides/deploying-to-kubernetes.adoc:1315
+#: upstream/_guides/deploying-to-kubernetes.adoc:1385
 #, fuzzy
 msgid "This has the same effect as the following configuration:"
 msgstr "Esto tiene el mismo efecto que la siguiente configuración:"
 
 #. type: delimited block -
-#: upstream/_guides/deploying-to-kubernetes.adoc:1321
+#: upstream/_guides/deploying-to-kubernetes.adoc:1391
 #, no-wrap
 msgid ""
 "quarkus.kubernetes-service-binding.services.fruits-db.api-version=postgres-operator.crunchydata.com/v1beta1\n"
@@ -2575,7 +2677,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_guides/deploying-to-kubernetes.adoc:1325
+#: upstream/_guides/deploying-to-kubernetes.adoc:1395
 #, fuzzy
 msgid "For more details about the available properties and how do they work, see the link:https://github.com/servicebinding/spec#workload-projection[Workload Projection] part of the Service Binding specification."
 msgstr "Para obtener más detalles sobre las propiedades disponibles y su funcionamiento, consulte la parte de la especificación Service Binding relativa  link:https://github.com/k8s-service-bindings/spec#workload-projection[a la proyección de la carga de trabajo]."
@@ -2815,10 +2917,6 @@ msgstr "Para obtener más detalles sobre las propiedades disponibles y su funcio
 #, fuzzy
 #~ msgid "quarkus.kubernetes.sidecars"
 #~ msgstr "quarkus.kubernetes.sidecars"
-
-#, fuzzy
-#~ msgid "quarkus.kubernetes.ingress.expose"
-#~ msgstr "quarkus.kubernetes.ingress.expose"
 
 #, fuzzy
 #~ msgid "boolean"

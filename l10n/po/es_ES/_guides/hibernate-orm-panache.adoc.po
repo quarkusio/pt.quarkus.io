@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-08-02 09:15+0000\n"
+"POT-Creation-Date: 2022-08-31 11:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -412,7 +412,7 @@ msgstr ""
 #: upstream/_guides/hibernate-orm-panache.adoc:216
 #, no-wrap
 msgid ""
-"// check if it's persistent\n"
+"// check if it is persistent\n"
 "if(person.isPersistent()){\n"
 "    // delete it\n"
 "    person.delete();\n"
@@ -705,7 +705,7 @@ msgstr ""
 #: upstream/_guides/hibernate-orm-panache.adoc:403
 #, no-wrap
 msgid ""
-"// check if it's persistent\n"
+"// check if it is persistent\n"
 "if(personRepository.isPersistent(person)){\n"
 "    // delete it\n"
 "    personRepository.delete(person);\n"
@@ -1410,6 +1410,7 @@ msgstr "La clase de proyección necesita ser un Java Bean válido y tener un con
 
 #. type: delimited block -
 #: upstream/_guides/hibernate-orm-panache.adoc:742
+#: upstream/_guides/hibernate-orm-panache.adoc:801
 #, no-wrap
 msgid "import io.quarkus.runtime.annotations.RegisterForReflection;\n"
 msgstr ""
@@ -1472,20 +1473,21 @@ msgid "If in the DTO projection object you have a field from a referenced entity
 msgstr "Si en el objeto de proyección DTO tiene un campo de una entidad referenciada, puede utilizar la anotación `@ProjectedFieldName` para proporcionar la ruta para la sentencia SELECT."
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:778
+#: upstream/_guides/hibernate-orm-panache.adoc:779
 #, no-wrap
 msgid ""
 "@Entity\n"
 "public class Dog extends PanacheEntity {\n"
 "    public String name;\n"
 "    public String race;\n"
+"    public Double weight;\n"
 "    @ManyToOne\n"
 "    public Person owner;\n"
 "}\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:783
+#: upstream/_guides/hibernate-orm-panache.adoc:784
 #, no-wrap
 msgid ""
 "@RegisterForReflection\n"
@@ -1495,7 +1497,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:789
+#: upstream/_guides/hibernate-orm-panache.adoc:790
 #, no-wrap
 msgid ""
 "    public DogDto(String name, @ProjectedFieldName(\"owner.name\") String ownerName) {  // <1>\n"
@@ -1506,73 +1508,137 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:791
+#: upstream/_guides/hibernate-orm-panache.adoc:792
 #, no-wrap
 msgid "PanacheQuery<DogDto> query = Dog.findAll().project(DogDto.class);\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:793
+#: upstream/_guides/hibernate-orm-panache.adoc:794
 #, fuzzy
 msgid "The `ownerName` DTO constructor's parameter will be loaded from the `owner.name` HQL property."
 msgstr "El parámetro del constructor `ownerName` DTO se cargará desde la propiedad HQL `owner.name`."
 
+#. type: Plain text
+#: upstream/_guides/hibernate-orm-panache.adoc:797
+msgid "It is also possible to specify a HQL query with a select clause. In this case, the projection class must have a constructor matching the values returned by the select clause:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/hibernate-orm-panache.adoc:806
+#, no-wrap
+msgid ""
+"@RegisterForReflection \n"
+"public class RaceWeight {\n"
+"    public final String race;\n"
+"    public final Double weight;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/hibernate-orm-panache.adoc:810
+#, no-wrap
+msgid ""
+"    public RaceWeight(String race) {\n"
+"        this(race, null);\n"
+"    }\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/hibernate-orm-panache.adoc:816
+#, no-wrap
+msgid ""
+"    public RaceWeight(String race, Double weight) { // <1>\n"
+"        this.race = race;\n"
+"        this.weight = weight;\n"
+"    }\n"
+"}\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/hibernate-orm-panache.adoc:819
+#, no-wrap
+msgid ""
+"// Only the race and the average weight will be loaded\n"
+"PanacheQuery<RaceWeight> query = Person.find(\"select d.race, AVG(d.weight) from Dog d group by d.race).project(RaceWeight.class);\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/hibernate-orm-panache.adoc:821
+msgid "Hibernate ORM will use this constructor. When the query has a select clause, it is possible to have multiple constructors."
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_guides/hibernate-orm-panache.adoc:825
+msgid "It is not possible to have a HQL `select new` query and `.project(Class)` at the same time - you need to pick one approach."
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_guides/hibernate-orm-panache.adoc:827
+msgid "For example, this will fail:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/hibernate-orm-panache.adoc:831
+#, no-wrap
+msgid "PanacheQuery<RaceWeight> query = Person.find(\"select new MyView(d.race, AVG(d.weight)) from Dog d group by d.race).project(AnotherView.class);\n"
+msgstr ""
+
 #. type: Title ==
-#: upstream/_guides/hibernate-orm-panache.adoc:794
+#: upstream/_guides/hibernate-orm-panache.adoc:834
 #, fuzzy, no-wrap
 msgid "Multiple Persistence Units"
 msgstr "Unidades de persistencia múltiple"
 
-#. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:797
+#. type: delimited block =
+#: upstream/_guides/hibernate-orm-panache.adoc:837
 #, fuzzy
 msgid "The support for multiple persistence units is described in detail in xref:hibernate-orm.adoc#multiple-persistence-units[the Hibernate ORM guide]."
 msgstr "El soporte para múltiples unidades de persistencia se describe en detalle en  link:hibernate-orm.html#multiple-persistence-units[la guía de Hibernate ORM]."
 
-#. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:799
+#. type: delimited block =
+#: upstream/_guides/hibernate-orm-panache.adoc:839
 #, fuzzy
 msgid "When using Panache, things are simple:"
 msgstr "Cuando se utiliza Panache, las cosas son sencillas:"
 
-#. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:801
+#. type: delimited block =
+#: upstream/_guides/hibernate-orm-panache.adoc:841
 #, fuzzy
 msgid "A given Panache entity can be attached to only a single persistence unit."
 msgstr "Una determinada entidad de Panache sólo puede adjuntarse a una única unidad de persistencia."
 
-#. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:802
+#. type: delimited block =
+#: upstream/_guides/hibernate-orm-panache.adoc:842
 #, fuzzy
 msgid "Given that, Panache already provides the necessary plumbing to transparently find the appropriate `EntityManager` associated to a Panache entity."
 msgstr "En este sentido, Panache ya proporciona la fontanería necesaria para encontrar de forma transparente el `EntityManager` adecuado asociado a una entidad Panache."
 
 #. type: Title ==
-#: upstream/_guides/hibernate-orm-panache.adoc:803
+#: upstream/_guides/hibernate-orm-panache.adoc:843
 #, fuzzy, no-wrap
 msgid "Transactions"
 msgstr "Transacciones"
 
-#. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:808
+#. type: delimited block =
+#: upstream/_guides/hibernate-orm-panache.adoc:848
 #, fuzzy
 msgid "Make sure to wrap methods modifying your database (e.g. `entity.persist()`) within a transaction. Marking a CDI bean method `@Transactional` will do that for you and make that method a transaction boundary. We recommend doing so at your application entry point boundaries like your REST endpoint controllers."
 msgstr "Asegúrate de envolver los métodos que modifican tu base de datos (por ejemplo, `entity.persist()`) dentro de una transacción. Marcar un método CDI bean `@Transactional` lo hará por ti y hará que ese método sea un límite de transacción. Recomendamos hacerlo en los límites de los puntos de entrada de tu aplicación, como tus controladores de puntos finales REST."
 
-#. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:814
+#. type: delimited block =
+#: upstream/_guides/hibernate-orm-panache.adoc:854
 #, fuzzy
-msgid "JPA batches changes you make to your entities and sends changes (it's called flush) at the end of the transaction or before a query.  This is usually a good thing as it's more efficient.  But if you want to check optimistic locking failures, do object validation right away or generally want to get immediate feedback, you can force the flush operation by calling `entity.flush()` or even use `entity.persistAndFlush()` to make it a single method call. This will allow you to catch any `PersistenceException` that could occur when JPA send those changes to the database.  Remember, this is less efficient so don't abuse it.  And your transaction still has to be committed."
+msgid "JPA batches changes you make to your entities and sends changes (it is called flush) at the end of the transaction or before a query.  This is usually a good thing as it is more efficient.  But if you want to check optimistic locking failures, do object validation right away or generally want to get immediate feedback, you can force the flush operation by calling `entity.flush()` or even use `entity.persistAndFlush()` to make it a single method call. This will allow you to catch any `PersistenceException` that could occur when JPA send those changes to the database.  Remember, this is less efficient so don't abuse it.  And your transaction still has to be committed."
 msgstr "JPA agrupa por lotes los cambios que se realizan en las entidades y envía los cambios (se llama flush) al final de la transacción o antes de una consulta. Esto es normalmente algo bueno ya que es más eficiente. Pero si quieres comprobar fallos de bloqueo optimistas, hacer validación de objetos de inmediato o, en general, quieres obtener información inmediata, puedes forzar la operación de flush llamando a `entity.flush()` o incluso utilizar `entity.persistAndFlush()` para que sea una única llamada a un método. Esto le permitirá atrapar cualquier `PersistenceException` que pueda ocurrir cuando JPA envíe esos cambios a la base de datos. Recuerda que esto es menos eficiente así que no abuses de ello. Y su transacción todavía tiene que ser comprometida."
 
-#. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:816
+#. type: delimited block =
+#: upstream/_guides/hibernate-orm-panache.adoc:856
 #, fuzzy
 msgid "Here is an example of the usage of the flush method to allow making a specific action in case of `PersistenceException`:"
 msgstr "He aquí un ejemplo del uso del método de descarga para permitir realizar una acción específica en caso de `PersistenceException`:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:830
+#: upstream/_guides/hibernate-orm-panache.adoc:870
 #, no-wrap
 msgid ""
 "@Transactional\n"
@@ -1590,38 +1656,38 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/hibernate-orm-panache.adoc:832
+#: upstream/_guides/hibernate-orm-panache.adoc:872
 #, fuzzy, no-wrap
 msgid "Lock management"
 msgstr "Gestión de cerraduras"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:835
+#: upstream/_guides/hibernate-orm-panache.adoc:875
 #, fuzzy
 msgid "Panache provides direct support for database locking with your entity/repository, using `findById(Object, LockModeType)` or `find().withLock(LockModeType)`."
 msgstr "Panache proporciona soporte directo para el bloqueo de la base de datos con su entidad/repositorio, utilizando `findById(Object, LockModeType)` o `find().withLock(LockModeType)`."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:837
+#: upstream/_guides/hibernate-orm-panache.adoc:877
 #, fuzzy
 msgid "The following examples are for the active record pattern, but the same can be used with repositories."
 msgstr "Los siguientes ejemplos son para el patrón de registro activo, pero se puede utilizar lo mismo con los repositorios."
 
 #. type: Title ===
-#: upstream/_guides/hibernate-orm-panache.adoc:838
+#: upstream/_guides/hibernate-orm-panache.adoc:878
 #, fuzzy, no-wrap
 msgid "First: Locking using findById()."
 msgstr "Primero: Bloqueo mediante findById()."
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:843
-#: upstream/_guides/hibernate-orm-panache.adoc:860
+#: upstream/_guides/hibernate-orm-panache.adoc:883
+#: upstream/_guides/hibernate-orm-panache.adoc:900
 #, no-wrap
 msgid "public class PersonEndpoint {\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:851
+#: upstream/_guides/hibernate-orm-panache.adoc:891
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -1634,20 +1700,20 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:853
-#: upstream/_guides/hibernate-orm-panache.adoc:870
+#: upstream/_guides/hibernate-orm-panache.adoc:893
+#: upstream/_guides/hibernate-orm-panache.adoc:910
 #, no-wrap
 msgid "}\n"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/hibernate-orm-panache.adoc:855
+#: upstream/_guides/hibernate-orm-panache.adoc:895
 #, fuzzy, no-wrap
 msgid "Second: Locking in a find()."
 msgstr "Segundo: Bloqueo en un find()."
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:868
+#: upstream/_guides/hibernate-orm-panache.adoc:908
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -1660,31 +1726,31 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:873
+#: upstream/_guides/hibernate-orm-panache.adoc:913
 #, fuzzy
 msgid "Be careful that locks are released when the transaction ends, so the method that invokes the lock query must be annotated with the `@Transactional` annotation."
 msgstr "Hay que tener cuidado de que los bloqueos se liberen cuando la transacción termine, por lo que el método que invoca la consulta de bloqueo debe estar anotado con la anotación `@Transactional`."
 
 #. type: Title ==
-#: upstream/_guides/hibernate-orm-panache.adoc:874
+#: upstream/_guides/hibernate-orm-panache.adoc:914
 #, fuzzy, no-wrap
 msgid "Custom IDs"
 msgstr "Identificaciones personalizadas"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:878
+#: upstream/_guides/hibernate-orm-panache.adoc:918
 #, fuzzy
 msgid "IDs are often a touchy subject, and not everyone's up for letting them handled by the framework, once again we have you covered."
 msgstr "Las identificaciones suelen ser un tema delicado, y no todo el mundo está dispuesto a dejar que el marco las maneje, una vez más te tenemos cubierto."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:881
+#: upstream/_guides/hibernate-orm-panache.adoc:921
 #, fuzzy
 msgid "You can specify your own ID strategy by extending `PanacheEntityBase` instead of `PanacheEntity`. Then you just declare whatever ID you want as a public field:"
 msgstr "Puedes especificar tu propia estrategia de ID extendiendo `PanacheEntityBase` en lugar de `PanacheEntity`. Entonces sólo tienes que declarar el ID que quieras como campo público:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:886
+#: upstream/_guides/hibernate-orm-panache.adoc:926
 #, no-wrap
 msgid ""
 "@Entity\n"
@@ -1692,7 +1758,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:895
+#: upstream/_guides/hibernate-orm-panache.adoc:935
 #, no-wrap
 msgid ""
 "    @Id\n"
@@ -1706,7 +1772,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:898
+#: upstream/_guides/hibernate-orm-panache.adoc:938
 #, no-wrap
 msgid ""
 "    //...\n"
@@ -1714,13 +1780,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:902
+#: upstream/_guides/hibernate-orm-panache.adoc:942
 #, fuzzy
 msgid "If you're using repositories, then you will want to extend `PanacheRepositoryBase` instead of `PanacheRepository` and specify your ID type as an extra type parameter:"
 msgstr "Si está utilizando repositorios, entonces querrá extender `PanacheRepositoryBase` en lugar de `PanacheRepository` y especificar su tipo de identificación como un parámetro de tipo adicional:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:909
+#: upstream/_guides/hibernate-orm-panache.adoc:949
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -1730,31 +1796,31 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/hibernate-orm-panache.adoc:911
+#: upstream/_guides/hibernate-orm-panache.adoc:951
 #, fuzzy, no-wrap
 msgid "Mocking"
 msgstr "Burlándose de"
 
 #. type: Title ===
-#: upstream/_guides/hibernate-orm-panache.adoc:913
+#: upstream/_guides/hibernate-orm-panache.adoc:953
 #, fuzzy, no-wrap
 msgid "Using the active record pattern"
 msgstr "Uso del patrón de registro activo"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:918
+#: upstream/_guides/hibernate-orm-panache.adoc:958
 #, fuzzy
 msgid "If you are using the active record pattern you cannot use Mockito directly as it does not support mocking static methods, but you can use the `quarkus-panache-mock` module which allows you to use Mockito to mock all provided static methods, including your own."
 msgstr "Si está utilizando el patrón de registro activo, no puede utilizar Mockito directamente, ya que no admite la imitación de métodos estáticos, pero puede utilizar el módulo `quarkus-panache-mock`, que le permite utilizar Mockito para imitar todos los métodos estáticos proporcionados, incluidos los suyos."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:920
+#: upstream/_guides/hibernate-orm-panache.adoc:960
 #, fuzzy
 msgid "Add this dependency to your `pom.xml`:"
 msgstr "Añada esta dependencia a su `pom.xml`:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:928
+#: upstream/_guides/hibernate-orm-panache.adoc:968
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -1765,14 +1831,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:932
-#: upstream/_guides/hibernate-orm-panache.adoc:1071
+#: upstream/_guides/hibernate-orm-panache.adoc:972
+#: upstream/_guides/hibernate-orm-panache.adoc:1111
 #, fuzzy
 msgid "Given this simple entity:"
 msgstr "Dada esta simple entidad:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:937
+#: upstream/_guides/hibernate-orm-panache.adoc:977
 #, no-wrap
 msgid ""
 "@Entity\n"
@@ -1780,13 +1846,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:939
+#: upstream/_guides/hibernate-orm-panache.adoc:979
 #, no-wrap
 msgid "    public String name;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:944
+#: upstream/_guides/hibernate-orm-panache.adoc:984
 #, no-wrap
 msgid ""
 "    public static List<Person> findOrdered() {\n"
@@ -1796,14 +1862,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:947
-#: upstream/_guides/hibernate-orm-panache.adoc:1098
+#: upstream/_guides/hibernate-orm-panache.adoc:987
+#: upstream/_guides/hibernate-orm-panache.adoc:1138
 #, fuzzy
 msgid "You can write your mocking test like this:"
 msgstr "Puedes escribir tu prueba de burla así:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:952
+#: upstream/_guides/hibernate-orm-panache.adoc:992
 #, no-wrap
 msgid ""
 "@QuarkusTest\n"
@@ -1811,7 +1877,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:956
+#: upstream/_guides/hibernate-orm-panache.adoc:996
 #, no-wrap
 msgid ""
 "    @Test\n"
@@ -1820,7 +1886,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:959
+#: upstream/_guides/hibernate-orm-panache.adoc:999
 #, no-wrap
 msgid ""
 "        // Mocked classes always return a default value\n"
@@ -1828,7 +1894,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:963
+#: upstream/_guides/hibernate-orm-panache.adoc:1003
 #, no-wrap
 msgid ""
 "        // Now let's specify the return value\n"
@@ -1837,7 +1903,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:967
+#: upstream/_guides/hibernate-orm-panache.adoc:1007
 #, no-wrap
 msgid ""
 "        // Now let's change the return value\n"
@@ -1846,7 +1912,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:971
+#: upstream/_guides/hibernate-orm-panache.adoc:1011
 #, no-wrap
 msgid ""
 "        // Now let's call the original method\n"
@@ -1855,7 +1921,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:974
+#: upstream/_guides/hibernate-orm-panache.adoc:1014
 #, no-wrap
 msgid ""
 "        // Check that we called it 4 times\n"
@@ -1863,7 +1929,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:980
+#: upstream/_guides/hibernate-orm-panache.adoc:1020
 #, no-wrap
 msgid ""
 "        // Mock only with specific parameters\n"
@@ -1874,7 +1940,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:984
+#: upstream/_guides/hibernate-orm-panache.adoc:1024
 #, no-wrap
 msgid ""
 "        // Mock throwing\n"
@@ -1883,7 +1949,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:988
+#: upstream/_guides/hibernate-orm-panache.adoc:1028
 #, no-wrap
 msgid ""
 "        // We can even mock your custom methods\n"
@@ -1892,7 +1958,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:991
+#: upstream/_guides/hibernate-orm-panache.adoc:1031
 #, no-wrap
 msgid ""
 "        // Mocking a void method\n"
@@ -1900,7 +1966,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1000
+#: upstream/_guides/hibernate-orm-panache.adoc:1040
 #, no-wrap
 msgid ""
 "        // Make it throw\n"
@@ -1914,7 +1980,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1004
+#: upstream/_guides/hibernate-orm-panache.adoc:1044
 #, no-wrap
 msgid ""
 "        // Back to doNothing\n"
@@ -1923,7 +1989,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1013
+#: upstream/_guides/hibernate-orm-panache.adoc:1053
 #, no-wrap
 msgid ""
 "        // Make it call the real method\n"
@@ -1937,7 +2003,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1020
+#: upstream/_guides/hibernate-orm-panache.adoc:1060
 #, no-wrap
 msgid ""
 "        PanacheMock.verify(Person.class).findOrdered();\n"
@@ -1949,25 +2015,25 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1023
+#: upstream/_guides/hibernate-orm-panache.adoc:1063
 #, fuzzy
 msgid "Be sure to call your `verify` and `do*` methods on `PanacheMock` rather than `Mockito`, otherwise you won't know what mock object to pass."
 msgstr "Asegúrese de llamar a sus métodos `verify` y `do*` en `PanacheMock` en lugar de `Mockito`, de lo contrario no sabrá qué objeto mock pasar."
 
 #. type: Title ====
-#: upstream/_guides/hibernate-orm-panache.adoc:1024
+#: upstream/_guides/hibernate-orm-panache.adoc:1064
 #, fuzzy, no-wrap
 msgid "Mocking `EntityManager`, `Session` and entity instance methods"
 msgstr "Mocking `EntityManager`, `Session` y métodos de instancia de entidad"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1027
+#: upstream/_guides/hibernate-orm-panache.adoc:1067
 #, fuzzy
 msgid "If you need to mock entity instance methods, such as `persist()` you can do it by mocking the Hibernate ORM `Session` object:"
 msgstr "Si necesita burlarse de los métodos de instancia de la entidad, como `persist()`, puede hacerlo burlándose del objeto Hibernate ORM `Session`:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1032
+#: upstream/_guides/hibernate-orm-panache.adoc:1072
 #, no-wrap
 msgid ""
 "@QuarkusTest\n"
@@ -1975,7 +2041,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1035
+#: upstream/_guides/hibernate-orm-panache.adoc:1075
 #, no-wrap
 msgid ""
 "    @InjectMock\n"
@@ -1983,7 +2049,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1043
+#: upstream/_guides/hibernate-orm-panache.adoc:1083
 #, no-wrap
 msgid ""
 "    @BeforeEach\n"
@@ -1996,7 +2062,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1050
+#: upstream/_guides/hibernate-orm-panache.adoc:1090
 #, no-wrap
 msgid ""
 "    @Test\n"
@@ -2008,7 +2074,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1054
+#: upstream/_guides/hibernate-orm-panache.adoc:1094
 #, no-wrap
 msgid ""
 "        Mockito.verify(session, Mockito.times(1)).persist(Mockito.any());\n"
@@ -2017,19 +2083,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/hibernate-orm-panache.adoc:1056
+#: upstream/_guides/hibernate-orm-panache.adoc:1096
 #, fuzzy, no-wrap
 msgid "Using the repository pattern"
 msgstr "Uso del patrón de repositorio"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1060
+#: upstream/_guides/hibernate-orm-panache.adoc:1100
 #, fuzzy
 msgid "If you are using the repository pattern you can use Mockito directly, using the `quarkus-junit5-mockito` module, which makes mocking beans much easier:"
 msgstr "Si estás usando el patrón de repositorio puedes usar Mockito directamente, usando el módulo `quarkus-junit5-mockito`, lo que hace que mockear beans sea mucho más fácil:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1068
+#: upstream/_guides/hibernate-orm-panache.adoc:1108
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -2040,7 +2106,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1076
+#: upstream/_guides/hibernate-orm-panache.adoc:1116
 #, no-wrap
 msgid ""
 "@Entity\n"
@@ -2048,7 +2114,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1080
+#: upstream/_guides/hibernate-orm-panache.adoc:1120
 #, no-wrap
 msgid ""
 "    @Id\n"
@@ -2057,7 +2123,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1083
+#: upstream/_guides/hibernate-orm-panache.adoc:1123
 #, no-wrap
 msgid ""
 "    public String name;\n"
@@ -2065,13 +2131,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1086
+#: upstream/_guides/hibernate-orm-panache.adoc:1126
 #, fuzzy
 msgid "And this repository:"
 msgstr "Y este depósito:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1095
+#: upstream/_guides/hibernate-orm-panache.adoc:1135
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -2083,7 +2149,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1105
+#: upstream/_guides/hibernate-orm-panache.adoc:1145
 #, no-wrap
 msgid ""
 "@QuarkusTest\n"
@@ -2093,7 +2159,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1110
+#: upstream/_guides/hibernate-orm-panache.adoc:1150
 #, no-wrap
 msgid ""
 "    @Test\n"
@@ -2103,7 +2169,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1114
+#: upstream/_guides/hibernate-orm-panache.adoc:1154
 #, no-wrap
 msgid ""
 "        // Now let's specify the return value\n"
@@ -2112,7 +2178,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1118
+#: upstream/_guides/hibernate-orm-panache.adoc:1158
 #, no-wrap
 msgid ""
 "        // Now let's change the return value\n"
@@ -2121,7 +2187,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1122
+#: upstream/_guides/hibernate-orm-panache.adoc:1162
 #, no-wrap
 msgid ""
 "        // Now let's call the original method\n"
@@ -2130,7 +2196,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1125
+#: upstream/_guides/hibernate-orm-panache.adoc:1165
 #, no-wrap
 msgid ""
 "        // Check that we called it 4 times\n"
@@ -2138,7 +2204,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1131
+#: upstream/_guides/hibernate-orm-panache.adoc:1171
 #, no-wrap
 msgid ""
 "        // Mock only with specific parameters\n"
@@ -2149,7 +2215,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1135
+#: upstream/_guides/hibernate-orm-panache.adoc:1175
 #, no-wrap
 msgid ""
 "        // Mock throwing\n"
@@ -2158,7 +2224,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1138
+#: upstream/_guides/hibernate-orm-panache.adoc:1178
 #, no-wrap
 msgid ""
 "        Mockito.when(personRepository.findOrdered()).thenReturn(Collections.emptyList());\n"
@@ -2166,7 +2232,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1145
+#: upstream/_guides/hibernate-orm-panache.adoc:1185
 #, no-wrap
 msgid ""
 "        // We can even mock your custom methods\n"
@@ -2178,103 +2244,103 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/hibernate-orm-panache.adoc:1147
+#: upstream/_guides/hibernate-orm-panache.adoc:1187
 #, fuzzy, no-wrap
 msgid "How and why we simplify Hibernate ORM mappings"
 msgstr "Cómo y por qué simplificamos los mapeos ORM de Hibernate"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1151
+#: upstream/_guides/hibernate-orm-panache.adoc:1191
 #, fuzzy
 msgid "When it comes to writing Hibernate ORM entities, there are a number of annoying things that users have grown used to reluctantly deal with, such as:"
 msgstr "Cuando se trata de escribir entidades ORM de Hibernate, hay una serie de cosas molestas con las que los usuarios se han acostumbrado a lidiar a regañadientes, como por ejemplo"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1154
+#: upstream/_guides/hibernate-orm-panache.adoc:1194
 #, fuzzy
-msgid "Duplicating ID logic: most entities need an ID, most people don't care how it's set, because it's not really relevant to your model."
+msgid "Duplicating ID logic: most entities need an ID, most people don't care how it is set, because it is not really relevant to your model."
 msgstr "Duplicar la lógica del ID: la mayoría de las entidades necesitan un ID, a la mayoría de la gente no le importa cómo se establece, porque no es realmente relevante para su modelo."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1160
+#: upstream/_guides/hibernate-orm-panache.adoc:1200
 #, fuzzy
 msgid "Traditional EE patterns advise to split entity definition (the model) from the operations you can do on them (DAOs, Repositories), but really that requires a split between the state and its operations even though we would never do something like that for regular objects in the Object-Oriented architecture, where state and methods are in the same class. Moreover, this requires two classes per entity, and requires injection of the DAO or Repository where you need to do entity operations, which breaks your edit flow and requires you to get out of the code you're writing to set up an injection point before coming back to use it."
 msgstr "Los patrones tradicionales de EE aconsejan dividir la definición de la entidad (el modelo) de las operaciones que puedes hacer sobre ellas (DAOs, Repositorios), pero realmente eso requiere una división entre el estado y sus operaciones aunque nunca haríamos algo así para los objetos regulares en la arquitectura orientada a objetos, donde el estado y los métodos están en la misma clase. Además, esto requiere dos clases por entidad, y requiere la inyección del DAO o Repositorio donde necesitas hacer las operaciones de la entidad, lo que rompe tu flujo de edición y requiere que salgas del código que estás escribiendo para establecer un punto de inyección antes de volver a usarlo."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1162
+#: upstream/_guides/hibernate-orm-panache.adoc:1202
 #, fuzzy
 msgid "Hibernate queries are super powerful, but overly verbose for common operations, requiring you to write queries even when you don't need all the parts."
 msgstr "Las consultas de Hibernate son muy potentes, pero excesivamente prolijas para las operaciones habituales, lo que obliga a escribir consultas incluso cuando no se necesitan todas las partes."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1164
+#: upstream/_guides/hibernate-orm-panache.adoc:1204
 #, fuzzy
 msgid "Hibernate is very general-purpose, but does not make it trivial to do trivial operations that make up 90% of our model usage."
 msgstr "Hibernate es muy polivalente, pero no permite realizar las operaciones triviales que constituyen el 90% del uso de nuestro modelo."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1166
+#: upstream/_guides/hibernate-orm-panache.adoc:1206
 #, fuzzy
 msgid "With Panache, we took an opinionated approach to tackle all these problems:"
 msgstr "Con Panache, adoptamos un enfoque de opinión para abordar todos estos problemas:"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1169
+#: upstream/_guides/hibernate-orm-panache.adoc:1209
 #, fuzzy
 msgid "Make your entities extend `PanacheEntity`: it has an ID field that is auto-generated. If you require a custom ID strategy, you can extend `PanacheEntityBase` instead and handle the ID yourself."
 msgstr "Haga que sus entidades extiendan `PanacheEntity`: tiene un campo ID que se genera automáticamente. Si necesita una estrategia de ID personalizada, puede extender `PanacheEntityBase` en su lugar y manejar el ID usted mismo."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1172
+#: upstream/_guides/hibernate-orm-panache.adoc:1212
 #, fuzzy
 msgid "Use public fields. Get rid of dumb getter and setters. Hibernate ORM w/o Panache also doesn't require you to use getters and setters, but Panache will additionally generate all getters and setters that are missing, and rewrite every access to these fields to use the accessor methods. This way you can still write _useful_ accessors when you need them, which will be used even though your entity users still use field accesses. This implies that from the Hibernate perspective you're using accessors via getters and setters even while it looks like field accessors."
 msgstr "Utilizar campos públicos. Deshágase de los getter y setters tontos. El ORM de Hibernate sin Panache tampoco requiere que se usen getters y setters, pero Panache generará adicionalmente todos los getters y setters que falten, y reescribirá todos los accesos a estos campos para usar los métodos de los accessors. De este modo, podrá seguir escribiendo accesores _útiles_ cuando los necesite, que se utilizarán aunque los usuarios de su entidad sigan utilizando los accesos a los campos. Esto implica que, desde la perspectiva de Hibernate, estás utilizando los accesos a través de getters y setters aunque parezca que son accesos de campo."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1175
+#: upstream/_guides/hibernate-orm-panache.adoc:1215
 #, fuzzy
 msgid "With the active record pattern: put all your entity logic in static methods in your entity class and don't create DAOs.  Your entity superclass comes with lots of super useful static methods, and you can add your own in your entity class.  Users can just start using your entity `Person` by typing `Person.` and getting completion for all the operations in a single place."
 msgstr "Con el patrón de registro activo: pon toda tu lógica de entidad en métodos estáticos en tu clase de entidad y no crees DAOs. Tu superclase de entidad viene con un montón de métodos estáticos súper útiles, y puedes añadir los tuyos propios en tu clase de entidad. Los usuarios pueden empezar a utilizar su entidad `Person` escribiendo `Person.` y obteniendo la finalización de todas las operaciones en un solo lugar."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1178
+#: upstream/_guides/hibernate-orm-panache.adoc:1218
 #, fuzzy
 msgid "Don't write parts of the query that you don't need: write `Person.find(\"order by name\")` or `Person.find(\"name = ?1 and status = ?2\", \"stef\", Status.Alive)` or even better `Person.find(\"name\", \"stef\")`."
 msgstr "No escribas partes de la consulta que no necesites: escribe `Person.find(\"order by name\")` o `Person.find(\"name = ?1 and status = ?2\", \"stef\", Status.Alive)` o incluso mejor `Person.find(\"name\", \"stef\")`."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1180
+#: upstream/_guides/hibernate-orm-panache.adoc:1220
 #, fuzzy
 msgid "That's all there is to it: with Panache, Hibernate ORM has never looked so trim and neat."
 msgstr "Eso es todo: con Panache, el ORM de Hibernate nunca ha tenido un aspecto tan cuidado."
 
 #. type: Title ==
-#: upstream/_guides/hibernate-orm-panache.adoc:1181
+#: upstream/_guides/hibernate-orm-panache.adoc:1221
 #, fuzzy, no-wrap
 msgid "Defining entities in external projects or jars"
 msgstr "Definición de entidades en proyectos o tarros externos"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1184
+#: upstream/_guides/hibernate-orm-panache.adoc:1224
 #, fuzzy
 msgid "Hibernate ORM with Panache relies on compile-time bytecode enhancements to your entities."
 msgstr "Hibernate ORM con Panache se basa en las mejoras de código de bytes en tiempo de compilación de sus entidades."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1190
+#: upstream/_guides/hibernate-orm-panache.adoc:1230
 #, fuzzy
 msgid "It attempts to identify archives with Panache entities (and consumers of Panache entities)  by the presence of the marker file `META-INF/panache-archive.marker`. Panache includes an annotation processor that will automatically create this file in archives that depend on Panache (even indirectly). If you have disabled annotation processors you may need to create this file manually in some cases."
 msgstr "Intenta identificar archivos con entidades Panache (y consumidores de entidades Panache) por la presencia del archivo marcador `META-INF/panache-archive.marker`. Panache incluye un procesador de anotaciones que creará automáticamente este archivo en los archivos que dependen de Panache (incluso indirectamente). Si ha desactivado los procesadores de anotación, es posible que tenga que crear este archivo manualmente en algunos casos."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm-panache.adoc:1194
+#: upstream/_guides/hibernate-orm-panache.adoc:1234
 #, fuzzy
 msgid "If you include the jpa-modelgen annotation processor this will exclude the Panache annotation processor by default. If you do this you should either create the marker file yourself, or add the `quarkus-panache-common` as well, as shown below:"
 msgstr "Si incluye el procesador de anotaciones jpa-modelgen, éste excluirá por defecto el procesador de anotaciones Panache. Si lo hace, deberá crear usted mismo el archivo de marcadores o añadir también el `quarkus-panache-common`, como se muestra a continuación:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm-panache.adoc:1215
+#: upstream/_guides/hibernate-orm-panache.adoc:1255
 #, no-wrap
 msgid ""
 "<plugin>\n"
