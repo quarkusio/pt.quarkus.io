@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-05-05 02:45+0000\n"
+"POT-Creation-Date: 2022-09-09 03:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -452,6 +452,7 @@ msgstr ""
 #. type: delimited block -
 #: upstream/_versions/main/guides/stork.adoc:235
 #: upstream/_versions/main/guides/stork.adoc:270
+#: upstream/_versions/main/guides/stork.adoc:305
 #, no-wrap
 msgid "package org.acme;\n"
 msgstr ""
@@ -558,21 +559,78 @@ msgstr ""
 #. type: Title ==
 #: upstream/_versions/main/guides/stork.adoc:297
 #, no-wrap
+msgid "Stork Filter"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/stork.adoc:301
+msgid "The `baseUri` configured in the REST client will be processed by `StorkClientRequestFilter` class, this is a https://quarkus.io/specs/jaxrs/2.1/index.html#filters[JAX-RS filter].  If you need to process the metadata associated with a message: HTTP headers, query parameters, media type, and other metadata, you can implement another filter to configure what you need.  Let’s implement a custom filter to add logging capability to our service. We create `CustomLoggingFilter` and annotating it with the @Provider annotation:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/stork.adoc:310
+#, no-wrap
+msgid ""
+"import io.vertx.core.http.HttpServerRequest;\n"
+"import org.jboss.logging.Logger;\n"
+"import org.jboss.resteasy.reactive.client.spi.ResteasyReactiveClientRequestContext;\n"
+"import org.jboss.resteasy.reactive.client.spi.ResteasyReactiveClientRequestFilter;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/stork.adoc:312
+#, no-wrap
+msgid "import javax.ws.rs.ext.Provider;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/stork.adoc:315
+#, no-wrap
+msgid ""
+"@Provider\n"
+"public class CustomLoggingFilter implements ResteasyReactiveClientRequestFilter {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/stork.adoc:317
+#, no-wrap
+msgid "    private static final Logger LOG = Logger.getLogger(CustomLoggingFilter.class);\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/stork.adoc:323
+#, no-wrap
+msgid ""
+"    @Override\n"
+"    public void filter(ResteasyReactiveClientRequestContext requestContext) {\n"
+"        LOG.infof(\"Resolved address by Stork: %s\",requestContext.getUri().toString());\n"
+"    }\n"
+"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/stork.adoc:328
+msgid "The order in which filters are executed is defined by https://quarkus.io/specs/jaxrs/2.1/index.html#priorities[Priorities].  Note that `CustomLoggingFilter` is using a default value, so the user-level priority and the `StorkClientRequestFilter` uses the security authentication filter priority. This means that `StorkClientRequestFilter` will be executed before our `CustomLoggingFilter`.  Use `@Priority` annotation to change this behaviour."
+msgstr ""
+
+#. type: Title ==
+#: upstream/_versions/main/guides/stork.adoc:330
+#, no-wrap
 msgid "Stork configuration"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:300
+#: upstream/_versions/main/guides/stork.adoc:333
 msgid "The system is almost complete. We only need to configure Stork and the `Registration` bean."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:302
+#: upstream/_versions/main/guides/stork.adoc:335
 msgid "In the `src/main/resources/application.properties`, add:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/stork.adoc:307
+#: upstream/_versions/main/guides/stork.adoc:340
 #, no-wrap
 msgid ""
 "consul.host=localhost\n"
@@ -580,7 +638,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/stork.adoc:312
+#: upstream/_versions/main/guides/stork.adoc:345
 #, no-wrap
 msgid ""
 "quarkus.stork.my-service.service-discovery.type=consul\n"
@@ -590,65 +648,65 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:315
+#: upstream/_versions/main/guides/stork.adoc:348
 msgid "The first two lines provide the Consul location used by the `Registration` bean."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:322
+#: upstream/_versions/main/guides/stork.adoc:355
 msgid "The other properties are related to Stork.  `stork.my-service.service-discovery` indicates which type of service discovery we will be using to locate the `my-service` service.  In our case, it's `consul`.  `quarkus.stork.my-service.service-discovery.consul-host` and `quarkus.stork.my-service.service-discovery.consul-port` configures the access to Consul.  Finally, `quarkus.stork.my-service.load-balancer.type` configures the service selection.  In our case, we use a `round-robin`."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/stork.adoc:323
+#: upstream/_versions/main/guides/stork.adoc:356
 #, no-wrap
 msgid "Running the application"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:327
+#: upstream/_versions/main/guides/stork.adoc:360
 msgid "We're done! So, let's see if it works."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:329
+#: upstream/_versions/main/guides/stork.adoc:362
 msgid "First, start Consul:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/stork.adoc:333
+#: upstream/_versions/main/guides/stork.adoc:366
 #, no-wrap
 msgid "docker run --rm --name consul -p 8500:8500 -p 8501:8501 consul:1.7 agent -dev -ui -client=0.0.0.0 -bind=0.0.0.0 --https-port=8501\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:336
+#: upstream/_versions/main/guides/stork.adoc:369
 msgid "If you start Consul differently, do not forget to edit the application configuration."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:338
+#: upstream/_versions/main/guides/stork.adoc:371
 msgid "Then, package the application:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:342
+#: upstream/_versions/main/guides/stork.adoc:375
 msgid "And run it:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/stork.adoc:346
+#: upstream/_versions/main/guides/stork.adoc:379
 #, no-wrap
 msgid "> java -jar target/quarkus-app/quarkus-run.jar\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:349
+#: upstream/_versions/main/guides/stork.adoc:382
 msgid "In another terminal, run:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/stork.adoc:358
+#: upstream/_versions/main/guides/stork.adoc:391
 #, no-wrap
 msgid ""
 "> curl http://localhost:8080/api\n"
@@ -660,43 +718,43 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:361
+#: upstream/_versions/main/guides/stork.adoc:394
 msgid "The responses alternate between `Hello from Red!` and `Hello from Blue!`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:363
+#: upstream/_versions/main/guides/stork.adoc:396
 msgid "You can compile this application into a native executable:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:367
+#: upstream/_versions/main/guides/stork.adoc:400
 msgid "And start it with:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/stork.adoc:371
+#: upstream/_versions/main/guides/stork.adoc:404
 #, no-wrap
 msgid "> ./target/stork-getting-started-1.0.0-SNAPSHOT-runner\n"
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/stork.adoc:373
+#: upstream/_versions/main/guides/stork.adoc:406
 #, no-wrap
 msgid "Going further"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:377
+#: upstream/_versions/main/guides/stork.adoc:410
 msgid "This guide has shown how to use SmallRye Stork to discover and select your services.  You can find more about Stork in:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:379
+#: upstream/_versions/main/guides/stork.adoc:412
 msgid "the xref:stork-reference.adoc[Stork reference guide],"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/stork.adoc:379
+#: upstream/_versions/main/guides/stork.adoc:412
 msgid "the https://smallrye.io/smallrye-stork[SmallRye Stork website]."
 msgstr ""
