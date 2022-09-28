@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-06-29 15:36+0000\n"
+"POT-Creation-Date: 2022-09-28 11:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -971,25 +971,63 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/cdi-integration.adoc:482
+#: upstream/_guides/cdi-integration.adoc:481
+#, fuzzy, no-wrap
+msgid "Use Case - Additional Stereotypes"
+msgstr "Caso práctico - Calificadores adicionales"
+
+#. type: Plain text
+#: upstream/_guides/cdi-integration.adoc:486
+#, fuzzy
+msgid "It is sometimes useful to register an existing annotation that is not annotated with `@javax.enterprise.inject.Stereotype` as a CDI stereotype.  This is similar to what CDI achieves through `BeforeBeanDiscovery#addStereotype()`.  We are going to use `StereotypeRegistrarBuildItem` to get it done."
+msgstr "A veces puede ser útil registrar una anotación existente que no está anotada con `@javax.inject.Qualifier` como un calificador CDI. Esto es similar a lo que el CDI consigue a través de `BeforeBeanDiscovery#addQualifier()`. Vamos a utilizar `QualifierRegistrarBuildItem` para conseguirlo."
+
+#. type: Block title
+#: upstream/_guides/cdi-integration.adoc:487
+#, fuzzy, no-wrap
+msgid "`StereotypeRegistrarBuildItem` Example"
+msgstr "`QualifierRegistrarBuildItem` Ejemplo"
+
+#. type: delimited block -
+#: upstream/_guides/cdi-integration.adoc:499
+#, no-wrap
+msgid ""
+"@BuildStep\n"
+"StereotypeRegistrarBuildItem addStereotypes() {\n"
+"    return new StereotypeRegistrarBuildItem(new StereotypeRegistrar() {\n"
+"        @Override\n"
+"        public Set<DotName> getAdditionalStereotypes() {\n"
+"            return Collections.singleton(DotName.createSimple(NotAStereotype.class.getName()));\n"
+"        }\n"
+"    });\n"
+"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/cdi-integration.adoc:502
+msgid "If the newly registered stereotype annotation doesn't have the appropriate meta-annotations, such as scope or interceptor bindings, use an <<annotations_transformer_build_item,annotation transformation>> to add them."
+msgstr ""
+
+#. type: Title ==
+#: upstream/_guides/cdi-integration.adoc:504
 #, fuzzy, no-wrap
 msgid "Use Case - Injection Point Transformation"
 msgstr "Caso práctico - Transformación del punto de inyección"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:487
+#: upstream/_guides/cdi-integration.adoc:509
 #, fuzzy
 msgid "Every now and then it is handy to be able to change the qualifiers of an injection point programmatically.  You can do just that with `InjectionPointTransformerBuildItem`.  The following sample shows how to apply transformation to injection points with type `Foo` that contain qualifier `MyQualifier`:"
 msgstr "De vez en cuando es útil poder cambiar los calificadores de un punto de inyección mediante programación. Eso es lo que se puede hacer con `InjectionPointTransformerBuildItem`. El siguiente ejemplo muestra cómo aplicar la transformación a los puntos de inyección de tipo `Foo` que contienen el calificador `MyQualifier`:"
 
 #. type: Block title
-#: upstream/_guides/cdi-integration.adoc:488
+#: upstream/_guides/cdi-integration.adoc:510
 #, fuzzy, no-wrap
 msgid "`InjectionPointTransformerBuildItem` Example"
 msgstr "`InjectionPointTransformerBuildItem` Ejemplo"
 
 #. type: delimited block -
-#: upstream/_guides/cdi-integration.adoc:494
+#: upstream/_guides/cdi-integration.adoc:516
 #, no-wrap
 msgid ""
 "@BuildStep\n"
@@ -998,7 +1036,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/cdi-integration.adoc:498
+#: upstream/_guides/cdi-integration.adoc:520
 #, no-wrap
 msgid ""
 "        public boolean appliesTo(Type requiredType) {\n"
@@ -1007,7 +1045,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/cdi-integration.adoc:510
+#: upstream/_guides/cdi-integration.adoc:532
 #, no-wrap
 msgid ""
 "        public void transform(TransformationContext context) {\n"
@@ -1024,31 +1062,31 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:513
+#: upstream/_guides/cdi-integration.adoc:535
 #, fuzzy
 msgid "In theory, you can use <<annotations_transformer_build_item,an `AnnotationsTransformer`>> to achieve the same goal. However, there are few differences that make `InjectionPointsTransformer` more suitable for this particular task: (1) annotation transformers are applied to all classes during bean discovery, whereas `InjectionPointsTransformer` is only applied to discovered injection points after bean discovery; (2) with `InjectionPointsTransformer` you don't need to handle various types of injection points (field, parameters of initializer methods, etc.)."
 msgstr "En teoría, se puede utilizar  link:#annotations_transformer_build_item[un `AnnotationsTransformer`] para lograr el mismo objetivo. Sin embargo, hay algunas diferencias que hacen que `InjectionPointsTransformer` sea más adecuado para esta tarea en particular: (1) los transformadores de anotación se aplican a todas las clases durante el descubrimiento de los beans, mientras que `InjectionPointsTransformer` sólo se aplica a los puntos de inyección descubiertos después del descubrimiento de los beans; (2) con `InjectionPointsTransformer` no es necesario manejar varios tipos de puntos de inyección (campo, parámetros de métodos inicializadores, etc.)."
 
 #. type: Title ==
-#: upstream/_guides/cdi-integration.adoc:514
+#: upstream/_guides/cdi-integration.adoc:536
 #, fuzzy, no-wrap
 msgid "Use Case - Resource Annotations and Injection"
 msgstr "Caso práctico - Anotaciones de recursos e inyección"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:518
+#: upstream/_guides/cdi-integration.adoc:540
 #, fuzzy
 msgid "The `ResourceAnnotationBuildItem` can be used to specify resource annotations that make it possible to resolve non-CDI injection points, such as Jakarta EE resources.  An integrator must also provide a corresponding `io.quarkus.arc.ResourceReferenceProvider` service provider implementation."
 msgstr "El `ResourceAnnotationBuildItem` puede ser utilizado para especificar anotaciones de recursos que hacen posible resolver puntos de inyección no-CDI, como los recursos de Jakarta EE. Un integrador también debe proporcionar la correspondiente implementación del proveedor de servicios `io.quarkus.arc.ResourceReferenceProvider`."
 
 #. type: Block title
-#: upstream/_guides/cdi-integration.adoc:519
+#: upstream/_guides/cdi-integration.adoc:541
 #, fuzzy, no-wrap
 msgid "`ResourceAnnotationBuildItem` Example"
 msgstr "`ResourceAnnotationBuildItem` Ejemplo"
 
 #. type: delimited block -
-#: upstream/_guides/cdi-integration.adoc:528
+#: upstream/_guides/cdi-integration.adoc:550
 #, no-wrap
 msgid ""
 "@BuildStep\n"
@@ -1060,201 +1098,201 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/cdi-integration.adoc:531
+#: upstream/_guides/cdi-integration.adoc:553
 #, fuzzy, no-wrap
 msgid "Available Build Time Metadata"
 msgstr "Metadatos de tiempo de construcción disponibles"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:535
+#: upstream/_guides/cdi-integration.adoc:557
 #, fuzzy
 msgid "Any of the above extensions that operates with `BuildExtension.BuildContext` can leverage certain build time metadata that are generated during build.  The built-in keys located in `io.quarkus.arc.processor.BuildExtension.Key` are:"
 msgstr "Cualquiera de las extensiones anteriores que opera con `BuildExtension.BuildContext` puede aprovechar ciertos metadatos de tiempo de compilación que se generan durante la misma. Las claves incorporadas ubicadas en `io.quarkus.arc.processor.BuildExtension.Key` son:"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:536
+#: upstream/_guides/cdi-integration.adoc:558
 #, fuzzy, no-wrap
 msgid "ANNOTATION_STORE"
 msgstr "ALMACÉN_DE_ANOTACIONES"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:537
+#: upstream/_guides/cdi-integration.adoc:559
 #, fuzzy
 msgid "Contains an `AnnotationStore` that keeps information about all `AnnotationTarget` annotations after application of annotation transformers"
 msgstr "Contiene un `AnnotationStore` que mantiene la información sobre todas las anotaciones de `AnnotationTarget` tras la aplicación de los transformadores de anotaciones"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:537
+#: upstream/_guides/cdi-integration.adoc:559
 #, fuzzy, no-wrap
 msgid "INJECTION_POINTS"
 msgstr "PUNTOS_DE_INYECCIÓN"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:538
+#: upstream/_guides/cdi-integration.adoc:560
 #, fuzzy
 msgid "`Collection<InjectionPointInfo>` containing all injection points"
 msgstr "`Collection&amp;lt;InjectionPointInfo&amp;gt;` que contiene todos los puntos de inyección"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:538
+#: upstream/_guides/cdi-integration.adoc:560
 #, fuzzy, no-wrap
 msgid "BEANS"
 msgstr "FRIJOLES"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:539
+#: upstream/_guides/cdi-integration.adoc:561
 #, fuzzy
 msgid "`Collection<BeanInfo>` containing all beans"
 msgstr "`Collection&amp;lt;BeanInfo&amp;gt;` que contiene todas las judías"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:539
+#: upstream/_guides/cdi-integration.adoc:561
 #, fuzzy, no-wrap
 msgid "REMOVED_BEANS"
 msgstr "FRIJOLES_REMOVIDOS"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:540
+#: upstream/_guides/cdi-integration.adoc:562
 #, fuzzy
 msgid "`Collection<BeanInfo>` containing all the removed beans; see <<cdi-reference.adoc#remove_unused_beans,Removing unused beans>> for more information"
 msgstr "`Collection&amp;lt;BeanInfo&amp;gt;` que contiene todos los granos eliminados; para más información, consulte  link:cdi-reference.html#remove_unused_beans[Eliminar los granos no utilizados]"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:540
+#: upstream/_guides/cdi-integration.adoc:562
 #, fuzzy, no-wrap
 msgid "OBSERVERS"
 msgstr "OBSERVADORES"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:541
+#: upstream/_guides/cdi-integration.adoc:563
 #, fuzzy
 msgid "`Collection<ObserverInfo>` containing all observers"
 msgstr "`Collection&amp;lt;ObserverInfo&amp;gt;` que contiene todos los observadores"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:541
+#: upstream/_guides/cdi-integration.adoc:563
 #, fuzzy, no-wrap
 msgid "SCOPES"
 msgstr "SCOPES"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:542
+#: upstream/_guides/cdi-integration.adoc:564
 #, fuzzy
 msgid "`Collection<ScopeInfo>` containing all scopes, including custom ones"
 msgstr "`Collection&amp;lt;ScopeInfo&amp;gt;` que contiene todos los ámbitos, incluidos los personalizados"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:542
+#: upstream/_guides/cdi-integration.adoc:564
 #, fuzzy, no-wrap
 msgid "QUALIFIERS"
 msgstr "CALIFICADORES"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:543
+#: upstream/_guides/cdi-integration.adoc:565
 #, fuzzy
 msgid "`Map<DotName, ClassInfo>` containing all qualifiers"
 msgstr "`Map&amp;lt;DotName, ClassInfo&amp;gt;` que contiene todos los calificativos"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:543
+#: upstream/_guides/cdi-integration.adoc:565
 #, fuzzy, no-wrap
 msgid "INTERCEPTOR_BINDINGS"
 msgstr "INTERCEPTOR_BINDINGS"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:544
+#: upstream/_guides/cdi-integration.adoc:566
 #, fuzzy
 msgid "`Map<DotName, ClassInfo>` containing all interceptor bindings"
 msgstr "`Map&amp;lt;DotName, ClassInfo&amp;gt;` que contiene todos los enlaces del interceptor"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:544
+#: upstream/_guides/cdi-integration.adoc:566
 #, fuzzy, no-wrap
 msgid "STEREOTYPES"
 msgstr "ESTEREOTIPOS"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:545
+#: upstream/_guides/cdi-integration.adoc:567
 #, fuzzy
 msgid "`Map<DotName, StereotypeInfo>` containing all stereotypes"
 msgstr "`Map&amp;lt;DotName, StereotypeInfo&amp;gt;` que contiene todos los estereotipos"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:550
+#: upstream/_guides/cdi-integration.adoc:572
 #, fuzzy
 msgid "To get hold of these, simply query the extension context object for given key.  Note that these metadata are made available as build proceeds which means that extensions can only leverage metadata that were built before the extensions are invoked.  If your extension attempts to retrieve metadata that wasn't yet produced, `null` will be returned.  Here is a summary of which extensions can access which metadata:"
 msgstr "Para obtenerlos, basta con consultar el objeto de contexto de la extensión para una clave determinada. Tenga en cuenta que estos metadatos están disponibles a medida que se produce la construcción, lo que significa que las extensiones sólo pueden aprovechar los metadatos que se construyeron antes de que las extensiones sean invocadas. Si su extensión intenta recuperar metadatos que aún no se han producido, se devolverá `null`. A continuación se muestra un resumen de qué extensiones pueden acceder a qué metadatos:"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:551
+#: upstream/_guides/cdi-integration.adoc:573
 #, fuzzy, no-wrap
 msgid "AnnotationsTransformer"
 msgstr "AnotacionesTransformador"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:552
+#: upstream/_guides/cdi-integration.adoc:574
 #, fuzzy
 msgid "Shouldn't rely on any metadata as it could be used at any time in any phase of the bootstrap"
 msgstr "No debería depender de ningún metadato, ya que podría utilizarse en cualquier momento en cualquier fase del arranque"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:552
+#: upstream/_guides/cdi-integration.adoc:574
 #, fuzzy, no-wrap
 msgid "ContextRegistrar"
 msgstr "ContextRegistrar"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:553
-#: upstream/_guides/cdi-integration.adoc:554
-#: upstream/_guides/cdi-integration.adoc:555
+#: upstream/_guides/cdi-integration.adoc:575
+#: upstream/_guides/cdi-integration.adoc:576
+#: upstream/_guides/cdi-integration.adoc:577
 #, fuzzy
 msgid "Has access to `ANNOTATION_STORE`, `QUALIFIERS`, `INTERCEPTOR_BINDINGS`, `STEREOTYPES`"
 msgstr "Tiene acceso a `ANNOTATION_STORE`, `QUALIFIERS`, `INTERCEPTOR_BINDINGS`, `STEREOTYPES`"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:553
+#: upstream/_guides/cdi-integration.adoc:575
 #, fuzzy, no-wrap
 msgid "InjectionPointsTransformer"
 msgstr "InjectionPointsTransformer"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:554
+#: upstream/_guides/cdi-integration.adoc:576
 #, fuzzy, no-wrap
 msgid "ObserverTransformer"
 msgstr "ObservadorTransformador"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:555
+#: upstream/_guides/cdi-integration.adoc:577
 #, fuzzy, no-wrap
 msgid "BeanRegistrar"
 msgstr "BeanRegistrar"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:556
+#: upstream/_guides/cdi-integration.adoc:578
 #, fuzzy
 msgid "Has access to `ANNOTATION_STORE`, `QUALIFIERS`, `INTERCEPTOR_BINDINGS`, `STEREOTYPES`, `BEANS` (class-based beans only), `OBSERVERS` (class-based observers only), `INJECTION_POINTS`"
 msgstr "Tiene acceso a `ANNOTATION_STORE`, `QUALIFIERS`, `INTERCEPTOR_BINDINGS`, `STEREOTYPES`, `BEANS` (sólo beans basados en clases), `OBSERVERS` (sólo observadores basados en clases), `INJECTION_POINTS`"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:556
+#: upstream/_guides/cdi-integration.adoc:578
 #, fuzzy, no-wrap
 msgid "ObserverRegistrar"
 msgstr "ObservadorRegistrador"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:557
+#: upstream/_guides/cdi-integration.adoc:579
 #, fuzzy
 msgid "Has access to `ANNOTATION_STORE`, `QUALIFIERS`, `INTERCEPTOR_BINDINGS`, `STEREOTYPES`, `BEANS`, `OBSERVERS` (class-based observers only), `INJECTION_POINTS`"
 msgstr "Tiene acceso a `ANNOTATION_STORE`, `QUALIFIERS`, `INTERCEPTOR_BINDINGS`, `STEREOTYPES`, `BEANS`, `OBSERVERS` (sólo observadores de clase), `INJECTION_POINTS`"
 
 #. type: Labeled list
-#: upstream/_guides/cdi-integration.adoc:557
+#: upstream/_guides/cdi-integration.adoc:579
 #, fuzzy, no-wrap
 msgid "BeanDeploymentValidator"
 msgstr "BeanDeploymentValidator"
 
 #. type: Plain text
-#: upstream/_guides/cdi-integration.adoc:557
+#: upstream/_guides/cdi-integration.adoc:579
 #, fuzzy
 msgid "Has access to all build metadata"
 msgstr "Tiene acceso a todos los metadatos de construcción"

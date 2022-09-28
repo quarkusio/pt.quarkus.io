@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-08-05 18:15+0000\n"
+"POT-Creation-Date: 2022-09-28 11:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -316,45 +316,46 @@ msgid "package io.quarkus.deployment.pkg;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/platform.adoc:115
+#: upstream/_guides/platform.adoc:116
 #, no-wrap
 msgid ""
 "@ConfigRoot(phase = ConfigPhase.BUILD_TIME)\n"
-"public class NativeConfig {\n"
+"@ConfigMapping(prefix = \"quarkus\")\n"
+"public interface NativeConfig {\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/platform.adoc:122
+#: upstream/_guides/platform.adoc:123
 #, no-wrap
 msgid ""
 "    /**\n"
 "     * The docker image to use to do the image build\n"
 "     */\n"
-"    @ConfigItem(defaultValue = \"${platform.quarkus.native.builder-image}\")\n"
-"    public String builderImage;\n"
+"    @WithDefault(\"${platform.quarkus.native.builder-image}\")\n"
+"    String builderImage();\n"
 "}\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/platform.adoc:126
+#: upstream/_guides/platform.adoc:127
 #, fuzzy
 msgid "In this case the default value for `quarkus.native.builder-image` will be provided by the platform. The user will still be able to set the desired value for `quarkus.native.builder-image` in its `application.properties`, of course. But in case it's not customized by the user, the default value will be coming from the platform properties.  A platform properties file for the example above would contain:"
 msgstr "En este caso, el valor por defecto para `quarkus.native.builder-image` será proporcionado por la plataforma. El usuario todavía podrá establecer el valor deseado para `quarkus.native.builder-image` en su `application.properties`, por supuesto. Pero en caso de que no sea personalizado por el usuario, el valor por defecto vendrá de las propiedades de la plataforma. Un archivo de propiedades de la plataforma para el ejemplo anterior contendría:"
 
 #. type: delimited block -
-#: upstream/_guides/platform.adoc:130
+#: upstream/_guides/platform.adoc:131
 #, no-wrap
 msgid "platform.quarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-native-image:{graalvm-flavor}\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/platform.adoc:133
+#: upstream/_guides/platform.adoc:134
 #, fuzzy
 msgid "There is also a Maven plugin goal that validates the platform properties content and its artifact coordinates and also checks whether the platform properties artifact is present in the platform's BOM. Here is a sample plugin configuration:"
 msgstr "También hay un objetivo del plugin de Maven que valida el contenido de las propiedades de la plataforma y sus coordenadas de artefacto y también comprueba si el artefacto de las propiedades de la plataforma está presente en la lista de materiales de la plataforma. Aquí hay un ejemplo de configuración del plugin:"
 
 #. type: delimited block -
-#: upstream/_guides/platform.adoc:149
+#: upstream/_guides/platform.adoc:150
 #, no-wrap
 msgid ""
 "<plugin>\n"
@@ -373,43 +374,43 @@ msgid ""
 msgstr ""
 
 #. type: Title ====
-#: upstream/_guides/platform.adoc:151
+#: upstream/_guides/platform.adoc:152
 #, fuzzy, no-wrap
 msgid "Merging Quarkus Platform Properties"
 msgstr "Fusión de las propiedades de la plataforma Quarkus"
 
 #. type: Plain text
-#: upstream/_guides/platform.adoc:155
+#: upstream/_guides/platform.adoc:156
 #, fuzzy
 msgid "In case an application is importing more than one Quarkus platform and those platforms include their own platform properties artifacts, the content of those platform properties artifacts will be merged to form a single set of properties that will be used for the application build.  The order in which the properties artifacts are merged will correspond to the order in which they appear in the list of dependency version constraints of the application (in the Maven terms that will correspond to the effective list of application's managed dependencies, i.e. the flattened `managedDependencies` POM section)."
 msgstr "En caso de que una aplicación esté importando más de una plataforma Quarkus y esas plataformas incluyan sus propios artefactos de propiedades de plataforma, el contenido de esos artefactos de propiedades de plataforma se fusionará para formar un único conjunto de propiedades que se utilizará para la construcción de la aplicación. El orden en el que se fusionan los artefactos de propiedades se corresponderá con el orden en el que aparecen en la lista de restricciones de versiones de dependencias de la aplicación (en los términos de Maven que se corresponderá con la lista efectiva de dependencias gestionadas de la aplicación, es decir, la sección POM aplanada `managedDependencies` )."
 
 #. type: Plain text
-#: upstream/_guides/platform.adoc:157
+#: upstream/_guides/platform.adoc:158
 #, fuzzy
 msgid "The content of the properties artifacts found earlier will dominate over those found later among the application's dependency constraints!"
 msgstr "¡El contenido de los artefactos de propiedades encontrados antes dominará sobre los encontrados después entre las restricciones de dependencia de la aplicación!"
 
 #. type: Plain text
-#: upstream/_guides/platform.adoc:159
+#: upstream/_guides/platform.adoc:160
 #, fuzzy
 msgid "That means if a platform needs to override a certain property value defined in the platform it is based on, it will need to include its platform properties artifact into the `managedDependencies` section of its BOM before importing the base platform."
 msgstr "Esto significa que si una plataforma necesita anular un determinado valor de propiedad definido en la plataforma en la que se basa, tendrá que incluir su artefacto de propiedades de plataforma en la sección `managedDependencies` de su lista de materiales antes de importar la plataforma base."
 
 #. type: Plain text
-#: upstream/_guides/platform.adoc:161
+#: upstream/_guides/platform.adoc:162
 #, fuzzy
 msgid "For example, let's assume `org.acme:acme-quarkus-bom` platform extends the `io.quarkus:quarkus-bom` platform by importing its BOM. In case, the `org.acme:acme-quarkus-bom` platform were to override certain properties defined in the `io.quarkus:quarkus-bom-quarkus-platform-properties` included in the `io.quarkus:quarkus-bom`, the `org.acme:acme-quarkus-bom` would have to be composed as"
 msgstr "Por ejemplo, supongamos que la plataforma `org.acme:acme-quarkus-bom` extiende la plataforma `io.quarkus:quarkus-bom` importando su lista de materiales. En caso de que la plataforma `org.acme:acme-quarkus-bom` anule ciertas propiedades definidas en `io.quarkus:quarkus-bom-quarkus-platform-properties` incluidas en `io.quarkus:quarkus-bom`, la plataforma `org.acme:acme-quarkus-bom` tendría que componerse como"
 
 #. type: delimited block -
-#: upstream/_guides/platform.adoc:164 upstream/_guides/platform.adoc:189
+#: upstream/_guides/platform.adoc:165 upstream/_guides/platform.adoc:190
 #, no-wrap
 msgid "  <!-- skipped content -->\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/platform.adoc:168
+#: upstream/_guides/platform.adoc:169
 #, no-wrap
 msgid ""
 "  <artifactId>acme-quarkus-bom</artifactId>\n"
@@ -418,7 +419,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/platform.adoc:178
+#: upstream/_guides/platform.adoc:179
 #, no-wrap
 msgid ""
 "  <dependencyManagement>\n"
@@ -433,7 +434,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/platform.adoc:187
+#: upstream/_guides/platform.adoc:188
 #, no-wrap
 msgid ""
 "      <!-- The base Quarkus BOM -->\n"
@@ -447,7 +448,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/platform.adoc:191
+#: upstream/_guides/platform.adoc:192
 #, fuzzy
 msgid "That way, the `org.acme:acme-quarkus-bom` platform properties will appear before those provided by the `io.quarkus:quarkus-bom` properties and so will be dominating at build time."
 msgstr "De este modo, las propiedades de la plataforma `org.acme:acme-quarkus-bom` aparecerán antes que las proporcionadas por las propiedades de `io.quarkus:quarkus-bom` y, por tanto, serán las que dominen en el momento de la construcción."
