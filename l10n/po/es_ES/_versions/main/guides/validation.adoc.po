@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-10-15 03:08+0000\n"
+"POT-Creation-Date: 2022-10-20 03:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -166,7 +166,7 @@ msgstr ""
 
 #. type: delimited block -
 #: upstream/_versions/main/guides/validation.adoc:83
-#: upstream/_versions/main/guides/validation.adoc:432
+#: upstream/_versions/main/guides/validation.adoc:441
 #, no-wrap
 msgid "public class Book {\n"
 msgstr ""
@@ -336,7 +336,7 @@ msgstr ""
 
 #. type: delimited block -
 #: upstream/_versions/main/guides/validation.adoc:170
-#: upstream/_versions/main/guides/validation.adoc:441
+#: upstream/_versions/main/guides/validation.adoc:450
 #, no-wrap
 msgid "}\n"
 msgstr ""
@@ -778,7 +778,7 @@ msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/validation.adoc:391
-msgid "If you are using RESTEasy (Classic or Reactive), in the context of a JAX-RS endpoint, Hibernate Validator will automatically resolve the optimal locale to use from the `Accept-Language` HTTP header, provided the supported locales have been properly specified in the `application.properties`:"
+msgid "If you are using RESTEasy Reactive or RESTEasy Classic, in the context of a JAX-RS endpoint, Hibernate Validator will automatically resolve the optimal locale to use from the `Accept-Language` HTTP header, provided the supported locales have been properly specified in the `application.properties`:"
 msgstr ""
 
 #. type: delimited block -
@@ -789,34 +789,64 @@ msgid ""
 "quarkus.locales=en-US,es-ES,fr-FR\n"
 msgstr ""
 
+#. type: Plain text
+#: upstream/_versions/main/guides/validation.adoc:399
+msgid "A similar mechanism exists for GraphQL services based on the `quarkus-smallrye-graphql` extension."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/validation.adoc:401
+msgid "If this default mechanism is not sufficient and you need a custom locale resolution, you can add additional ``org.hibernate.validator.spi.messageinterpolation.LocaleResolver``s:"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/validation.adoc:403
+msgid "Any CDI bean implementing `org.hibernate.validator.spi.messageinterpolation.LocaleResolver` will be taken into account."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/validation.adoc:404
+msgid "The ``LocaleResolver``s are consulted in the order of `@Priority` (higher priority goes first)."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/validation.adoc:405
+msgid "A `LocaleResolver` may return null if it cannot resolve the locale, it will then be ignored."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/validation.adoc:406
+msgid "The first non-null locale returned by a `LocaleResolver` is the one resolved."
+msgstr ""
+
 #. type: Title ===
-#: upstream/_versions/main/guides/validation.adoc:398
+#: upstream/_versions/main/guides/validation.adoc:407
 #, no-wrap
 msgid "Validation groups for REST endpoint or service method validation"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/validation.adoc:402
+#: upstream/_versions/main/guides/validation.adoc:411
 msgid "It's sometimes necessary to enable different validation constraints for the same class when it's passed to a different method."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/validation.adoc:407
+#: upstream/_versions/main/guides/validation.adoc:416
 msgid "For example, a `Book` may need to have a `null` identifier when passed to the `post` method (because the identifier will be generated), but a non-`null` identifier when passed to the `put` method (because the method needs the identifier to know what to update)."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/validation.adoc:410
+#: upstream/_versions/main/guides/validation.adoc:419
 msgid "To address this, you can take advantage of validation groups.  Validation groups are markers that you put on your constraints in order to enable or disable them at will."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/validation.adoc:412
+#: upstream/_versions/main/guides/validation.adoc:421
 msgid "First, define the `Post` and `Put` groups, which are just Java interfaces."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/validation.adoc:421
+#: upstream/_versions/main/guides/validation.adoc:430
 #, no-wrap
 msgid ""
 "public interface ValidationGroups {\n"
@@ -828,17 +858,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/validation.adoc:426
+#: upstream/_versions/main/guides/validation.adoc:435
 msgid "Make the custom groups extend the `Default` group.  This means that whenever these groups are enabled, the `Default` group is also enabled.  This is useful if you have constraints that you want validated in both the `Post` and `Put` method: you can simply use the default group on those constraints, like on the `title` property below."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/validation.adoc:428
+#: upstream/_versions/main/guides/validation.adoc:437
 msgid "Then add the relevant constraints to `Book`, assigning the right group to each constraint:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/validation.adoc:436
+#: upstream/_versions/main/guides/validation.adoc:445
 #, no-wrap
 msgid ""
 "    @Null(groups = ValidationGroups.Post.class)\n"
@@ -847,7 +877,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/validation.adoc:439
+#: upstream/_versions/main/guides/validation.adoc:448
 #, no-wrap
 msgid ""
 "    @NotBlank\n"
@@ -855,12 +885,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/validation.adoc:444
+#: upstream/_versions/main/guides/validation.adoc:453
 msgid "Finally, add a `@ConvertGroup` annotation next to your `@Valid` annotation in your validated method."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/validation.adoc:453
+#: upstream/_versions/main/guides/validation.adoc:462
 #, no-wrap
 msgid ""
 "@Path(\"/\")\n"
@@ -872,7 +902,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/validation.adoc:460
+#: upstream/_versions/main/guides/validation.adoc:469
 #, no-wrap
 msgid ""
 "@Path(\"/\")\n"
@@ -884,17 +914,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/validation.adoc:464
+#: upstream/_versions/main/guides/validation.adoc:473
 msgid "Enable the `Post` group, meaning only constraints assigned to the `Post` (and `Default`) groups will be validated for the `book` parameter of the `post` method.  In this case, it means `Book.id` must be `null` and `Book.title` must not be blank."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/validation.adoc:467
+#: upstream/_versions/main/guides/validation.adoc:476
 msgid "Enable the `Put` group, meaning only constraints assigned to the `Put` (and `Default`) groups will be validated for the `book` parameter of the `put` method.  In this case, it means `Book.id` must not be `null` and `Book.title` must not be blank."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/validation.adoc:469
+#: upstream/_versions/main/guides/validation.adoc:478
 #, no-wrap
 msgid "Hibernate Validator Configuration Reference"
 msgstr ""
