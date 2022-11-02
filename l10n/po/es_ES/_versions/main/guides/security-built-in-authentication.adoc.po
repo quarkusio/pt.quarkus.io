@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-08-20 02:58+0000\n"
+"POT-Creation-Date: 2022-11-02 02:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -219,19 +219,70 @@ msgid "How to customize authentication exception responses"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-built-in-authentication.adoc:129
-#, fuzzy
-msgid "By default, the authentication security constraints are enforced before the JAX-RS chain starts.  Disabling the proactive authentication effectively shifts this process to the moment when the JAX-RS chain starts running thus making it possible to use JAX-RS `ExceptionMapper` to capture Quarkus Security authentication exceptions such as `io.quarkus.security.AuthenticationFailedException`, for example:"
-msgstr "Por defecto, las restricciones de seguridad de la autenticación se aplican antes de que se inicie la cadena JAX-RS. Desactivar la autenticación proactiva desplaza efectivamente este proceso al momento en que la cadena JAX-RS comienza a ejecutarse haciendo así posible el uso de JAX-RS `ExceptionMapper` para capturar excepciones de autenticación de Quarkus Security como `io.quarkus.security.AuthenticationFailedException`, por ejemplo:"
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:128
+msgid "By default, the authentication security constraints are enforced before the JAX-RS chain starts and only way to handle Quarkus Security authentication exceptions is to provide a failure handler like this one:"
+msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication.adoc:133
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:132
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:164
 #, no-wrap
 msgid "package io.quarkus.it.keycloak;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication.adoc:139
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:135
+#, no-wrap
+msgid ""
+"import javax.enterprise.context.ApplicationScoped;\n"
+"import javax.enterprise.event.Observes;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:140
+#, no-wrap
+msgid ""
+"import io.quarkus.security.AuthenticationFailedException;\n"
+"import io.vertx.core.Handler;\n"
+"import io.vertx.ext.web.Router;\n"
+"import io.vertx.ext.web.RoutingContext;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:143
+#, no-wrap
+msgid ""
+"@ApplicationScoped\n"
+"public class AuthenticationFailedExceptionHandler {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:157
+#, no-wrap
+msgid ""
+"    public void init(@Observes Router router) {\n"
+"        router.route().failureHandler(new Handler<RoutingContext>() {\n"
+"            @Override\n"
+"            public void handle(RoutingContext event) {\n"
+"                if (event.failure() instanceof AuthenticationFailedException) {\n"
+"                    event.response().setStatusCode(401).end(CUSTOMIZED_RESPONSE);\n"
+"                } else {\n"
+"                    event.next();\n"
+"                }\n"
+"            }\n"
+"        });\n"
+"    }\n"
+"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:160
+#, fuzzy
+msgid "Disabling the proactive authentication effectively shifts this process to the moment when the JAX-RS chain starts running thus making it possible to use JAX-RS `ExceptionMapper` to capture Quarkus Security authentication exceptions such as `io.quarkus.security.AuthenticationFailedException`, for example:"
+msgstr "Por defecto, las restricciones de seguridad de la autenticación se aplican antes de que se inicie la cadena JAX-RS. Desactivar la autenticación proactiva desplaza efectivamente este proceso al momento en que la cadena JAX-RS comienza a ejecutarse haciendo así posible el uso de JAX-RS `ExceptionMapper` para capturar excepciones de autenticación de Quarkus Security como `io.quarkus.security.AuthenticationFailedException`, por ejemplo:"
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:170
 #, no-wrap
 msgid ""
 "import javax.annotation.Priority;\n"
@@ -242,13 +293,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication.adoc:141
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:172
 #, no-wrap
 msgid "import io.quarkus.security.AuthenticationFailedException;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication.adoc:145
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:176
 #, no-wrap
 msgid ""
 "@Provider\n"
@@ -257,7 +308,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication.adoc:148
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:179
 #, no-wrap
 msgid ""
 "    @Context\n"
@@ -265,7 +316,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication.adoc:154
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:185
 #, no-wrap
 msgid ""
 "    @Override\n"
@@ -276,13 +327,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/security-built-in-authentication.adoc:156
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:187
 #, no-wrap
 msgid "References"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-built-in-authentication.adoc:158
+#: upstream/_versions/main/guides/security-built-in-authentication.adoc:189
 msgid "xref:security.adoc[Quarkus Security]"
 msgstr ""
 
