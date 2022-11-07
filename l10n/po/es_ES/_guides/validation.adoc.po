@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-10-19 16:10+0000\n"
+"POT-Creation-Date: 2022-11-07 17:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -177,7 +177,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/validation.adoc:83 upstream/_guides/validation.adoc:431
+#: upstream/_guides/validation.adoc:83 upstream/_guides/validation.adoc:441
 #, no-wrap
 msgid "public class Book {\n"
 msgstr ""
@@ -353,7 +353,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/validation.adoc:170 upstream/_guides/validation.adoc:440
+#: upstream/_guides/validation.adoc:170 upstream/_guides/validation.adoc:450
 #, no-wrap
 msgid "}\n"
 msgstr ""
@@ -842,51 +842,81 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/validation.adoc:390
+#: upstream/_guides/validation.adoc:391
 #, fuzzy
-msgid "If you are using RESTEasy Reactive, in the context of a JAX-RS endpoint, Hibernate Validator will automatically resolve the optimal locale to use from the `Accept-Language` HTTP header, provided the supported locales have been properly specified in the `application.properties`:"
+msgid "If you are using RESTEasy Reactive or RESTEasy Classic, in the context of a JAX-RS endpoint, Hibernate Validator will automatically resolve the optimal locale to use from the `Accept-Language` HTTP header, provided the supported locales have been properly specified in the `application.properties`:"
 msgstr "Si se utiliza RESTEasy Reactive, en el contexto de un endpoint JAX-RS, Hibernate Validator resolverá automáticamente la configuración regional óptima a utilizar a partir de la cabecera HTTP `Accept-Language`, siempre que las configuraciones regionales admitidas se hayan especificado correctamente en `application.properties`:"
 
 #. type: delimited block -
-#: upstream/_guides/validation.adoc:395
+#: upstream/_guides/validation.adoc:396
 #, no-wrap
 msgid ""
 "# The list of all the supported locales\n"
 "quarkus.locales=en-US,es-ES,fr-FR\n"
 msgstr ""
 
+#. type: Plain text
+#: upstream/_guides/validation.adoc:399
+msgid "A similar mechanism exists for GraphQL services based on the `quarkus-smallrye-graphql` extension."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/validation.adoc:401
+msgid "If this default mechanism is not sufficient and you need a custom locale resolution, you can add additional ``org.hibernate.validator.spi.messageinterpolation.LocaleResolver``s:"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/validation.adoc:403
+msgid "Any CDI bean implementing `org.hibernate.validator.spi.messageinterpolation.LocaleResolver` will be taken into account."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/validation.adoc:404
+msgid "The ``LocaleResolver``s are consulted in the order of `@Priority` (higher priority goes first)."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/validation.adoc:405
+msgid "A `LocaleResolver` may return null if it cannot resolve the locale, it will then be ignored."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/validation.adoc:406
+msgid "The first non-null locale returned by a `LocaleResolver` is the one resolved."
+msgstr ""
+
 #. type: Title ===
-#: upstream/_guides/validation.adoc:397
+#: upstream/_guides/validation.adoc:407
 #, fuzzy, no-wrap
 msgid "Validation groups for REST endpoint or service method validation"
 msgstr "Grupos de validación para la validación del punto final REST o del método de servicio"
 
 #. type: Plain text
-#: upstream/_guides/validation.adoc:401
+#: upstream/_guides/validation.adoc:411
 #, fuzzy
 msgid "It's sometimes necessary to enable different validation constraints for the same class when it's passed to a different method."
 msgstr "A veces es necesario activar diferentes restricciones de validación para la misma clase cuando se pasa a un método diferente."
 
 #. type: Plain text
-#: upstream/_guides/validation.adoc:406
+#: upstream/_guides/validation.adoc:416
 #, fuzzy
 msgid "For example, a `Book` may need to have a `null` identifier when passed to the `post` method (because the identifier will be generated), but a non-`null` identifier when passed to the `put` method (because the method needs the identifier to know what to update)."
 msgstr "Por ejemplo, un `Book` puede necesitar tener un identificador `null` cuando se pasa al método `post` (porque se generará el identificador), pero un identificador no `null` cuando se pasa al método `put` (porque el método necesita el identificador para saber qué actualizar)."
 
 #. type: Plain text
-#: upstream/_guides/validation.adoc:409
+#: upstream/_guides/validation.adoc:419
 #, fuzzy
 msgid "To address this, you can take advantage of validation groups.  Validation groups are markers that you put on your constraints in order to enable or disable them at will."
 msgstr "Para ello, puede utilizar los grupos de validación. Los grupos de validación son marcadores que se colocan en las restricciones para activarlas o desactivarlas a voluntad."
 
 #. type: Plain text
-#: upstream/_guides/validation.adoc:411
+#: upstream/_guides/validation.adoc:421
 #, fuzzy
 msgid "First, define the `Post` and `Put` groups, which are just Java interfaces."
 msgstr "En primer lugar, defina los grupos `Post` y `Put`, que no son más que interfaces Java."
 
 #. type: delimited block -
-#: upstream/_guides/validation.adoc:420
+#: upstream/_guides/validation.adoc:430
 #, no-wrap
 msgid ""
 "public interface ValidationGroups {\n"
@@ -898,19 +928,19 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/validation.adoc:425
+#: upstream/_guides/validation.adoc:435
 #, fuzzy
 msgid "Make the custom groups extend the `Default` group.  This means that whenever these groups are enabled, the `Default` group is also enabled.  This is useful if you have constraints that you want validated in both the `Post` and `Put` method: you can simply use the default group on those constraints, like on the `title` property below."
 msgstr "Haz que los grupos personalizados amplíen el grupo `Default`. Esto significa que siempre que estos grupos estén habilitados, el grupo `Default` también lo estará. Esto es útil si tienes restricciones que quieres validar tanto en el método `Post` como en el `Put`: puedes simplemente usar el grupo por defecto en esas restricciones, como en la propiedad `title` de abajo."
 
 #. type: Plain text
-#: upstream/_guides/validation.adoc:427
+#: upstream/_guides/validation.adoc:437
 #, fuzzy
 msgid "Then add the relevant constraints to `Book`, assigning the right group to each constraint:"
 msgstr "A continuación, añada las restricciones pertinentes a `Book`, asignando el grupo adecuado a cada restricción:"
 
 #. type: delimited block -
-#: upstream/_guides/validation.adoc:435
+#: upstream/_guides/validation.adoc:445
 #, no-wrap
 msgid ""
 "    @Null(groups = ValidationGroups.Post.class)\n"
@@ -919,7 +949,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/validation.adoc:438
+#: upstream/_guides/validation.adoc:448
 #, no-wrap
 msgid ""
 "    @NotBlank\n"
@@ -927,13 +957,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/validation.adoc:443
+#: upstream/_guides/validation.adoc:453
 #, fuzzy
 msgid "Finally, add a `@ConvertGroup` annotation next to your `@Valid` annotation in your validated method."
 msgstr "Por último, añada una anotación `@ConvertGroup` junto a su anotación `@Valid` en su método validado."
 
 #. type: delimited block -
-#: upstream/_guides/validation.adoc:452
+#: upstream/_guides/validation.adoc:462
 #, no-wrap
 msgid ""
 "@Path(\"/\")\n"
@@ -945,7 +975,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/validation.adoc:459
+#: upstream/_guides/validation.adoc:469
 #, no-wrap
 msgid ""
 "@Path(\"/\")\n"
@@ -957,19 +987,19 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/validation.adoc:463
+#: upstream/_guides/validation.adoc:473
 #, fuzzy
 msgid "Enable the `Post` group, meaning only constraints assigned to the `Post` (and `Default`) groups will be validated for the `book` parameter of the `post` method.  In this case, it means `Book.id` must be `null` and `Book.title` must not be blank."
 msgstr "Habilitar el grupo `Post`, lo que significa que sólo se validarán las restricciones asignadas a los grupos `Post` (y `Default`) para el parámetro `book` del método `post`. En este caso, significa que `Book.id` debe ser `null` y `Book.title` no debe estar en blanco."
 
 #. type: Plain text
-#: upstream/_guides/validation.adoc:466
+#: upstream/_guides/validation.adoc:476
 #, fuzzy
 msgid "Enable the `Put` group, meaning only constraints assigned to the `Put` (and `Default`) groups will be validated for the `book` parameter of the `put` method.  In this case, it means `Book.id` must not be `null` and `Book.title` must not be blank."
 msgstr "Habilitar el grupo `Put`, lo que significa que sólo se validarán las restricciones asignadas a los grupos `Put` (y `Default`) para el parámetro `book` del método `put`. En este caso, significa que `Book.id` no debe ser `null` y `Book.title` no debe estar en blanco."
 
 #. type: Title ==
-#: upstream/_guides/validation.adoc:468
+#: upstream/_guides/validation.adoc:478
 #, fuzzy, no-wrap
 msgid "Hibernate Validator Configuration Reference"
 msgstr "Referencia de la configuración del validador de Hibernate"
