@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-11-12 02:43+0000\n"
+"POT-Creation-Date: 2022-11-16 02:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -614,16 +614,46 @@ msgstr ""
 #. type: Title ==
 #: upstream/_versions/main/guides/rest-data-panache.adoc:325
 #, no-wrap
-msgid "Securing endpoints"
+msgid "Adding additional methods to the generated resource"
 msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/rest-data-panache.adoc:328
+msgid "You can add additional methods to the generated resources by the REST Data with Panache extension by adding these methods to the resource interface, for example:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/rest-data-panache.adoc:339
+#, no-wrap
+msgid ""
+"@ResourceProperties\n"
+"public interface PeopleResource extends PanacheEntityResource<Person, Long> {\n"
+"    @GET\n"
+"    @Path(\"/name/{name}\")\n"
+"    default List<Person> findByName(@PathParam(\"name\") String name) {\n"
+"        return Person.find(\"name = :name\", Collections.singletonMap(\"name\", name)).list();\n"
+"    }\n"
+"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/rest-data-panache.adoc:342
+msgid "And this method will be exposed along with the generated methods using `http://localhost:8080/people/name/Johan`."
+msgstr ""
+
+#. type: Title ==
+#: upstream/_versions/main/guides/rest-data-panache.adoc:343
+#, no-wrap
+msgid "Securing endpoints"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/rest-data-panache.adoc:346
 msgid "REST Data with Panache will use the Security annotations within the package `javax.annotation.security` that are defined on your resource interfaces:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/rest-data-panache.adoc:334
+#: upstream/_versions/main/guides/rest-data-panache.adoc:352
 #, no-wrap
 msgid ""
 "import javax.annotation.security.DenyAll;\n"
@@ -631,7 +661,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/rest-data-panache.adoc:341
+#: upstream/_versions/main/guides/rest-data-panache.adoc:359
 #, no-wrap
 msgid ""
 "@DenyAll\n"
@@ -643,69 +673,116 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:344
+#: upstream/_versions/main/guides/rest-data-panache.adoc:362
 msgid "Additionally, if you are only interested in specifying the roles that are allowed to use the resources, the `@ResourceProperties` and `@MethodProperties` annotations have the field `rolesAllowed` to list the security roles permitted to access the resource or operation."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/rest-data-panache.adoc:345
+#: upstream/_versions/main/guides/rest-data-panache.adoc:363
 #, no-wrap
-msgid "Query parameters"
+msgid "Query parameters to list entities"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:348
-msgid "REST Data with Panache supports the following query parameters with the generated resources."
+#: upstream/_versions/main/guides/rest-data-panache.adoc:366
+msgid "REST Data with Panache supports the following query parameters to get the list of entities:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:351
+#: upstream/_versions/main/guides/rest-data-panache.adoc:369
 msgid "`page` - a page number which should be returned by a list operation.  It applies to the paged resources only and is a number starting with 0. Default is 0."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:353
+#: upstream/_versions/main/guides/rest-data-panache.adoc:371
 msgid "`size` - a page size which should be returned by a list operation.  It applies to the paged resources only and is a number starting with 1. Default is 20."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:356
+#: upstream/_versions/main/guides/rest-data-panache.adoc:374
 msgid "`sort` - a comma separated list of fields which should be used for sorting a result of a list operation.  Fields are sorted in the ascending order unless they're prefixed with a `-`.  E.g. `?sort=name,-age` will sort the result by the name ascending by the age descending."
 msgstr ""
 
+#. type: Plain text
+#: upstream/_versions/main/guides/rest-data-panache.adoc:376
+msgid "For example, if you want to get two `People` entities in the first page, you should call `http://localhost:8080/people?page=0&size=2`, and the response should look like:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/rest-data-panache.adoc:391
+#: upstream/_versions/main/guides/rest-data-panache.adoc:493
+#, no-wrap
+msgid ""
+"[\n"
+"  {\n"
+"    \"id\": 1,\n"
+"    \"name\": \"John Johnson\",\n"
+"    \"birth\": \"1988-01-10\"\n"
+"  },\n"
+"  {\n"
+"    \"id\": 2,\n"
+"    \"name\": \"Peter Peterson\",\n"
+"    \"birth\": \"1986-11-20\"\n"
+"  }\n"
+"]\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/rest-data-panache.adoc:394
+msgid "Additionally, you can also filter by the entity fields by adding a query param with the name of the field and the value, for example, calling `http://localhost:8080/people?name=Peter Peterson` would return:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/rest-data-panache.adoc:404
+#, no-wrap
+msgid ""
+"[\n"
+"  {\n"
+"    \"id\": 2,\n"
+"    \"name\": \"Peter Peterson\",\n"
+"    \"birth\": \"1986-11-20\"\n"
+"  }\n"
+"]\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/rest-data-panache.adoc:407
+msgid "Filtering by fields is only supported for primitive types."
+msgstr ""
+
 #. type: Title ==
-#: upstream/_versions/main/guides/rest-data-panache.adoc:357
+#: upstream/_versions/main/guides/rest-data-panache.adoc:408
 #, no-wrap
 msgid "Resource Method Before/After Listeners"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:360
+#: upstream/_versions/main/guides/rest-data-panache.adoc:411
 msgid "REST Data with Panache supports the subscription to the following resource method hooks:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:362
+#: upstream/_versions/main/guides/rest-data-panache.adoc:413
 msgid "Before/After add resource"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:363
+#: upstream/_versions/main/guides/rest-data-panache.adoc:414
 msgid "Before/After update resource"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:364
+#: upstream/_versions/main/guides/rest-data-panache.adoc:415
 msgid "Before/After delete resource"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:366
+#: upstream/_versions/main/guides/rest-data-panache.adoc:417
 msgid "To register your resource method listener, you need to provide a bean that implements the interface `RestDataResourceMethodListener`, for example:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/rest-data-panache.adoc:376
+#: upstream/_versions/main/guides/rest-data-panache.adoc:427
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -718,30 +795,30 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/rest-data-panache.adoc:378
+#: upstream/_versions/main/guides/rest-data-panache.adoc:429
 #, no-wrap
 msgid "Response body examples"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:382
+#: upstream/_versions/main/guides/rest-data-panache.adoc:433
 msgid "As mentioned above REST Data with Panache supports the `application/json` and `application/hal+json` response content types.  Here are a couple of examples of how a response body would look like for the `get` and `list` operations assuming there are five `Person` records in a database."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/rest-data-panache.adoc:383
+#: upstream/_versions/main/guides/rest-data-panache.adoc:434
 #, no-wrap
 msgid "GET /people/1"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:386
-#: upstream/_versions/main/guides/rest-data-panache.adoc:427
+#: upstream/_versions/main/guides/rest-data-panache.adoc:437
+#: upstream/_versions/main/guides/rest-data-panache.adoc:478
 msgid "`Accept: application/json`"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/rest-data-panache.adoc:394
+#: upstream/_versions/main/guides/rest-data-panache.adoc:445
 #, no-wrap
 msgid ""
 "{\n"
@@ -752,13 +829,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:397
-#: upstream/_versions/main/guides/rest-data-panache.adoc:446
+#: upstream/_versions/main/guides/rest-data-panache.adoc:448
+#: upstream/_versions/main/guides/rest-data-panache.adoc:497
 msgid "`Accept: application/hal+json`"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/rest-data-panache.adoc:422
+#: upstream/_versions/main/guides/rest-data-panache.adoc:473
 #, no-wrap
 msgid ""
 "{\n"
@@ -786,31 +863,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/rest-data-panache.adoc:424
+#: upstream/_versions/main/guides/rest-data-panache.adoc:475
 #, no-wrap
 msgid "GET /people?page=0&size=2"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/rest-data-panache.adoc:442
-#, no-wrap
-msgid ""
-"[\n"
-"  {\n"
-"    \"id\": 1,\n"
-"    \"name\": \"John Johnson\",\n"
-"    \"birth\": \"1988-01-10\"\n"
-"  },\n"
-"  {\n"
-"    \"id\": 2,\n"
-"    \"name\": \"Peter Peterson\",\n"
-"    \"birth\": \"1986-11-20\"\n"
-"  }\n"
-"]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_versions/main/guides/rest-data-panache.adoc:514
+#: upstream/_versions/main/guides/rest-data-panache.adoc:565
 #, no-wrap
 msgid ""
 "{\n"
@@ -881,26 +940,26 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:517
+#: upstream/_versions/main/guides/rest-data-panache.adoc:568
 msgid "Both responses would also contain these headers:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:519
+#: upstream/_versions/main/guides/rest-data-panache.adoc:570
 msgid "Link: < http://example.com/people?page=0&size=2 >; rel=\"first\""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:520
+#: upstream/_versions/main/guides/rest-data-panache.adoc:571
 msgid "Link: < http://example.com/people?page=2&size=2 >; rel=\"last\""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:521
+#: upstream/_versions/main/guides/rest-data-panache.adoc:572
 msgid "Link: < http://example.com/people?page=1&size=2 >; rel=\"next\""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/rest-data-panache.adoc:522
+#: upstream/_versions/main/guides/rest-data-panache.adoc:573
 msgid "A `previous` link header (and hal link) would not be included, because the previous page does not exist."
 msgstr ""
