@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-11-09 13:22+0000\n"
+"POT-Creation-Date: 2022-12-06 18:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -164,127 +164,153 @@ msgid "Linux"
 msgstr "Linux"
 
 #. type: Plain text
-#: upstream/_guides/podman.adoc:77
+#: upstream/_guides/podman.adoc:76
 #, fuzzy
-msgid "The Podman package is available in several Linux distributions.  Podman can be used the same way as Docker with the `podman-docker` package.  To install it for your OS, please refer to the https://podman.io/getting-started/installation[Podman installation guide].  Below is the short installation instruction for popular Linux distributions:"
+msgid "The Podman package is available in several Linux distributions.  Podman can in most cases be used as an drop-in-replacement for Docker, either with the `podman-docker` package, or using an alias (`alias docker=podman`).  To install it for your Linux OS, please refer to the https://podman.io/getting-started/installation#installing-on-linux[Podman installation guide]."
 msgstr "El paquete Podman está disponible en varias distribuciones de Linux. Para instalarlo en su sistema operativo, consulte la  link:https://podman.io/getting-started/installation[guía de instalación de Podman]. A continuación se muestran las breves instrucciones de instalación para las distribuciones de Linux más populares:"
 
-#. type: Title ====
-#: upstream/_guides/podman.adoc:78
-#, fuzzy, no-wrap
-msgid "Fedora"
-msgstr "Fedora"
-
-#. type: delimited block -
-#: upstream/_guides/podman.adoc:83
-#, no-wrap
-msgid "sudo dnf install podman podman-docker docker-compose\n"
-msgstr ""
-
-#. type: Title ====
-#: upstream/_guides/podman.adoc:85
-#, fuzzy, no-wrap
-msgid "Ubuntu (21.04 and later)"
-msgstr "Ubuntu (21.04 y posterior)"
-
-#. type: delimited block -
-#: upstream/_guides/podman.adoc:90
-#, no-wrap
-msgid "sudo apt install podman podman-docker docker-compose\n"
-msgstr ""
-
 #. type: Title ===
-#: upstream/_guides/podman.adoc:92
+#: upstream/_guides/podman.adoc:77
 #, fuzzy, no-wrap
 msgid "Setting DOCKER_HOST on Linux"
 msgstr "Configuración de DOCKER_HOST en Linux"
 
 #. type: Plain text
-#: upstream/_guides/podman.adoc:100
+#: upstream/_guides/podman.adoc:84
 #, fuzzy
-msgid "Podman supports two modes of operation: rootful, in which case the container runs as root on the host system, and rootless, where the container runs under a standard Unix user account.  On Linux, the REST API Unix socket is, by default, restricted to only allow the root user to access it.  This prevents someone from using a container to achieve a privilege escalation on the syetem.  While these restrictions can be softened to allow a special group instead of just root, the recommended approach is to use rootless Podman on Linux.  To use rootless Podman, you need to set a DOCKER_HOST environment variable to point to the user-specific socket.  In both cases, you need to start the REST API by enabling the Podman socket service through systemd."
+msgid "Podman supports two modes of operation: rootful, in which case the container runs as root on the host system, and rootless, where the container runs under a standard Unix user account.  On Linux, the REST API Unix socket is, by default, restricted to only allow the root user to access it.  This prevents someone from using a container to achieve a privilege escalation on the system.  While these restrictions can be softened to allow a special group instead of just root, the recommended approach is to use rootless Podman on Linux.  To use rootless Podman, you need to set a `DOCKER_HOST` environment variable to point to the user-specific socket."
 msgstr "Podman soporta dos modos de funcionamiento: rootful, en cuyo caso el contenedor se ejecuta como root en el sistema anfitrión, y rootless, donde el contenedor se ejecuta bajo una cuenta de usuario Unix estándar. En Linux, el socket Unix de la API REST está, por defecto, restringido para que sólo el usuario root pueda acceder a él. Esto evita que alguien utilice un contenedor para lograr una escalada de privilegios en el sistema. Aunque estas restricciones pueden suavizarse para permitir un grupo especial en lugar de sólo root, el enfoque recomendado es utilizar Podman sin raíz en Linux. Para utilizar Podman sin raíz, es necesario establecer una variable de entorno DOCKER_HOST para que apunte al socket específico del usuario. En ambos casos, es necesario iniciar la API REST habilitando el servicio de socket de Podman a través de systemd."
 
-#. type: delimited block -
-#: upstream/_guides/podman.adoc:107
-#, no-wrap
-msgid ""
-"# Enable the podman socket with Docker REST API (only needs to be done once)\n"
-"systemctl --user enable podman.socket --now\n"
-"# Set the required environment variables (need to be run everytime or added to profile)\n"
+#. type: Plain text
+#: upstream/_guides/podman.adoc:86
+msgid "In both cases, you need to start the REST API by enabling the Podman socket service through systemd, or at least by making sure Podman is running as a service."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/podman.adoc:109
+#: upstream/_guides/podman.adoc:91
 #, no-wrap
-msgid "export DOCKER_HOST=unix:///run/user/${UID}/podman/podman.sock\n"
+msgid ""
+"# Example 1: Enable the podman socket with Docker REST API with systemd (only needs to be done once)\n"
+"systemctl --user enable podman.socket --now\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/podman.adoc:97
+#, no-wrap
+msgid ""
+"# Example 2: Enable the podman socket with Docker REST API on a system where systemd is not running (WSL etc)\n"
+"podman system service --time=0\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/podman.adoc:113
+#: upstream/_guides/podman.adoc:100
+msgid "Then, you can obtain the path of the socket with the following command:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/podman.adoc:104
+#, no-wrap
+msgid "$ podman info | grep -A2 'remoteSocket'\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/podman.adoc:108
+#, no-wrap
+msgid ""
+"remoteSocket:\n"
+"  exists: true\n"
+"  path: /path/to/podman.sock\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/podman.adoc:111
+msgid "Setting the `DOCKER_HOST` environment variable must be done every time or added to the profile:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/podman.adoc:115
+#, no-wrap
+msgid "export DOCKER_HOST=unix:///path/to/podman.sock <1>\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/podman.adoc:117
+msgid "Replace `/path/to/podman.sock` with the path you obtained previously."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/podman.adoc:119
 #, fuzzy
 msgid "For a detailed explanation, see this https://quarkus.io/blog/quarkus-devservices-testcontainers-podman/[blog article]."
 msgstr "Para una explicación detallada, consulte este  link:https://quarkus.io/blog/quarkus-devservices-testcontainers-podman/[artículo del blog]."
 
 #. type: Title ==
-#: upstream/_guides/podman.adoc:114
+#: upstream/_guides/podman.adoc:120
 #, fuzzy, no-wrap
 msgid "After installation"
 msgstr "Después de la instalación"
 
 #. type: Title ===
-#: upstream/_guides/podman.adoc:116
+#: upstream/_guides/podman.adoc:122
 #, fuzzy, no-wrap
 msgid "Testcontainers privileges"
 msgstr "Privilegios de los contenedores de prueba"
 
 #. type: Plain text
-#: upstream/_guides/podman.adoc:119
+#: upstream/_guides/podman.adoc:125
 #, fuzzy
 msgid "Edit `~/.testcontainers.properties` and add the following line"
 msgstr "Edite `~/.testcontainers.properties` y añada la siguiente línea"
 
 #. type: delimited block -
-#: upstream/_guides/podman.adoc:123
+#: upstream/_guides/podman.adoc:129
 #, no-wrap
 msgid "ryuk.container.privileged=true\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/podman.adoc:126
+#: upstream/_guides/podman.adoc:132
 #, fuzzy
 msgid "Alternatively, you can disable ryuk:"
 msgstr "Como alternativa, puedes desactivar ryuk:"
 
 #. type: delimited block -
-#: upstream/_guides/podman.adoc:130
+#: upstream/_guides/podman.adoc:136
 #, no-wrap
 msgid "export TESTCONTAINERS_RYUK_DISABLED=true #not recommended - see above!\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/podman.adoc:134
+#: upstream/_guides/podman.adoc:140
 #, fuzzy
 msgid "This has the disadvantage of https://github.com/containers/podman/discussions/14238[disabling container cleanup], so you may find stale containers hanging around.  This can be a problem if you're running automated tests."
 msgstr "Esto tiene la desventaja de  link:https://github.com/containers/podman/discussions/14238[deshabilitar la limpieza de los] contenedores, por lo que puede encontrar contenedores viejos dando vueltas. Esto puede ser un problema si estás ejecutando pruebas automatizadas."
 
 #. type: Title ==
-#: upstream/_guides/podman.adoc:135
+#: upstream/_guides/podman.adoc:141
 #, fuzzy, no-wrap
 msgid "Short names of images"
 msgstr "Nombres cortos de las imágenes"
 
 #. type: Plain text
-#: upstream/_guides/podman.adoc:139
+#: upstream/_guides/podman.adoc:145
 #, fuzzy
 msgid "Testcontainers and Quarkus Dev Services also expect the container service they make requests against to be non-interactive.  In case you have multiple registries configured in your Docker or Podman configuration, and when using short image names, Podman responds with a prompt asking which registry should be used to pull images."
 msgstr "Testcontainers y Quarkus Dev Services también esperan que el servicio de contenedores contra el que hacen peticiones no sea interactivo. En caso de que tengas varios registros configurados en tu configuración de Docker o Podman, y cuando uses nombres de imagen cortos, Podman responde con un aviso preguntando qué registro debe usarse para extraer imágenes."
 
 #. type: Plain text
-#: upstream/_guides/podman.adoc:142
+#: upstream/_guides/podman.adoc:148
 #, fuzzy
 msgid "While we recommend you to avoid short names and always use fully specified names including the registry, Testcontainers unfortunately relies on short names internally for the time being.  If you are using Testcontainers, either directly or through Dev Services, you need to disable this prompt by setting the `short-name-mode=\"disabled\"` configuration property of Podman in `/etc/containers/registries.conf`."
 msgstr "Aunque le recomendamos que evite los nombres cortos y que utilice siempre nombres completamente especificados incluyendo el registro, Testcontainers lamentablemente confía en los nombres cortos internamente por el momento. Si está utilizando Testcontainers, ya sea directamente o a través de Dev Services, necesita desactivar este aviso estableciendo la propiedad de configuración `short-name-mode=\"disabled\"` de Podman en `/etc/containers/registries.conf`."
+
+#, fuzzy
+#~ msgid "Fedora"
+#~ msgstr "Fedora"
+
+#, fuzzy
+#~ msgid "Ubuntu (21.04 and later)"
+#~ msgstr "Ubuntu (21.04 y posterior)"
 
 #, fuzzy
 #~ msgid "Podman is a daemonless container engine. Most Quarkus Dev Services and Testcontainers expect a running Docker daemon listening at a Unix socket.  That's why the following steps are required."
