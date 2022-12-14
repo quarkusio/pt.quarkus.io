@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-10-19 16:10+0000\n"
+"POT-Creation-Date: 2022-12-14 18:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -835,3 +835,50 @@ msgstr "Modo Dev"
 #, fuzzy
 msgid "By default, when starting the application in dev mode, a gRPC server is started, even if no services are configured.  You can configure the gRPC extension's dev mode behavior using the following properties."
 msgstr "Por defecto, cuando se inicia la aplicación en modo dev, se inicia un servidor gRPC, incluso si no hay servicios configurados. Puedes configurar el comportamiento del modo dev de la extensión gRPC usando las siguientes propiedades."
+
+#. type: Title ==
+#: upstream/_guides/grpc-service-consumption.adoc:408
+#, no-wrap
+msgid "Inject mock clients"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/grpc-service-consumption.adoc:411
+msgid "In your `@QuarkuTest`, you can use `@InjectMock` to inject the Mutiny client of a gRPC service:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/grpc-service-consumption.adoc:416
+#, no-wrap
+msgid ""
+"@QuarkusTest\n"
+"public class GrpcMockTest {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/grpc-service-consumption.adoc:420
+#, no-wrap
+msgid ""
+"    @InjectMock\n"
+"    @GrpcClient(\"hello\")\n"
+"    Greeter greeter;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/grpc-service-consumption.adoc:429
+#, no-wrap
+msgid ""
+"    @Test\n"
+"    void test1() {\n"
+"        HelloRequest request = HelloRequest.newBuilder().setName(\"neo\").build();\n"
+"        Mockito.when(greeter.sayHello(Mockito.any(HelloRequest.class)))\n"
+"                .thenReturn(Uni.createFrom().item(HelloReply.newBuilder().setMessage(\"hello neo\").build()));\n"
+"        Assertions.assertEquals(greeter.sayHello(request).await().indefinitely().getMessage(), \"hello neo\");\n"
+"    }\n"
+"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/grpc-service-consumption.adoc:431
+msgid "Only the Mutiny client can be _mocked_, channels, and other stubs cannot be mocked."
+msgstr ""

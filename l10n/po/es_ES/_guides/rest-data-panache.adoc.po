@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-11-16 17:09+0000\n"
+"POT-Creation-Date: 2022-12-14 18:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -649,18 +649,48 @@ msgstr "`rolesAllowed` - Lista de los roles de seguridad permitidos para acceder
 
 #. type: Title ==
 #: upstream/_guides/rest-data-panache.adoc:325
+#, no-wrap
+msgid "Adding additional methods to the generated resource"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:328
+msgid "You can add additional methods to the generated resources by the REST Data with Panache extension by adding these methods to the resource interface, for example:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/rest-data-panache.adoc:339
+#, no-wrap
+msgid ""
+"@ResourceProperties\n"
+"public interface PeopleResource extends PanacheEntityResource<Person, Long> {\n"
+"    @GET\n"
+"    @Path(\"/name/{name}\")\n"
+"    default List<Person> findByName(@PathParam(\"name\") String name) {\n"
+"        return Person.find(\"name = :name\", Collections.singletonMap(\"name\", name)).list();\n"
+"    }\n"
+"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:342
+msgid "And this method will be exposed along with the generated methods using `http://localhost:8080/people/name/Johan`."
+msgstr ""
+
+#. type: Title ==
+#: upstream/_guides/rest-data-panache.adoc:343
 #, fuzzy, no-wrap
 msgid "Securing endpoints"
 msgstr "Asegurar los puntos finales"
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:328
+#: upstream/_guides/rest-data-panache.adoc:346
 #, fuzzy
 msgid "REST Data with Panache will use the Security annotations within the package `javax.annotation.security` that are defined on your resource interfaces:"
 msgstr "REST Data with Panache utilizará las anotaciones de seguridad dentro del paquete `javax.annotation.security` que se definen en sus interfaces de recursos:"
 
 #. type: delimited block -
-#: upstream/_guides/rest-data-panache.adoc:334
+#: upstream/_guides/rest-data-panache.adoc:352
 #, no-wrap
 msgid ""
 "import javax.annotation.security.DenyAll;\n"
@@ -668,7 +698,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/rest-data-panache.adoc:341
+#: upstream/_guides/rest-data-panache.adoc:359
 #, no-wrap
 msgid ""
 "@DenyAll\n"
@@ -680,68 +710,205 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:344
+#: upstream/_guides/rest-data-panache.adoc:362
 #, fuzzy
 msgid "Additionally, if you are only interested in specifying the roles that are allowed to use the resources, the `@ResourceProperties` and `@MethodProperties` annotations have the field `rolesAllowed` to list the security roles permitted to access the resource or operation."
 msgstr "Además, si sólo le interesa especificar los roles que están autorizados a utilizar los recursos, las anotaciones `@ResourceProperties` y `@MethodProperties` tienen el campo `rolesAllowed` para enumerar los roles de seguridad permitidos para acceder al recurso o la operación."
 
 #. type: Title ==
-#: upstream/_guides/rest-data-panache.adoc:345
+#: upstream/_guides/rest-data-panache.adoc:363
 #, fuzzy, no-wrap
-msgid "Query parameters"
+msgid "Query parameters to list entities"
 msgstr "Parámetros de consulta"
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:348
+#: upstream/_guides/rest-data-panache.adoc:366
 #, fuzzy
-msgid "REST Data with Panache supports the following query parameters with the generated resources."
+msgid "REST Data with Panache supports the following query parameters to get the list of entities:"
 msgstr "REST Data with Panache admite los siguientes parámetros de consulta con los recursos generados."
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:351
+#: upstream/_guides/rest-data-panache.adoc:369
 #, fuzzy
 msgid "`page` - a page number which should be returned by a list operation.  It applies to the paged resources only and is a number starting with 0. Default is 0."
 msgstr "`page` - un número de página que debe ser devuelto por una operación de lista. Se aplica sólo a los recursos paginados y es un número que empieza por 0. Por defecto es 0."
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:353
+#: upstream/_guides/rest-data-panache.adoc:371
 #, fuzzy
 msgid "`size` - a page size which should be returned by a list operation.  It applies to the paged resources only and is a number starting with 1. Default is 20."
 msgstr "`size` - un tamaño de página que debe ser devuelto por una operación de lista. Se aplica sólo a los recursos paginados y es un número que empieza por 1. Por defecto es 20."
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:356
+#: upstream/_guides/rest-data-panache.adoc:374
 #, fuzzy
 msgid "`sort` - a comma separated list of fields which should be used for sorting a result of a list operation.  Fields are sorted in the ascending order unless they're prefixed with a `-`.  E.g. `?sort=name,-age` will sort the result by the name ascending by the age descending."
 msgstr "`sort` - una lista separada por comas de los campos que deben utilizarse para ordenar el resultado de una operación de lista. Los campos se ordenan de forma ascendente a menos que lleven el prefijo `-`. Por ejemplo, `?sort=name,-age` ordenará el resultado por el nombre de forma ascendente y por la edad de forma descendente."
 
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:375
+msgid "`namedQuery` - a named query that should be configured at entity level using the annotation `@NamedQuery`."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:377
+msgid "For example, if you want to get two `People` entities in the first page, you should call `http://localhost:8080/people?page=0&size=2`, and the response should look like:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/rest-data-panache.adoc:392
+#: upstream/_guides/rest-data-panache.adoc:513
+#, no-wrap
+msgid ""
+"[\n"
+"  {\n"
+"    \"id\": 1,\n"
+"    \"name\": \"John Johnson\",\n"
+"    \"birth\": \"1988-01-10\"\n"
+"  },\n"
+"  {\n"
+"    \"id\": 2,\n"
+"    \"name\": \"Peter Peterson\",\n"
+"    \"birth\": \"1986-11-20\"\n"
+"  }\n"
+"]\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:395
+msgid "Additionally, you can also filter by the entity fields by adding a query param with the name of the field and the value, for example, calling `http://localhost:8080/people?name=Peter Peterson` would return:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/rest-data-panache.adoc:405
+#, no-wrap
+msgid ""
+"[\n"
+"  {\n"
+"    \"id\": 2,\n"
+"    \"name\": \"Peter Peterson\",\n"
+"    \"birth\": \"1986-11-20\"\n"
+"  }\n"
+"]\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:408
+msgid "Filtering by fields is only supported for primitive types."
+msgstr ""
+
 #. type: Title ==
-#: upstream/_guides/rest-data-panache.adoc:357
+#: upstream/_guides/rest-data-panache.adoc:409
+#, no-wrap
+msgid "Complex filtering to list entities using @NamedQuery"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:412
+msgid "You can specify a named query to filter when listing the entities. For example, having the following named query in your entity:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/rest-data-panache.adoc:420
+#, no-wrap
+msgid ""
+"@Entity\n"
+"@NamedQuery(name = \"Person.containsInName\", query = \"from Person where name like CONCAT('%', CONCAT(:name, '%'))\")\n"
+"public class Person extends PanacheEntity {\n"
+"  String name;\n"
+"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:423
+msgid "In this example, we have added a named query to list all the persons that contains some text in the `name` field."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:425
+msgid "Next, we can set a query param `namedQuery` when listing the entities using the generated resource with the name of the named query that we want to use, for example, calling `http://localhost:8080/people?namedQuery=Person.containsInName&name=ter` would return all the persons which name contains the text \"ter\"."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:427
+msgid "For more information about how named queries work, go to https://quarkus.io/guides/hibernate-orm-panache#named-queries[the Hibernate ORM guide] or to https://quarkus.io/guides/hibernate-reactive-panache#named-queries[the Hibernate Reactive guide]."
+msgstr ""
+
+#. type: Title ==
+#: upstream/_guides/rest-data-panache.adoc:428
+#, no-wrap
+msgid "Resource Method Before/After Listeners"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:431
+#, fuzzy
+msgid "REST Data with Panache supports the subscription to the following resource method hooks:"
+msgstr "REST Data with Panache admite los siguientes parámetros de consulta con los recursos generados."
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:433
+#, fuzzy
+msgid "Before/After add resource"
+msgstr "El recurso generado"
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:434
+#, fuzzy
+msgid "Before/After update resource"
+msgstr "El recurso generado"
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:435
+#, fuzzy
+msgid "Before/After delete resource"
+msgstr "El recurso generado"
+
+#. type: Plain text
+#: upstream/_guides/rest-data-panache.adoc:437
+msgid "To register your resource method listener, you need to provide a bean that implements the interface `RestDataResourceMethodListener`, for example:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/rest-data-panache.adoc:447
+#, no-wrap
+msgid ""
+"@ApplicationScoped\n"
+"public class PeopleRestDataResourceMethodListener implements RestDataResourceMethodListener<Person> {\n"
+"    @Override\n"
+"    public void onBeforeAdd(Person person) {\n"
+"        System.out.println(\"Before Save Person: \" + person.name);\n"
+"    }\n"
+"}\n"
+msgstr ""
+
+#. type: Title ==
+#: upstream/_guides/rest-data-panache.adoc:449
 #, fuzzy, no-wrap
 msgid "Response body examples"
 msgstr "Ejemplos de cuerpo de respuesta"
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:361
+#: upstream/_guides/rest-data-panache.adoc:453
 #, fuzzy
 msgid "As mentioned above REST Data with Panache supports the `application/json` and `application/hal+json` response content types.  Here are a couple of examples of how a response body would look like for the `get` and `list` operations assuming there are five `Person` records in a database."
 msgstr "Como se ha mencionado anteriormente, REST Data with Panache admite los tipos de contenido de respuesta `application/json` y `application/hal+json`. A continuación se muestran un par de ejemplos de cómo sería el cuerpo de una respuesta para las operaciones `get` y `list` suponiendo que hay cinco registros `Person` en una base de datos."
 
 #. type: Title ===
-#: upstream/_guides/rest-data-panache.adoc:362
+#: upstream/_guides/rest-data-panache.adoc:454
 #, fuzzy, no-wrap
 msgid "GET /people/1"
 msgstr "GET /people/1"
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:365
-#: upstream/_guides/rest-data-panache.adoc:406
+#: upstream/_guides/rest-data-panache.adoc:457
+#: upstream/_guides/rest-data-panache.adoc:498
 #, fuzzy
 msgid "`Accept: application/json`"
 msgstr "`Accept: application/json`"
 
 #. type: delimited block -
-#: upstream/_guides/rest-data-panache.adoc:373
+#: upstream/_guides/rest-data-panache.adoc:465
 #, no-wrap
 msgid ""
 "{\n"
@@ -752,14 +919,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:376
-#: upstream/_guides/rest-data-panache.adoc:425
+#: upstream/_guides/rest-data-panache.adoc:468
+#: upstream/_guides/rest-data-panache.adoc:517
 #, fuzzy
 msgid "`Accept: application/hal+json`"
 msgstr "`Accept: application/hal+json`"
 
 #. type: delimited block -
-#: upstream/_guides/rest-data-panache.adoc:401
+#: upstream/_guides/rest-data-panache.adoc:493
 #, no-wrap
 msgid ""
 "{\n"
@@ -787,31 +954,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/rest-data-panache.adoc:403
+#: upstream/_guides/rest-data-panache.adoc:495
 #, fuzzy, no-wrap
 msgid "GET /people?page=0&size=2"
 msgstr "GET /people?page=0&amp;size=2"
 
 #. type: delimited block -
-#: upstream/_guides/rest-data-panache.adoc:421
-#, no-wrap
-msgid ""
-"[\n"
-"  {\n"
-"    \"id\": 1,\n"
-"    \"name\": \"John Johnson\",\n"
-"    \"birth\": \"1988-01-10\"\n"
-"  },\n"
-"  {\n"
-"    \"id\": 2,\n"
-"    \"name\": \"Peter Peterson\",\n"
-"    \"birth\": \"1986-11-20\"\n"
-"  }\n"
-"]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/rest-data-panache.adoc:493
+#: upstream/_guides/rest-data-panache.adoc:585
 #, no-wrap
 msgid ""
 "{\n"
@@ -882,31 +1031,31 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:496
+#: upstream/_guides/rest-data-panache.adoc:588
 #, fuzzy
 msgid "Both responses would also contain these headers:"
 msgstr "Ambas respuestas contendrían también estas cabeceras:"
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:498
+#: upstream/_guides/rest-data-panache.adoc:590
 #, fuzzy
 msgid "Link: < http://example.com/people?page=0&size=2 >; rel=\"first\""
 msgstr "Enlace: &lt;  http://example.com/people?page=0&amp;size=2  &gt;; rel=\"first\""
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:499
+#: upstream/_guides/rest-data-panache.adoc:591
 #, fuzzy
 msgid "Link: < http://example.com/people?page=2&size=2 >; rel=\"last\""
 msgstr "Enlace: &lt;  http://example.com/people?page=2&amp;size=2  &gt;; rel=\"last\""
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:500
+#: upstream/_guides/rest-data-panache.adoc:592
 #, fuzzy
 msgid "Link: < http://example.com/people?page=1&size=2 >; rel=\"next\""
 msgstr "Enlace: &lt;  http://example.com/people?page=1&amp;size=2  &gt;; rel=\"next\""
 
 #. type: Plain text
-#: upstream/_guides/rest-data-panache.adoc:501
+#: upstream/_guides/rest-data-panache.adoc:593
 #, fuzzy
 msgid "A `previous` link header (and hal link) would not be included, because the previous page does not exist."
 msgstr "Una cabecera de enlace `previous` (y un enlace hal) no se incluiría, porque la página anterior no existe."
