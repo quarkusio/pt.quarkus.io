@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-12-14 02:38+0000\n"
+"POT-Creation-Date: 2022-12-17 02:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -335,7 +335,7 @@ msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:191
-msgid "By default, the authentication security constraints are enforced before the JAX-RS chain starts and only way to handle Quarkus Security authentication exceptions is to provide a failure handler like this one:"
+msgid "You can use JAX-RS `ExceptionMapper` to capture Quarkus Security authentication exceptions such as `io.quarkus.security.AuthenticationFailedException`, for example:"
 msgstr ""
 
 #. type: delimited block -
@@ -346,57 +346,7 @@ msgid "package io.quarkus.it.keycloak;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:198
-#, no-wrap
-msgid ""
-"import javax.enterprise.context.ApplicationScoped;\n"
-"import javax.enterprise.event.Observes;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:203
-#, no-wrap
-msgid ""
-"import io.quarkus.security.AuthenticationFailedException;\n"
-"import io.vertx.core.Handler;\n"
-"import io.vertx.ext.web.Router;\n"
-"import io.vertx.ext.web.RoutingContext;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:206
-#, no-wrap
-msgid ""
-"@ApplicationScoped\n"
-"public class AuthenticationFailedExceptionHandler {\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:220
-#, no-wrap
-msgid ""
-"    public void init(@Observes Router router) {\n"
-"        router.route().failureHandler(new Handler<RoutingContext>() {\n"
-"            @Override\n"
-"            public void handle(RoutingContext event) {\n"
-"                if (event.failure() instanceof AuthenticationFailedException) {\n"
-"                    event.response().setStatusCode(401).end(CUSTOMIZED_RESPONSE);\n"
-"                } else {\n"
-"                    event.next();\n"
-"                }\n"
-"            }\n"
-"        });\n"
-"    }\n"
-"}\n"
-msgstr ""
-
-#. type: Plain text
-#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:223
-msgid "Disabling the proactive authentication effectively shifts this process to the moment when the JAX-RS chain starts running thus making it possible to use JAX-RS `ExceptionMapper` to capture Quarkus Security authentication exceptions such as `io.quarkus.security.AuthenticationFailedException`, for example:"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:233
+#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:201
 #, no-wrap
 msgid ""
 "import javax.annotation.Priority;\n"
@@ -407,13 +357,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:235
+#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:203
 #, no-wrap
 msgid "import io.quarkus.security.AuthenticationFailedException;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:239
+#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:207
 #, no-wrap
 msgid ""
 "@Provider\n"
@@ -422,7 +372,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:242
+#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:210
 #, no-wrap
 msgid ""
 "    @Context\n"
@@ -430,7 +380,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:248
+#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:216
 #, no-wrap
 msgid ""
 "    @Override\n"
@@ -440,13 +390,63 @@ msgid ""
 "}\n"
 msgstr ""
 
+#. type: Plain text
+#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:223
+msgid "Some HTTP authentication mechanisms need to handle authentication exceptions themselves in order to create a correct authentication challenge.  For example, `io.quarkus.oidc.runtime.CodeAuthenticationMechanism` which manages OpenId Connect authorization code flow authentication, needs to build a correct redirect URL, cookies, etc.  For that reason, using custom exception mappers to customize authentication exceptions thrown by such mechanisms is not recommended.  In such cases, a safer way to customize authentication exceptions is to make sure the proactive authentication is not disabled and use Vert.x HTTP route failure handlers, as events come to the handler with the correct response status and headers.  To that end, the only thing that needs to be done is to customize the response like this:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:230
+#, no-wrap
+msgid ""
+"import javax.enterprise.context.ApplicationScoped;\n"
+"import javax.enterprise.event.Observes;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:235
+#, no-wrap
+msgid ""
+"import io.quarkus.security.AuthenticationFailedException;\n"
+"import io.vertx.core.Handler;\n"
+"import io.vertx.ext.web.Router;\n"
+"import io.vertx.ext.web.RoutingContext;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:238
+#, no-wrap
+msgid ""
+"@ApplicationScoped\n"
+"public class AuthenticationFailedExceptionHandler {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:252
+#, no-wrap
+msgid ""
+"    public void init(@Observes Router router) {\n"
+"        router.route().failureHandler(new Handler<RoutingContext>() {\n"
+"            @Override\n"
+"            public void handle(RoutingContext event) {\n"
+"                if (event.failure() instanceof AuthenticationFailedException) {\n"
+"                    event.response().end(\"CUSTOMIZED_RESPONSE\");\n"
+"                } else {\n"
+"                    event.next();\n"
+"                }\n"
+"            }\n"
+"        });\n"
+"    }\n"
+"}\n"
+msgstr ""
+
 #. type: Title ==
-#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:250
+#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:254
 #, no-wrap
 msgid "References"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:252
+#: upstream/_versions/main/guides/security-built-in-authentication-support-concept.adoc:256
 msgid "xref:security-overview-concept.adoc[Quarkus Security overview]"
 msgstr ""
