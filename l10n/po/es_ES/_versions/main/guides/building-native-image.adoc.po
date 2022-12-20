@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-12-17 02:27+0000\n"
+"POT-Creation-Date: 2022-12-20 02:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,7 +42,7 @@ msgstr ""
 
 #. type: Title ==
 #: upstream/_versions/main/guides/building-native-image.adoc:16
-#: upstream/_versions/main/guides/building-native-image.adoc:776
+#: upstream/_versions/main/guides/building-native-image.adoc:779
 #, no-wrap
 msgid "Debugging native executable"
 msgstr ""
@@ -1027,7 +1027,7 @@ msgstr ""
 #. type: Title ===
 #: upstream/_versions/main/guides/building-native-image.adoc:656
 #, no-wrap
-msgid "Using a scratch base image"
+msgid "Build a container image from scratch"
 msgstr ""
 
 #. type: Plain text
@@ -1057,9 +1057,9 @@ msgid ""
 "COPY --chown=quarkus:quarkus .mvn /code/.mvn\n"
 "COPY --chown=quarkus:quarkus pom.xml /code/\n"
 "RUN mkdir /musl && \\\n"
-"    curl -L -o musl.tar.gz https://more.musl.cc/10.2.1/x86_64-linux-musl/x86_64-linux-musl-native.tgz && \\\n"
+"    curl -L -o musl.tar.gz https://more.musl.cc/11.2.1/x86_64-linux-musl/x86_64-linux-musl-native.tgz && \\\n"
 "    tar -xvzf musl.tar.gz -C /musl --strip-components 1 && \\\n"
-"    curl -L -o zlib.tar.gz https://zlib.net/zlib-1.2.12.tar.gz && \\\n"
+"    curl -L -o zlib.tar.gz https://www.zlib.net/zlib-1.2.13.tar.gz && \\\n"
 "    mkdir zlib && tar -xvzf zlib.tar.gz -C zlib --strip-components 1 && \\\n"
 "    cd zlib && ./configure --static --prefix=/musl && \\\n"
 "    make && make install && \\\n"
@@ -1069,59 +1069,65 @@ msgid ""
 "WORKDIR /code\n"
 "RUN ./mvnw -B org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline\n"
 "COPY src /code/src\n"
-"RUN ./mvnw package -Pnative -Dquarkus.native.additional-build-args=\"--static\",\"--libc=musl\"\n"
+"RUN ./mvnw package -Pnative -DskipTests -Dquarkus.native.additional-build-args=\"--static\",\"--libc=musl\"\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/building-native-image.adoc:692
+#: upstream/_versions/main/guides/building-native-image.adoc:693
 #, no-wrap
 msgid ""
-"## Stage 2 : create the docker final image\n"
+"## Stage 2 : create the final image\n"
 "FROM scratch\n"
 "COPY --from=build /code/target/*-runner /application\n"
+"EXPOSE 8080\n"
 "ENTRYPOINT [ \"/application\" ]\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:695
+#: upstream/_versions/main/guides/building-native-image.adoc:696
 msgid "Scratch images should not be used in production without rigorous testing."
 msgstr ""
 
+#. type: Plain text
+#: upstream/_versions/main/guides/building-native-image.adoc:698
+msgid "The versions of musl and zlib may need to be updated to meet the native-image executable requirements (and UPX if you use native image compression)."
+msgstr ""
+
 #. type: Title ===
-#: upstream/_versions/main/guides/building-native-image.adoc:696
+#: upstream/_versions/main/guides/building-native-image.adoc:699
 #, no-wrap
-msgid "Native executable compression"
+msgid "Compress native images"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:700
+#: upstream/_versions/main/guides/building-native-image.adoc:703
 msgid "Quarkus can compress the produced native executable using UPX.  More details on xref:./upx.adoc[UPX Compression documentation]."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/building-native-image.adoc:701
+#: upstream/_versions/main/guides/building-native-image.adoc:704
 #, no-wrap
 msgid "Separating Java and native image compilation"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:707
+#: upstream/_versions/main/guides/building-native-image.adoc:710
 msgid "In certain circumstances, you may want to build the native image in a separate step.  For example, in a CI/CD pipeline, you may want to have one step to generate the source that will be used for the native image generation and another step to use these sources to actually build the native executable.  For this use case, you can set the `quarkus.package.type=native-sources`.  This will execute the java compilation as if you had started native compilation (`-Pnative`), but stops before triggering the actual call to GraalVM's `native-image`."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/building-native-image.adoc:711
+#: upstream/_versions/main/guides/building-native-image.adoc:714
 #, no-wrap
 msgid "$ ./mvnw clean package -Dquarkus.package.type=native-sources\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:714
+#: upstream/_versions/main/guides/building-native-image.adoc:717
 msgid "After compilation has finished, you find the build artifact in `target/native-sources`:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/building-native-image.adoc:720
+#: upstream/_versions/main/guides/building-native-image.adoc:723
 #, no-wrap
 msgid ""
 "$ cd target/native-sources\n"
@@ -1130,12 +1136,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:725
+#: upstream/_versions/main/guides/building-native-image.adoc:728
 msgid "From the output above one can see that, in addition to the produced jar file and the associated lib directory, a text file named `native-image.args` was created.  This file holds all parameters (including the name of the JAR to compile) to pass along to GraalVM's `native-image` command.  If you have GraalVM installed, you can start the native compilation by executing:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/building-native-image.adoc:736
+#: upstream/_versions/main/guides/building-native-image.adoc:739
 #, no-wrap
 msgid ""
 "$ cd target/native-source\n"
@@ -1149,17 +1155,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:739
+#: upstream/_versions/main/guides/building-native-image.adoc:742
 msgid "The process for Gradle is analogous."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:741
+#: upstream/_versions/main/guides/building-native-image.adoc:744
 msgid "Running the build process in a container is also possible:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/building-native-image.adoc:753
+#: upstream/_versions/main/guides/building-native-image.adoc:756
 #, no-wrap
 msgid ""
 "cd target/native-image\n"
@@ -1174,77 +1180,77 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:756
+#: upstream/_versions/main/guides/building-native-image.adoc:759
 msgid "Mount the host's directory `target/native-image` to the container's `/work`. Thus, the generated binary will also be written to this directory."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:757
+#: upstream/_versions/main/guides/building-native-image.adoc:760
 msgid "Switch the working directory to `/work`, which we have mounted in <1>."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:758
+#: upstream/_versions/main/guides/building-native-image.adoc:761
 msgid "Use the `quay.io/quarkus/ubi-quarkus-graalvmce-builder-image:{graalvm-flavor}` docker image introduced in <<#multistage-docker,Using a multi-stage Docker build>> to build the native image."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:759
+#: upstream/_versions/main/guides/building-native-image.adoc:762
 msgid "Call `native-image` with the content of file `native-image.args` as arguments. We also supply an additional argument to limit the process's maximum memory to 4 Gigabytes (this may vary depending on the project being built and the machine building it)."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/building-native-image.adoc:764
+#: upstream/_versions/main/guides/building-native-image.adoc:767
 msgid "If you are running on a Windows machine, please keep in mind that the binary was created within a Linux docker container.  Hence, the binary will not be executable on the host Windows machine."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:767
+#: upstream/_versions/main/guides/building-native-image.adoc:770
 msgid "A high level overview of what the various steps of a CI/CD pipeline would look is the following:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:769
+#: upstream/_versions/main/guides/building-native-image.adoc:772
 msgid "Register the output of the step executing `./mvnw ...` command (i.e. directory `target/native-image`) as a build artifact,"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:770
+#: upstream/_versions/main/guides/building-native-image.adoc:773
 msgid "Require this artifact in the step executing the `native-image ...` command, and"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:771
+#: upstream/_versions/main/guides/building-native-image.adoc:774
 msgid "Register the output of the step executing the `native-image ...` command (i.e. files matching `target/*runner`) as build artifact."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:773
+#: upstream/_versions/main/guides/building-native-image.adoc:776
 msgid "The environment executing step `1` only needs Java and Maven (or Gradle) installed, while the environment executing step `3` only needs a GraalVM installation (including the `native-image` feature)."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:775
+#: upstream/_versions/main/guides/building-native-image.adoc:778
 msgid "Depending on what the final desired output of the CI/CD pipeline is, the generated binary might then be used to create a container image."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:782
+#: upstream/_versions/main/guides/building-native-image.adoc:785
 msgid "Starting with Oracle GraalVM 20.2 or Mandrel 20.1, debug symbols for native executables can be generated for Linux environments (Windows support is still under development, macOS is not supported).  These symbols can be used to debug native executables with tools such as `gdb`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:786
+#: upstream/_versions/main/guides/building-native-image.adoc:789
 msgid "To generate debug symbols, add `-Dquarkus.native.debug.enabled=true` flag when generating the native executable.  You will find the debug symbols for the native executable in a `.debug` file next to the native executable."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/building-native-image.adoc:791
+#: upstream/_versions/main/guides/building-native-image.adoc:794
 msgid "The generation of the `.debug` file depends on `objcopy`.  On common Linux distributions you will need to install the `binutils` package:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/building-native-image.adoc:798
+#: upstream/_versions/main/guides/building-native-image.adoc:801
 #, no-wrap
 msgid ""
 "# dnf (rpm-based)\n"
@@ -1254,96 +1260,96 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:801
+#: upstream/_versions/main/guides/building-native-image.adoc:804
 msgid "When `objcopy` is not available debug symbols are embedded in the executable."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/building-native-image.adoc:809
+#: upstream/_versions/main/guides/building-native-image.adoc:812
 msgid "Aside from debug symbols, setting `-Dquarkus.native.debug.enabled=true` flag generates a cache of source files for any JDK runtime classes, GraalVM classes and application classes resolved during native executable generation.  This source cache is useful for native debugging tools, to establish the link between the symbols and matching source code.  It provides a convenient way of making just the necessary sources available to the debugger/IDE when debugging a native executable."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/building-native-image.adoc:815
+#: upstream/_versions/main/guides/building-native-image.adoc:818
 msgid "Sources for third party jar dependencies, including Quarkus source code, are not added to the source cache by default.  To include those, make sure you invoke `mvn dependency:sources` first.  This step is required in order to pull the sources for these dependencies, and get them included in the source cache."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/building-native-image.adoc:817
+#: upstream/_versions/main/guides/building-native-image.adoc:820
 msgid "The source cache is located in the `target/sources` folder."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:821
+#: upstream/_versions/main/guides/building-native-image.adoc:824
 msgid "If running `gdb` from a different directory than `target`, then the sources can be loaded by running:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/building-native-image.adoc:825
+#: upstream/_versions/main/guides/building-native-image.adoc:828
 #, no-wrap
 msgid "directory path/to/target\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:828
+#: upstream/_versions/main/guides/building-native-image.adoc:831
 msgid "in the `gdb` prompt."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:830
+#: upstream/_versions/main/guides/building-native-image.adoc:833
 msgid "Or start `gdb` with:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/building-native-image.adoc:834
+#: upstream/_versions/main/guides/building-native-image.adoc:837
 #, no-wrap
 msgid "gdb -ex 'directory path/to/target' path/to/target/{project.name}-{project.version}-runner\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/building-native-image.adoc:837
+#: upstream/_versions/main/guides/building-native-image.adoc:840
 msgid "e.g.,"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/building-native-image.adoc:840
+#: upstream/_versions/main/guides/building-native-image.adoc:843
 #, no-wrap
 msgid "gdb -ex 'directory ./target' ./target/getting-started-1.0.0-SNAPSHOT-runner\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/building-native-image.adoc:844
+#: upstream/_versions/main/guides/building-native-image.adoc:847
 msgid "For a more detailed guide about debugging native images please refer to the xref:native-reference.adoc[Native Reference Guide]."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/building-native-image.adoc:846
+#: upstream/_versions/main/guides/building-native-image.adoc:849
 #, no-wrap
 msgid "Configuring the Native Executable"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/building-native-image.adoc:850
+#: upstream/_versions/main/guides/building-native-image.adoc:853
 msgid "There are a lot of different configuration options that can affect how the native executable is generated.  These are provided in `application.properties` the same as any other config property."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/building-native-image.adoc:852
+#: upstream/_versions/main/guides/building-native-image.adoc:855
 msgid "The properties are shown below:"
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/building-native-image.adoc:855
+#: upstream/_versions/main/guides/building-native-image.adoc:858
 #, no-wrap
 msgid "What's next?"
 msgstr "¿Qué es lo que sigue?"
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/building-native-image.adoc:860
+#: upstream/_versions/main/guides/building-native-image.adoc:863
 msgid "This guide covered the creation of a native (binary) executable for your application.  It provides an application exhibiting a swift startup time and consuming less memory.  However, there is much more."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/building-native-image.adoc:861
+#: upstream/_versions/main/guides/building-native-image.adoc:864
 msgid "We recommend continuing the journey with the xref:deploying-to-kubernetes.adoc[deployment to Kubernetes and OpenShift]."
 msgstr ""
