@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-09-28 11:15+0000\n"
+"POT-Creation-Date: 2022-12-06 18:09+0000\n"
 "PO-Revision-Date: 2022-05-24 12:24+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -216,26 +216,178 @@ msgstr "Tenga en cuenta que si se utiliza la autenticación proactiva, el acceso
 msgid "It's still possible to access the `SecurityIdentity` synchronously with `public SecurityIdentity getIdentity()` in the xref:resteasy-reactive.adoc[RESTEasy Reactive] from endpoints annotated with `@RolesAllowed`, `@Authenticated`, or with respective configuration authorization checks as authentication has already happened. The same is also valid for the xref:reactive-routes.adoc[Reactive routes] if a route response is synchronous."
 msgstr "Sigue siendo posible acceder a `SecurityIdentity` de forma sincrónica con `public SecurityIdentity getIdentity()` en el  link:resteasy-reactive.html[RESTEasy Reactive] desde puntos finales anotados con `@RolesAllowed`, `@Authenticated`, o con las respectivas comprobaciones de autorización de la configuración, ya que la autenticación ya se ha producido. Lo mismo es válido para las  link:reactive-routes.html[rutas] Reactive si una respuesta de ruta es sincrónica."
 
+#. type: Plain text
+#: upstream/_guides/security-built-in-authentication.adoc:128
+#, fuzzy
+msgid "xref:security-authorization.adoc#standard-security-annotations[Standard security annotations] on CDI beans are not supported on IO thread if a non-void secured method returns a value synchronously and proactive authentication is disabled, as they need to access the `SecurityIdentity`.  In the example below, we have defined `HelloResource` and `HelloService`. It's easy to see that any GET request to `/hello` will run on IO thread and throw `BlockingOperationNotAllowedException` exception.  There is more than one way to fix the example:"
+msgstr "Las  link:security-authorization.html#standard-security-annotations[anotaciones de seguridad estándar] en los beans CDI no son compatibles con el hilo IO si un método asegurado no vacío devuelve un valor de forma sincrónica y la autenticación proactiva está deshabilitada, ya que necesitan acceder a la `SecurityIdentity`. En el ejemplo siguiente, hemos definido `HelloResource` y `HelloService`. Es fácil ver que cualquier petición GET a `/hello` se ejecutará en el hilo IO y lanzará la excepción `BlockingOperationNotAllowedException`. Hay más de una forma de arreglar el ejemplo:"
+
+#. type: Plain text
+#: upstream/_guides/security-built-in-authentication.adoc:130
+#, fuzzy
+msgid "switch to a worker thread (annotate `hello` endpoint with `@Blocking`)"
+msgstr "cambiar a un hilo de trabajo (anotar `hello` endpoint con `@Blocking`)"
+
+#. type: Plain text
+#: upstream/_guides/security-built-in-authentication.adoc:131
+#, fuzzy
+msgid "change `sayHello` method return type (use reactive or asynchronous data type)"
+msgstr "cambiar el tipo de retorno del método `sayHello` (utilizar un tipo de datos reactivo o asíncrono)"
+
+#. type: Plain text
+#: upstream/_guides/security-built-in-authentication.adoc:132
+#, fuzzy
+msgid "arguably the safest way is to move `@RolesAllowed` annotation to the endpoint, as accessing `SecurityIdentity` from endpoint methods is never the blocking operation"
+msgstr "Podría decirse que la forma más segura es mover la anotación `@RolesAllowed` al punto final, ya que el acceso a `SecurityIdentity` desde los métodos del punto final nunca es una operación de bloqueo"
+
+#. type: delimited block -
+#: upstream/_guides/security-built-in-authentication.adoc:139
+#, no-wrap
+msgid ""
+"import javax.annotation.security.PermitAll;\n"
+"import javax.inject.Inject;\n"
+"import javax.ws.rs.GET;\n"
+"import javax.ws.rs.Path;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-built-in-authentication.adoc:141
+#, no-wrap
+msgid "import io.smallrye.mutiny.Uni;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-built-in-authentication.adoc:145
+#, no-wrap
+msgid ""
+"@Path(\"/hello\")\n"
+"@PermitAll\n"
+"public class HelloResource {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-built-in-authentication.adoc:148
+#, no-wrap
+msgid ""
+"    @Inject\n"
+"    HelloService helloService;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-built-in-authentication.adoc:153
+#, no-wrap
+msgid ""
+"    @GET\n"
+"    public Uni<String> hello() {\n"
+"        return Uni.createFrom().item(helloService.sayHello());\n"
+"    }\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-built-in-authentication.adoc:155
+#: upstream/_guides/security-built-in-authentication.adoc:171
+#, no-wrap
+msgid "}\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-built-in-authentication.adoc:161
+#, no-wrap
+msgid ""
+"import javax.annotation.security.RolesAllowed;\n"
+"import javax.enterprise.context.ApplicationScoped;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-built-in-authentication.adoc:164
+#, no-wrap
+msgid ""
+"@ApplicationScoped\n"
+"public class HelloService {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-built-in-authentication.adoc:169
+#, no-wrap
+msgid ""
+"    @RolesAllowed(\"admin\")\n"
+"    public String sayHello() {\n"
+"        return \"Hello\";\n"
+"    }\n"
+msgstr ""
+
 #. type: Title ===
-#: upstream/_guides/security-built-in-authentication.adoc:125
+#: upstream/_guides/security-built-in-authentication.adoc:174
 #, no-wrap
 msgid "How to customize authentication exception responses"
 msgstr "Cómo personalizar las respuestas de excepción de autenticación"
 
 #. type: Plain text
-#: upstream/_guides/security-built-in-authentication.adoc:129
+#: upstream/_guides/security-built-in-authentication.adoc:177
 #, fuzzy
-msgid "By default, the authentication security constraints are enforced before the JAX-RS chain starts.  Disabling the proactive authentication effectively shifts this process to the moment when the JAX-RS chain starts running thus making it possible to use JAX-RS `ExceptionMapper` to capture Quarkus Security authentication exceptions such as `io.quarkus.security.AuthenticationFailedException`, for example:"
-msgstr "Por defecto, las restricciones de seguridad de la autenticación se aplican antes de que se inicie la cadena JAX-RS. Desactivar la autenticación proactiva desplaza efectivamente este proceso al momento en que la cadena JAX-RS comienza a ejecutarse haciendo así posible el uso de JAX-RS `ExceptionMapper` para capturar excepciones de autenticación de Quarkus Security como `io.quarkus.security.AuthenticationFailedException`, por ejemplo:"
+msgid "By default, the authentication security constraints are enforced before the JAX-RS chain starts and only way to handle Quarkus Security authentication exceptions is to provide a failure handler like this one:"
+msgstr "Por defecto, las restricciones de seguridad de autenticación se aplican antes de que la cadena JAX-RS se inicie y la única manera de manejar las excepciones de autenticación de Quarkus Security es proporcionar un controlador de fallos como este:"
 
 #. type: delimited block -
-#: upstream/_guides/security-built-in-authentication.adoc:133
+#: upstream/_guides/security-built-in-authentication.adoc:181
+#: upstream/_guides/security-built-in-authentication.adoc:213
 #, no-wrap
 msgid "package io.quarkus.it.keycloak;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-built-in-authentication.adoc:139
+#: upstream/_guides/security-built-in-authentication.adoc:184
+#, no-wrap
+msgid ""
+"import javax.enterprise.context.ApplicationScoped;\n"
+"import javax.enterprise.event.Observes;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-built-in-authentication.adoc:189
+#, no-wrap
+msgid ""
+"import io.quarkus.security.AuthenticationFailedException;\n"
+"import io.vertx.core.Handler;\n"
+"import io.vertx.ext.web.Router;\n"
+"import io.vertx.ext.web.RoutingContext;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-built-in-authentication.adoc:192
+#, no-wrap
+msgid ""
+"@ApplicationScoped\n"
+"public class AuthenticationFailedExceptionHandler {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-built-in-authentication.adoc:206
+#, no-wrap
+msgid ""
+"    public void init(@Observes Router router) {\n"
+"        router.route().failureHandler(new Handler<RoutingContext>() {\n"
+"            @Override\n"
+"            public void handle(RoutingContext event) {\n"
+"                if (event.failure() instanceof AuthenticationFailedException) {\n"
+"                    event.response().setStatusCode(401).end(CUSTOMIZED_RESPONSE);\n"
+"                } else {\n"
+"                    event.next();\n"
+"                }\n"
+"            }\n"
+"        });\n"
+"    }\n"
+"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-built-in-authentication.adoc:209
+#, fuzzy
+msgid "Disabling the proactive authentication effectively shifts this process to the moment when the JAX-RS chain starts running thus making it possible to use JAX-RS `ExceptionMapper` to capture Quarkus Security authentication exceptions such as `io.quarkus.security.AuthenticationFailedException`, for example:"
+msgstr "Por defecto, las restricciones de seguridad de la autenticación se aplican antes de que se inicie la cadena JAX-RS. Desactivar la autenticación proactiva desplaza efectivamente este proceso al momento en que la cadena JAX-RS comienza a ejecutarse haciendo así posible el uso de JAX-RS `ExceptionMapper` para capturar excepciones de autenticación de Quarkus Security como `io.quarkus.security.AuthenticationFailedException`, por ejemplo:"
+
+#. type: delimited block -
+#: upstream/_guides/security-built-in-authentication.adoc:219
 #, no-wrap
 msgid ""
 "import javax.annotation.Priority;\n"
@@ -246,13 +398,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-built-in-authentication.adoc:141
+#: upstream/_guides/security-built-in-authentication.adoc:221
 #, no-wrap
 msgid "import io.quarkus.security.AuthenticationFailedException;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-built-in-authentication.adoc:145
+#: upstream/_guides/security-built-in-authentication.adoc:225
 #, no-wrap
 msgid ""
 "@Provider\n"
@@ -261,7 +413,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-built-in-authentication.adoc:148
+#: upstream/_guides/security-built-in-authentication.adoc:228
 #, no-wrap
 msgid ""
 "    @Context\n"
@@ -269,7 +421,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-built-in-authentication.adoc:154
+#: upstream/_guides/security-built-in-authentication.adoc:234
 #, no-wrap
 msgid ""
 "    @Override\n"
@@ -280,13 +432,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/security-built-in-authentication.adoc:156
+#: upstream/_guides/security-built-in-authentication.adoc:236
 #, no-wrap
 msgid "References"
 msgstr "Referencias"
 
 #. type: Plain text
-#: upstream/_guides/security-built-in-authentication.adoc:158
+#: upstream/_guides/security-built-in-authentication.adoc:238
 msgid "xref:security.adoc[Quarkus Security]"
 msgstr "xref:security.html[Seguridad Quarkus]"
 
