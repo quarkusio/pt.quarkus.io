@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-02-07 13:19+0000\n"
+"POT-Creation-Date: 2023-02-10 02:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -135,8 +135,8 @@ msgstr ""
 #. type: Block title
 #: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:67
 #: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:111
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:870
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:980
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:909
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1019
 #, no-wrap
 msgid "pom.xml"
 msgstr "pom.xml"
@@ -165,8 +165,8 @@ msgstr ""
 #. type: Block title
 #: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:87
 #: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:127
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:880
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:990
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:919
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1029
 #, no-wrap
 msgid "build.gradle"
 msgstr "build.gradle"
@@ -1535,34 +1535,111 @@ msgid "Testing"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:858
-msgid "Testing reactive Panache entities in a `@QuarkusTest` is slightly more complicated than testing regular Panache entities due to the asynchronous nature of the APIs and the fact that all operations need to run on a Vert.x event loop.  The usage of `@RunOnVertxContext`, `@TestReactiveTransaction` and `UniAsserter` is described in the xref:hibernate-reactive.adoc#testing[Hibernate Reactive] guide."
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:857
+msgid "Testing reactive Panache entities in a `@QuarkusTest` is slightly more complicated than testing regular Panache entities due to the asynchronous nature of the APIs and the fact that all operations need to run on a Vert.x event loop."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:860
+msgid "The `quarkus-test-vertx` dependency provides the `@io.quarkus.test.vertx.RunOnVertxContext` annotation and the `io.quarkus.test.vertx.UniAsserter` class which are intended precisely for this purpose.  The usage is described in the xref:hibernate-reactive.adoc#testing[Hibernate Reactive] guide."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:863
+msgid "You can also extend the `io.quarkus.test.vertx.UniAsserterInterceptor` to customize the behavior of the injected `UniAsserter`.  For example, the interceptor can be used to execute the assert methods within a separate database transaction."
+msgstr ""
+
+#. type: Block title
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:864
+#, no-wrap
+msgid "`UniAsserterInterceptor` Example"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:868
+#, no-wrap
+msgid "import io.quarkus.test.vertx.UniAsserterInterceptor;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:871
+#, no-wrap
+msgid ""
+"@QuarkusTest\n"
+"public class SomeTest {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:873
+#, no-wrap
+msgid "    static class TransactionalUniAsserterInterceptor extends UniAsserterInterceptor {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:877
+#, no-wrap
+msgid ""
+"        public TransactionUniAsserterInterceptor(UniAsserter asserter) {\n"
+"            super(asserter);\n"
+"        }\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:884
+#, no-wrap
+msgid ""
+"        @Override\n"
+"        protected <T> Supplier<Uni<T>> transformUni(Supplier<Uni<T>> uniSupplier) {\n"
+"            // Assert/execute methods are invoked within a database transaction\n"
+"            return () -> Panache.withTransaction(uniSupplier);\n"
+"        }\n"
+"    }\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:894
+#, no-wrap
+msgid ""
+"    @Test\n"
+"    @RunOnVertxContext\n"
+"    public void testEntity(UniAsserter asserter) {\n"
+"        asserter = new TransactionalUniAsserterInterceptor(asserter); <1>\n"
+"        asserter.execute(() -> new MyEntity().persist());\n"
+"        asserter.assertEquals(() -> MyEntity.count(), 1l);\n"
+"        asserter.execute(() -> MyEntity.deleteAll());\n"
+"    }\n"
+"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:896
+msgid "The `TransactionalUniAsserterInterceptor` wraps the injected `UniAsserter`."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:859
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:898
 #, no-wrap
 msgid "Mocking"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:861
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:900
 #, no-wrap
 msgid "Using the active record pattern"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:866
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:905
 msgid "If you are using the active record pattern you cannot use Mockito directly as it does not support mocking static methods, but you can use the `quarkus-panache-mock` module which allows you to use Mockito to mock all provided static methods, including your own."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:868
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:907
 msgid "Add this dependency to your build file:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:877
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:916
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -1573,19 +1650,19 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:883
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:922
 #, no-wrap
 msgid "testImplementation(\"io.quarkus:quarkus-panache-mock\")\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:886
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:996
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:925
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1035
 msgid "Given this simple entity:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:891
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:930
 #, no-wrap
 msgid ""
 "@Entity\n"
@@ -1593,13 +1670,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:893
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:932
 #, no-wrap
 msgid "    public String name;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:898
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:937
 #, no-wrap
 msgid ""
 "    public static Uni<List<Person>> findOrdered() {\n"
@@ -1609,14 +1686,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:901
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1023
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:940
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1062
 msgid "You can write your mocking test like this:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:906
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1028
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:945
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1067
 #, no-wrap
 msgid ""
 "import io.quarkus.test.vertx.UniAsserter;\n"
@@ -1624,7 +1701,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:909
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:948
 #, no-wrap
 msgid ""
 "@QuarkusTest\n"
@@ -1632,7 +1709,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:914
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:953
 #, no-wrap
 msgid ""
 "    @RunOnVertxContext // <1>\n"
@@ -1642,7 +1719,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:917
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:956
 #, no-wrap
 msgid ""
 "        // Mocked classes always return a default value\n"
@@ -1650,7 +1727,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:921
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:960
 #, no-wrap
 msgid ""
 "        // Now let's specify the return value\n"
@@ -1659,7 +1736,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:925
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:964
 #, no-wrap
 msgid ""
 "        // Now let's change the return value\n"
@@ -1668,7 +1745,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:929
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:968
 #, no-wrap
 msgid ""
 "        // Now let's call the original method\n"
@@ -1677,7 +1754,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:934
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:973
 #, no-wrap
 msgid ""
 "        // Check that we called it 4 times\n"
@@ -1687,7 +1764,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:943
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:982
 #, no-wrap
 msgid ""
 "        // Mock only with specific parameters\n"
@@ -1701,7 +1778,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:953
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:992
 #, no-wrap
 msgid ""
 "        // Mock throwing\n"
@@ -1716,7 +1793,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:957
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:996
 #, no-wrap
 msgid ""
 "        // We can even mock your custom methods\n"
@@ -1725,7 +1802,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:963
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1002
 #, no-wrap
 msgid ""
 "        asserter.execute(() -> {\n"
@@ -1736,8 +1813,8 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:968
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1093
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1007
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1132
 #, no-wrap
 msgid ""
 "        // IMPORTANT: We need to execute the asserter within a reactive session\n"
@@ -1747,35 +1824,35 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:970
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1095
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1009
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1134
 msgid "Make sure the test method is run on the Vert.x event loop."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:971
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1096
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1010
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1135
 msgid "The injected `UniAsserter` agrument is used to make assertions."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:973
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1012
 msgid "Be sure to call your `verify` and `do*` methods on `PanacheMock` rather than `Mockito`, otherwise you won't know what mock object to pass."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:974
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1013
 #, no-wrap
 msgid "Using the repository pattern"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:978
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1017
 msgid "If you are using the repository pattern you can use Mockito directly, using the `quarkus-junit5-mockito` module, which makes mocking beans much easier:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:987
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1026
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -1786,13 +1863,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:993
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1032
 #, no-wrap
 msgid "testImplementation(\"io.quarkus:quarkus-junit5-mockito\")\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1001
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1040
 #, no-wrap
 msgid ""
 "@Entity\n"
@@ -1800,7 +1877,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1005
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1044
 #, no-wrap
 msgid ""
 "    @Id\n"
@@ -1809,7 +1886,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1008
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1047
 #, no-wrap
 msgid ""
 "    public String name;\n"
@@ -1817,12 +1894,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1011
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1050
 msgid "And this repository:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1020
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1059
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -1834,7 +1911,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1033
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1072
 #, no-wrap
 msgid ""
 "@QuarkusTest\n"
@@ -1844,7 +1921,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1037
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1076
 #, no-wrap
 msgid ""
 "    @RunOnVertxContext // <1>\n"
@@ -1853,7 +1930,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1040
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1079
 #, no-wrap
 msgid ""
 "        // Mocked classes always return a default value\n"
@@ -1861,7 +1938,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1044
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1083
 #, no-wrap
 msgid ""
 "        // Now let's specify the return value\n"
@@ -1870,7 +1947,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1048
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1087
 #, no-wrap
 msgid ""
 "        // Now let's change the return value\n"
@@ -1879,7 +1956,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1052
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1091
 #, no-wrap
 msgid ""
 "        // Now let's call the original method\n"
@@ -1888,7 +1965,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1057
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1096
 #, no-wrap
 msgid ""
 "        // Check that we called it 4 times\n"
@@ -1898,7 +1975,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1066
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1105
 #, no-wrap
 msgid ""
 "        // Mock only with specific parameters\n"
@@ -1912,7 +1989,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1076
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1115
 #, no-wrap
 msgid ""
 "        // Mock throwing\n"
@@ -1927,7 +2004,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1081
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1120
 #, no-wrap
 msgid ""
 "        // We can even mock your custom methods\n"
@@ -1937,7 +2014,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1088
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1127
 #, no-wrap
 msgid ""
 "        asserter.execute(() -> {\n"
@@ -1949,94 +2026,94 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1097
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1136
 #, no-wrap
 msgid "How and why we simplify Hibernate Reactive mappings"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1101
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1140
 msgid "When it comes to writing Hibernate Reactive entities, there are a number of annoying things that users have grown used to reluctantly deal with, such as:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1104
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1143
 msgid "Duplicating ID logic: most entities need an ID, most people don't care how it is set, because it is not really relevant to your model."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1107
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1146
 msgid "Dumb getters and setters: since Java lacks support for properties in the language, we have to create fields, then generate getters and setters for those fields, even if they don't actually do anything more than read/write the fields."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1113
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1152
 msgid "Traditional EE patterns advise to split entity definition (the model) from the operations you can do on them (DAOs, Repositories), but really that requires an unnatural split between the state and its operations even though we would never do something like that for regular objects in the Object-Oriented architecture, where state and methods are in the same class. Moreover, this requires two classes per entity, and requires injection of the DAO or Repository where you need to do entity operations, which breaks your edit flow and requires you to get out of the code you're writing to set up an injection point before coming back to use it."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1115
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1154
 msgid "Hibernate queries are super powerful, but overly verbose for common operations, requiring you to write queries even when you don't need all the parts."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1117
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1156
 msgid "Hibernate is very general-purpose, but does not make it trivial to do trivial operations that make up 90% of our model usage."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1119
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1158
 msgid "With Panache, we took an opinionated approach to tackle all these problems:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1122
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1161
 msgid "Make your entities extend `PanacheEntity`: it has an ID field that is auto-generated. If you require a custom ID strategy, you can extend `PanacheEntityBase` instead and handle the ID yourself."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1125
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1164
 msgid "Use public fields. Get rid of dumb getter and setters. Under the hood, we will generate all getters and setters that are missing, and rewrite every access to these fields to use the accessor methods. This way you can still write _useful_ accessors when you need them, which will be used even though your entity users still use field accesses."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1128
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1167
 msgid "With the active record pattern: put all your entity logic in static methods in your entity class and don't create DAOs.  Your entity superclass comes with lots of super useful static methods, and you can add your own in your entity class.  Users can just start using your entity `Person` by typing `Person.` and getting completion for all the operations in a single place."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1131
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1170
 msgid "Don't write parts of the query that you don't need: write `Person.find(\"order by name\")` or `Person.find(\"name = ?1 and status = ?2\", \"stef\", Status.Alive)` or even better `Person.find(\"name\", \"stef\")`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1133
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1172
 msgid "That's all there is to it: with Panache, Hibernate Reactive has never looked so trim and neat."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1134
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1173
 #, no-wrap
 msgid "Defining entities in external projects or jars"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1137
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1176
 msgid "Hibernate Reactive with Panache relies on compile-time bytecode enhancements to your entities."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1143
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1182
 msgid "It attempts to identify archives with Panache entities (and consumers of Panache entities)  by the presence of the marker file `META-INF/panache-archive.marker`. Panache includes an annotation processor that will automatically create this file in archives that depend on Panache (even indirectly). If you have disabled annotation processors you may need to create this file manually in some cases."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1147
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1186
 msgid "If you include the jpa-modelgen annotation processor this will exclude the Panache annotation processor by default. If you do this you should either create the marker file yourself, or add the `quarkus-panache-common` as well, as shown below:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1168
+#: upstream/_versions/main/guides/hibernate-reactive-panache.adoc:1207
 #, no-wrap
 msgid ""
 "<plugin>\n"
