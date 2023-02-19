@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-02-05 02:41+0000\n"
+"POT-Creation-Date: 2023-02-19 02:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -526,7 +526,7 @@ msgid ""
 "@BuildStep\n"
 "SyntheticBeanBuildItem syntheticBean() {\n"
 "   return SyntheticBeanBuildItem.configure(String.class)\n"
-"             .qualifiers(new MyQualifierLiteral())\n"
+"             .qualifiers(AnnotationInstance.builder(MyQualifier.class).build())\n"
 "             .creator(mc -> mc.returnValue(mc.load(\"foo\"))) <1>\n"
 "             .done();\n"
 "}\n"
@@ -549,12 +549,12 @@ msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/cdi-integration.adoc:289
-msgid "Pass a `io.quarkus.arc.BeanCreator` implementation class via `ExtendedBeanConfigurator#creator(Class<? extends BeanCreator<U>>)`, and possibly specify some parameters via `ExtendedBeanConfigurator#param()`."
+msgid "Pass a subclass of `io.quarkus.arc.BeanCreator` via `ExtendedBeanConfigurator#creator(Class<? extends BeanCreator<U>>)`, and possibly specify some build-time parameters via `ExtendedBeanConfigurator#param()` and synthetic injection points via `ExtendedBeanConfigurator#addInjectionPoint()`."
 msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/cdi-integration.adoc:290
-msgid "Produce the runtime instance through a proxy returned from a <<writing-extensions.adoc#bytecode-recording,`@Recorder` method>> and set it via `ExtendedBeanConfigurator#runtimeValue(RuntimeValue<?>)` or `ExtendedBeanConfigurator#supplier(Supplier<?>)`."
+msgid "Produce the runtime instance through a proxy returned from a <<writing-extensions.adoc#bytecode-recording,`@Recorder` method>> and set it via `ExtendedBeanConfigurator#runtimeValue(RuntimeValue<?>)`, `ExtendedBeanConfigurator#supplier(Supplier<?>)` or `ExtendedBeanConfigurator#createWith(Function<SyntheticCreationalContext<?>, <?>)`."
 msgstr ""
 
 #. type: Block title
@@ -618,6 +618,7 @@ msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/cdi-integration.adoc:322
+#: upstream/_versions/main/guides/cdi-integration.adoc:365
 msgid "The bean instance is initialized during `RUNTIME_INIT`."
 msgstr ""
 
@@ -653,35 +654,116 @@ msgstr ""
 msgid "It is also possible to use the `BeanRegistrationPhaseBuildItem` to register a synthetic bean. However, we recommend extension authors to stick with `SyntheticBeanBuildItem` which is more idiomatic for Quarkus."
 msgstr ""
 
+#. type: Title ===
+#: upstream/_versions/main/guides/cdi-integration.adoc:342
+#, no-wrap
+msgid "Synthetic Injection Points"
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_versions/main/guides/cdi-integration.adoc:347
+msgid "A synthetic bean may register a synthetic injection point via the `ExtendedBeanConfigurator#addInjectionPoint()` method.  This injection point is validated at build time and considered when <<cdi-reference.adoc#remove_unused_beans,detecting unused beans>>.  The injected reference is accessible through the `SyntheticCreationalContext#getInjectedReference()` methods at runtime."
+msgstr ""
+
+#. type: Block title
+#: upstream/_versions/main/guides/cdi-integration.adoc:348
+#, no-wrap
+msgid "Synthetic Injection Point - Build Step Example"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/cdi-integration.adoc:353
+#, no-wrap
+msgid ""
+"import org.jboss.jandex.ClassType;\n"
+"import org.jboss.jandex.DotName;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/cdi-integration.adoc:363
+#, no-wrap
+msgid ""
+"@BuildStep\n"
+"@Record(RUNTIME_INIT) <1>\n"
+"SyntheticBeanBuildItem syntheticBean(TestRecorder recorder) {\n"
+"   return SyntheticBeanBuildItem.configure(Foo.class)\n"
+"                .scope(Singleton.class)\n"
+"                .addInjectionPoint(ClassType.create(DotName.createSimple(Bar.class))) <2>\n"
+"                .createWith(recorder.createFoo()) <3>\n"
+"                .done();\n"
+"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/cdi-integration.adoc:366
+msgid "A synthetic injection point with required type `Bar` was added; this is an equivalent of `@Inject Bar`."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/cdi-integration.adoc:367
+msgid "The bean instance is created with a function returned from a recorder method."
+msgstr ""
+
+#. type: Block title
+#: upstream/_versions/main/guides/cdi-integration.adoc:368
+#, no-wrap
+msgid "Synthetic Injection Point - Recorder Example"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/cdi-integration.adoc:373
+#, no-wrap
+msgid ""
+"@Recorder\n"
+"public class TestRecorder {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/cdi-integration.adoc:380
+#, no-wrap
+msgid ""
+"   public Function<SyntheticCreationalContext<Foo>, Foo> createFoo() {\n"
+"     return (context) -> {\n"
+"        return new Foo(context.getInjectedReference(Bar.class)); <1>\n"
+"     };\n"
+"   }\n"
+"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/cdi-integration.adoc:382
+msgid "Pass a contextual reference of `Bar` to the constructor of `Foo`."
+msgstr ""
+
 #. type: Title ==
-#: upstream/_versions/main/guides/cdi-integration.adoc:343
+#: upstream/_versions/main/guides/cdi-integration.adoc:384
 #, no-wrap
 msgid "Use Case - Synthetic Observers"
 msgstr ""
 
-#. type: delimited block =
-#: upstream/_versions/main/guides/cdi-integration.adoc:346
+#. type: Plain text
+#: upstream/_versions/main/guides/cdi-integration.adoc:387
 msgid "Similar to <<synthetic_beans,synthetic beans>>, the attributes of a synthetic observer method are not derived from a Java method. Instead, all the attributes are defined by an extension."
 msgstr ""
 
-#. type: delimited block =
-#: upstream/_versions/main/guides/cdi-integration.adoc:348
+#. type: Plain text
+#: upstream/_versions/main/guides/cdi-integration.adoc:389
 msgid "_Solution_: If you need to register a synthetic observer, use the `ObserverRegistrationPhaseBuildItem`."
 msgstr ""
 
-#. type: delimited block =
-#: upstream/_versions/main/guides/cdi-integration.adoc:350
+#. type: Plain text
+#: upstream/_versions/main/guides/cdi-integration.adoc:391
 msgid "A build step that consumes the `ObserverRegistrationPhaseBuildItem` should always produce an `ObserverConfiguratorBuildItem` or at least inject a `BuildProducer` for this build item, otherwise it could be ignored or processed at the wrong time (e.g. after the correct CDI bootstrap phase)."
 msgstr ""
 
 #. type: Block title
-#: upstream/_versions/main/guides/cdi-integration.adoc:351
+#: upstream/_versions/main/guides/cdi-integration.adoc:392
 #, no-wrap
 msgid "`ObserverRegistrationPhaseBuildItem` Example"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/cdi-integration.adoc:367
+#: upstream/_versions/main/guides/cdi-integration.adoc:408
 #, no-wrap
 msgid ""
 "@BuildStep\n"
@@ -700,29 +782,29 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:372
+#: upstream/_versions/main/guides/cdi-integration.adoc:413
 msgid "The output of a `ObserverConfigurator` is recorded as bytecode.  Therefore, there are some limitations in how a synthetic observer is invoked at runtime.  Currently, you must generate the bytecode of the method body directly."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/cdi-integration.adoc:374
+#: upstream/_versions/main/guides/cdi-integration.adoc:415
 #, no-wrap
 msgid "Use Case - I Have a Generated Bean Class"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:378
+#: upstream/_versions/main/guides/cdi-integration.adoc:419
 msgid "No problem.  You can generate the bytecode of a bean class manually and then all you need to do is to produce a `GeneratedBeanBuildItem` instead of `GeneratedClassBuildItem`."
 msgstr ""
 
 #. type: Block title
-#: upstream/_versions/main/guides/cdi-integration.adoc:379
+#: upstream/_versions/main/guides/cdi-integration.adoc:420
 #, no-wrap
 msgid "`GeneratedBeanBuildItem` Example"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/cdi-integration.adoc:391
+#: upstream/_versions/main/guides/cdi-integration.adoc:432
 #, no-wrap
 msgid ""
 "@BuildStep\n"
@@ -737,38 +819,38 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:393
+#: upstream/_versions/main/guides/cdi-integration.adoc:434
 msgid "`io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor` makes it easy to produce ``GeneratedBeanBuildItem``s from Gizmo constructs."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:394
+#: upstream/_versions/main/guides/cdi-integration.adoc:435
 msgid "The resulting bean class is something like `public class @Singleton MyBean { }`."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/cdi-integration.adoc:395
+#: upstream/_versions/main/guides/cdi-integration.adoc:436
 #, no-wrap
 msgid "Use Case - I Need to Validate the Deployment"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:398
+#: upstream/_versions/main/guides/cdi-integration.adoc:439
 msgid "Sometimes extensions need to inspect the beans, observers and injection points, then perform additional validations and fail the build if something is wrong."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:400
+#: upstream/_versions/main/guides/cdi-integration.adoc:441
 msgid "_Solution_: If an extension needs to validate the deployment it should use the `ValidationPhaseBuildItem`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:402
+#: upstream/_versions/main/guides/cdi-integration.adoc:443
 msgid "A build step that consumes the `ValidationPhaseBuildItem` should always produce a `ValidationErrorBuildItem` or at least inject a `BuildProducer` for this build item, otherwise it could be ignored or processed at the wrong time (e.g. after the correct CDI bootstrap phase)."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/cdi-integration.adoc:414
+#: upstream/_versions/main/guides/cdi-integration.adoc:455
 #, no-wrap
 msgid ""
 "@BuildStep\n"
@@ -783,38 +865,38 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:417
+#: upstream/_versions/main/guides/cdi-integration.adoc:458
 msgid "You can easily filter all registered beans via the convenient `BeanStream` returned from the `ValidationPhaseBuildItem.getContext().beans()` method."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/cdi-integration.adoc:419
+#: upstream/_versions/main/guides/cdi-integration.adoc:460
 #, no-wrap
 msgid "Use Case - Register a Custom CDI Context"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:422
+#: upstream/_versions/main/guides/cdi-integration.adoc:463
 msgid "Sometimes extensions need to extend the set of built-in CDI contexts."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:424
+#: upstream/_versions/main/guides/cdi-integration.adoc:465
 msgid "_Solution_: If you need to register a custom context, use the `ContextRegistrationPhaseBuildItem`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:426
+#: upstream/_versions/main/guides/cdi-integration.adoc:467
 msgid "A build step that consumes the `ContextRegistrationPhaseBuildItem` should always produce a `ContextConfiguratorBuildItem` or at least inject a `BuildProducer` for this build item, otherwise it could be ignored or processed at the wrong time (e.g. after the correct CDI bootstrap phase)."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:428
+#: upstream/_versions/main/guides/cdi-integration.adoc:469
 msgid "`ContextRegistrationPhaseBuildItem` Example"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/cdi-integration.adoc:434
+#: upstream/_versions/main/guides/cdi-integration.adoc:475
 #, no-wrap
 msgid ""
 "@BuildStep\n"
@@ -824,17 +906,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:437
+#: upstream/_versions/main/guides/cdi-integration.adoc:478
 msgid "Additionally, each extension that registers a custom CDI context via `ContextRegistrationPhaseBuildItem` should also produce the `CustomScopeBuildItem` in order to contribute the custom scope annotation name to the set of bean defining annotations."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:439
+#: upstream/_versions/main/guides/cdi-integration.adoc:480
 msgid "`CustomScopeBuildItem` Example"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/cdi-integration.adoc:445
+#: upstream/_versions/main/guides/cdi-integration.adoc:486
 #, no-wrap
 msgid ""
 "@BuildStep\n"
@@ -844,35 +926,35 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/cdi-integration.adoc:447
+#: upstream/_versions/main/guides/cdi-integration.adoc:488
 #, no-wrap
 msgid "What if I Need to Know All the Scopes Used in the Application?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:450
+#: upstream/_versions/main/guides/cdi-integration.adoc:491
 msgid "_Solution_: You can inject the `CustomScopeAnnotationsBuildItem` in a build step and use the convenient methods such as `CustomScopeAnnotationsBuildItem.isScopeDeclaredOn()`."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/cdi-integration.adoc:452
+#: upstream/_versions/main/guides/cdi-integration.adoc:493
 #, no-wrap
 msgid "Use Case - Additional Interceptor Bindings"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:457
+#: upstream/_versions/main/guides/cdi-integration.adoc:498
 msgid "In rare cases it might be handy to programmatically register an existing annotation that is not annotated with `@jakarta.interceptor.InterceptorBinding` as an interceptor binding.  This is similar to what CDI achieves through `BeforeBeanDiscovery#addInterceptorBinding()`.  We are going to use `InterceptorBindingRegistrarBuildItem` to get it done."
 msgstr ""
 
 #. type: Block title
-#: upstream/_versions/main/guides/cdi-integration.adoc:458
+#: upstream/_versions/main/guides/cdi-integration.adoc:499
 #, no-wrap
 msgid "`InterceptorBindingRegistrarBuildItem` Example"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/cdi-integration.adoc:470
+#: upstream/_versions/main/guides/cdi-integration.adoc:511
 #, no-wrap
 msgid ""
 "@BuildStep\n"
@@ -887,24 +969,24 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/cdi-integration.adoc:472
+#: upstream/_versions/main/guides/cdi-integration.adoc:513
 #, no-wrap
 msgid "Use Case - Additional Qualifiers"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:477
+#: upstream/_versions/main/guides/cdi-integration.adoc:518
 msgid "Sometimes it might be useful to register an existing annotation that is not annotated with `@jakarta.inject.Qualifier` as a CDI qualifier.  This is similar to what CDI achieves through `BeforeBeanDiscovery#addQualifier()`.  We are going to use `QualifierRegistrarBuildItem` to get it done."
 msgstr ""
 
 #. type: Block title
-#: upstream/_versions/main/guides/cdi-integration.adoc:478
+#: upstream/_versions/main/guides/cdi-integration.adoc:519
 #, no-wrap
 msgid "`QualifierRegistrarBuildItem` Example"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/cdi-integration.adoc:491
+#: upstream/_versions/main/guides/cdi-integration.adoc:532
 #, no-wrap
 msgid ""
 "@BuildStep\n"
@@ -920,24 +1002,24 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/cdi-integration.adoc:493
+#: upstream/_versions/main/guides/cdi-integration.adoc:534
 #, no-wrap
 msgid "Use Case - Additional Stereotypes"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:498
+#: upstream/_versions/main/guides/cdi-integration.adoc:539
 msgid "It is sometimes useful to register an existing annotation that is not annotated with `@jakarta.enterprise.inject.Stereotype` as a CDI stereotype.  This is similar to what CDI achieves through `BeforeBeanDiscovery#addStereotype()`.  We are going to use `StereotypeRegistrarBuildItem` to get it done."
 msgstr ""
 
 #. type: Block title
-#: upstream/_versions/main/guides/cdi-integration.adoc:499
+#: upstream/_versions/main/guides/cdi-integration.adoc:540
 #, no-wrap
 msgid "`StereotypeRegistrarBuildItem` Example"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/cdi-integration.adoc:511
+#: upstream/_versions/main/guides/cdi-integration.adoc:552
 #, no-wrap
 msgid ""
 "@BuildStep\n"
@@ -952,29 +1034,29 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:514
+#: upstream/_versions/main/guides/cdi-integration.adoc:555
 msgid "If the newly registered stereotype annotation doesn't have the appropriate meta-annotations, such as scope or interceptor bindings, use an <<annotations_transformer_build_item,annotation transformation>> to add them."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/cdi-integration.adoc:516
+#: upstream/_versions/main/guides/cdi-integration.adoc:557
 #, no-wrap
 msgid "Use Case - Injection Point Transformation"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:521
+#: upstream/_versions/main/guides/cdi-integration.adoc:562
 msgid "Every now and then it is handy to be able to change the qualifiers of an injection point programmatically.  You can do just that with `InjectionPointTransformerBuildItem`.  The following sample shows how to apply transformation to injection points with type `Foo` that contain qualifier `MyQualifier`:"
 msgstr ""
 
 #. type: Block title
-#: upstream/_versions/main/guides/cdi-integration.adoc:522
+#: upstream/_versions/main/guides/cdi-integration.adoc:563
 #, no-wrap
 msgid "`InjectionPointTransformerBuildItem` Example"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/cdi-integration.adoc:528
+#: upstream/_versions/main/guides/cdi-integration.adoc:569
 #, no-wrap
 msgid ""
 "@BuildStep\n"
@@ -983,7 +1065,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/cdi-integration.adoc:532
+#: upstream/_versions/main/guides/cdi-integration.adoc:573
 #, no-wrap
 msgid ""
 "        public boolean appliesTo(Type requiredType) {\n"
@@ -992,7 +1074,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/cdi-integration.adoc:544
+#: upstream/_versions/main/guides/cdi-integration.adoc:585
 #, no-wrap
 msgid ""
 "        public void transform(TransformationContext context) {\n"
@@ -1009,29 +1091,29 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:547
+#: upstream/_versions/main/guides/cdi-integration.adoc:588
 msgid "In theory, you can use <<annotations_transformer_build_item,an `AnnotationsTransformer`>> to achieve the same goal. However, there are few differences that make `InjectionPointsTransformer` more suitable for this particular task: (1) annotation transformers are applied to all classes during bean discovery, whereas `InjectionPointsTransformer` is only applied to discovered injection points after bean discovery; (2) with `InjectionPointsTransformer` you don't need to handle various types of injection points (field, parameters of initializer methods, etc.)."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/cdi-integration.adoc:548
+#: upstream/_versions/main/guides/cdi-integration.adoc:589
 #, no-wrap
 msgid "Use Case - Resource Annotations and Injection"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:552
+#: upstream/_versions/main/guides/cdi-integration.adoc:593
 msgid "The `ResourceAnnotationBuildItem` can be used to specify resource annotations that make it possible to resolve non-CDI injection points, such as Jakarta EE resources.  An integrator must also provide a corresponding `io.quarkus.arc.ResourceReferenceProvider` service provider implementation."
 msgstr ""
 
 #. type: Block title
-#: upstream/_versions/main/guides/cdi-integration.adoc:553
+#: upstream/_versions/main/guides/cdi-integration.adoc:594
 #, no-wrap
 msgid "`ResourceAnnotationBuildItem` Example"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/cdi-integration.adoc:562
+#: upstream/_versions/main/guides/cdi-integration.adoc:603
 #, no-wrap
 msgid ""
 "@BuildStep\n"
@@ -1043,185 +1125,185 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/cdi-integration.adoc:565
+#: upstream/_versions/main/guides/cdi-integration.adoc:606
 #, no-wrap
 msgid "Available Build Time Metadata"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:569
+#: upstream/_versions/main/guides/cdi-integration.adoc:610
 msgid "Any of the above extensions that operates with `BuildExtension.BuildContext` can leverage certain build time metadata that are generated during build.  The built-in keys located in `io.quarkus.arc.processor.BuildExtension.Key` are:"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:570
+#: upstream/_versions/main/guides/cdi-integration.adoc:611
 #, no-wrap
 msgid "ANNOTATION_STORE"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:571
+#: upstream/_versions/main/guides/cdi-integration.adoc:612
 msgid "Contains an `AnnotationStore` that keeps information about all `AnnotationTarget` annotations after application of annotation transformers"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:571
+#: upstream/_versions/main/guides/cdi-integration.adoc:612
 #, no-wrap
 msgid "INJECTION_POINTS"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:572
+#: upstream/_versions/main/guides/cdi-integration.adoc:613
 msgid "`Collection<InjectionPointInfo>` containing all injection points"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:572
+#: upstream/_versions/main/guides/cdi-integration.adoc:613
 #, no-wrap
 msgid "BEANS"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:573
+#: upstream/_versions/main/guides/cdi-integration.adoc:614
 msgid "`Collection<BeanInfo>` containing all beans"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:573
+#: upstream/_versions/main/guides/cdi-integration.adoc:614
 #, no-wrap
 msgid "REMOVED_BEANS"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:574
+#: upstream/_versions/main/guides/cdi-integration.adoc:615
 msgid "`Collection<BeanInfo>` containing all the removed beans; see <<cdi-reference.adoc#remove_unused_beans,Removing unused beans>> for more information"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:574
+#: upstream/_versions/main/guides/cdi-integration.adoc:615
 #, no-wrap
 msgid "OBSERVERS"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:575
+#: upstream/_versions/main/guides/cdi-integration.adoc:616
 msgid "`Collection<ObserverInfo>` containing all observers"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:575
+#: upstream/_versions/main/guides/cdi-integration.adoc:616
 #, no-wrap
 msgid "SCOPES"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:576
+#: upstream/_versions/main/guides/cdi-integration.adoc:617
 msgid "`Collection<ScopeInfo>` containing all scopes, including custom ones"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:576
+#: upstream/_versions/main/guides/cdi-integration.adoc:617
 #, no-wrap
 msgid "QUALIFIERS"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:577
+#: upstream/_versions/main/guides/cdi-integration.adoc:618
 msgid "`Map<DotName, ClassInfo>` containing all qualifiers"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:577
+#: upstream/_versions/main/guides/cdi-integration.adoc:618
 #, no-wrap
 msgid "INTERCEPTOR_BINDINGS"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:578
+#: upstream/_versions/main/guides/cdi-integration.adoc:619
 msgid "`Map<DotName, ClassInfo>` containing all interceptor bindings"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:578
+#: upstream/_versions/main/guides/cdi-integration.adoc:619
 #, no-wrap
 msgid "STEREOTYPES"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:579
+#: upstream/_versions/main/guides/cdi-integration.adoc:620
 msgid "`Map<DotName, StereotypeInfo>` containing all stereotypes"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:584
+#: upstream/_versions/main/guides/cdi-integration.adoc:625
 msgid "To get hold of these, simply query the extension context object for given key.  Note that these metadata are made available as build proceeds which means that extensions can only leverage metadata that were built before the extensions are invoked.  If your extension attempts to retrieve metadata that wasn't yet produced, `null` will be returned.  Here is a summary of which extensions can access which metadata:"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:585
+#: upstream/_versions/main/guides/cdi-integration.adoc:626
 #, no-wrap
 msgid "AnnotationsTransformer"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:586
+#: upstream/_versions/main/guides/cdi-integration.adoc:627
 msgid "Shouldn't rely on any metadata as it could be used at any time in any phase of the bootstrap"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:586
+#: upstream/_versions/main/guides/cdi-integration.adoc:627
 #, no-wrap
 msgid "ContextRegistrar"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:587
-#: upstream/_versions/main/guides/cdi-integration.adoc:588
-#: upstream/_versions/main/guides/cdi-integration.adoc:589
+#: upstream/_versions/main/guides/cdi-integration.adoc:628
+#: upstream/_versions/main/guides/cdi-integration.adoc:629
+#: upstream/_versions/main/guides/cdi-integration.adoc:630
 msgid "Has access to `ANNOTATION_STORE`, `QUALIFIERS`, `INTERCEPTOR_BINDINGS`, `STEREOTYPES`"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:587
+#: upstream/_versions/main/guides/cdi-integration.adoc:628
 #, no-wrap
 msgid "InjectionPointsTransformer"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:588
+#: upstream/_versions/main/guides/cdi-integration.adoc:629
 #, no-wrap
 msgid "ObserverTransformer"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:589
+#: upstream/_versions/main/guides/cdi-integration.adoc:630
 #, no-wrap
 msgid "BeanRegistrar"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:590
+#: upstream/_versions/main/guides/cdi-integration.adoc:631
 msgid "Has access to `ANNOTATION_STORE`, `QUALIFIERS`, `INTERCEPTOR_BINDINGS`, `STEREOTYPES`, `BEANS` (class-based beans only), `OBSERVERS` (class-based observers only), `INJECTION_POINTS`"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:590
+#: upstream/_versions/main/guides/cdi-integration.adoc:631
 #, no-wrap
 msgid "ObserverRegistrar"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:591
+#: upstream/_versions/main/guides/cdi-integration.adoc:632
 msgid "Has access to `ANNOTATION_STORE`, `QUALIFIERS`, `INTERCEPTOR_BINDINGS`, `STEREOTYPES`, `BEANS`, `OBSERVERS` (class-based observers only), `INJECTION_POINTS`"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/cdi-integration.adoc:591
+#: upstream/_versions/main/guides/cdi-integration.adoc:632
 #, no-wrap
 msgid "BeanDeploymentValidator"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/cdi-integration.adoc:591
+#: upstream/_versions/main/guides/cdi-integration.adoc:632
 msgid "Has access to all build metadata"
 msgstr ""
