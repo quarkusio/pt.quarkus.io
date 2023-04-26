@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-12-14 18:08+0000\n"
+"POT-Creation-Date: 2023-04-26 15:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,7 @@ msgstr "Cuando se prueba o se ejecuta en modo de desarrollo, Quarkus puede propo
 #. type: Plain text
 #: upstream/_guides/databases-dev-services.adoc:15
 #, fuzzy
-msgid "DB2 (container) (requires <<#license_acceptance,license acceptance>>)"
+msgid "DB2 (container) (requires xref:license_acceptance[license acceptance])"
 msgstr "DB2 (contenedor) (requiere la  link:#license_acceptance[aceptación de la licencia])"
 
 #. type: Plain text
@@ -58,7 +58,7 @@ msgstr "MariaDB (contenedor)"
 #. type: Plain text
 #: upstream/_guides/databases-dev-services.adoc:19
 #, fuzzy
-msgid "Microsoft SQL Server (container) (requires <<#license_acceptance,license acceptance>>)"
+msgid "Microsoft SQL Server (container) (requires xref:license_acceptance[license acceptance])"
 msgstr "Microsoft SQL Server (contenedor) (requiere la  link:#license_acceptance[aceptación de la licencia])"
 
 #. type: Plain text
@@ -159,168 +159,261 @@ msgstr ""
 #. type: Title ==
 #: upstream/_guides/databases-dev-services.adoc:62
 #, fuzzy, no-wrap
+msgid "Mapping volumes into Dev Services for Database"
+msgstr "Activación/desactivación de los servicios de desarrollo para la base de datos"
+
+#. type: Plain text
+#: upstream/_guides/databases-dev-services.adoc:65
+msgid "Mapping volumes from the Docker host's filesystem to the containers is handy to provide files like scripts or configuration, but also to preserve database data and reuse it after an application restart."
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_guides/databases-dev-services.adoc:69
+msgid "Mapping volumes will only work in Dev Services with a container-based database like PostgreSQL."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/databases-dev-services.adoc:72
+msgid "Dev Services volumes can be mapped to the filesystem or the classpath:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/databases-dev-services.adoc:79
+#, no-wrap
+msgid ""
+"# Using a filesystem volume:\n"
+"quarkus.datasource.devservices.volumes.\"/path/from\"=/container/to <1>\n"
+"# Using a classpath volume:\n"
+"quarkus.datasource.devservices.volumes.\"classpath:./file\"=/container/to <2>\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/databases-dev-services.adoc:82
+msgid "The file or folder \"/path/from\" from the local machine will be accessible at \"/container/to\" in the container."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/databases-dev-services.adoc:83
+msgid "When using classpath volumes, the location has to start with \"classpath:\". The file or folder \"./file\" from the project's classpath will be accessible at \"/container/to\" in the container."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/databases-dev-services.adoc:85
+msgid "when using a classpath volume, the container will only be granted read permission. On the other hand, when using a filesystem volume, the container will be granted read and write permission."
+msgstr ""
+
+#. type: Title ===
+#: upstream/_guides/databases-dev-services.adoc:86
+#, no-wrap
+msgid "Example of mapping volumes to persist the database data"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/databases-dev-services.adoc:89
+msgid "Let's see an example using PostgreSQL where we'll map a file system volume to keep the database data permantently and use it:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/databases-dev-services.adoc:94
+#, no-wrap
+msgid ""
+"quarkus.datasource.db-kind=postgresql\n"
+"quarkus.datasource.devservices.volumes.\"/local/test/data\"=/var/lib/postgresql/data\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/databases-dev-services.adoc:97
+msgid "The appropriate in-container location varies depending on the database vendor. For PostgresSQL is \"/var/lib/postgresql/data\", but for MySQL, you would need this configuration instead:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/databases-dev-services.adoc:102
+#, no-wrap
+msgid ""
+"quarkus.datasource.db-kind=mysql\n"
+"quarkus.datasource.devservices.volumes.\"/local/test/data\"=/var/lib/mysql\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/databases-dev-services.adoc:105
+msgid "When starting Dev Services (for example, in tests or in DEV mode), you will see that the folder \"/local/test/data\" will be created at your file sytem and that will contain all the database data. When rerunning again the same dev services, this data will contain all the data you might have created beforehand."
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_guides/databases-dev-services.adoc:110
+msgid "When using Dev Services with Hibernate ORM, by default Quarkus will wipe out the database on application startup, which will wipe out the database data on your Docker host's filesystem.  Configure `quarkus.hibernate-orm.database.generation=none` or `quarkus.hibernate-orm.database.generation=validate` to avoid this behavior."
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_guides/databases-dev-services.adoc:112
+msgid "Also, using Flyway to migrate your schema when starting the application will modify the database data on your Docker hosts's file system."
+msgstr ""
+
+#. type: Title ==
+#: upstream/_guides/databases-dev-services.adoc:114
+#, fuzzy, no-wrap
 msgid "Database Vendor Specific Configuration"
 msgstr "Configuración específica del proveedor de la base de datos"
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:66
+#: upstream/_guides/databases-dev-services.adoc:118
 #, fuzzy
 msgid "All services based on containers are run using Testcontainers but Quarkus is not using the Testcontainers JDBC driver.  Thus, even though extra JDBC URL properties can be set in your `application.properties` file, specific properties supported by the Testcontainers JDBC driver such as `TC_INITSCRIPT`, `TC_INITFUNCTION`, `TC_DAEMON`, `TC_TMPFS` are not supported."
 msgstr "Todos los servicios basados en contenedores se ejecutan utilizando Testcontainers, pero Quarkus no utiliza el controlador JDBC de Testcontainers. Por lo tanto, aunque las propiedades extra de la URL JDBC pueden ser establecidas en su archivo `application.properties`, las propiedades específicas soportadas por el controlador JDBC de Testcontainers como `TC_INITSCRIPT`, `TC_INITFUNCTION`, `TC_DAEMON`, `TC_TMPFS` no son soportadas."
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:68
+#: upstream/_guides/databases-dev-services.adoc:120
 #, fuzzy
 msgid "Quarkus can support *specific* properties sent to the container itself though, e.g. this is the case for `TC_MY_CNF` which allows to override the MariaDB/MySQL configuration file."
 msgstr "Sin embargo, Quarkus puede soportar propiedades *específicas* enviadas al propio contenedor, por ejemplo, este es el caso de `TC_MY_CNF` que permite anular el archivo de configuración de MariaDB/MySQL."
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:70
+#: upstream/_guides/databases-dev-services.adoc:122
 #, fuzzy
 msgid "Overriding the MariaDB/MySQL configuration would be done as follows:"
 msgstr "La anulación de la configuración de MariaDB/MySQL se haría como sigue:"
 
 #. type: delimited block -
-#: upstream/_guides/databases-dev-services.adoc:74
+#: upstream/_guides/databases-dev-services.adoc:126
 #, no-wrap
 msgid "quarkus.datasource.devservices.container-properties.TC_MY_CNF=testcontainers/mysql-conf\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:77
+#: upstream/_guides/databases-dev-services.adoc:129
 #, fuzzy
 msgid "This support is database specific and needs to be implemented in each dev service specifically."
 msgstr "Este soporte es específico de la base de datos y debe ser implementado en cada servicio de desarrollo específicamente."
 
 #. type: Title ==
-#: upstream/_guides/databases-dev-services.adoc:78
+#: upstream/_guides/databases-dev-services.adoc:130
 #, fuzzy, no-wrap
 msgid "Connect To Database Run as a Dev Service"
 msgstr "Conectar con la base de datos ejecutada como servicio de desarrollo"
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:81
+#: upstream/_guides/databases-dev-services.adoc:133
 #, fuzzy
 msgid "You can connect to a database running as a Dev Service as you would do with any database running inside a Docker container."
 msgstr "Puede conectarse a una base de datos que se ejecuta como un servicio de desarrollo como lo haría con cualquier base de datos que se ejecuta dentro de un contenedor Docker."
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:83
+#: upstream/_guides/databases-dev-services.adoc:135
 #, fuzzy
 msgid "Login credentials are the same for most databases, except when the database requirements don't allow it:"
 msgstr "Las credenciales de inicio de sesión son las mismas para la mayoría de las bases de datos, excepto cuando los requisitos de la base de datos no lo permiten:"
 
 #. type: Table
-#: upstream/_guides/databases-dev-services.adoc:85
+#: upstream/_guides/databases-dev-services.adoc:137
 #, fuzzy, no-wrap
 msgid "Database"
 msgstr "Base de datos"
 
 #. type: Table
-#: upstream/_guides/databases-dev-services.adoc:85
+#: upstream/_guides/databases-dev-services.adoc:137
 #, fuzzy, no-wrap
 msgid "Username"
 msgstr "Nombre de usuario"
 
 #. type: Table
-#: upstream/_guides/databases-dev-services.adoc:85
+#: upstream/_guides/databases-dev-services.adoc:137
 #, fuzzy, no-wrap
 msgid "Password"
 msgstr "Contraseña"
 
 #. type: Table
-#: upstream/_guides/databases-dev-services.adoc:87
+#: upstream/_guides/databases-dev-services.adoc:139
 #, fuzzy, no-wrap
 msgid "Database name"
 msgstr "Nombre de la base de datos"
 
 #. type: Table
-#: upstream/_guides/databases-dev-services.adoc:88
+#: upstream/_guides/databases-dev-services.adoc:140
 #, fuzzy, no-wrap
 msgid "PostgreSQL, MariaDB, MySQL, IBM Db2, H2"
 msgstr "PostgreSQL, MariaDB, MySQL, IBM Db2, H2"
 
 #. type: Table
-#: upstream/_guides/databases-dev-services.adoc:89
+#: upstream/_guides/databases-dev-services.adoc:141
 #, fuzzy, no-wrap
 msgid "`quarkus` for the default datasource or name of the datasource"
 msgstr "`quarkus` para la fuente de datos por defecto o el nombre de la fuente de datos"
 
 #. type: Table
-#: upstream/_guides/databases-dev-services.adoc:90
-#: upstream/_guides/databases-dev-services.adoc:92
+#: upstream/_guides/databases-dev-services.adoc:142
+#: upstream/_guides/databases-dev-services.adoc:144
 #, fuzzy, no-wrap
 msgid "`quarkus`"
 msgstr "`quarkus`"
 
 #. type: Table
-#: upstream/_guides/databases-dev-services.adoc:93
+#: upstream/_guides/databases-dev-services.adoc:145
 #, fuzzy, no-wrap
 msgid "Microsoft SQL Server"
 msgstr "Microsoft SQL Server"
 
 #. type: Table
-#: upstream/_guides/databases-dev-services.adoc:94
+#: upstream/_guides/databases-dev-services.adoc:146
 #, fuzzy, no-wrap
 msgid "`SA`"
 msgstr "`SA`"
 
 #. type: Table
-#: upstream/_guides/databases-dev-services.adoc:95
+#: upstream/_guides/databases-dev-services.adoc:147
 #, fuzzy, no-wrap
 msgid "`Quarkus123`"
 msgstr "`Quarkus123`"
 
 #. type: delimited block =
-#: upstream/_guides/databases-dev-services.adoc:103
+#: upstream/_guides/databases-dev-services.adoc:155
 #, fuzzy
 msgid "The Microsoft SQL Server Testcontainer doesn't support defining the username or database name.  It also requires a strong password."
 msgstr "El Testcontainer de Microsoft SQL Server no permite definir el nombre de usuario o el nombre de la base de datos. También requiere una contraseña fuerte."
 
 #. type: delimited block =
-#: upstream/_guides/databases-dev-services.adoc:110
+#: upstream/_guides/databases-dev-services.adoc:162
 #, fuzzy
 msgid "For databases supporting it (i.e. all of them except Microsoft SQL Server for which it is only possible to override the password), you can override the database name, username and password used by the Dev Service."
 msgstr "En el caso de las bases de datos que lo soportan (es decir, todas excepto Microsoft SQL Server, para la que sólo es posible anular la contraseña), puede anular el nombre de la base de datos, el nombre de usuario y la contraseña utilizados por el servicio de desarrollo."
 
 #. type: delimited block =
-#: upstream/_guides/databases-dev-services.adoc:112
+#: upstream/_guides/databases-dev-services.adoc:164
 #, fuzzy
-msgid "See <<configuration-reference>> for more information."
+msgid "See xref:configuration-reference[Configuration Reference] for more information."
 msgstr "Para más información, consulte  link:#configuration-reference[[configuración-referencia]]."
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:116
+#: upstream/_guides/databases-dev-services.adoc:168
 #, fuzzy
 msgid "Keep in mind that, except if configured otherwise (see below), a Dev Service runs on a random port.  For instance, when you run PostgreSQL as a Dev Service and have `psql` installed on the host, you can connect via:"
 msgstr "Ten en cuenta que, salvo que se configure de otra manera (ver más abajo), un Dev Service se ejecuta en un puerto aleatorio. Por ejemplo, cuando se ejecuta PostgreSQL como un servicio de desarrollo y tiene `psql` instalado en el host, puede conectarse a través de:"
 
 #. type: delimited block -
-#: upstream/_guides/databases-dev-services.adoc:120
+#: upstream/_guides/databases-dev-services.adoc:172
 #, no-wrap
 msgid "psql -h localhost -p <random port> -U quarkus\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:123
+#: upstream/_guides/databases-dev-services.adoc:175
 #, fuzzy
 msgid "The random port can be found with `docker ps`"
 msgstr "El puerto aleatorio se puede encontrar con `docker ps`"
 
 #. type: delimited block -
-#: upstream/_guides/databases-dev-services.adoc:127
+#: upstream/_guides/databases-dev-services.adoc:179
 #, no-wrap
 msgid "docker ps\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/databases-dev-services.adoc:129
+#: upstream/_guides/databases-dev-services.adoc:181
 #, no-wrap
 msgid "# returns something like this:\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/databases-dev-services.adoc:132
+#: upstream/_guides/databases-dev-services.adoc:184
 #, no-wrap
 msgid ""
 "CONTAINER ID   IMAGE           [..]    PORTS                                         [..]\n"
@@ -328,61 +421,61 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:134
+#: upstream/_guides/databases-dev-services.adoc:186
 #, fuzzy
 msgid "The random port is `49174`."
 msgstr "El puerto aleatorio es `49174`."
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:136
+#: upstream/_guides/databases-dev-services.adoc:188
 #, fuzzy
 msgid "You can require a fixed port for a database Dev Service using:"
 msgstr "Puede requerir un puerto fijo para una base de datos Dev Service utilizando:"
 
 #. type: delimited block -
-#: upstream/_guides/databases-dev-services.adoc:140
+#: upstream/_guides/databases-dev-services.adoc:192
 #, no-wrap
 msgid "quarkus.datasource.devservices.port=<your fixed port> <1>\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/databases-dev-services.adoc:142
+#: upstream/_guides/databases-dev-services.adoc:194
 #, no-wrap
 msgid "quarkus.datasource.\"datasource-name\".devservices.port=<your fixed port> <2>\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:144
+#: upstream/_guides/databases-dev-services.adoc:196
 #, fuzzy
 msgid "Fixed port for the default datasource."
 msgstr "Puerto fijo para la fuente de datos por defecto."
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:145
+#: upstream/_guides/databases-dev-services.adoc:197
 #, fuzzy
 msgid "Fixed port for a named datasource."
 msgstr "Puerto fijo para una fuente de datos con nombre."
 
 #. type: delimited block =
-#: upstream/_guides/databases-dev-services.adoc:150
+#: upstream/_guides/databases-dev-services.adoc:202
 #, fuzzy
 msgid "`docker ps` allows for more advanced retrieval of container information using the `--format` argument.  For example, to get the running container ID, the image, the labels and the ports, the following command can be used:"
 msgstr "`docker ps` permite una recuperación más avanzada de la información del contenedor utilizando el argumento `--format`. Por ejemplo, para obtener el ID del contenedor en ejecución, la imagen, las etiquetas y los puertos, se puede utilizar el siguiente comando:"
 
 #. type: delimited block -
-#: upstream/_guides/databases-dev-services.adoc:154
+#: upstream/_guides/databases-dev-services.adoc:206
 #, no-wrap
 msgid "docker ps --format \"table {{.ID}}\\t{{.Image}}\\t{{.Labels}}\\t{{.Ports}}\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:157
+#: upstream/_guides/databases-dev-services.adoc:209
 #, fuzzy
 msgid "An example output using Dev Services for PostgreSQL is the following:"
 msgstr "Un ejemplo de salida utilizando Dev Services para PostgreSQL es el siguiente:"
 
 #. type: delimited block -
-#: upstream/_guides/databases-dev-services.adoc:162
+#: upstream/_guides/databases-dev-services.adoc:214
 #, no-wrap
 msgid ""
 "CONTAINER ID   IMAGE          LABELS                                                                        PORTS\n"
@@ -390,19 +483,19 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/databases-dev-services.adoc:166
+#: upstream/_guides/databases-dev-services.adoc:218
 #, fuzzy
 msgid "In the labels tab, we see that Quarkus added the datasource label, which can be very useful in differentiating containers when multiple Dev Services have been started."
 msgstr "En la pestaña labels, vemos que Quarkus ha añadido la etiqueta datasource, que puede ser muy útil para diferenciar contenedores cuando se han iniciado varios Dev Services."
 
 #. type: Title ==
-#: upstream/_guides/databases-dev-services.adoc:170
+#: upstream/_guides/databases-dev-services.adoc:222
 #, fuzzy, no-wrap
 msgid "Configuration Reference"
 msgstr "Referencia de configuración"
 
 #. type: delimited block =
-#: upstream/_guides/databases-dev-services.adoc:173
+#: upstream/_guides/databases-dev-services.adoc:225
 #, fuzzy
 msgid "Dev Services for Databases support the following configuration options:"
 msgstr "Los servicios de desarrollo de fuentes de datos admiten las siguientes opciones de configuración:"
