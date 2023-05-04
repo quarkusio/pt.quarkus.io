@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-04-26 15:18+0000\n"
+"POT-Creation-Date: 2023-05-04 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1932,7 +1932,7 @@ msgstr "\"El término multitenancy, en general, se aplica al desarrollo de softw
 #. type: Plain text
 #: upstream/_guides/hibernate-orm.adoc:920
 #, fuzzy
-msgid "Quarkus currently supports the link:{orm-doc-url-prefix}#multitenacy-separate-database[separate database] and the link:{orm-doc-url-prefix}#multitenacy-separate-schema[separate schema] approach."
+msgid "Quarkus currently supports the link:{orm-doc-url-prefix}#multitenacy-separate-database[separate database] approach, the link:{orm-doc-url-prefix}#multitenacy-separate-schema[separate schema] approach and the link:{orm-doc-url-prefix}#multitenacy-discriminator[discriminator] approach."
 msgstr "Actualmente, Quarkus admite la  link:{orm-doc-url-prefix}#multitenacy-separate-database[base de datos separada] y el enfoque de  link:{orm-doc-url-prefix}#multitenacy-separate-schema[esquema separado]."
 
 #. type: Plain text
@@ -2175,6 +2175,7 @@ msgstr ""
 
 #. type: delimited block -
 #: upstream/_guides/hibernate-orm.adoc:1047
+#: upstream/_guides/hibernate-orm.adoc:1167
 #, no-wrap
 msgid ""
 "# The default data source used for all tenant schemas\n"
@@ -2342,32 +2343,51 @@ msgid ""
 "INSERT INTO known_fruits(id, name) VALUES (3, 'Blackberries');\n"
 msgstr ""
 
+#. type: Title ====
+#: upstream/_guides/hibernate-orm.adoc:1152
+#, fuzzy, no-wrap
+msgid "DISCRIMINATOR approach"
+msgstr "Enfoque SCHEMA"
+
+#. type: Plain text
+#: upstream/_guides/hibernate-orm.adoc:1155
+msgid "The default data source will be used for all tenants. All entities defining a field annotated with `@TenantId` will have that field populated automatically, and will get filtered automatically in queries."
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/hibernate-orm.adoc:1161
+#, no-wrap
+msgid ""
+"# Enable DISCRIMINATOR approach\n"
+"quarkus.hibernate-orm.multitenant=DISCRIMINATOR\n"
+msgstr ""
+
 #. type: Title ===
-#: upstream/_guides/hibernate-orm.adoc:1150
+#: upstream/_guides/hibernate-orm.adoc:1170
 #, fuzzy, no-wrap
 msgid "Programmatically Resolving Tenants Connections"
 msgstr "Resolver programáticamente las conexiones de los inquilinos"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm.adoc:1158
+#: upstream/_guides/hibernate-orm.adoc:1178
 #, fuzzy
 msgid "If you need a more dynamic configuration for the different tenants you want to support and don't want to end up with multiple entries in your configuration file, you can use the `io.quarkus.hibernate.orm.runtime.tenant.TenantConnectionResolver` interface to implement your own logic for retrieving a connection.  Creating an application-scoped bean that implements this interface and annotating it with `@PersistenceUnitExtension` (or `@PersistenceUnitExtension(\"nameOfYourPU\")` for a xref:multiple-persistence-units[named persistence unit])  will replace the current Quarkus default implementation `io.quarkus.hibernate.orm.runtime.tenant.DataSourceTenantConnectionResolver`.  Your custom connection resolver would allow for example to read tenant information from a database and create a connection per tenant at runtime based on it."
 msgstr "Si se necesita una configuración más dinámica para los diferentes inquilinos que se desea apoyar y no se quiere terminar con múltiples entradas en el archivo de configuración, se puede utilizar la interfaz `io.quarkus.hibernate.orm.runtime.tenant.TenantConnectionResolver` para implementar su propia lógica para recuperar una conexión. Crear un bean de ámbito de aplicación que implemente esta interfaz y anotarlo con `@PersistenceUnitExtension` (o `@PersistenceUnitExtension(\"nameOfYourPU\")` para una  link:#multiple-persistence-units[unidad de persistencia con nombre]) reemplazará la implementación actual por defecto de Quarkus `io.quarkus.hibernate.orm.runtime.tenant.DataSourceTenantConnectionResolver`. Su resolvedor de conexiones personalizado permitiría, por ejemplo, leer la información de los inquilinos desde una base de datos y crear una conexión por inquilino en tiempo de ejecución basándose en ella."
 
 #. type: Title ==
-#: upstream/_guides/hibernate-orm.adoc:1160
+#: upstream/_guides/hibernate-orm.adoc:1180
 #, fuzzy, no-wrap
 msgid "Interceptors"
 msgstr "Interceptores"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm.adoc:1164
+#: upstream/_guides/hibernate-orm.adoc:1184
 #, fuzzy
 msgid "You can assign an link:{orm-doc-url-prefix}#events-interceptors[`org.hibernate.Interceptor`] to your `SessionFactory` by simply defining a CDI bean with the appropriate qualifier:"
 msgstr "Puede asignar un  link:{orm-doc-url-prefix}#events-interceptors[`org.hibernate.Interceptor`] a su `SessionFactory` simplemente definiendo un frijol CDI con el calificador apropiado:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm.adoc:1176
+#: upstream/_guides/hibernate-orm.adoc:1196
 #, no-wrap
 msgid ""
 "@PersistenceUnitExtension // <1>\n"
@@ -2382,62 +2402,62 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm.adoc:1179
+#: upstream/_guides/hibernate-orm.adoc:1199
 #, fuzzy
 msgid "Annotate the interceptor implementation with the `@PersistenceUnitExtension` qualifier to tell Quarkus it should be used in the default persistence unit."
 msgstr "Anote la implementación del interceptor con el calificador `@PersistenceUnitExtension` para indicar a Quarkus que debe utilizarse en la unidad de persistencia por defecto."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm.adoc:1181
-#: upstream/_guides/hibernate-orm.adoc:1223
+#: upstream/_guides/hibernate-orm.adoc:1201
+#: upstream/_guides/hibernate-orm.adoc:1243
 #, fuzzy
 msgid "For xref:multiple-persistence-units[named persistence units], use `@PersistenceUnitExtension(\"nameOfYourPU\")`"
 msgstr "Para las  link:#multiple-persistence-units[unidades de persistencia con nombre], utilice `@PersistenceUnitExtension(\"nameOfYourPU\")`"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm.adoc:1182
+#: upstream/_guides/hibernate-orm.adoc:1202
 #, fuzzy
 msgid "Either extend `org.hibernate.EmptyInterceptor` or implement `org.hibernate.Interceptor` directly."
 msgstr "O bien se amplía `org.hibernate.EmptyInterceptor` o se implementa directamente `org.hibernate.Interceptor`."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm.adoc:1183
+#: upstream/_guides/hibernate-orm.adoc:1203
 #, fuzzy
 msgid "Implement methods as necessary."
 msgstr "Aplicar los métodos que sean necesarios."
 
 #. type: delimited block =
-#: upstream/_guides/hibernate-orm.adoc:1190
+#: upstream/_guides/hibernate-orm.adoc:1210
 #, fuzzy
 msgid "By default, interceptor beans annotated with `@PersistenceUnitExtension` are application-scoped, which means only one interceptor instance will be created per application and reused across all entity managers.  For this reason, the interceptor implementation must be thread-safe."
 msgstr "Por defecto, los beans interceptores anotados con `@PersistenceUnitExtension` son de ámbito aplicativo, lo que significa que sólo se creará una instancia de interceptor por aplicación y se reutilizará en todos los gestores de entidades. Por esta razón, la implementación del interceptor debe ser segura para los hilos."
 
 #. type: delimited block =
-#: upstream/_guides/hibernate-orm.adoc:1194
+#: upstream/_guides/hibernate-orm.adoc:1214
 #, fuzzy
 msgid "In order to create one interceptor instance per entity manager instead, annotate your bean with `@Dependent`.  In that case, the interceptor implementation doesn't need to be thread-safe."
 msgstr "Para crear una instancia de interceptor por gestor de entidades, anote su frijol con `@Dependent`. En ese caso, la implementación del interceptor no necesita ser segura para los hilos."
 
 #. type: delimited block =
-#: upstream/_guides/hibernate-orm.adoc:1200
+#: upstream/_guides/hibernate-orm.adoc:1220
 #, fuzzy
 msgid "Due to a limitation in Hibernate ORM itself, `@PreDestroy` methods on `@Dependent`-scoped interceptors will never get called."
 msgstr "Debido a una limitación del propio ORM de Hibernate, los métodos de `@PreDestroy` en los interceptores de alcance `@Dependent` nunca serán llamados."
 
 #. type: Title ==
-#: upstream/_guides/hibernate-orm.adoc:1204
+#: upstream/_guides/hibernate-orm.adoc:1224
 #, fuzzy, no-wrap
 msgid "Statement Inspectors"
 msgstr "Declaración Inspectores"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm.adoc:1207
+#: upstream/_guides/hibernate-orm.adoc:1227
 #, fuzzy
 msgid "You can assign a `org.hibernate.engine.jdbc.spi.StatementInspector` to your `SessionFactory` by simply defining a CDI bean with the appropriate qualifier:"
 msgstr "Puede asignar un  link:{orm-doc-url-prefix}#events-interceptors[`org.hibernate.Interceptor`] a su `SessionFactory` simplemente definiendo un frijol CDI con el calificador apropiado:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-orm.adoc:1218
+#: upstream/_guides/hibernate-orm.adoc:1238
 #, no-wrap
 msgid ""
 "@PersistenceUnitExtension // <1>\n"
@@ -2451,13 +2471,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm.adoc:1221
+#: upstream/_guides/hibernate-orm.adoc:1241
 #, fuzzy
 msgid "Annotate the statement inspector implementation with the `@PersistenceUnitExtension` qualifier to tell Quarkus it should be used in the default persistence unit."
 msgstr "Anote la implementación del interceptor con el calificador `@PersistenceUnitExtension` para indicar a Quarkus que debe utilizarse en la unidad de persistencia por defecto."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-orm.adoc:1223
+#: upstream/_guides/hibernate-orm.adoc:1243
 #, fuzzy
 msgid "Implement `org.hibernate.engine.jdbc.spi.StatementInspector`."
 msgstr "Implementar `org.hibernate.engine.jdbc.spi.StatementInspector`."
