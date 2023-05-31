@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-04-26 15:18+0000\n"
+"POT-Creation-Date: 2023-05-31 13:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -204,30 +204,52 @@ msgstr "build.gradle"
 msgid "implementation(\"io.quarkus:quarkus-security-jpa\")\n"
 msgstr ""
 
-#. type: Title ==
+#. type: Title ===
 #: upstream/_guides/security-basic-authentication-tutorial.adoc:84
+#, no-wrap
+msgid "Using Hibernate Reactive"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:90
+msgid "If you plan to use Hibernate Reactive and non-blocking database drivers, you will need to use the `security-jpa-reactive` extension instead.  The `security-jpa-reactive` extension works with the same annotations and only difference in configuration is a datasource URL.  Reactive datasource has URL set with the `quarkus.datasource.reactive.url` configuration property, instead of the `quarkus.datasource.jdbc.url` configuration property used by JDBC datasource."
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:94
+#, no-wrap
+msgid "%prod.quarkus.datasource.reactive.url=vertx-reactive:postgresql://localhost:5431/security_jpa\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:99
+msgid "Please refer to the xref:hibernate-reactive.adoc[Hibernate Reactive guide] for more information.  On top of that, Hibernate Reactive with Panache uses its own reactive classes as `io.quarkus.hibernate.reactive.panache.PanacheEntity`.  You can learn more about it in the xref:hibernate-reactive-panache.adoc[Hibernate Reactive with Panache guide]."
+msgstr ""
+
+#. type: Title ==
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:100
 #, fuzzy, no-wrap
 msgid "Write the application"
 msgstr "Redactar la solicitud"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:88
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:104
 #, fuzzy
 msgid "Let's start by implementing the `/api/public` endpoint to allow all users access to access the application.  Add a regular Jakarta REST resource to your Java source code, as outlined in the following code snippet:"
 msgstr "Empecemos por implementar el endpoint `/api/public` para permitir a todos los usuarios acceder a la aplicación. Añade un recurso JAX-RS normal a tu código fuente Java, como se indica en el siguiente fragmento de código:"
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:92
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:116
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:140
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:167
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:251
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:108
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:132
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:156
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:183
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:267
 #, no-wrap
 msgid "package org.acme.security.jpa;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:98
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:114
 #, no-wrap
 msgid ""
 "import jakarta.annotation.security.PermitAll;\n"
@@ -238,7 +260,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:101
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:117
 #, no-wrap
 msgid ""
 "@Path(\"/api/public\")\n"
@@ -246,7 +268,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:109
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:125
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -259,13 +281,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:112
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:128
 #, fuzzy
 msgid "The source code for the `/api/admin` endpoint is similar, but instead, you use a `@RolesAllowed` annotation to ensure that only users granted the `admin` role can access the endpoint.  Add a Jakarta REST resource with the following `@RolesAllowed` annotation:"
 msgstr "El código fuente para el endpoint `/api/admin` es similar, pero en su lugar se utiliza una anotación `@RolesAllowed` para asegurarse de que sólo los usuarios con el rol `admin` pueden acceder al endpoint. Añade un recurso JAX-RS con la siguiente anotación `@RolesAllowed`:"
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:122
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:138
 #, no-wrap
 msgid ""
 "import jakarta.annotation.security.RolesAllowed;\n"
@@ -276,7 +298,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:125
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:141
 #, no-wrap
 msgid ""
 "@Path(\"/api/admin\")\n"
@@ -284,7 +306,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:133
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:149
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -297,13 +319,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:136
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:152
 #, fuzzy
 msgid "Finally, implement the `/api/users/me` endpoint. As you can see from the source code example below, we are trusting only users with the `user` role.  We are also using `SecurityContext` to get access to the currently authenticated `Principal`, and we return the username, all of which is loaded from the database."
 msgstr "Por último, implementa el endpoint `/api/users/me`. Como se puede ver en el ejemplo de código fuente a continuación, estamos confiando sólo en los usuarios con el rol `user`. También estamos usando `SecurityContext` para obtener acceso al actualmente autenticado `Principal`, y devolvemos el nombre de usuario, todo lo cual es cargado desde la base de datos."
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:147
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:163
 #, no-wrap
 msgid ""
 "import jakarta.annotation.security.RolesAllowed;\n"
@@ -315,7 +337,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:150
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:166
 #, no-wrap
 msgid ""
 "@Path(\"/api/users\")\n"
@@ -323,7 +345,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:158
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:174
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -336,19 +358,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:160
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:176
 #, fuzzy, no-wrap
 msgid "Define the user entity"
 msgstr "Definir la entidad usuaria"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:163
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:179
 #, fuzzy
 msgid "You can now describe how you want security information to be stored in the model by adding annotations to the `user` entity, as outlined in the following code snippet:"
 msgstr "Ahora puede describir cómo desea que se almacene la información de seguridad en el modelo añadiendo anotaciones a la entidad `user`, como se indica en el siguiente fragmento de código:"
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:170
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:186
 #, no-wrap
 msgid ""
 "import jakarta.persistence.Entity;\n"
@@ -356,7 +378,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:177
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:193
 #, no-wrap
 msgid ""
 "import io.quarkus.hibernate.orm.panache.PanacheEntity;\n"
@@ -368,7 +390,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:188
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:204
 #, no-wrap
 msgid ""
 "@Entity\n"
@@ -384,7 +406,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:203
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:219
 #, no-wrap
 msgid ""
 "    /**\n"
@@ -404,79 +426,79 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:207
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:223
 #, fuzzy
 msgid "The `security-jpa` extension initializes only if there is a single entity annotated with `@UserDefinition`."
 msgstr "La extensión `security-jpa` sólo se inicializa si existe una única entidad anotada con `@UserDefinition`."
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:209
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:225
 #, fuzzy
 msgid "The `@UserDefinition` annotation must be present on a single entity and can be either a regular Hibernate ORM entity or a Hibernate ORM with Panache entity."
 msgstr "La anotación `@UserDefinition` debe estar presente en una única entidad y puede ser una entidad Hibernate ORM normal o una entidad Hibernate ORM con Panache."
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:210
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:226
 #, fuzzy
 msgid "Indicates the field used for the username."
 msgstr "Indica el campo utilizado para el nombre de usuario."
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:211
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:227
 #, fuzzy
 msgid "Indicates the field used for the password. By default, it uses bcrypt-hashed passwords. You can configure it to use plain text or custom passwords."
 msgstr "Indica el campo utilizado para la contraseña, que por defecto utiliza contraseñas con hash bcrypt pero también se puede configurar para texto plano o contraseñas personalizadas."
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:212
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:228
 #, fuzzy
 msgid "This indicates the comma-separated list of roles added to the target principal representation attributes."
 msgstr "Indica la lista separada por comas de funciones añadidas a los atributos de representación de la entidad de seguridad de destino."
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:213
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:229
 #, fuzzy
 msgid "This method allows us to add users while hashing the password with the proper bcrypt hash."
 msgstr "Este método nos permite añadir usuarios mientras hacemos hash de la contraseña con el hash bcrypt adecuado."
 
 #. type: Title ===
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:214
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:230
 #, fuzzy, no-wrap
 msgid "Configure the application"
 msgstr "Configurar la aplicación"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:217
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:233
 #, fuzzy
 msgid "Enable the built-in Quarkus xref:security-basic-authentication-concept.adoc[Basic authentication] by setting the `quarkus.http.auth.basic` property to `true`:"
 msgstr "Habilite la  link:security-built-in-authentication-support-concept.html#basic-auth[autenticación HTTP básica incorporada de Quarkus] estableciendo la propiedad `quarkus.http.auth.basic` en `true`:"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:219
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:235
 #, fuzzy
 msgid "`quarkus.http.auth.basic`=true`"
 msgstr "`quarkus.http.auth.basic`=verdadero`"
 
 #. type: delimited block =
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:224
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:240
 #, fuzzy
 msgid "When secure access is required and no other authentication mechanisms are enabled, the built-in xref:security-basic-authentication-concept.adoc[Basic authentication] of Quarkus is the fallback authentication mechanism.  Therefore, in this tutorial, you do not need to set the property `quarkus.http.auth.basic` to `true`."
 msgstr "Cuando se requiere acceso seguro y no hay otros mecanismos de autenticación habilitados,  link:security-built-in-authentication-support-concept.html#basic-auth[la autenticación HTTP básica incorporada en Quarkus] es el mecanismo de autenticación de reserva. Por lo tanto, en este tutorial, no es necesario establecer la propiedad `quarkus.http.auth.basic=true`."
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:227
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:243
 #, fuzzy
 msgid "Configure at least one data source so that the `security-jpa` extension can access your database."
 msgstr "Configure al menos una fuente de datos para que la extensión `security-jpa` pueda acceder a su base de datos."
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:231
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:247
 #, no-wrap
 msgid "quarkus.http.auth.basic=true\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:236
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:252
 #, no-wrap
 msgid ""
 "quarkus.datasource.db-kind=postgresql\n"
@@ -486,26 +508,26 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:238
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:301
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:254
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:317
 #, no-wrap
 msgid "quarkus.hibernate-orm.database.generation=drop-and-create\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:241
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:257
 #, fuzzy
 msgid "To initialize the database with users and roles, implement the `Startup` class, as outlined in the following code snippet:"
 msgstr "Para inicializar la base de datos con usuarios y roles, implemente la clase `Startup`, como se indica en el siguiente fragmento de código:"
 
 #. type: delimited block =
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:246
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:262
 #, fuzzy
 msgid "In this tutorial, a PostgreSQL database is used for the identity store. link:https://hibernate.org/orm/[Hibernate ORM] automatically creates the database schema on startup.  This approach is suitable for development but needs to be revised for production."
 msgstr "En este tutorial, se utiliza una base de datos PostgreSQL para el almacén de identidades. Hibernate ORM crea automáticamente el esquema de la base de datos al inicio (cámbialo en producción)."
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:255
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:271
 #, no-wrap
 msgid ""
 "import jakarta.enterprise.event.Observes;\n"
@@ -514,13 +536,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:257
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:273
 #, no-wrap
 msgid "import io.quarkus.runtime.StartupEvent;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:269
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:285
 #, no-wrap
 msgid ""
 "@Singleton\n"
@@ -536,49 +558,49 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:272
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:288
 #, fuzzy
 msgid "The application is now protected and the user identities are provided by the specified database."
 msgstr "La aplicación está ahora protegida y las identidades de los usuarios son proporcionadas por la base de datos especificada."
 
 #. type: delimited block =
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:277
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:293
 #, fuzzy
 msgid "In a production environment, do not store plain text passwords.  As a result, the `security-jpa` defaults to using bcrypt-hashed passwords."
 msgstr "En un entorno de producción, no almacene contraseñas en texto plano. Por ello, `security-jpa` utiliza por defecto contraseñas cifradas con bcrypt."
 
 #. type: Title ==
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:279
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:295
 #, fuzzy, no-wrap
 msgid "Test your application"
 msgstr "Pruebe su aplicación"
 
 #. type: Title ===
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:281
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:297
 #, fuzzy, no-wrap
 msgid "Use Dev Services for PostgreSQL to test your application"
 msgstr "Utilice Dev Services para PostgreSQL para probar su aplicación"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:286
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:302
 #, fuzzy
 msgid "Add the integration tests before you run your application in production mode."
 msgstr "Añada las pruebas de integración antes de ejecutar su aplicación en modo de producción."
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:289
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:305
 #, fuzzy
 msgid "Use xref:https://quarkus.io/guides/dev-services#databases[Dev Services for PostgreSQL] for the integration testing of your application in JVM and native modes."
 msgstr "Utilice  link:https://quarkus.io/guides/dev-services.html#databases[Dev Services para PostgreSQL] para las pruebas de integración de su aplicación en JVM y modos nativos."
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:292
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:308
 #, fuzzy
 msgid "The following properties configuration demonstrates how you can enable PostgreSQL testing to run in production (`prod`) mode only.  In this scenario, `Dev Services for PostgreSQL` launches and configures a `PostgreSQL` test container."
 msgstr "La siguiente configuración de propiedades demuestra cómo puede habilitar las pruebas PostgreSQL para que se ejecuten únicamente en modo de producción ( `prod`). En este escenario, `Dev Services for PostgreSQL` lanza y configura un contenedor de pruebas `PostgreSQL`."
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:299
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:315
 #, no-wrap
 msgid ""
 "%prod.quarkus.datasource.db-kind=postgresql\n"
@@ -588,25 +610,25 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:304
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:320
 #, fuzzy
 msgid "If you add the `%prod.` profile prefix, data source properties are not visible to `Dev Services for PostgreSQL` and are only observed by an application running in production mode."
 msgstr "Si añade el prefijo de perfil `%prod.`, las propiedades del origen de datos no son visibles para `Dev Services for PostgreSQL` y sólo son observadas por una aplicación que se ejecute en modo de producción."
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:306
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:322
 #, fuzzy
 msgid "To write the integration test, use the following code sample:"
 msgstr "Para escribir la prueba de integración, utilice el siguiente ejemplo de código:"
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:310
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:326
 #, no-wrap
 msgid "package org.acme.elytron.security.jpa;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:314
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:330
 #, no-wrap
 msgid ""
 "import static io.restassured.RestAssured.get;\n"
@@ -615,7 +637,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:317
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:333
 #, no-wrap
 msgid ""
 "import org.apache.http.HttpStatus;\n"
@@ -623,13 +645,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:319
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:335
 #, no-wrap
 msgid "import io.quarkus.test.junit.QuarkusTest;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:322
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:338
 #, no-wrap
 msgid ""
 "@QuarkusTest\n"
@@ -637,7 +659,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:328
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:344
 #, no-wrap
 msgid ""
 "    @Test\n"
@@ -648,15 +670,15 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:330
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:338
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:349
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:346
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:354
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:365
 #, no-wrap
 msgid "    }\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:336
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:352
 #, no-wrap
 msgid ""
 "    @Test\n"
@@ -667,7 +689,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:347
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:363
 #, no-wrap
 msgid ""
 "    @Test\n"
@@ -681,7 +703,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:359
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:375
 #, no-wrap
 msgid ""
 "    @Test\n"
@@ -696,7 +718,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:371
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:387
 #, no-wrap
 msgid ""
 "    @Test\n"
@@ -713,31 +735,31 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:374
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:390
 #, fuzzy
 msgid "As you can see in this code sample, you do not need to start the test container from the test code."
 msgstr "Como puede ver en este ejemplo de código, no es necesario iniciar el contenedor de prueba desde el código de prueba."
 
 #. type: delimited block =
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:380
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:396
 #, fuzzy
 msgid "If you start your application in dev mode, `Dev Services for PostgreSQL` launches a `PostgreSQL` `devmode` container so that you can start developing your application.  While developing your application, you can also start to add tests one by one and run them by using the xref:continuous-testing.adoc[Continuous Testing] feature.  `Dev Services for PostgreSQL` supports testing while you develop by providing a separate `PostgreSQL` test container that does not conflict with the `devmode` container."
 msgstr "Si inicias tu aplicación en modo de desarrollo, `Dev Services for PostgreSQL` lanza un contenedor `PostgreSQL` `devmode` para que puedas empezar a desarrollar tu aplicación. Mientras desarrollas tu aplicación, también puedes empezar a añadir pruebas una a una y ejecutarlas utilizando la función de  link:continuous-testing.html[pruebas continuas]. `Dev Services for PostgreSQL` permite realizar pruebas mientras desarrollas proporcionando un contenedor de pruebas `PostgreSQL` independiente que no entra en conflicto con el contenedor `devmode`."
 
 #. type: Title ===
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:382
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:398
 #, fuzzy, no-wrap
 msgid "Use `curl` or a browser to test your application"
 msgstr "Utilice `curl` o un navegador para probar su aplicación"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:385
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:401
 #, fuzzy
 msgid "Use the following example to start the PostgreSQL server:"
 msgstr "Utilice el siguiente ejemplo para iniciar el servidor PostgreSQL:"
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:390
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:406
 #, no-wrap
 msgid ""
 "docker run --rm=true --name security-getting-started -e POSTGRES_USER=quarkus \\\n"
@@ -746,80 +768,80 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:391
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:407
 #, fuzzy, no-wrap
 msgid "Compile and run the application"
 msgstr "Compilar y ejecutar la aplicación"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:394
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:410
 #, fuzzy
 msgid "Compile and run your Quarkus application by using one of the following methods:"
 msgstr "Compila y ejecuta tu aplicación Quarkus utilizando uno de los siguientes métodos:"
 
 #. type: Title ====
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:395
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:411
 #, fuzzy, no-wrap
 msgid "JVM mode"
 msgstr "Modo JVM"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:400
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:416
 #, fuzzy
 msgid "Compile the application: Run the application:"
 msgstr "Compilar la aplicación: Ejecuta la aplicación:"
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:404
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:420
 #, no-wrap
 msgid "java -jar target/quarkus-app/quarkus-run.jar\n"
 msgstr ""
 
 #. type: Title ====
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:406
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:422
 #, fuzzy, no-wrap
 msgid "Native mode"
 msgstr "Modo nativo"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:409
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:425
 #, fuzzy
 msgid "Compile the application:"
 msgstr "Compila la aplicación:"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:413
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:429
 #, fuzzy
 msgid "Run the application:"
 msgstr "Ejecuta la aplicación:"
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:416
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:432
 #, no-wrap
 msgid "./target/security-jpa-quickstart-runner\n"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:418
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:434
 #, fuzzy, no-wrap
 msgid "Access and test the application security"
 msgstr "Acceder y probar la seguridad de la aplicación"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:422
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:438
 #, fuzzy
 msgid "When your application is running, you can access your application by using one of the following `curl` commands.  You can also access the same endpoint URLs by using a browser."
 msgstr "Cuando su aplicación se está ejecutando, puede acceder a ella utilizando uno de los siguientes comandos `curl`. También puede acceder a las mismas URL de punto final utilizando un navegador."
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:424
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:435
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:440
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:451
 #, fuzzy
 msgid "Connect to a protected endpoint anonymously:"
 msgstr "Conéctese a un punto final protegido de forma anónima:"
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:430
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:446
 #, no-wrap
 msgid ""
 "$ curl -i -X GET http://localhost:8080/api/public\n"
@@ -829,13 +851,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:432
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:448
 #, fuzzy, no-wrap
 msgid "public\n"
 msgstr "`/api/public`"
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:442
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:458
 #, no-wrap
 msgid ""
 "$ curl -i -X GET http://localhost:8080/api/admin\n"
@@ -846,25 +868,25 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:444
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:460
 #, no-wrap
 msgid "Not authorized\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:449
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:465
 #, fuzzy
 msgid "When you use a browser to anonymously connect to a protected resource, a basic authentication form displays prompting you to enter credentials."
 msgstr "Cuando utilizas un navegador para conectarte de forma anónima a un recurso protegido, aparece un formulario de autenticación básica que te pide que introduzcas las credenciales."
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:452
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:468
 #, fuzzy
 msgid "Connect to a protected endpoint as an authorized user:"
 msgstr "Conectarse a un endpoint protegido como usuario autorizado:"
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:459
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:475
 #, no-wrap
 msgid ""
 "$ curl -i -X GET -u admin:admin http://localhost:8080/api/admin\n"
@@ -874,31 +896,31 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:461
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:477
 #, no-wrap
 msgid "admin\n"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:463
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:479
 #, fuzzy, no-wrap
 msgid "Results"
 msgstr "Resultados"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:467
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:483
 #, fuzzy
 msgid "When you provide the credentials of an authorized user, for example, `admin:admin`, the Jakarta Persistence security extension authenticates and loads the roles of the user.  The `admin` user is authorized to access the protected resources."
 msgstr "Cuando se proporcionan las credenciales de un usuario autorizado, por ejemplo, `admin:admin`, la extensión de seguridad JPA autentica y carga los roles del usuario. El usuario de `admin` está autorizado a acceder a los recursos protegidos."
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:469
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:485
 #, fuzzy
 msgid "If a resource is protected with `@RolesAllowed(\"user\")`, the user `admin` is not authorized to access the resource because it is not assigned to the \"user\" role, as outlined in the following shell example:"
 msgstr "Si un recurso está protegido con `@RolesAllowed(\"user\")`, el usuario `admin` no está autorizado a acceder al recurso porque no tiene asignado el rol \"usuario\", como se indica en el siguiente ejemplo de shell:"
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:476
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:492
 #, no-wrap
 msgid ""
 "$ curl -i -X GET -u admin:admin http://localhost:8080/api/users/me\n"
@@ -908,19 +930,19 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:478
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:494
 #, no-wrap
 msgid "Forbidden\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:481
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:497
 #, fuzzy
 msgid "Finally, the user name `user` is authorized and the security context contains the principal details, for example, the user name."
 msgstr "Por último, se autoriza el nombre de usuario `user` y el contexto de seguridad contiene los detalles principales, por ejemplo, el nombre de usuario."
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:488
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:504
 #, no-wrap
 msgid ""
 "$ curl -i -X GET -u user:user http://localhost:8080/api/users/me\n"
@@ -930,81 +952,81 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:490
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:506
 #, no-wrap
 msgid "user\n"
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:494
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:510
 #, fuzzy, no-wrap
 msgid "What's next"
 msgstr "Próximos pasos"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:498
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:514
 #, fuzzy
 msgid "Congratulations! You have learned how to create and test a secure Quarkus application by combining the built-in xref:security-basic-authentication-concept.adoc[Basic authentication] in Quarkus with the Jakarta Persistence identity provider."
 msgstr "Enhorabuena. Ha aprendido a crear y probar una aplicación Quarkus segura combinando la  link:security-built-in-authentication-support-concept.html#basic-auth[autenticación HTTP básica incorporada en Quarkus] con el proveedor de identidad JPA."
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:501
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:517
 #, fuzzy
 msgid "After you have completed this tutorial, explore some of the more advanced security mechanisms in Quarkus.  Use the following information to learn how you can securely use `OpenID Connect` to provide secure single sign-on access to your Quarkus endpoints:"
 msgstr "Después de completar este tutorial, explore algunos de los mecanismos de seguridad más avanzados de Quarkus. Utilice la siguiente información para aprender cómo puede utilizar de forma segura `OpenID Connect` para proporcionar un acceso seguro de inicio de sesión único a sus terminales de Quarkus:"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:503
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:512
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:519
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:528
 #, fuzzy
 msgid "xref:security-oidc-bearer-authentication-concept.adoc[OIDC Bearer authentication]"
 msgstr "link:security-oidc-bearer-authentication-concept.html[Autenticación del portador OIDC]"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:504
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:513
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:520
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:529
 #, fuzzy
 msgid "xref:security-oidc-code-flow-authentication-concept.adoc[OIDC code flow mechanism for protecting web applications]"
 msgstr "link:security-oidc-code-flow-authentication-concept.html[Mecanismo de flujo de código OIDC para proteger las aplicaciones web]"
 
 #. type: Title ==
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:505
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:521
 #, fuzzy, no-wrap
 msgid "References"
 msgstr "Referencias"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:508
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:524
 #, fuzzy
 msgid "xref:security-overview-concept.adoc[Quarkus Security overview]"
 msgstr "link:security-overview-concept.html[Visión general de Quarkus Security]"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:509
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:525
 #, fuzzy
 msgid "xref:security-architecture-concept.adoc[Quarkus Security architecture]"
 msgstr "link:security-overview-concept.html[Visión general de Quarkus Security]"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:510
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:526
 #, fuzzy
 msgid "xref:security-authentication-mechanisms-concept.adoc#other-supported-authentication-mechanisms[Authentication mechanisms in Quarkus]"
 msgstr "link:security-authentication-mechanisms-concept.html#other-supported-authentication-mechanisms[Mecanismos de autenticación en Quarkus]"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:511
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:527
 #, fuzzy
 msgid "xref:security-identity-providers-concept.adoc[Identity providers]"
 msgstr "link:security-overview-concept.html[Visión general de Quarkus Security]"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:514
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:530
 #, fuzzy
 msgid "xref:hibernate-orm-panache.adoc[Simplified Hibernate ORM with Panache]"
 msgstr "link:hibernate-orm-panache.html[Hibernate ORM simplificado con Panache]"
 
 #. type: Plain text
-#: upstream/_guides/security-basic-authentication-tutorial.adoc:514
+#: upstream/_guides/security-basic-authentication-tutorial.adoc:530
 #, fuzzy
 msgid "xref:hibernate-orm.adoc[Using Hibernate ORM and Jakarta Persistence]"
 msgstr "link:hibernate-orm.html[Uso de Hibernate ORM y JPA]"

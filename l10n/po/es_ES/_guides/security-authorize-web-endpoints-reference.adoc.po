@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-04-26 15:18+0000\n"
+"POT-Creation-Date: 2023-05-31 13:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1087,7 +1087,7 @@ msgstr "Ejemplo de un `java.security.Permission` personalizado que acepta argume
 
 #. type: delimited block -
 #: upstream/_guides/security-authorize-web-endpoints-reference.adoc:513
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:641
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:631
 #, no-wrap
 msgid ""
 "import java.security.Permission;\n"
@@ -1247,9 +1247,9 @@ msgstr ""
 
 #. type: delimited block -
 #: upstream/_guides/security-authorize-web-endpoints-reference.adoc:588
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:625
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:649
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:711
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:619
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:639
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:701
 #, no-wrap
 msgid "}\n"
 msgstr ""
@@ -1266,20 +1266,14 @@ msgstr "El parámetro formal `update` se identifica como el primer parámetro de
 msgid "Here, the first `Library` parameter is `migrate`, therefore we marked `library` parameter explicitly via `PermissionsAllowed#params`.  Please note that both Permission constructor and annotated method must have parameter `library`, otherwise validation will fail."
 msgstr "Aquí, el primer parámetro `Library` es `migrate`, por lo tanto marcamos el parámetro `library` explícitamente a través de `PermissionsAllowed#params`. Ten en cuenta que tanto el constructor de Permiso como el método anotado deben tener el parámetro `library`, de lo contrario la validación fallará."
 
-#. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:599
-#, fuzzy
-msgid "If you would like to pass method parameters to a custom `Permission` constructor from RESTEasy Reactive endpoints, make sure you have `@PermissionsAllowed` annotation set not on the JAX-RS resource method itself, but on the injected CDI bean to which this method will delegate to. Setting `@PermissionsAllowed` on the JAX-RS resource method will not work because RESTEasy Reactive performs the security checks before the deserialization.  These limitations are demonstrated in the example below."
-msgstr "Si desea pasar parámetros de método a un constructor personalizado de `Permission` desde los puntos finales de RESTEasy Reactive, asegúrese de que ha establecido la anotación `@PermissionsAllowed` no en el método de recurso JAX-RS en sí, sino en el frijol CDI inyectado en el que delegará este método. Establecer `@PermissionsAllowed` en el método de recurso JAX-RS no funcionará porque RESTEasy Reactive realiza las comprobaciones de seguridad antes de la deserialización. Estas limitaciones se demuestran en el siguiente ejemplo."
-
 #. type: Block title
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:600
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:594
 #, fuzzy, no-wrap
-msgid "Example of endpoint limitations when it comes to passing annotated method arguments to the Permission constructor"
-msgstr "Ejemplo de limitaciones del endpoint cuando se trata de pasar argumentos de métodos anotados al constructor de Permisos"
+msgid "Example of resource secured with the `LibraryPermission`"
+msgstr "Ejemplo de uso de expresiones de propiedad en la anotación `@RolesAllowed`"
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:606
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:600
 #, no-wrap
 msgid ""
 "@Path(\"/library\")\n"
@@ -1287,7 +1281,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:609
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:603
 #, no-wrap
 msgid ""
 "    @Inject\n"
@@ -1295,61 +1289,49 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:616
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:610
 #, no-wrap
 msgid ""
 "    @PermissionsAllowed(value = \"tv:write\", permission = LibraryPermission.class)\n"
 "    @PUT\n"
 "    @Path(\"/id/{id}\")\n"
-"    public Library updateLibrary(@PathParam(\"id\") Integer id, Library library) { <1>\n"
+"    public Library updateLibrary(@PathParam(\"id\") Integer id, Library library) {\n"
 "        ...\n"
 "    }\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:623
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:617
 #, no-wrap
 msgid ""
 "    @PUT\n"
 "    @Path(\"/service-way/id/{id}\")\n"
 "    public Library updateLibrarySvc(@PathParam(\"id\") Integer id, Library library) {\n"
 "        String newDescription = \"new description \" + id;\n"
-"        return libraryService.updateLibrary(newDescription, library); <2>\n"
+"        return libraryService.updateLibrary(newDescription, library);\n"
 "    }\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:629
-#, fuzzy
-msgid "In the RESTEasy Reactive, the endpoint argument `library` won't ever be passed to the `LibraryPermission`, because it is not available.  Instead, Quarkus will pass `null` for the argument `library`.  That gives you option to reuse your custom Permission when the method argument (like `library`) is optional."
-msgstr "En el RESTEasy Reactive, el argumento de punto final `library` no se pasará nunca al `LibraryPermission`, porque no está disponible. En su lugar, Quarkus pasará `null` para el argumento `library`. Eso le da la opción de reutilizar su Permiso personalizado cuando el argumento del método (como `library`) es opcional."
-
-#. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:630
-#, fuzzy
-msgid "Argument `library` will be passed to the `LibraryPermission` constructor as the `LibraryService#updateLibrary` method is not an endpoint."
-msgstr "El argumento `library` se pasará al constructor `LibraryPermission` ya que el método `LibraryService#updateLibrary` no es un endpoint."
-
-#. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:633
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:623
 #, fuzzy
 msgid "Similarly to the `CRUDResource` example, we can use permission to role mapping and grant user with role `admin` right to update `MediaLibrary`:"
 msgstr "De forma similar al ejemplo de `CRUDResource`, podemos utilizar la asignación de permisos a roles y conceder al usuario con rol `admin` el derecho a actualizar `MediaLibrary`:"
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:637
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:627
 #, no-wrap
 msgid "package org.acme.library;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:643
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:633
 #, no-wrap
 msgid "public class MediaLibraryPermission extends LibraryPermission {\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:647
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:637
 #, no-wrap
 msgid ""
 "    public MediaLibraryPermission(String libraryName, String[] actions) {\n"
@@ -1358,13 +1340,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:651
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:641
 #, fuzzy
 msgid "We want to pass `MediaLibrary` instance to the `LibraryPermission` constructor."
 msgstr "Queremos pasar la instancia `MediaLibrary` al constructor `LibraryPermission`."
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:658
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:648
 #, no-wrap
 msgid ""
 "quarkus.http.auth.policy.role-policy3.permissions.admin=media-library:list,media-library:read,media-library:write   <1>\n"
@@ -1374,25 +1356,25 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:661
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:651
 #, fuzzy
 msgid "Grants permission `media-library` that is allowed to perform actions `read`, `write` and `list`.  Considering `MediaLibrary` is the `TvLibrary` class parent, we know that administrator is also going to be allowed to modify television library."
 msgstr "Concede el permiso `media-library` que permite realizar las acciones `read`, `write` y `list`. Teniendo en cuenta que `MediaLibrary` es el padre de la clase `TvLibrary`, sabemos que el administrador también va a tener permiso para modificar la biblioteca de televisión."
 
 #. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:665
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:655
 #, fuzzy
 msgid "All the examples above leveraged role to permission mapping, but you can also add permissions to the `SecurityIdentity` programmatically.  In the example below, we use xref:security-customization.adoc#security-identity-customization[Security Identity Customization] to add the same permission as we previously granted with the HTTP role-based policy."
 msgstr "Todos los ejemplos anteriores aprovechan la asignación de roles a permisos, pero también puede añadir permisos a `SecurityIdentity` mediante programación. En el siguiente ejemplo, utilizamos  link:security-customization.html#security-identity-customization[Personalización de identidades de seguridad] para añadir el mismo permiso que concedimos anteriormente con la política HTTP basada en roles."
 
 #. type: Block title
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:666
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:656
 #, fuzzy, no-wrap
 msgid "Example of adding the `LibraryPermission` programmatically to the `SecurityIdentity`"
 msgstr "Ejemplo de adición programática de la dirección `LibraryPermission` a la dirección `SecurityIdentity`"
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:672
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:662
 #, no-wrap
 msgid ""
 "import java.security.Permission;\n"
@@ -1400,13 +1382,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:674
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:664
 #, no-wrap
 msgid "import jakarta.enterprise.context.ApplicationScoped;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:680
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:670
 #, no-wrap
 msgid ""
 "import io.quarkus.security.identity.AuthenticationRequestContext;\n"
@@ -1417,7 +1399,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:683
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:673
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -1425,7 +1407,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:691
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:681
 #, no-wrap
 msgid ""
 "    @Override\n"
@@ -1438,7 +1420,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:695
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:685
 #, no-wrap
 msgid ""
 "    private boolean isNotAdmin(SecurityIdentity identity) {\n"
@@ -1447,7 +1429,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:709
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:699
 #, no-wrap
 msgid ""
 "    SecurityIdentity build(SecurityIdentity identity) {\n"
@@ -1466,58 +1448,74 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:714
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:704
 #, fuzzy
 msgid "Created permission `media-library` is allowed to perform actions `read`, `write` and `list`.  Considering `MediaLibrary` is the `TvLibrary` class parent, we know that administrator is also going to be allowed to modify television library."
 msgstr "Creado el permiso `media-library` se le permite realizar acciones `read`, `write` y `list`. Teniendo en cuenta que `MediaLibrary` es el padre de la clase `TvLibrary`, sabemos que al administrador también se le va a permitir modificar la biblioteca de televisión."
 
 #. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:715
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:705
 #, fuzzy
 msgid "You can add a permission checker via `io.quarkus.security.runtime.QuarkusSecurityIdentity.Builder#addPermissionChecker`."
 msgstr "Puede añadir un verificador de permisos a través de `io.quarkus.security.runtime.QuarkusSecurityIdentity.Builder#addPermissionChecker`."
 
 #. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:717
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:707
 #, fuzzy
 msgid "Annotation permissions do not work with the custom xref:security-customization.adoc#jaxrs-security-context[JAX-RS SecurityContext], for there are no permissions in `jakarta.ws.rs.core.SecurityContext`."
 msgstr "Los permisos de anotación no funcionan con el  link:security-customization.html#jaxrs-security-context[JAX-RS SecurityContext] personalizado, ya que no hay permisos en `jakarta.ws.rs.core.SecurityContext`."
 
 #. type: Title ==
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:718
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:708
 #, fuzzy, no-wrap
 msgid "References"
 msgstr "Referencias"
 
 #. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:721
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:711
 #, fuzzy
 msgid "xref:security-overview-concept.adoc[Quarkus Security overview]"
 msgstr "link:security-overview-concept.html[Visión general de Quarkus Security]"
 
 #. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:722
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:712
 #, fuzzy
 msgid "xref:security-architecture-concept.adoc[Quarkus Security architecture]"
 msgstr "link:security-overview-concept.html[Visión general de Quarkus Security]"
 
 #. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:723
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:713
 #, fuzzy
 msgid "xref:security-authentication-mechanisms-concept.adoc#other-supported-authentication-mechanisms[Authentication mechanisms in Quarkus]"
 msgstr "link:security-authentication-mechanisms-concept.html#other-supported-authentication-mechanisms[Mecanismos de autenticación en Quarkus]"
 
 #. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:724
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:714
 #, fuzzy
 msgid "xref:security-basic-authentication-concept.adoc[Basic authentication]"
 msgstr "link:security-basic-authentication-concept.html[Autenticación básica]"
 
 #. type: Plain text
-#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:724
+#: upstream/_guides/security-authorize-web-endpoints-reference.adoc:714
 #, fuzzy
 msgid "xref:security-basic-authentication-tutorial.adoc[Secure a Quarkus application with Basic authentication and Jakarta Persistence]"
 msgstr "link:security-basic-authentication-tutorial.html[Proteger una aplicación Quarkus con autenticación básica y Jakarta Persistence]"
+
+#, fuzzy
+#~ msgid "If you would like to pass method parameters to a custom `Permission` constructor from RESTEasy Reactive endpoints, make sure you have `@PermissionsAllowed` annotation set not on the JAX-RS resource method itself, but on the injected CDI bean to which this method will delegate to. Setting `@PermissionsAllowed` on the JAX-RS resource method will not work because RESTEasy Reactive performs the security checks before the deserialization.  These limitations are demonstrated in the example below."
+#~ msgstr "Si desea pasar parámetros de método a un constructor personalizado de `Permission` desde los puntos finales de RESTEasy Reactive, asegúrese de que ha establecido la anotación `@PermissionsAllowed` no en el método de recurso JAX-RS en sí, sino en el frijol CDI inyectado en el que delegará este método. Establecer `@PermissionsAllowed` en el método de recurso JAX-RS no funcionará porque RESTEasy Reactive realiza las comprobaciones de seguridad antes de la deserialización. Estas limitaciones se demuestran en el siguiente ejemplo."
+
+#, fuzzy
+#~ msgid "Example of endpoint limitations when it comes to passing annotated method arguments to the Permission constructor"
+#~ msgstr "Ejemplo de limitaciones del endpoint cuando se trata de pasar argumentos de métodos anotados al constructor de Permisos"
+
+#, fuzzy
+#~ msgid "In the RESTEasy Reactive, the endpoint argument `library` won't ever be passed to the `LibraryPermission`, because it is not available.  Instead, Quarkus will pass `null` for the argument `library`.  That gives you option to reuse your custom Permission when the method argument (like `library`) is optional."
+#~ msgstr "En el RESTEasy Reactive, el argumento de punto final `library` no se pasará nunca al `LibraryPermission`, porque no está disponible. En su lugar, Quarkus pasará `null` para el argumento `library`. Eso le da la opción de reutilizar su Permiso personalizado cuando el argumento del método (como `library`) es opcional."
+
+#, fuzzy
+#~ msgid "Argument `library` will be passed to the `LibraryPermission` constructor as the `LibraryService#updateLibrary` method is not an endpoint."
+#~ msgstr "El argumento `library` se pasará al constructor `LibraryPermission` ya que el método `LibraryService#updateLibrary` no es un endpoint."
 
 #, fuzzy
 #~ msgid "Please refer to the xref:security-built-in-authentication-support-concept.adoc#proactive-authentication[Proactive Authentication] section of the Built-In Authentication Support guide if you plan to use standard security annotations on the IO thread."
