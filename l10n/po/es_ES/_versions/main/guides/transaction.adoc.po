@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-03-10 02:43+0000\n"
+"POT-Creation-Date: 2023-05-31 02:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -639,60 +639,86 @@ msgstr ""
 #. type: Title ==
 #: upstream/_versions/main/guides/transaction.adoc:365
 #, no-wrap
+msgid "Configuring transaction log to be stored in a DataSource"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/transaction.adoc:368
+msgid "The Narayana project has the capability to store the transaction logs into a JDBC Datasource; this should be our recommendation for users needing transaction recovery capabilities, especially when running in volatile containers."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/transaction.adoc:370
+msgid "To enable this capability, you need to set `quarkus.transaction-manager.object-store.type` to `jdbc` explicitly. Also, you can specify a datasource name to be used for the transaction log storage by setting `quarkus.transaction-manager.object-store.datasource`. It will use the default datasource configuration if not specified."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/transaction.adoc:372
+msgid "If you enable `quarkus.transaction-manager.object-store.create-table`, the transaction log table will be created automatically if it does not exist."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/transaction.adoc:374
+msgid "When enabling this capability, the transaction node identifier must be set through `quarkus.transaction-manager.node-name`."
+msgstr ""
+
+#. type: Title ==
+#: upstream/_versions/main/guides/transaction.adoc:376
+#, no-wrap
 msgid "Why always having a transaction manager?"
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/transaction.adoc:367
+#: upstream/_versions/main/guides/transaction.adoc:378
 #, no-wrap
 msgid "Does it work everywhere I want to?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/transaction.adoc:374
+#: upstream/_versions/main/guides/transaction.adoc:385
 msgid "Yep, it works in your Quarkus application, in your IDE, in your tests, because all of these are Quarkus applications.  JTA has some bad press for some people.  I don't know why.  Let's just say that this is not your grandpa's JTA implementation.  What we have is perfectly embeddable and lean."
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/transaction.adoc:375
+#: upstream/_versions/main/guides/transaction.adoc:386
 #, no-wrap
 msgid "Does it do 2 Phase Commit and slow down my app?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/transaction.adoc:379
+#: upstream/_versions/main/guides/transaction.adoc:390
 msgid "No, this is an old folk tale.  Let's assume it essentially comes for free and let you scale to more complex cases involving several datasources as needed."
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/transaction.adoc:380
+#: upstream/_versions/main/guides/transaction.adoc:391
 #, no-wrap
 msgid "I don't need transaction when I do read only operations, it's faster."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/transaction.adoc:392
+#: upstream/_versions/main/guides/transaction.adoc:403
 msgid "Wrong. + First off, just disable the transaction by marking your transaction boundary with `@Transactional(NOT_SUPPORTED)` (or `NEVER` or `SUPPORTS` depending on the semantic you want). + Second, it's again fairy tale that not using transaction is faster.  The answer is, it depends on your DB and how many SQL SELECTs you are making.  No transaction means the DB does have a single operation transaction context anyway. + Third, when you do several SELECTs, it's better to wrap them in a single transaction because they will all be consistent with one another.  Say your DB represents your car dashboard, you can see the number of kilometers remaining and the fuel gauge level.  By reading it in one transaction, they will be consistent.  If you read one and the other from two different transactions, then they can be inconsistent.  It can be more dramatic if you read data related to rights and access management for example."
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/transaction.adoc:393
+#: upstream/_versions/main/guides/transaction.adoc:404
 #, no-wrap
 msgid "Why do you prefer JTA vs Hibernate's transaction management API"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/transaction.adoc:397
+#: upstream/_versions/main/guides/transaction.adoc:408
 msgid "Managing the transactions manually via `entityManager.getTransaction().begin()` and friends lead to a butt ugly code with tons of try catch finally that people get wrong.  Transactions are also about JMS and other database access, so one API makes more sense."
 msgstr ""
 
 #. type: Labeled list
-#: upstream/_versions/main/guides/transaction.adoc:398
+#: upstream/_versions/main/guides/transaction.adoc:409
 #, no-wrap
 msgid "It's a mess because I don't know if my Jakarta Persistence persistence unit is using `JTA` or `Resource-level` Transaction"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/transaction.adoc:403
+#: upstream/_versions/main/guides/transaction.adoc:414
 msgid "It's not a mess in Quarkus :)  Resource-level was introduced to support Jakarta Persistence in a non managed environment.  But Quarkus is both lean and a managed environment, so we can safely always assume we are in JTA mode.  The end result is that the difficulties of running Hibernate ORM + CDI + a transaction manager in Java SE mode are solved by Quarkus."
 msgstr ""
