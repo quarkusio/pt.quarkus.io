@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-06-27 02:51+0000\n"
+"POT-Creation-Date: 2023-06-28 02:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,7 @@ msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/security-proactive-authentication.adoc:19
-msgid "You can change the default behavior if you only want to authenticate when the target page requires authentication."
+msgid "If you only want to authenticate when the target page requires authentication, you can change the default behavior."
 msgstr ""
 
 #. type: Plain text
@@ -45,51 +45,56 @@ msgstr ""
 #. type: delimited block -
 #: upstream/_versions/main/guides/security-proactive-authentication.adoc:25
 #, no-wrap
-msgid "`quarkus.http.auth.proactive=false` \n"
+msgid "`quarkus.http.auth.proactive=false`\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:28
-msgid "If you disable proactive authentication, the authentication process runs only when an identity is requested. An identity can be requested because of security rules that require the user to authenticate or because programmatic access to the current identity is required."
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:29
+msgid "If you disable proactive authentication, the authentication process runs only when an identity is requested.  An identity can be requested because of security rules that require the user to authenticate or because programmatic access to the current identity is required."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:34
-msgid "If proactive authentication is in use, accessing the `SecurityIdentity` is a blocking operation.  This is because authentication may have yet to happen, and accessing it may require calls to external systems, such as databases that may block.  For blocking applications, this is no problem. However, if you have disabled authentication in a reactive application, this will fail (as you cannot do blocking operations on the IO thread).  To work around this, you need to `@Inject` an instance of `io.quarkus.security.identity.CurrentIdentityAssociation` and call the `Uni<SecurityIdentity> getDeferredIdentity();` method.  You can then subscribe to the resulting `Uni` and will be notified when authentication is complete and the identity is available."
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:36
+msgid "If proactive authentication is in use, accessing `SecurityIdentity` is a blocking operation.  This is because authentication might have yet to happen and accessing `SecurityIdentity` might require calls to external systems, such as databases, that might block the operation.  For blocking applications, this is not an issue.  However, if you have disabled authentication in a reactive application, this will fail because you cannot do blocking operations on the I/O thread.  To work around this, you need to `@Inject` an instance of `io.quarkus.security.identity.CurrentIdentityAssociation` and call the `Uni<SecurityIdentity> getDeferredIdentity();` method.  Then, you can subscribe to the resulting `Uni` and will be notified when authentication is complete and the identity is available."
 msgstr ""
 
-#. type: Plain text
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:37
-msgid "It's still possible to access the `SecurityIdentity` synchronously with `public SecurityIdentity getIdentity()` in the xref:resteasy-reactive.adoc[RESTEasy Reactive] from endpoints annotated with `@RolesAllowed`, `@Authenticated`, or with respective configuration authorization checks as authentication has already happened.  The same is also valid for the xref:reactive-routes.adoc[Reactive routes] if a route response is synchronous."
-msgstr ""
-
-#. type: Plain text
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:40
-msgid "xref:security-authorization.adoc#standard-security-annotations[Standard security annotations] on CDI beans are not supported on IO thread if a non-void secured method returns a value synchronously and proactive authentication is disabled, as they need to access the `SecurityIdentity`.  In the example below, we have defined `HelloResource` and `HelloService`. It's easy to see that any GET request to `/hello` will run on IO thread and throw `BlockingOperationNotAllowedException` exception."
-msgstr ""
-
-#. type: Plain text
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:42
-msgid "There is more than one way to fix the example:"
+#. type: delimited block =
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:41
+msgid "You can still access `SecurityIdentity` synchronously with `public SecurityIdentity getIdentity()` in xref:resteasy-reactive.adoc[RESTEasy Reactive] from endpoints that are annotated with `@RolesAllowed`, `@Authenticated`, or with respective configuration authorization checks because authentication has already happened.  The same is also valid for xref:reactive-routes.adoc[Reactive routes] if a route response is synchronous."
 msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/security-proactive-authentication.adoc:44
-msgid "switch to a worker thread (annotate `hello` endpoint with `@Blocking`)"
+msgid "xref:security-authorization.adoc#standard-security-annotations[Standard security annotations] on CDI beans are not supported on an I/O thread if a non-void secured method returns a value synchronously and proactive authentication is disabled because they need to access `SecurityIdentity`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:45
-msgid "change `sayHello` method return type (use reactive or asynchronous data type)"
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:47
+msgid "In the following example, `HelloResource` and `HelloService` are defined.  Any GET request to `/hello` will run on the I/O thread and throw a `BlockingOperationNotAllowedException` exception."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:46
-msgid "arguably the safest way is to move `@RolesAllowed` annotation to the endpoint, as accessing `SecurityIdentity` from endpoint methods is never the blocking operation"
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:49
+msgid "There is more than one way to fix the example:"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:51
+msgid "Switch to a worker thread by annotating the `hello` endpoint with `@Blocking`."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:52
+msgid "Change the `sayHello` method return type by using a reactive or asynchronous data type."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:54
+msgid "Move `@RolesAllowed` annotation to the endpoint.  This could be one of the safest ways because accessing `SecurityIdentity` from endpoint methods is never the blocking operation."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:53
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:61
 #, no-wrap
 msgid ""
 "import jakarta.annotation.security.PermitAll;\n"
@@ -99,13 +104,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:55
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:63
 #, no-wrap
 msgid "import io.smallrye.mutiny.Uni;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:59
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:67
 #, no-wrap
 msgid ""
 "@Path(\"/hello\")\n"
@@ -114,7 +119,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:62
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:70
 #, no-wrap
 msgid ""
 "    @Inject\n"
@@ -122,7 +127,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:67
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:75
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -132,14 +137,14 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:69
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:85
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:77
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:93
 #, no-wrap
 msgid "}\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:75
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:83
 #, no-wrap
 msgid ""
 "import jakarta.annotation.security.RolesAllowed;\n"
@@ -147,7 +152,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:78
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:86
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -155,7 +160,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:83
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:91
 #, no-wrap
 msgid ""
 "    @RolesAllowed(\"admin\")\n"
@@ -165,25 +170,25 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:87
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:95
 #, no-wrap
-msgid "How to customize authentication exception responses"
+msgid "Customize authentication exception responses"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:90
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:98
 msgid "You can use Jakarta REST `ExceptionMapper` to capture Quarkus Security authentication exceptions such as `io.quarkus.security.AuthenticationFailedException`, for example:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:94
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:126
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:102
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:135
 #, no-wrap
 msgid "package io.quarkus.it.keycloak;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:100
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:108
 #, no-wrap
 msgid ""
 "import jakarta.annotation.Priority;\n"
@@ -194,13 +199,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:102
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:110
 #, no-wrap
 msgid "import io.quarkus.security.AuthenticationFailedException;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:106
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:114
 #, no-wrap
 msgid ""
 "@Provider\n"
@@ -209,7 +214,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:109
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:117
 #, no-wrap
 msgid ""
 "    @Context\n"
@@ -217,7 +222,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:115
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:123
 #, no-wrap
 msgid ""
 "    @Override\n"
@@ -228,12 +233,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:122
-msgid "Some HTTP authentication mechanisms need to handle authentication exceptions themselves to create a correct authentication challenge.  For example, `io.quarkus.oidc.runtime.CodeAuthenticationMechanism` which manages OpenId Connect authorization code flow authentication, needs to build a correct redirect URL, cookies, etc.  For that reason, using custom exception mappers to customize authentication exceptions thrown by such mechanisms is not recommended.  Instead, a safer approach would be to ensure that proactive authentication is enabled and to use Vert.x HTTP route failure handlers. This is because events come to the handler with the correct response status and headers.  You will then only need to customize the response, as outlined in the following example:"
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:131
+msgid "Some HTTP authentication mechanisms need to handle authentication exceptions themselves to create a correct authentication challenge.  For example, `io.quarkus.oidc.runtime.CodeAuthenticationMechanism`, which manages OpenID Connect (OIDC) authorization code flow authentication, needs to build a correct redirect URL, cookies, and so on.  For that reason, avoid using custom exception mappers to customize authentication exceptions thrown by such mechanisms.  Instead, a safer approach is to ensure that proactive authentication is enabled and to use Vert.x HTTP route failure handlers.  This is because events come to the handler with the correct response status and headers.  You then only need to customize the response, as shown in the following example:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:129
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:138
 #, no-wrap
 msgid ""
 "import jakarta.enterprise.context.ApplicationScoped;\n"
@@ -241,7 +246,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:134
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:143
 #, no-wrap
 msgid ""
 "import io.quarkus.security.AuthenticationFailedException;\n"
@@ -251,7 +256,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:137
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:146
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -259,7 +264,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:151
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:160
 #, no-wrap
 msgid ""
 "    public void init(@Observes Router router) {\n"
@@ -278,27 +283,27 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:153
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:162
 #, no-wrap
 msgid "References"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:156
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:165
 msgid "xref:security-overview.adoc[Quarkus Security overview]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:157
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:166
 msgid "xref:security-architecture.adoc[Quarkus Security architecture]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:158
-msgid "xref:security-authentication-mechanisms.adoc#other-supported-authentication-mechanisms[Authentication mechanisms in Quarkus]"
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:167
+msgid "xref:security-authentication-mechanisms.adoc[Authentication mechanisms in Quarkus]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-proactive-authentication.adoc:158
+#: upstream/_versions/main/guides/security-proactive-authentication.adoc:167
 msgid "xref:security-identity-providers.adoc[Identity providers]"
 msgstr ""
