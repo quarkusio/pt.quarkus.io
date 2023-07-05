@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-04-26 15:18+0000\n"
+"POT-Creation-Date: 2023-07-05 14:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -691,65 +691,92 @@ msgstr "En los métodos de escucha, puede acceder a más información sobre la t
 #. type: Title ==
 #: upstream/_guides/transaction.adoc:365
 #, fuzzy, no-wrap
+msgid "Configuring transaction log to be stored in a DataSource"
+msgstr "Configuración del identificador del nombre del nodo de la transacción"
+
+#. type: Plain text
+#: upstream/_guides/transaction.adoc:368
+msgid "The Narayana project has the capability to store the transaction logs into a JDBC Datasource; this should be our recommendation for users needing transaction recovery capabilities, especially when running in volatile containers."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/transaction.adoc:370
+msgid "To enable this capability, you need to set `quarkus.transaction-manager.object-store.type` to `jdbc` explicitly. Also, you can specify a datasource name to be used for the transaction log storage by setting `quarkus.transaction-manager.object-store.datasource`. It will use the default datasource configuration if not specified."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/transaction.adoc:372
+msgid "If you enable `quarkus.transaction-manager.object-store.create-table`, the transaction log table will be created automatically if it does not exist."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/transaction.adoc:374
+#, fuzzy
+msgid "When enabling this capability, the transaction node identifier must be set through `quarkus.transaction-manager.node-name`."
+msgstr "El identificador del nombre del nodo puede configurarse mediante la propiedad `quarkus.transaction-manager.node-name`."
+
+#. type: Title ==
+#: upstream/_guides/transaction.adoc:376
+#, fuzzy, no-wrap
 msgid "Why always having a transaction manager?"
 msgstr "¿Por qué tener siempre un gestor de transacciones?"
 
 #. type: Labeled list
-#: upstream/_guides/transaction.adoc:367
+#: upstream/_guides/transaction.adoc:378
 #, fuzzy, no-wrap
 msgid "Does it work everywhere I want to?"
 msgstr "¿Funciona en todos los lugares que quiero?"
 
 #. type: Plain text
-#: upstream/_guides/transaction.adoc:374
+#: upstream/_guides/transaction.adoc:385
 #, fuzzy
 msgid "Yep, it works in your Quarkus application, in your IDE, in your tests, because all of these are Quarkus applications.  JTA has some bad press for some people.  I don't know why.  Let's just say that this is not your grandpa's JTA implementation.  What we have is perfectly embeddable and lean."
 msgstr "Sí, funciona en tu aplicación Quarkus, en tu IDE, en tus pruebas, porque todas ellas son aplicaciones Quarkus. JTA tiene mala prensa para algunas personas. No sé por qué. Digamos que esta no es la implementación de JTA de tu abuelo. Lo que tenemos es perfectamente incrustado y magro."
 
 #. type: Labeled list
-#: upstream/_guides/transaction.adoc:375
+#: upstream/_guides/transaction.adoc:386
 #, fuzzy, no-wrap
 msgid "Does it do 2 Phase Commit and slow down my app?"
 msgstr "¿Hace 2 Phase Commit y ralentiza mi aplicación?"
 
 #. type: Plain text
-#: upstream/_guides/transaction.adoc:379
+#: upstream/_guides/transaction.adoc:390
 #, fuzzy
 msgid "No, this is an old folk tale.  Let's assume it essentially comes for free and let you scale to more complex cases involving several datasources as needed."
 msgstr "No, esto es un viejo cuento popular. Supongamos que es gratis y que te permite escalar a casos más complejos que implican varias fuentes de datos según sea necesario."
 
 #. type: Labeled list
-#: upstream/_guides/transaction.adoc:380
+#: upstream/_guides/transaction.adoc:391
 #, fuzzy, no-wrap
 msgid "I don't need transaction when I do read only operations, it's faster."
 msgstr "No necesito la transacción cuando hago operaciones de sólo lectura, es más rápido."
 
 #. type: Plain text
-#: upstream/_guides/transaction.adoc:392
+#: upstream/_guides/transaction.adoc:403
 #, fuzzy
 msgid "Wrong. + First off, just disable the transaction by marking your transaction boundary with `@Transactional(NOT_SUPPORTED)` (or `NEVER` or `SUPPORTS` depending on the semantic you want). + Second, it's again fairy tale that not using transaction is faster.  The answer is, it depends on your DB and how many SQL SELECTs you are making.  No transaction means the DB does have a single operation transaction context anyway. + Third, when you do several SELECTs, it's better to wrap them in a single transaction because they will all be consistent with one another.  Say your DB represents your car dashboard, you can see the number of kilometers remaining and the fuel gauge level.  By reading it in one transaction, they will be consistent.  If you read one and the other from two different transactions, then they can be inconsistent.  It can be more dramatic if you read data related to rights and access management for example."
 msgstr "No es así. + En primer lugar, basta con desactivar la transacción marcando el límite de la misma con `@Transactional(NOT_SUPPORTED)` (o `NEVER` o `SUPPORTS` dependiendo de la semántica que desee). + En segundo lugar, es de nuevo un cuento de hadas que no usar la transacción es más rápido. La respuesta es que depende de tu BD y de la cantidad de SELECTs SQL que estés haciendo. Sin transacción significa que la BD tiene un contexto de transacción de operación única de todos modos. + Tercero, cuando haces varios SELECTs, es mejor envolverlos en una sola transacción porque todos serán consistentes entre sí. Digamos que tu DB representa el tablero de tu coche, puedes ver el número de kilómetros restantes y el nivel del indicador de combustible. Al leerlo en una sola transacción, serán consistentes. Si lee uno y otro en dos transacciones diferentes, entonces pueden ser inconsistentes. Puede ser más dramático si lees datos relacionados con la gestión de derechos y accesos, por ejemplo."
 
 #. type: Labeled list
-#: upstream/_guides/transaction.adoc:393
+#: upstream/_guides/transaction.adoc:404
 #, fuzzy, no-wrap
 msgid "Why do you prefer JTA vs Hibernate's transaction management API"
 msgstr "¿Por qué prefiere JTA frente a la API de gestión de transacciones de Hibernate?"
 
 #. type: Plain text
-#: upstream/_guides/transaction.adoc:397
+#: upstream/_guides/transaction.adoc:408
 #, fuzzy
 msgid "Managing the transactions manually via `entityManager.getTransaction().begin()` and friends lead to a butt ugly code with tons of try catch finally that people get wrong.  Transactions are also about JMS and other database access, so one API makes more sense."
 msgstr "Manejar las transacciones manualmente a través de `entityManager.getTransaction().begin()` y amigos lleva a un código feo con toneladas de try catch finalmente que la gente se equivoca. Las transacciones también tienen que ver con JMS y otros accesos a la base de datos, así que una API tiene más sentido."
 
 #. type: Labeled list
-#: upstream/_guides/transaction.adoc:398
+#: upstream/_guides/transaction.adoc:409
 #, fuzzy, no-wrap
 msgid "It's a mess because I don't know if my Jakarta Persistence persistence unit is using `JTA` or `Resource-level` Transaction"
 msgstr "Es un lío porque no sé si mi unidad de persistencia JPA está usando `JTA` o `Resource-level` Transaction"
 
 #. type: Plain text
-#: upstream/_guides/transaction.adoc:403
+#: upstream/_guides/transaction.adoc:414
 #, fuzzy
 msgid "It's not a mess in Quarkus :)  Resource-level was introduced to support Jakarta Persistence in a non managed environment.  But Quarkus is both lean and a managed environment, so we can safely always assume we are in JTA mode.  The end result is that the difficulties of running Hibernate ORM + CDI + a transaction manager in Java SE mode are solved by Quarkus."
 msgstr "No es un lío en Quarkus :) El nivel de recursos se introdujo para soportar JPA en un entorno no gestionado. Pero Quarkus es a la vez un entorno no gestionado y gestionado, por lo que podemos asumir con seguridad que siempre estamos en modo JTA. El resultado final es que las dificultades de ejecutar Hibernate ORM + CDI + un gestor de transacciones en modo Java SE son resueltas por Quarkus."

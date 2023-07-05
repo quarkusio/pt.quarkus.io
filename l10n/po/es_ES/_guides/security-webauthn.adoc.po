@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-12-14 18:07+0000\n"
+"POT-Creation-Date: 2023-07-05 14:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,197 +16,194 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#. This guide is maintained in the main Quarkus repository
-#. and pull requests should be submitted there:
-#. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
 #. type: Title =
-#: upstream/_guides/security-webauthn.adoc:6
+#: upstream/_guides/security-webauthn.adoc:7
 #, fuzzy, no-wrap
 msgid "Using Security with WebAuthn"
 msgstr "Uso de la seguridad con WebAuthn"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:13
+#: upstream/_guides/security-webauthn.adoc:14
 #, fuzzy
 msgid "This guide demonstrates how your Quarkus application can use WebAuthn authentication instead of passwords."
 msgstr "Esta guía demuestra cómo su aplicación Quarkus puede utilizar la autenticación WebAuthn en lugar de contraseñas."
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:16
+#: upstream/_guides/security-webauthn.adoc:17
 #, fuzzy, no-wrap
 msgid "Prerequisites"
 msgstr "Requisitos previos"
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:20
+#: upstream/_guides/security-webauthn.adoc:21
 #, fuzzy, no-wrap
 msgid "Introduction to WebAuthn"
 msgstr "Introducción a WebAuthn"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:25
+#: upstream/_guides/security-webauthn.adoc:26
 #, fuzzy
 msgid "https://webauthn.guide/[WebAuthn] is an authentication mechanism designed to replace passwords. In short, every time you write a service for registering new users, or logging them in, instead of asking for a password, you use WebAuthn, which will replace the password."
 msgstr "link:https://webauthn.guide/[WebAuthn] es un mecanismo de autenticación diseñado para sustituir a las contraseñas. En resumen, cada vez que escribas un servicio para registrar nuevos usuarios, o para iniciar sesión, en lugar de pedir una contraseña, utiliza WebAuthn, que sustituirá la contraseña."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:30
+#: upstream/_guides/security-webauthn.adoc:31
 #, fuzzy
 msgid "WebAuthn replaces the password with a proof of identity. In practice, users, instead of having to invent a password, store it or remember it, will use a hardware token that will generate a proof of identity specifically for your service or website. This can be done by asking users to press their thumb on their phone, or pressing a button on a https://www.yubico.com[YubiKey] on a computer."
 msgstr "WebAuthn sustituye la contraseña por una prueba de identidad. En la práctica, los usuarios, en lugar de tener que inventar una contraseña, almacenarla o recordarla, utilizarán un token de hardware que generará una prueba de identidad específica para su servicio o sitio web. Esto puede hacerse pidiendo a los usuarios que pulsen el pulgar en su teléfono, o pulsando un botón de una  link:https://www.yubico.com[YubiKey] en un ordenador."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:35
+#: upstream/_guides/security-webauthn.adoc:36
 #, fuzzy
 msgid "So, when you register your user, you use your browser to enter your user information (username, your name, etc…)  and instead of typing a password to identify yourself, you click a button which will invoke the WebAuthn browser API which will ask you to do something (press a button, use your fingerprint). Then, your browser will generate a proof of identity which you can send to your service instead of a password."
 msgstr "Así, al registrar su usuario, utiliza su navegador para introducir su información de usuario (nombre de usuario, su nombre, etc...) y en lugar de escribir una contraseña para identificarse, hace clic en un botón que invocará la API del navegador WebAuthn que le pedirá que haga algo (pulsar un botón, utilizar su huella digital). Entonces, tu navegador generará una prueba de identidad que podrás enviar a tu servicio en lugar de una contraseña."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:42
+#: upstream/_guides/security-webauthn.adoc:43
 #, fuzzy
 msgid "This proof of identity, when you register, consists mostly in a public key. Actually there's a lot of stuff in there but the most interesting is the public key. This public key is not stored on your device, or your browser.  It is generated especially for the target service (tied to its URI), and derived from the hardware authenticator.  So the association of the hardware authenticator and the target service will always derive the same private and public key pair, none of which are stored anywhere. You can for example, take your YubiKey to another computer and it will keep generating the same private/public keys for the same target service."
 msgstr "Esta prueba de identidad, cuando te registras, consiste principalmente en una clave pública. En realidad hay muchas cosas ahí, pero lo más interesante es la clave pública. Esta clave pública no se almacena en tu dispositivo, ni en tu navegador. Se genera especialmente para el servicio de destino (ligado a su URI), y se deriva del autentificador de hardware. Así, la asociación del autentificador de hardware y el servicio de destino siempre derivará el mismo par de claves privadas y públicas, que no se almacenan en ningún sitio. Por ejemplo, puede llevar su YubiKey a otro ordenador y seguirá generando las mismas claves privadas/públicas para el mismo servicio de destino."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:45
+#: upstream/_guides/security-webauthn.adoc:46
 #, fuzzy
 msgid "So, when you register, you send (mostly) a public key instead of a password, and the service stores that information as WebAuthn credentials for your new user account, and this is what will identify you later."
 msgstr "Así, cuando te registras, envías (en su mayoría) una clave pública en lugar de una contraseña, y el servicio almacena esa información como credenciales de WebAuthn para tu nueva cuenta de usuario, y esto es lo que te identificará más tarde."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:51
+#: upstream/_guides/security-webauthn.adoc:52
 #, fuzzy
 msgid "Then, when you need to log in to that service, instead of typing your password (which doesn't exist, remember?), you press a button on the login form, and the browser will ask you to do something, and then it will send a signature to your service instead of a password. That signature requires the private key that is derived from your authenticator hardware and the target service, and so when your service receives it, it can verify that it corresponds to the signature of the public key you stored as credentials."
 msgstr "Entonces, cuando necesites iniciar sesión en ese servicio, en lugar de escribir tu contraseña (que no existe, ¿recuerdas?), pulsas un botón en el formulario de inicio de sesión, y el navegador te pedirá que hagas algo, y luego enviará una firma a tu servicio en lugar de una contraseña. Esa firma requiere la clave privada que se deriva de tu hardware autenticador y del servicio de destino, y así cuando tu servicio la recibe, puede verificar que corresponde a la firma de la clave pública que almacenaste como credenciales."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:54
+#: upstream/_guides/security-webauthn.adoc:55
 #, fuzzy
 msgid "So, to recap: registration sends a generated public key instead of a password, and login sends a signature for that public key, allowing you to verify that the user is who they were when they registered."
 msgstr "Así que, para recapitular: el registro envía una clave pública generada en lugar de una contraseña, y el inicio de sesión envía una firma para esa clave pública, lo que le permite verificar que el usuario es quien era cuando se registró."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:59
+#: upstream/_guides/security-webauthn.adoc:60
 #, fuzzy
 msgid "In practice, it's a little more complex, because there needs to be a handshake with the server before you can use the hardware authenticator (ask for a challenge and other things), so there are always two calls to your service: one before login or registration, before calling the hardware authenticator, and then the normal login or registration."
 msgstr "En la práctica, es un poco más complejo, porque tiene que haber un apretón de manos con el servidor antes de poder utilizar el autentificador de hardware (pedir un reto y otras cosas), por lo que siempre hay dos llamadas a su servicio: una antes del inicio de sesión o del registro, antes de llamar al autentificador de hardware, y luego el inicio de sesión o el registro normales."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:61
+#: upstream/_guides/security-webauthn.adoc:62
 #, fuzzy
 msgid "And also there are a lot more fields to store than just a public key, but we will help you with that."
 msgstr "Y también hay muchos más campos para almacenar que sólo una clave pública, pero te ayudaremos con eso."
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:62
+#: upstream/_guides/security-webauthn.adoc:63
 #, fuzzy, no-wrap
 msgid "Architecture"
 msgstr "Arquitectura"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:65
+#: upstream/_guides/security-webauthn.adoc:66
 #, fuzzy
 msgid "In this example, we build a very simple microservice which offers four endpoints:"
 msgstr "En este ejemplo, construimos un microservicio muy simple que ofrece cuatro puntos finales:"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:67
+#: upstream/_guides/security-webauthn.adoc:68
 #, fuzzy
 msgid "`/api/public`"
 msgstr "`/api/public`"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:68
+#: upstream/_guides/security-webauthn.adoc:69
 #, fuzzy
 msgid "`/api/public/me`"
 msgstr "`/api/public/me`"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:69
+#: upstream/_guides/security-webauthn.adoc:70
 #, fuzzy
 msgid "`/api/users/me`"
 msgstr "`/api/users/me`"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:70
+#: upstream/_guides/security-webauthn.adoc:71
 #, fuzzy
 msgid "`/api/admin`"
 msgstr "`/api/admin`"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:75
+#: upstream/_guides/security-webauthn.adoc:76
 #, fuzzy
 msgid "The `/api/public` endpoint can be accessed anonymously.  The `/api/public/me` endpoint can be accessed anonymously and returns the current username if there is one, or `<not logged in>` if not.  The `/api/admin` endpoint is protected with RBAC (Role-Based Access Control) where only users granted with the `admin` role can access. At this endpoint, we use the `@RolesAllowed` annotation to declaratively enforce the access constraint.  The `/api/users/me` endpoint is also protected with RBAC (Role-Based Access Control) where only users granted with the `user` role can access. As a response, it returns a JSON document with details about the user."
 msgstr "Se puede acceder al punto final `/api/public` de forma anónima. Se puede acceder al punto final `/api/public/me` de forma anónima y devuelve el nombre de usuario actual si lo hay, o `&amp;lt;not logged in&amp;gt;` si no lo hay. El endpoint `/api/admin` está protegido con RBAC (Role-Based Access Control) donde sólo los usuarios con el rol `admin` pueden acceder. En este punto final, utilizamos la anotación `@RolesAllowed` para imponer declarativamente la restricción de acceso. El endpoint `/api/users/me` también está protegido con RBAC (Role-Based Access Control) donde sólo los usuarios con el rol `user` pueden acceder. Como respuesta, devuelve un documento JSON con detalles sobre el usuario."
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:76
+#: upstream/_guides/security-webauthn.adoc:77
 #, fuzzy, no-wrap
 msgid "Solution"
 msgstr "Solución"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:80
+#: upstream/_guides/security-webauthn.adoc:81
 #, fuzzy
 msgid "We recommend that you follow the instructions in the next sections and create the application step by step.  However, you can go right to the completed example."
 msgstr "Le recomendamos que siga las instrucciones de las siguientes secciones y cree la aplicación paso a paso. Sin embargo, puede ir directamente al ejemplo completado."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:82
+#: upstream/_guides/security-webauthn.adoc:83
 msgid "Clone the Git repository: `git clone {quickstarts-clone-url}`, or download an {quickstarts-archive-url}[archive]."
 msgstr "Clone el repositorio Git: `git clone {quickstarts-clone-url}` o descargue un {quickstarts-archive-url}[archivo]."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:84
+#: upstream/_guides/security-webauthn.adoc:85
 #, fuzzy
 msgid "The solution is located in the `security-webauthn-quickstart` {quickstarts-tree-url}/security-webauthn-quickstart[directory]."
 msgstr "La solución se encuentra en el `security-webauthn-quickstart` {quickstarts-tree-url}/security-webauthn-quickstart[directorio]."
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:85
+#: upstream/_guides/security-webauthn.adoc:86
 #, fuzzy, no-wrap
 msgid "Creating the Maven Project"
 msgstr "Creación del proyecto Maven"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:88
+#: upstream/_guides/security-webauthn.adoc:89
 #, fuzzy
 msgid "First, we need a new project. Create a new project with the following command:"
 msgstr "En primer lugar, necesitamos un nuevo proyecto. Cree un nuevo proyecto con el siguiente comando:"
 
 #. type: delimited block =
-#: upstream/_guides/security-webauthn.adoc:96
+#: upstream/_guides/security-webauthn.adoc:97
 #, fuzzy
 msgid "Don't forget to add the database connector library of choice. Here we are using PostgreSQL as identity store."
 msgstr "No te olvides de añadir la biblioteca del conector de la base de datos que elijas. Aquí estamos usando PostgreSQL como almacén de identidad."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:100
+#: upstream/_guides/security-webauthn.adoc:101
 #, fuzzy
 msgid "This command generates a Maven project, importing the `security-webauthn` extension which allows you to use WebAuthn to authenticate users."
 msgstr "Este comando genera un proyecto Maven, importando la extensión `security-webauthn` que permite utilizar WebAuthn para autenticar usuarios."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:103
+#: upstream/_guides/security-webauthn.adoc:104
 #, fuzzy
 msgid "If you already have your Quarkus project configured, you can add the `security-webauthn` extension to your project by running the following command in your project base directory:"
 msgstr "Si ya tienes configurado tu proyecto Quarkus, puedes añadir la extensión `security-webauthn` a tu proyecto ejecutando el siguiente comando en el directorio base de tu proyecto:"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:108
+#: upstream/_guides/security-webauthn.adoc:109
 #, fuzzy
 msgid "This will add the following to your build file:"
 msgstr "Esto añadirá lo siguiente a su archivo de construcción:"
 
 #. type: Block title
-#: upstream/_guides/security-webauthn.adoc:110
-#: upstream/_guides/security-webauthn.adoc:1065
+#: upstream/_guides/security-webauthn.adoc:111
+#: upstream/_guides/security-webauthn.adoc:1066
 #, no-wrap
 msgid "pom.xml"
 msgstr "pom.xml"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:116
+#: upstream/_guides/security-webauthn.adoc:117
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -216,63 +213,63 @@ msgid ""
 msgstr ""
 
 #. type: Block title
-#: upstream/_guides/security-webauthn.adoc:119
-#: upstream/_guides/security-webauthn.adoc:1074
+#: upstream/_guides/security-webauthn.adoc:120
+#: upstream/_guides/security-webauthn.adoc:1075
 #, no-wrap
 msgid "build.gradle"
 msgstr "build.gradle"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:122
+#: upstream/_guides/security-webauthn.adoc:123
 #, no-wrap
 msgid "implementation(\"io.quarkus:quarkus-security-webauthn\")\n"
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:124
+#: upstream/_guides/security-webauthn.adoc:125
 #, fuzzy, no-wrap
 msgid "Writing the application"
 msgstr "Escribir la aplicación"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:127
+#: upstream/_guides/security-webauthn.adoc:128
 #, fuzzy
-msgid "Let's start by implementing the `/api/public` endpoint. As you can see from the source code below, it is just a regular JAX-RS resource:"
+msgid "Let's start by implementing the `/api/public` endpoint. As you can see from the source code below, it is just a regular Jakarta REST resource:"
 msgstr "Empecemos por implementar el endpoint `/api/public`. Como puedes ver en el código fuente de abajo, es sólo un recurso JAX-RS normal:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:131
-#: upstream/_guides/security-webauthn.adoc:166
-#: upstream/_guides/security-webauthn.adoc:191
-#: upstream/_guides/security-webauthn.adoc:219
-#: upstream/_guides/security-webauthn.adoc:338
-#: upstream/_guides/security-webauthn.adoc:363
-#: upstream/_guides/security-webauthn.adoc:411
-#: upstream/_guides/security-webauthn.adoc:933
+#: upstream/_guides/security-webauthn.adoc:132
+#: upstream/_guides/security-webauthn.adoc:167
+#: upstream/_guides/security-webauthn.adoc:192
+#: upstream/_guides/security-webauthn.adoc:220
+#: upstream/_guides/security-webauthn.adoc:339
+#: upstream/_guides/security-webauthn.adoc:364
+#: upstream/_guides/security-webauthn.adoc:412
+#: upstream/_guides/security-webauthn.adoc:934
 #, no-wrap
 msgid "package org.acme.security.webauthn;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:133
+#: upstream/_guides/security-webauthn.adoc:134
 #, no-wrap
 msgid "import java.security.Principal;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:140
+#: upstream/_guides/security-webauthn.adoc:141
 #, no-wrap
 msgid ""
-"import javax.ws.rs.GET;\n"
-"import javax.ws.rs.Path;\n"
-"import javax.ws.rs.Produces;\n"
-"import javax.ws.rs.core.Context;\n"
-"import javax.ws.rs.core.MediaType;\n"
-"import javax.ws.rs.core.SecurityContext;\n"
+"import jakarta.ws.rs.GET;\n"
+"import jakarta.ws.rs.Path;\n"
+"import jakarta.ws.rs.Produces;\n"
+"import jakarta.ws.rs.core.Context;\n"
+"import jakarta.ws.rs.core.MediaType;\n"
+"import jakarta.ws.rs.core.SecurityContext;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:143
+#: upstream/_guides/security-webauthn.adoc:144
 #, no-wrap
 msgid ""
 "@Path(\"/api/public\")\n"
@@ -280,7 +277,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:149
+#: upstream/_guides/security-webauthn.adoc:150
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -291,7 +288,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:158
+#: upstream/_guides/security-webauthn.adoc:159
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -305,24 +302,24 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:161
+#: upstream/_guides/security-webauthn.adoc:162
 #, fuzzy
 msgid "The source code for the `/api/admin` endpoint is also very simple. The main difference here is that we are using a `@RolesAllowed` annotation to make sure that only users granted with the `admin` role can access the endpoint:"
 msgstr "El código fuente del endpoint `/api/admin` también es muy sencillo. La principal diferencia aquí es que estamos usando una anotación `@RolesAllowed` para asegurarnos de que sólo los usuarios con el rol `admin` pueden acceder al endpoint:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:172
+#: upstream/_guides/security-webauthn.adoc:173
 #, no-wrap
 msgid ""
-"import javax.annotation.security.RolesAllowed;\n"
-"import javax.ws.rs.GET;\n"
-"import javax.ws.rs.Path;\n"
-"import javax.ws.rs.Produces;\n"
-"import javax.ws.rs.core.MediaType;\n"
+"import jakarta.annotation.security.RolesAllowed;\n"
+"import jakarta.ws.rs.GET;\n"
+"import jakarta.ws.rs.Path;\n"
+"import jakarta.ws.rs.Produces;\n"
+"import jakarta.ws.rs.core.MediaType;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:175
+#: upstream/_guides/security-webauthn.adoc:176
 #, no-wrap
 msgid ""
 "@Path(\"/api/admin\")\n"
@@ -330,7 +327,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:183
+#: upstream/_guides/security-webauthn.adoc:184
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -343,24 +340,24 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:187
+#: upstream/_guides/security-webauthn.adoc:188
 #, fuzzy
 msgid "Finally, let's consider the `/api/users/me` endpoint. As you can see from the source code below, we are trusting only users with the `user` role.  We are using `SecurityContext` to get access to the current authenticated Principal and we return the user's name. This information is loaded from the database."
 msgstr "Finalmente, consideremos el endpoint `/api/users/me`. Como puedes ver en el código fuente de abajo, estamos confiando sólo en los usuarios con el rol `user`. Estamos usando `SecurityContext` para obtener acceso al Principal autenticado actual y devolvemos el nombre del usuario. Esta información se carga desde la base de datos."
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:197
+#: upstream/_guides/security-webauthn.adoc:198
 #, no-wrap
 msgid ""
-"import javax.annotation.security.RolesAllowed;\n"
-"import javax.ws.rs.GET;\n"
-"import javax.ws.rs.Path;\n"
-"import javax.ws.rs.core.Context;\n"
-"import javax.ws.rs.core.SecurityContext;\n"
+"import jakarta.annotation.security.RolesAllowed;\n"
+"import jakarta.ws.rs.GET;\n"
+"import jakarta.ws.rs.Path;\n"
+"import jakarta.ws.rs.core.Context;\n"
+"import jakarta.ws.rs.core.SecurityContext;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:200
+#: upstream/_guides/security-webauthn.adoc:201
 #, no-wrap
 msgid ""
 "@Path(\"/api/users\")\n"
@@ -368,7 +365,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:208
+#: upstream/_guides/security-webauthn.adoc:209
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -381,19 +378,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-webauthn.adoc:210
+#: upstream/_guides/security-webauthn.adoc:211
 #, fuzzy, no-wrap
 msgid "Storing our WebAuthn credentials"
 msgstr "Almacenamiento de nuestras credenciales de WebAuthn"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:215
+#: upstream/_guides/security-webauthn.adoc:216
 #, fuzzy
 msgid "We can now describe how our WebAuthn credentials are stored in our database with three entities. Note that we've simplified the model in order to only store one credential per user (who could actually have more than one WebAuthn credential and other data such as roles):"
 msgstr "Ahora podemos describir cómo se almacenan nuestras credenciales WebAuthn en nuestra base de datos con tres entidades. Obsérvese que hemos simplificado el modelo para almacenar sólo una credencial por usuario (que en realidad podría tener más de una credencial WebAuthn y otros datos como los roles):"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:222
+#: upstream/_guides/security-webauthn.adoc:223
 #, no-wrap
 msgid ""
 "import java.util.ArrayList;\n"
@@ -401,18 +398,18 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:228
+#: upstream/_guides/security-webauthn.adoc:229
 #, no-wrap
 msgid ""
-"import javax.persistence.Entity;\n"
-"import javax.persistence.OneToMany;\n"
-"import javax.persistence.OneToOne;\n"
-"import javax.persistence.Table;\n"
-"import javax.persistence.UniqueConstraint;\n"
+"import jakarta.persistence.Entity;\n"
+"import jakarta.persistence.OneToMany;\n"
+"import jakarta.persistence.OneToOne;\n"
+"import jakarta.persistence.Table;\n"
+"import jakarta.persistence.UniqueConstraint;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:233
+#: upstream/_guides/security-webauthn.adoc:234
 #, no-wrap
 msgid ""
 "import io.quarkus.hibernate.reactive.panache.PanacheEntity;\n"
@@ -422,7 +419,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:237
+#: upstream/_guides/security-webauthn.adoc:238
 #, no-wrap
 msgid ""
 "@Table(uniqueConstraints = @UniqueConstraint(columnNames = {\"userName\", \"credID\"}))\n"
@@ -431,7 +428,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:242
+#: upstream/_guides/security-webauthn.adoc:243
 #, no-wrap
 msgid ""
 "    /**\n"
@@ -441,7 +438,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:247
+#: upstream/_guides/security-webauthn.adoc:248
 #, no-wrap
 msgid ""
 "    /**\n"
@@ -451,7 +448,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:252
+#: upstream/_guides/security-webauthn.adoc:253
 #, no-wrap
 msgid ""
 "    /**\n"
@@ -461,7 +458,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:257
+#: upstream/_guides/security-webauthn.adoc:258
 #, no-wrap
 msgid ""
 "    /**\n"
@@ -471,7 +468,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:262
+#: upstream/_guides/security-webauthn.adoc:263
 #, no-wrap
 msgid ""
 "    /**\n"
@@ -481,13 +478,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:264
+#: upstream/_guides/security-webauthn.adoc:265
 #, no-wrap
 msgid "    public String aaguid;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:280
+#: upstream/_guides/security-webauthn.adoc:281
 #, no-wrap
 msgid ""
 "    /**\n"
@@ -508,7 +505,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:286
+#: upstream/_guides/security-webauthn.adoc:287
 #, no-wrap
 msgid ""
 "    /**\n"
@@ -519,13 +516,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:288
+#: upstream/_guides/security-webauthn.adoc:289
 #, no-wrap
 msgid "    public String fmt;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:292
+#: upstream/_guides/security-webauthn.adoc:293
 #, no-wrap
 msgid ""
 "    // owning side\n"
@@ -534,7 +531,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:295
+#: upstream/_guides/security-webauthn.adoc:296
 #, no-wrap
 msgid ""
 "    public WebAuthnCredential() {\n"
@@ -542,7 +539,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:318
+#: upstream/_guides/security-webauthn.adoc:319
 #, no-wrap
 msgid ""
 "    public WebAuthnCredential(Authenticator authenticator, User user) {\n"
@@ -570,7 +567,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:322
+#: upstream/_guides/security-webauthn.adoc:323
 #, no-wrap
 msgid ""
 "    public static Uni<List<WebAuthnCredential>> findByUserName(String userName) {\n"
@@ -579,7 +576,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:326
+#: upstream/_guides/security-webauthn.adoc:327
 #, no-wrap
 msgid ""
 "    public static Uni<List<WebAuthnCredential>> findByCredID(String credID) {\n"
@@ -588,7 +585,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:331
+#: upstream/_guides/security-webauthn.adoc:332
 #, no-wrap
 msgid ""
 "    public <T> Uni<T> fetch(T association) {\n"
@@ -598,27 +595,27 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:334
+#: upstream/_guides/security-webauthn.adoc:335
 #, fuzzy
 msgid "We also need a second entity for the credentials:"
 msgstr "También necesitamos una segunda entidad para las credenciales:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:341
+#: upstream/_guides/security-webauthn.adoc:342
 #, no-wrap
 msgid ""
-"import javax.persistence.Entity;\n"
-"import javax.persistence.ManyToOne;\n"
+"import jakarta.persistence.Entity;\n"
+"import jakarta.persistence.ManyToOne;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:343
+#: upstream/_guides/security-webauthn.adoc:344
 #, no-wrap
 msgid "import io.quarkus.hibernate.reactive.panache.PanacheEntity;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:347
+#: upstream/_guides/security-webauthn.adoc:348
 #, no-wrap
 msgid ""
 "@Entity\n"
@@ -626,7 +623,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:350
+#: upstream/_guides/security-webauthn.adoc:351
 #, no-wrap
 msgid ""
 "    @ManyToOne\n"
@@ -634,7 +631,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:356
+#: upstream/_guides/security-webauthn.adoc:357
 #, no-wrap
 msgid ""
 "    /**\n"
@@ -645,23 +642,23 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:359
+#: upstream/_guides/security-webauthn.adoc:360
 #, fuzzy
 msgid "And last but not least, our user entity:"
 msgstr "Y por último, pero no menos importante, nuestra entidad de usuarios:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:368
+#: upstream/_guides/security-webauthn.adoc:369
 #, no-wrap
 msgid ""
-"import javax.persistence.Column;\n"
-"import javax.persistence.Entity;\n"
-"import javax.persistence.OneToOne;\n"
-"import javax.persistence.Table;\n"
+"import jakarta.persistence.Column;\n"
+"import jakarta.persistence.Entity;\n"
+"import jakarta.persistence.OneToOne;\n"
+"import jakarta.persistence.Table;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:371
+#: upstream/_guides/security-webauthn.adoc:372
 #, no-wrap
 msgid ""
 "import io.quarkus.hibernate.reactive.panache.PanacheEntity;\n"
@@ -669,7 +666,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:375
+#: upstream/_guides/security-webauthn.adoc:376
 #, no-wrap
 msgid ""
 "@Table(name = \"user_table\")\n"
@@ -678,7 +675,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:378
+#: upstream/_guides/security-webauthn.adoc:379
 #, no-wrap
 msgid ""
 "    @Column(unique = true)\n"
@@ -686,7 +683,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:382
+#: upstream/_guides/security-webauthn.adoc:383
 #, no-wrap
 msgid ""
 "    // non-owning side, so we can add more credentials later\n"
@@ -695,7 +692,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:387
+#: upstream/_guides/security-webauthn.adoc:388
 #, no-wrap
 msgid ""
 "    public static Uni<User> findByUserName(String userName) {\n"
@@ -705,55 +702,55 @@ msgid ""
 msgstr ""
 
 #. type: Title ====
-#: upstream/_guides/security-webauthn.adoc:389
+#: upstream/_guides/security-webauthn.adoc:390
 #, fuzzy, no-wrap
 msgid "A note about usernames and credential IDs"
 msgstr "Nota sobre los nombres de usuario y los identificadores de credenciales"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:392
+#: upstream/_guides/security-webauthn.adoc:393
 #, fuzzy
 msgid "WebAuthn relies on a combination of usernames (unique per user) and credential IDs (unique per authenticator device)."
 msgstr "WebAuthn se basa en una combinación de nombres de usuario (únicos por usuario) e identificadores de credenciales (únicos por dispositivo autenticador)."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:394
+#: upstream/_guides/security-webauthn.adoc:395
 #, fuzzy
 msgid "The reasons why there are two such identifiers, and why they are not unique keys for the credentials themselves are:"
 msgstr "Las razones por las que hay dos de estos identificadores, y por las que no son claves únicas para las propias credenciales son:"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:397
+#: upstream/_guides/security-webauthn.adoc:398
 #, fuzzy
 msgid "A single user can have more than one authenticator device, which means a single username can map to multiple credential IDs, all of which identify the same user."
 msgstr "Un mismo usuario puede tener más de un dispositivo autenticador, lo que significa que un solo nombre de usuario puede asignarse a varios ID de credenciales, todos los cuales identifican al mismo usuario."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:399
+#: upstream/_guides/security-webauthn.adoc:400
 #, fuzzy
 msgid "An authenticator device may be shared by multiple users, because a single person may want multiple user accounts with different usernames, all of which having the same authenticator device. So a single credential ID may be used by multiple different users."
 msgstr "Un dispositivo autenticador puede ser compartido por varios usuarios, ya que una misma persona puede querer varias cuentas de usuario con diferentes nombres de usuario, todas ellas con el mismo dispositivo autenticador. Por lo tanto, un único identificador de credenciales puede ser utilizado por varios usuarios diferentes."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:401
+#: upstream/_guides/security-webauthn.adoc:402
 #, fuzzy
 msgid "The combination of username and credential ID should be a unicity constraint for your credentials table, though."
 msgstr "Sin embargo, la combinación de nombre de usuario e ID de credencial debería ser una restricción de unicidad para su tabla de credenciales."
 
 #. type: Title ===
-#: upstream/_guides/security-webauthn.adoc:402
+#: upstream/_guides/security-webauthn.adoc:403
 #, fuzzy, no-wrap
 msgid "Exposing your entities to Quarkus WebAuthn"
 msgstr "Exponer sus entidades a Quarkus WebAuthn"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:407
+#: upstream/_guides/security-webauthn.adoc:408
 #, fuzzy
 msgid "You need to define a bean implementing the `WebAuthnUserProvider` in order to allow the Quarkus WebAuthn extension to load and store credentials. This is where you tell Quarkus how to turn your data model into the WebAuthn security model:"
 msgstr "Es necesario definir un bean que implemente el `WebAuthnUserProvider` para permitir que la extensión WebAuthn de Quarkus cargue y almacene credenciales. Aquí es donde le dices a Quarkus cómo convertir tu modelo de datos en el modelo de seguridad de WebAuthn:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:417
+#: upstream/_guides/security-webauthn.adoc:418
 #, no-wrap
 msgid ""
 "import java.util.ArrayList;\n"
@@ -764,14 +761,14 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:419
-#: upstream/_guides/security-webauthn.adoc:1280
+#: upstream/_guides/security-webauthn.adoc:420
+#: upstream/_guides/security-webauthn.adoc:1281
 #, no-wrap
-msgid "import javax.enterprise.context.ApplicationScoped;\n"
+msgid "import jakarta.enterprise.context.ApplicationScoped;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:425
+#: upstream/_guides/security-webauthn.adoc:426
 #, no-wrap
 msgid ""
 "import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactional;\n"
@@ -782,7 +779,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:428
+#: upstream/_guides/security-webauthn.adoc:429
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -790,7 +787,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:435
+#: upstream/_guides/security-webauthn.adoc:436
 #, no-wrap
 msgid ""
 "    @ReactiveTransactional\n"
@@ -802,7 +799,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:442
+#: upstream/_guides/security-webauthn.adoc:443
 #, no-wrap
 msgid ""
 "    @ReactiveTransactional\n"
@@ -814,7 +811,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:463
+#: upstream/_guides/security-webauthn.adoc:464
 #, no-wrap
 msgid ""
 "    @ReactiveTransactional\n"
@@ -840,7 +837,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:474
+#: upstream/_guides/security-webauthn.adoc:475
 #, no-wrap
 msgid ""
 "    private static Uni<List<Authenticator>> toAuthenticators(List<WebAuthnCredential> dbs) {\n"
@@ -856,7 +853,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:496
+#: upstream/_guides/security-webauthn.adoc:497
 #, no-wrap
 msgid ""
 "    private static Uni<Authenticator> toAuthenticator(WebAuthnCredential credential) {\n"
@@ -883,7 +880,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:508
+#: upstream/_guides/security-webauthn.adoc:509
 #, no-wrap
 msgid ""
 "    @Override\n"
@@ -900,19 +897,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:510
+#: upstream/_guides/security-webauthn.adoc:511
 #, fuzzy, no-wrap
 msgid "Writing the HTML application"
 msgstr "Escribir la aplicación HTML"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:514
+#: upstream/_guides/security-webauthn.adoc:515
 #, fuzzy
 msgid "We now need to write a web page with links to all our APIs, as well as a way to register a new user, login, and logout, in `src/main/resources/META-INF/resources/index.html`:"
 msgstr "Ahora tenemos que escribir una página web con enlaces a todas nuestras APIs, así como una forma de registrar un nuevo usuario, iniciar y cerrar la sesión, en `src/main/resources/META-INF/resources/index.html`:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:541
+#: upstream/_guides/security-webauthn.adoc:542
 #, no-wrap
 msgid ""
 "<!DOCTYPE html>\n"
@@ -942,7 +939,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:545
+#: upstream/_guides/security-webauthn.adoc:546
 #, no-wrap
 msgid ""
 "     nav > ul > li {\n"
@@ -951,7 +948,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:553
+#: upstream/_guides/security-webauthn.adoc:554
 #, no-wrap
 msgid ""
 "     nav > ul > li > a {\n"
@@ -964,7 +961,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:559
+#: upstream/_guides/security-webauthn.adoc:560
 #, no-wrap
 msgid ""
 "     nav > ul > li > a:hover {\n"
@@ -975,7 +972,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:596
+#: upstream/_guides/security-webauthn.adoc:597
 #, no-wrap
 msgid ""
 "  <body>\n"
@@ -1017,13 +1014,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:598
+#: upstream/_guides/security-webauthn.adoc:599
 #, no-wrap
 msgid "      const result = document.getElementById('result');\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:602
+#: upstream/_guides/security-webauthn.adoc:603
 #, no-wrap
 msgid ""
 "      fetch('/api/public/me')\n"
@@ -1032,13 +1029,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:604
+#: upstream/_guides/security-webauthn.adoc:605
 #, no-wrap
 msgid "      const loginButton = document.getElementById('login');\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:617
+#: upstream/_guides/security-webauthn.adoc:618
 #, no-wrap
 msgid ""
 "      loginButton.onclick = () => {\n"
@@ -1056,13 +1053,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:619
+#: upstream/_guides/security-webauthn.adoc:620
 #, no-wrap
 msgid "      const registerButton = document.getElementById('register');\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:637
+#: upstream/_guides/security-webauthn.adoc:638
 #, no-wrap
 msgid ""
 "      registerButton.onclick = () => {\n"
@@ -1085,143 +1082,143 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:639
+#: upstream/_guides/security-webauthn.adoc:640
 #, fuzzy, no-wrap
 msgid "Testing the application"
 msgstr "Probar la aplicación"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:642
+#: upstream/_guides/security-webauthn.adoc:643
 #, fuzzy
 msgid "The application is now protected and the identities are provided by our database."
 msgstr "La aplicación está ahora protegida y las identidades son proporcionadas por nuestra base de datos."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:644
+#: upstream/_guides/security-webauthn.adoc:645
 #, fuzzy
 msgid "Run your application in dev mode with:"
 msgstr "Ejecuta tu aplicación en modo dev con:"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:649
+#: upstream/_guides/security-webauthn.adoc:650
 #, fuzzy
 msgid "which will start a PostgreSQL Dev Service container, and open http://localhost:8080 in your browser."
 msgstr "que iniciará un contenedor PostgreSQL Dev Service, y abrirá  http://localhost:8080  en su navegador."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:651
+#: upstream/_guides/security-webauthn.adoc:652
 #, fuzzy
 msgid "Initially, you will have no credentials registered, and no current user:"
 msgstr "Inicialmente, no tendrá credenciales registradas, ni usuario actual:"
 
 #. type: Target for macro image
-#: upstream/_guides/security-webauthn.adoc:652
+#: upstream/_guides/security-webauthn.adoc:653
 #, no-wrap
 msgid "webauthn-1.png"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:656
+#: upstream/_guides/security-webauthn.adoc:657
 #, fuzzy
 msgid "The current user is displayed on the left, and you can use the top menu to try accessing the public API, which should work, while the user and admin APIs will fail and redirect you to the current page."
 msgstr "El usuario actual se muestra a la izquierda, y puedes utilizar el menú superior para intentar acceder a la API pública, que debería funcionar, mientras que las API de usuario y de administrador fallarán y te redirigirán a la página actual."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:659
+#: upstream/_guides/security-webauthn.adoc:660
 #, fuzzy
 msgid "Start by registering your WebAuthn credentials by entering a username, first and last names on the `Register` form on the right, then pressing the `Register` button:"
 msgstr "Empiece por registrar sus credenciales de WebAuthn introduciendo un nombre de usuario, nombre y apellidos en el formulario `Register` de la derecha, y luego pulse el botón `Register`:"
 
 #. type: Target for macro image
-#: upstream/_guides/security-webauthn.adoc:660
+#: upstream/_guides/security-webauthn.adoc:661
 #, no-wrap
 msgid "webauthn-2.png"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:663
+#: upstream/_guides/security-webauthn.adoc:664
 #, fuzzy
 msgid "Your browser will ask you to activate your WebAuthn authenticator:"
 msgstr "Su navegador le pedirá que active su autentificador WebAuthn:"
 
 #. type: Target for macro image
-#: upstream/_guides/security-webauthn.adoc:664
+#: upstream/_guides/security-webauthn.adoc:665
 #, no-wrap
 msgid "webauthn-3.png"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:667
+#: upstream/_guides/security-webauthn.adoc:668
 #, fuzzy
 msgid "You will then be logged in, and can check that the user API is now accessible:"
 msgstr "A continuación, se conectará y podrá comprobar que la API de usuario es ahora accesible:"
 
 #. type: Target for macro image
-#: upstream/_guides/security-webauthn.adoc:668
-#: upstream/_guides/security-webauthn.adoc:676
+#: upstream/_guides/security-webauthn.adoc:669
+#: upstream/_guides/security-webauthn.adoc:677
 #, no-wrap
 msgid "webauthn-4.png"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:671
+#: upstream/_guides/security-webauthn.adoc:672
 #, fuzzy
 msgid "At this stage you can `Logout` and enter your username in the `Login` form:"
 msgstr "En este momento puede `Logout` e introducir su nombre de usuario en el formulario `Login`:"
 
 #. type: Target for macro image
-#: upstream/_guides/security-webauthn.adoc:672
+#: upstream/_guides/security-webauthn.adoc:673
 #, no-wrap
 msgid "webauthn-5.png"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:675
+#: upstream/_guides/security-webauthn.adoc:676
 #, fuzzy
 msgid "Then press the `Login` button, and you will be logged in:"
 msgstr "A continuación, pulse el botón `Login` y se conectará:"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:679
+#: upstream/_guides/security-webauthn.adoc:680
 #, fuzzy
 msgid "The admin API is only accessible if you register with the `admin` user name."
 msgstr "Sólo se puede acceder a la API de administración si se registra con el nombre de usuario `admin`."
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:680
+#: upstream/_guides/security-webauthn.adoc:681
 #, fuzzy, no-wrap
 msgid "WebAuthn endpoints"
 msgstr "Puntos finales de WebAuthn"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:683
+#: upstream/_guides/security-webauthn.adoc:684
 #, fuzzy
 msgid "The Quarkus WebAuthn extension comes out of the box with these REST endpoints pre-defined:"
 msgstr "La extensión Quarkus WebAuthn viene de fábrica con estos puntos finales REST predefinidos:"
 
 #. type: Title ===
-#: upstream/_guides/security-webauthn.adoc:684
+#: upstream/_guides/security-webauthn.adoc:685
 #, fuzzy, no-wrap
 msgid "Obtain a registration challenge"
 msgstr "Obtener una impugnación de registro"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:687
+#: upstream/_guides/security-webauthn.adoc:688
 #, fuzzy
 msgid "`POST /q/webauthn/register`: Set up and obtain a registration challenge"
 msgstr "`POST /q/webauthn/register`: Establecer y obtener un reto de registro"
 
 #. type: Block title
-#: upstream/_guides/security-webauthn.adoc:689
-#: upstream/_guides/security-webauthn.adoc:737
-#: upstream/_guides/security-webauthn.adoc:774
-#: upstream/_guides/security-webauthn.adoc:794
+#: upstream/_guides/security-webauthn.adoc:690
+#: upstream/_guides/security-webauthn.adoc:738
+#: upstream/_guides/security-webauthn.adoc:775
+#: upstream/_guides/security-webauthn.adoc:795
 #, fuzzy, no-wrap
 msgid "Request"
 msgstr "Solicite"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:695
+#: upstream/_guides/security-webauthn.adoc:696
 #, no-wrap
 msgid ""
 "{\n"
@@ -1231,14 +1228,14 @@ msgid ""
 msgstr ""
 
 #. type: Block title
-#: upstream/_guides/security-webauthn.adoc:698
-#: upstream/_guides/security-webauthn.adoc:745
+#: upstream/_guides/security-webauthn.adoc:699
+#: upstream/_guides/security-webauthn.adoc:746
 #, fuzzy, no-wrap
 msgid "Response"
 msgstr "Respuesta"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:730
+#: upstream/_guides/security-webauthn.adoc:731
 #, no-wrap
 msgid ""
 "{\n"
@@ -1274,19 +1271,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-webauthn.adoc:732
+#: upstream/_guides/security-webauthn.adoc:733
 #, fuzzy, no-wrap
 msgid "Obtain a login challenge"
 msgstr "Obtener un desafío de inicio de sesión"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:735
+#: upstream/_guides/security-webauthn.adoc:736
 #, fuzzy
 msgid "`POST /q/webauthn/login`: Set up and obtain a login challenge"
 msgstr "`POST /q/webauthn/login`: Configurar y obtener un desafío de inicio de sesión"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:742
+#: upstream/_guides/security-webauthn.adoc:743
 #, no-wrap
 msgid ""
 "{\n"
@@ -1295,7 +1292,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:767
+#: upstream/_guides/security-webauthn.adoc:768
 #, no-wrap
 msgid ""
 "{\n"
@@ -1321,19 +1318,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-webauthn.adoc:769
+#: upstream/_guides/security-webauthn.adoc:770
 #, fuzzy, no-wrap
 msgid "Trigger a registration"
 msgstr "Activar un registro"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:772
+#: upstream/_guides/security-webauthn.adoc:773
 #, fuzzy
 msgid "`POST /q/webauthn/callback`: Trigger a registration"
 msgstr "`POST /q/webauthn/callback`: Activar un registro"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:785
+#: upstream/_guides/security-webauthn.adoc:786
 #, no-wrap
 msgid ""
 "{\n"
@@ -1348,26 +1345,26 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:788
-#: upstream/_guides/security-webauthn.adoc:810
+#: upstream/_guides/security-webauthn.adoc:789
+#: upstream/_guides/security-webauthn.adoc:811
 #, fuzzy
 msgid "This returns a 204 with no body."
 msgstr "Esto devuelve un 204 sin cuerpo."
 
 #. type: Title ===
-#: upstream/_guides/security-webauthn.adoc:789
+#: upstream/_guides/security-webauthn.adoc:790
 #, fuzzy, no-wrap
 msgid "Trigger a login"
 msgstr "Activar un inicio de sesión"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:792
+#: upstream/_guides/security-webauthn.adoc:793
 #, fuzzy
 msgid "`POST /q/webauthn/callback`: Trigger a login"
 msgstr "`POST /q/webauthn/callback`: Activar un inicio de sesión"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:807
+#: upstream/_guides/security-webauthn.adoc:808
 #, no-wrap
 msgid ""
 "{\n"
@@ -1384,37 +1381,37 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-webauthn.adoc:811
+#: upstream/_guides/security-webauthn.adoc:812
 #, fuzzy, no-wrap
 msgid "Logout"
 msgstr "Cierre de sesión"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:814
+#: upstream/_guides/security-webauthn.adoc:815
 #, fuzzy
 msgid "`GET /q/webauthn/logout`: Logs you out"
 msgstr "`GET /q/webauthn/logout`: Te cierra la sesión"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:816
+#: upstream/_guides/security-webauthn.adoc:817
 #, fuzzy
 msgid "This returns a 302 redirect to the root URI of your application."
 msgstr "Esto devuelve una redirección 302 a la URI raíz de su aplicación."
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:817
+#: upstream/_guides/security-webauthn.adoc:818
 #, fuzzy, no-wrap
 msgid "WebAuthn JavaScript library"
 msgstr "Biblioteca JavaScript de WebAuthn"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:821
+#: upstream/_guides/security-webauthn.adoc:822
 #, fuzzy
 msgid "Because there's so much JavaScript needed to set WebAuthn up in the browser, the Quarkus WebAuthn extension ships with a JavaScript library to help you talk to the WebAuthn endpoints, at `/q/webauthn/webauthn.js`. You can set it up like this:"
 msgstr "Debido a que se necesita mucho JavaScript para configurar WebAuthn en el navegador, la extensión Quarkus WebAuthn viene con una biblioteca de JavaScript para ayudarle a hablar con los puntos finales de WebAuthn, en `/q/webauthn/webauthn.js`. Puedes configurarlo así:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:834
+#: upstream/_guides/security-webauthn.adoc:835
 #, no-wrap
 msgid ""
 "<script src=\"/q/webauthn/webauthn.js\" type=\"text/javascript\" charset=\"UTF-8\"></script>\n"
@@ -1430,19 +1427,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-webauthn.adoc:836
+#: upstream/_guides/security-webauthn.adoc:837
 #, fuzzy, no-wrap
 msgid "Invoke registration"
 msgstr "Invocar el registro"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:840
+#: upstream/_guides/security-webauthn.adoc:841
 #, fuzzy
 msgid "The `webAuthn.register` method invokes the registration challenge endpoint, then calls the authenticator and invokes the callback endpoint for that registration, and returns a https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise[Promise object]:"
 msgstr "El método `webAuthn.register` invoca el punto final de desafío de registro, luego llama al autenticador e invoca el punto final de devolución de llamada para ese registro, y devuelve un  link:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise[objeto Promise]:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:850
+#: upstream/_guides/security-webauthn.adoc:851
 #, no-wrap
 msgid ""
 "webAuthn.register({ name: userName, displayName: firstName + \" \" + lastName })\n"
@@ -1455,19 +1452,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-webauthn.adoc:852
+#: upstream/_guides/security-webauthn.adoc:853
 #, fuzzy, no-wrap
 msgid "Invoke login"
 msgstr "Invocar el inicio de sesión"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:856
+#: upstream/_guides/security-webauthn.adoc:857
 #, fuzzy
 msgid "The `webAuthn.login` method invokes the login challenge endpoint, then calls the authenticator and invokes the callback endpoint for that login, and returns a https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise[Promise object]:"
 msgstr "El método `webAuthn.login` invoca el endpoint de desafío de inicio de sesión, luego llama al autenticador e invoca el endpoint de devolución de llamada para ese inicio de sesión, y devuelve un  link:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise[objeto Promise]:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:866
+#: upstream/_guides/security-webauthn.adoc:867
 #, no-wrap
 msgid ""
 "webAuthn.login({ name: userName })\n"
@@ -1480,19 +1477,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-webauthn.adoc:868
+#: upstream/_guides/security-webauthn.adoc:869
 #, fuzzy, no-wrap
 msgid "Only invoke the registration challenge and authenticator"
 msgstr "Sólo invoca el desafío de registro y el autentificador"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:874
+#: upstream/_guides/security-webauthn.adoc:875
 #, fuzzy
 msgid "The `webAuthn.registerOnly` method invokes the registration challenge endpoint, then calls the authenticator and returns a https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise[Promise object] containing a JSON object suitable for being sent to the callback endpoint. You can use that JSON object in order to store the credentials in hidden form `input` elements, for example, and send it as part of a regular HTML form:"
 msgstr "El método `webAuthn.registerOnly` invoca el endpoint de desafío de registro, luego llama al autenticador y devuelve un  link:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise[objeto Promise] que contiene un objeto JSON adecuado para ser enviado al endpoint de devolución de llamada. Puedes utilizar ese objeto JSON para almacenar las credenciales en elementos ocultos del formulario `input`, por ejemplo, y enviarlo como parte de un formulario HTML normal:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:889
+#: upstream/_guides/security-webauthn.adoc:890
 #, no-wrap
 msgid ""
 "webAuthn.registerOnly({ name: userName, displayName: firstName + \" \" + lastName })\n"
@@ -1510,19 +1507,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-webauthn.adoc:891
+#: upstream/_guides/security-webauthn.adoc:892
 #, fuzzy, no-wrap
 msgid "Only invoke the login challenge and authenticator"
 msgstr "Sólo invoca el desafío de registro y el autentificador"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:897
+#: upstream/_guides/security-webauthn.adoc:898
 #, fuzzy
 msgid "The `webAuthn.loginOnly` method invokes the login challenge endpoint, then calls the authenticator and returns a https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise[Promise object] containing a JSON object suitable for being sent to the callback endpoint. You can use that JSON object in order to store the credentials in hidden form `input` elements, for example, and send it as part of a regular HTML form:"
 msgstr "El método `webAuthn.loginOnly` invoca el endpoint de desafío de inicio de sesión, luego llama al autenticador y devuelve un  link:https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise[objeto Promise] que contiene un objeto JSON adecuado para ser enviado al endpoint de devolución de llamada. Puedes utilizar ese objeto JSON para almacenar las credenciales en elementos ocultos del formulario `input`, por ejemplo, y enviarlo como parte de un formulario HTML normal:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:914
+#: upstream/_guides/security-webauthn.adoc:915
 #, no-wrap
 msgid ""
 "webAuthn.loginOnly({ name: userName })\n"
@@ -1542,56 +1539,56 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:916
+#: upstream/_guides/security-webauthn.adoc:917
 #, fuzzy, no-wrap
 msgid "Handling login and registration endpoints yourself"
 msgstr "Manejar usted mismo los puntos finales de inicio de sesión y registro"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:921
+#: upstream/_guides/security-webauthn.adoc:922
 #, fuzzy
 msgid "Sometimes, you will want to ask for more data than just a username in order to register a user, or you want to deal with login and registration with custom validation, and so the WebAuthn callback endpoint is not enough."
 msgstr "A veces, querrá pedir más datos que sólo un nombre de usuario para registrar a un usuario, o querrá tratar el inicio de sesión y el registro con una validación personalizada, por lo que el punto final de devolución de llamada de WebAuthn no es suficiente."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:925
+#: upstream/_guides/security-webauthn.adoc:926
 #, fuzzy
 msgid "In this case, you can use the `WebAuthn.loginOnly` and `WebAuthn.registerOnly` methods from the JavaScript library, store the authenticator data in hidden form elements, and send them as part of your form payload to the server to your custom login or registration endpoints."
 msgstr "En este caso, puede utilizar los métodos `WebAuthn.loginOnly` y `WebAuthn.registerOnly` de la biblioteca de JavaScript, almacenar los datos del autentificador en elementos de formulario ocultos y enviarlos como parte de la carga útil del formulario al servidor a sus puntos finales de inicio de sesión o registro personalizados."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:929
+#: upstream/_guides/security-webauthn.adoc:930
 #, fuzzy
 msgid "If you are storing them in form input elements, you can then use the `WebAuthnLoginResponse` and `WebAuthnRegistrationResponse` classes, mark them as `@BeanParam` and then use the `WebAuthnSecurity.login` and `WebAuthnSecurity.register` methods. For example, here's how you can handle a custom login and register:"
 msgstr "Si los almacena en elementos de entrada de formularios, puede utilizar las clases `WebAuthnLoginResponse` y `WebAuthnRegistrationResponse`, marcarlos como `@BeanParam` y luego utilizar los métodos `WebAuthnSecurity.login` y `WebAuthnSecurity.register`. Por ejemplo, así es como puedes manejar un inicio de sesión y un registro personalizados:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:935
+#: upstream/_guides/security-webauthn.adoc:936
 #, no-wrap
 msgid "import java.net.URI;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:943
+#: upstream/_guides/security-webauthn.adoc:944
 #, no-wrap
 msgid ""
-"import javax.inject.Inject;\n"
-"import javax.ws.rs.BeanParam;\n"
-"import javax.ws.rs.POST;\n"
-"import javax.ws.rs.Path;\n"
-"import javax.ws.rs.core.NewCookie;\n"
-"import javax.ws.rs.core.Response;\n"
-"import javax.ws.rs.core.Response.Status;\n"
+"import jakarta.inject.Inject;\n"
+"import jakarta.ws.rs.BeanParam;\n"
+"import jakarta.ws.rs.POST;\n"
+"import jakarta.ws.rs.Path;\n"
+"import jakarta.ws.rs.core.NewCookie;\n"
+"import jakarta.ws.rs.core.Response;\n"
+"import jakarta.ws.rs.core.Response.Status;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:945
+#: upstream/_guides/security-webauthn.adoc:946
 #, no-wrap
 msgid "import org.jboss.resteasy.reactive.RestForm;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:953
+#: upstream/_guides/security-webauthn.adoc:954
 #, no-wrap
 msgid ""
 "import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactional;\n"
@@ -1604,7 +1601,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:956
+#: upstream/_guides/security-webauthn.adoc:957
 #, no-wrap
 msgid ""
 "@Path(\"\")\n"
@@ -1612,7 +1609,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:959
+#: upstream/_guides/security-webauthn.adoc:960
 #, no-wrap
 msgid ""
 "    @Inject\n"
@@ -1620,7 +1617,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:972
+#: upstream/_guides/security-webauthn.adoc:973
 #, no-wrap
 msgid ""
 "    @Path(\"/login\")\n"
@@ -1638,7 +1635,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:980
+#: upstream/_guides/security-webauthn.adoc:981
 #, no-wrap
 msgid ""
 "        Uni<User> userUni = User.findByUserName(userName);\n"
@@ -1651,7 +1648,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:994
+#: upstream/_guides/security-webauthn.adoc:995
 #, no-wrap
 msgid ""
 "            return authenticator\n"
@@ -1670,7 +1667,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:997
+#: upstream/_guides/security-webauthn.adoc:998
 #, no-wrap
 msgid ""
 "        });\n"
@@ -1678,7 +1675,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1010
+#: upstream/_guides/security-webauthn.adoc:1011
 #, no-wrap
 msgid ""
 "    @Path(\"/register\")\n"
@@ -1696,7 +1693,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1018
+#: upstream/_guides/security-webauthn.adoc:1019
 #, no-wrap
 msgid ""
 "        Uni<User> userUni = User.findByUserName(userName);\n"
@@ -1709,7 +1706,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1027
+#: upstream/_guides/security-webauthn.adoc:1028
 #, no-wrap
 msgid ""
 "            return authenticator\n"
@@ -1723,7 +1720,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1039
+#: upstream/_guides/security-webauthn.adoc:1040
 #, no-wrap
 msgid ""
 "                    })\n"
@@ -1740,7 +1737,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1043
+#: upstream/_guides/security-webauthn.adoc:1044
 #, no-wrap
 msgid ""
 "        });\n"
@@ -1749,25 +1746,25 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:1049
+#: upstream/_guides/security-webauthn.adoc:1050
 #, fuzzy
 msgid "The `WebAuthnSecurity` methods do not set or read the user cookie, so you will have to take care of it yourself, but it allows you to use other means of storing the user, such as JWT. You can use the `rememberUser(String userName, RoutingContext ctx)` and `logout(RoutingContext ctx)` methods on the same `WebAuthnSecurity` class if you want to manually set up login cookies."
 msgstr "Los métodos de `WebAuthnSecurity` no establecen ni leen la cookie de usuario, por lo que tendrás que encargarte de ello tú mismo, pero te permite utilizar otros medios de almacenamiento del usuario, como JWT. Puedes utilizar los métodos `rememberUser(String userName, RoutingContext ctx)` y `logout(RoutingContext ctx)` en la misma clase `WebAuthnSecurity` si quieres configurar manualmente las cookies de inicio de sesión."
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:1050
+#: upstream/_guides/security-webauthn.adoc:1051
 #, fuzzy, no-wrap
 msgid "Blocking version"
 msgstr "Versión de bloqueo"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:1055
+#: upstream/_guides/security-webauthn.adoc:1056
 #, fuzzy
 msgid "If you're using a blocking data access to the database, you can safely block on the `WebAuthnSecurity` methods, with `.await().indefinitely()`, because nothing is async in the `register` and `login` methods, besides the data access with your `WebAuthnUserProvider`."
 msgstr "Si está utilizando un acceso de datos de bloqueo a la base de datos, puede bloquear con seguridad en los métodos `WebAuthnSecurity`, con `.await().indefinitely()`, porque nada es asíncrono en los métodos `register` y `login`, además del acceso de datos con su `WebAuthnUserProvider`."
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:1058
+#: upstream/_guides/security-webauthn.adoc:1059
 #, fuzzy, no-wrap
 msgid ""
 "You will have to add the `@Blocking` annotation on your `WebAuthnUserProvider` class in order to tell the\n"
@@ -1775,19 +1772,19 @@ msgid ""
 msgstr "Tendrá que añadir la anotación `@Blocking` en su clase `WebAuthnUserProvider` para indicar a los puntos finales de Quarkus WebAuthn que difieran esas llamadas al grupo de trabajadores."
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:1059
+#: upstream/_guides/security-webauthn.adoc:1060
 #, fuzzy, no-wrap
 msgid "Testing WebAuthn"
 msgstr "Prueba de WebAuthn"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:1063
+#: upstream/_guides/security-webauthn.adoc:1064
 #, fuzzy
 msgid "Testing WebAuthn can be complicated because normally you need a hardware token, which is why we've made the `quarkus-test-security-webauthn` helper library:"
 msgstr "Probar WebAuthn puede ser complicado porque normalmente se necesita un token de hardware, por lo que hemos creado la extensión `quarkus-test-security-webauthn`:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1071
+#: upstream/_guides/security-webauthn.adoc:1072
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -1797,32 +1794,32 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1077
+#: upstream/_guides/security-webauthn.adoc:1078
 #, no-wrap
 msgid "implementation(\"io.quarkus:quarkus-test-security-webauthn\")\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:1082
+#: upstream/_guides/security-webauthn.adoc:1083
 #, fuzzy
 msgid "With this, you can use `WebAuthnHardware` to emulate an authenticator token, as well as the `WebAuthnEndpointHelper` helper methods in order to invoke the WebAuthn endpoints, or even fill your form data for custom endpoints:"
 msgstr "Con esto, puede utilizar `WebAuthnHardware` para emular un token de autenticación, así como los métodos de ayuda de `WebAuthnEndpointHelper` para invocar los puntos finales de WebAuthn, o incluso rellenar los datos de su formulario para los puntos finales personalizados:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1086
-#: upstream/_guides/security-webauthn.adoc:1278
+#: upstream/_guides/security-webauthn.adoc:1087
+#: upstream/_guides/security-webauthn.adoc:1279
 #, no-wrap
 msgid "package org.acme.security.webauthn.test;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1088
+#: upstream/_guides/security-webauthn.adoc:1089
 #, no-wrap
 msgid "import static io.restassured.RestAssured.given;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1091
+#: upstream/_guides/security-webauthn.adoc:1092
 #, no-wrap
 msgid ""
 "import java.util.function.Consumer;\n"
@@ -1830,7 +1827,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1094
+#: upstream/_guides/security-webauthn.adoc:1095
 #, no-wrap
 msgid ""
 "import org.hamcrest.Matchers;\n"
@@ -1838,7 +1835,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1104
+#: upstream/_guides/security-webauthn.adoc:1105
 #, no-wrap
 msgid ""
 "import io.quarkus.security.webauthn.WebAuthnController;\n"
@@ -1853,7 +1850,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1107
+#: upstream/_guides/security-webauthn.adoc:1108
 #, no-wrap
 msgid ""
 "@QuarkusTest\n"
@@ -1861,7 +1858,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1114
+#: upstream/_guides/security-webauthn.adoc:1115
 #, no-wrap
 msgid ""
 "    enum User {\n"
@@ -1873,7 +1870,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1120
+#: upstream/_guides/security-webauthn.adoc:1121
 #, no-wrap
 msgid ""
 "    @Test\n"
@@ -1884,7 +1881,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1125
+#: upstream/_guides/security-webauthn.adoc:1126
 #, no-wrap
 msgid ""
 "    @Test\n"
@@ -1894,7 +1891,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1129
+#: upstream/_guides/security-webauthn.adoc:1130
 #, no-wrap
 msgid ""
 "    private void testWebAuthn(String userName, User user, Endpoint endpoint) {\n"
@@ -1903,14 +1900,14 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1131
-#: upstream/_guides/security-webauthn.adoc:1151
+#: upstream/_guides/security-webauthn.adoc:1132
+#: upstream/_guides/security-webauthn.adoc:1152
 #, no-wrap
 msgid "        verifyLoggedOut(cookieFilter);\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1143
+#: upstream/_guides/security-webauthn.adoc:1144
 #, no-wrap
 msgid ""
 "        // two-step registration\n"
@@ -1927,8 +1924,8 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1146
-#: upstream/_guides/security-webauthn.adoc:1166
+#: upstream/_guides/security-webauthn.adoc:1147
+#: upstream/_guides/security-webauthn.adoc:1167
 #, no-wrap
 msgid ""
 "        // verify that we can access logged-in endpoints\n"
@@ -1936,8 +1933,8 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1149
-#: upstream/_guides/security-webauthn.adoc:1169
+#: upstream/_guides/security-webauthn.adoc:1150
+#: upstream/_guides/security-webauthn.adoc:1170
 #, no-wrap
 msgid ""
 "        // logout\n"
@@ -1945,7 +1942,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1163
+#: upstream/_guides/security-webauthn.adoc:1164
 #, no-wrap
 msgid ""
 "        // two-step login\n"
@@ -1962,7 +1959,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1172
+#: upstream/_guides/security-webauthn.adoc:1173
 #, no-wrap
 msgid ""
 "        verifyLoggedOut(cookieFilter);\n"
@@ -1970,7 +1967,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1189
+#: upstream/_guides/security-webauthn.adoc:1190
 #, no-wrap
 msgid ""
 "    private void invokeCustomEndpoint(String uri, Filter cookieFilter, Consumer<RequestSpecification> requestCustomiser) {\n"
@@ -1992,7 +1989,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1205
+#: upstream/_guides/security-webauthn.adoc:1206
 #, no-wrap
 msgid ""
 "    private void verifyLoggedIn(Filter cookieFilter, String userName, User user) {\n"
@@ -2013,7 +2010,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1213
+#: upstream/_guides/security-webauthn.adoc:1214
 #, no-wrap
 msgid ""
 "        // user API accessible\n"
@@ -2026,7 +2023,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1230
+#: upstream/_guides/security-webauthn.adoc:1231
 #, no-wrap
 msgid ""
 "        // admin API?\n"
@@ -2048,7 +2045,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1246
+#: upstream/_guides/security-webauthn.adoc:1247
 #, no-wrap
 msgid ""
 "    private void verifyLoggedOut(Filter cookieFilter) {\n"
@@ -2069,7 +2066,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1256
+#: upstream/_guides/security-webauthn.adoc:1257
 #, no-wrap
 msgid ""
 "        // user API not accessible\n"
@@ -2084,7 +2081,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1268
+#: upstream/_guides/security-webauthn.adoc:1269
 #, no-wrap
 msgid ""
 "        // admin API not accessible\n"
@@ -2101,19 +2098,19 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:1274
+#: upstream/_guides/security-webauthn.adoc:1275
 #, fuzzy
 msgid "For this test, since we're testing both the provided callback endpoint, which updates users in its `WebAuthnUserProvider` and the manual `LoginResource` endpoint, which deals with users manually, we need to override the `WebAuthnUserProvider` with one that doesn't update the `scooby` user:"
 msgstr "Para esta prueba, ya que estamos probando tanto el punto final de devolución de llamada proporcionado, que actualiza los usuarios en su `WebAuthnUserProvider` y el punto final manual `LoginResource`, que se ocupa de los usuarios de forma manual, necesitamos anular el `WebAuthnUserProvider` con uno que no actualice el usuario `scooby`:"
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1282
+#: upstream/_guides/security-webauthn.adoc:1283
 #, no-wrap
 msgid "import org.acme.security.webauthn.MyWebAuthnSetup;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1286
+#: upstream/_guides/security-webauthn.adoc:1287
 #, no-wrap
 msgid ""
 "import io.quarkus.test.Mock;\n"
@@ -2122,7 +2119,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-webauthn.adoc:1299
+#: upstream/_guides/security-webauthn.adoc:1300
 #, no-wrap
 msgid ""
 "@Mock\n"
@@ -2140,19 +2137,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:1302
+#: upstream/_guides/security-webauthn.adoc:1303
 #, fuzzy, no-wrap
 msgid "Configuration Reference"
 msgstr "Referencia de configuración"
 
 #. type: Title ==
-#: upstream/_guides/security-webauthn.adoc:1306
+#: upstream/_guides/security-webauthn.adoc:1307
 #, fuzzy, no-wrap
 msgid "References"
 msgstr "Referencias"
 
 #. type: Plain text
-#: upstream/_guides/security-webauthn.adoc:1308
+#: upstream/_guides/security-webauthn.adoc:1309
 #, fuzzy
-msgid "xref:security-overview-concept.adoc[Quarkus Security overview]"
+msgid "xref:security-overview.adoc[Quarkus Security overview]"
 msgstr "link:security.html[Seguridad Quarkus]"
