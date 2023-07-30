@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-07-04 02:48+0000\n"
+"POT-Creation-Date: 2023-07-30 08:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -239,7 +239,7 @@ msgstr ""
 
 #. type: Title ===
 #: upstream/_versions/main/guides/pulsar.adoc:126
-#: upstream/_versions/main/guides/pulsar.adoc:399
+#: upstream/_versions/main/guides/pulsar.adoc:460
 #, no-wrap
 msgid "Example"
 msgstr ""
@@ -259,7 +259,7 @@ msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/pulsar.adoc:138
-#: upstream/_versions/main/guides/pulsar.adoc:410
+#: upstream/_versions/main/guides/pulsar.adoc:471
 msgid "Configure the Pulsar broker service url."
 msgstr ""
 
@@ -315,10 +315,11 @@ msgstr ""
 
 #. type: delimited block -
 #: upstream/_versions/main/guides/pulsar.adoc:170
-#: upstream/_versions/main/guides/pulsar.adoc:444
-#: upstream/_versions/main/guides/pulsar.adoc:534
-#: upstream/_versions/main/guides/pulsar.adoc:638
-#: upstream/_versions/main/guides/pulsar.adoc:705
+#: upstream/_versions/main/guides/pulsar.adoc:287
+#: upstream/_versions/main/guides/pulsar.adoc:505
+#: upstream/_versions/main/guides/pulsar.adoc:595
+#: upstream/_versions/main/guides/pulsar.adoc:699
+#: upstream/_versions/main/guides/pulsar.adoc:766
 #, no-wrap
 msgid "}\n"
 msgstr ""
@@ -466,63 +467,163 @@ msgid "As with the previous `Message` example, if your injected channel receives
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:257
+#: upstream/_versions/main/guides/pulsar.adoc:258
+#, no-wrap
+msgid "Blocking processing"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/pulsar.adoc:264
+msgid "Reactive Messaging invokes your method on an I/O thread.  See the xref:quarkus-reactive-architecture.adoc[Quarkus Reactive Architecture documentation] for further details on this topic.  But, you often need to combine Reactive Messaging with blocking processing such as database interactions.  For this, you need to use the `@Blocking` annotation indicating that the processing is _blocking_ and should not be run on the caller thread."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/pulsar.adoc:266
+msgid "For example, The following code illustrates how you can store incoming payloads to a database using Hibernate with Panache:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:271
+#, no-wrap
+msgid ""
+"import io.smallrye.reactive.messaging.annotations.Blocking;\n"
+"import org.eclipse.microprofile.reactive.messaging.Incoming;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:274
+#, no-wrap
+msgid ""
+"import jakarta.enterprise.context.ApplicationScoped;\n"
+"import jakarta.transaction.Transactional;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:277
+#, no-wrap
+msgid ""
+"@ApplicationScoped\n"
+"public class PriceStorage {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:285
+#, no-wrap
+msgid ""
+"    @Incoming(\"prices\")\n"
+"    @Transactional\n"
+"    public void store(int priceInUsd) {\n"
+"        Price price = new Price();\n"
+"        price.value = priceInUsd;\n"
+"        price.persist();\n"
+"    }\n"
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_versions/main/guides/pulsar.adoc:292
+msgid "There are 2 `@Blocking` annotations:"
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_versions/main/guides/pulsar.adoc:294
+msgid "`io.smallrye.reactive.messaging.annotations.Blocking`"
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_versions/main/guides/pulsar.adoc:295
+msgid "`io.smallrye.common.annotation.Blocking`"
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_versions/main/guides/pulsar.adoc:300
+msgid "They have the same effect.  Thus, you can use both.  The first one provides more fine-grained tuning such as the worker pool to use and whether it preserves the order.  The second one, used also with other reactive features of Quarkus, uses the default worker pool and preserves the order."
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_versions/main/guides/pulsar.adoc:302
+msgid "Detailed information on the usage of `@Blocking` annotation can be found in https://smallrye.io/smallrye-reactive-messaging/latest/concepts/blocking/[SmallRye Reactive Messaging – Handling blocking execution]."
+msgstr ""
+
+#. type: Block title
+#: upstream/_versions/main/guides/pulsar.adoc:305
+#, no-wrap
+msgid "@RunOnVirtualThread"
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_versions/main/guides/pulsar.adoc:308
+msgid "For running the blocking processing on Java _virtual threads_, see the xref:messaging-virtual-threads.adoc[Quarkus Virtual Thread support with Reactive Messaging documentation]."
+msgstr ""
+
+#. type: Block title
+#: upstream/_versions/main/guides/pulsar.adoc:311
+#, no-wrap
+msgid "@Transactional"
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_versions/main/guides/pulsar.adoc:314
+msgid "If your method is annotated with `@Transactional`, it will be considered _blocking_ automatically, even if the method is not annotated with `@Blocking`."
+msgstr ""
+
+#. type: Title ===
+#: upstream/_versions/main/guides/pulsar.adoc:316
 #, no-wrap
 msgid "Pulsar Subscription Types"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:260
+#: upstream/_versions/main/guides/pulsar.adoc:319
 msgid "Pulsar *subscriptionType* consumer configuration can be used flexibly to achieve different messaging scenarios, such as publish-subscribe or queuing."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:262
+#: upstream/_versions/main/guides/pulsar.adoc:321
 #, no-wrap
 msgid "*Exclusive* subscription type allows specifying a _unique subscription name_ for \"fan-out pub-sub messaging\". This is the default subscription type.\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:263
+#: upstream/_versions/main/guides/pulsar.adoc:322
 #, no-wrap
 msgid "*Shared*, *Key_Shared* or *Failover* subscription types allow multiple consumers to share the _same subscription name_, to achieve \"message queuing\" among consumers.\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:265
+#: upstream/_versions/main/guides/pulsar.adoc:324
 msgid "If a subscription name is not provided Quarkus generates a unique id."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:266
+#: upstream/_versions/main/guides/pulsar.adoc:325
 #, no-wrap
 msgid "Deserialization and Pulsar Schema"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:270
+#: upstream/_versions/main/guides/pulsar.adoc:329
 msgid "The Pulsar Connector allows configuring Schema configuration for the underlying Pulsar consumer.  See the xref:pulsar-schema-configuration[Pulsar Schema Configuration & Auto Schema Discovery] for more information."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:271
+#: upstream/_versions/main/guides/pulsar.adoc:330
 #, no-wrap
 msgid "Acknowledgement Strategies"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:276
+#: upstream/_versions/main/guides/pulsar.adoc:335
 msgid "When a message produced from a Pulsar Message is *acknowledged*, the connector sends an https://pulsar.apache.org/docs/3.0.x/concepts-messaging/#acknowledgment[acknowledgement request] to the Pulsar broker.  All Reactive Messaging messages need to be *acknowledged*, which is handled automatically in most cases.  Acknowledgement requests can be sent to the Pulsar broker using the following two strategies:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:278
+#: upstream/_versions/main/guides/pulsar.adoc:337
 #, no-wrap
 msgid "**Individual acknowledgement** is the default strategy, an acknowledgement request is to the broker for each message.\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:280
+#: upstream/_versions/main/guides/pulsar.adoc:339
 #, no-wrap
 msgid ""
 "**Cumulative acknowledgement**, configured using `ack-strategy=cumulative`, the consumer only acknowledges the last message it received.\n"
@@ -530,79 +631,84 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:285
+#: upstream/_versions/main/guides/pulsar.adoc:344
 msgid "By default, the Pulsar consumer does not wait for the acknowledgement confirmation from the broker to validate an acknowledgement.  You can enable this using `ackReceiptEnabled=true`."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:287
+#: upstream/_versions/main/guides/pulsar.adoc:346
 #, no-wrap
 msgid "Failure Handling Strategies"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:291
+#: upstream/_versions/main/guides/pulsar.adoc:350
 msgid "If a message produced from a Pulsar message is *nacked*, a failure strategy is applied.  The Quarkus Pulsar extension supports 4 strategies:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:294
+#: upstream/_versions/main/guides/pulsar.adoc:353
 msgid "`nack` *(default)* sends https://pulsar.apache.org/docs/3.0.x/concepts-messaging/#negative-acknowledgment[negative acknowledgment] to the broker, triggering the broker to redeliver this message to the consumer.  The negative acknowledgment can be further configured using `negativeAckRedeliveryDelayMicros` and `negativeAck.redeliveryBackoff` properties."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:295
+#: upstream/_versions/main/guides/pulsar.adoc:354
 msgid "`fail` fail the application, no more messages will be processed."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:296
+#: upstream/_versions/main/guides/pulsar.adoc:355
 msgid "`ignore` the failure is logged, but the acknowledgement strategy will be applied and the processing will continue."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:299
+#: upstream/_versions/main/guides/pulsar.adoc:356
+msgid "`continue` the failure is logged, but processing continues without applying acknowledgement or negative acknowledgement. This strategy can be used with xref:ack-timeout[Acknowledgement timeout] configuration."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/pulsar.adoc:359
 msgid "`reconsume-later` sends the message to the https://pulsar.apache.org/docs/3.0.x/concepts-messaging/#retry-letter-topic[retry letter topic] using the `reconsumeLater` API to be reconsumed with a delay.  The delay can be configured using the `reconsumeLater.delay` property and defaults to 3 seconds.  Custom delay or properties per message can be configured by adding an instance of `io.smallrye.reactive.messaging.pulsar.PulsarReconsumeLaterMetadata` to the failure metadata."
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/pulsar.adoc:300
+#: upstream/_versions/main/guides/pulsar.adoc:361
 #, no-wrap
 msgid "Acknowledgement timeout"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:304
+#: upstream/_versions/main/guides/pulsar.adoc:365
 msgid "Similar to the negative acknowledgement, with the https://pulsar.apache.org/docs/3.0.x/concepts-messaging/#acknowledgment-timeout[acknowledgement timeout] mechanism, the Pulsar client tracks the unacknowledged messages, for the given *ackTimeout* period and sends *redeliver unacknowledged messages request* to the broker, thus the broker resends the unacknowledged messages to the consumer."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:307
+#: upstream/_versions/main/guides/pulsar.adoc:368
 msgid "To configure the timeout and redelivery backoff mechanism you can set `ackTimeoutMillis` and `ackTimeout.redeliveryBackoff` properties.  The `ackTimeout.redeliveryBackoff` value accepts comma separated values of min delay in milliseconds, max delay in milliseconds and multiplier respectively:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:313
+#: upstream/_versions/main/guides/pulsar.adoc:374
 #, no-wrap
 msgid ""
-"mp.messaging.incoming.out.failure-strategy=ignore\n"
+"mp.messaging.incoming.out.failure-strategy=continue\n"
 "mp.messaging.incoming.out.ackTimeoutMillis=10000\n"
 "mp.messaging.incoming.out.ackTimeout.redeliveryBackoff=1000,60000,2\n"
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/pulsar.adoc:315
+#: upstream/_versions/main/guides/pulsar.adoc:376
 #, no-wrap
 msgid "Reconsume later and retry letter topic"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:319
+#: upstream/_versions/main/guides/pulsar.adoc:380
 msgid "The https://pulsar.apache.org/docs/3.0.x/concepts-messaging/#retry-letter-topic[retry letter topic] pushes messages that are not consumed successfully to a dead letter topic and continue message consumption.  Note that dead letter topic can be used in different message redelivery methods, such as acknowledgment timeout, negative acknowledgment or retry letter topic."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:326
+#: upstream/_versions/main/guides/pulsar.adoc:387
 #, no-wrap
 msgid ""
 "mp.messaging.incoming.data.failure-strategy=reconsume-later\n"
@@ -612,18 +718,18 @@ msgid ""
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/pulsar.adoc:328
+#: upstream/_versions/main/guides/pulsar.adoc:389
 #, no-wrap
 msgid "Dead-letter topic"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:332
+#: upstream/_versions/main/guides/pulsar.adoc:393
 msgid "The https://pulsar.apache.org/docs/3.0.x/concepts-messaging/#dead-letter-topic[dead letter topic] pushes messages that are not consumed successfully to a dead letter topic an continue message consumption.  Note that dead letter topic can be used in different message redelivery methods, such as acknowledgment timeout, negative acknowledgment or retry letter topic."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:340
+#: upstream/_versions/main/guides/pulsar.adoc:401
 #, no-wrap
 msgid ""
 "mp.messaging.incoming.data.failure-strategy=nack\n"
@@ -634,7 +740,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:346
+#: upstream/_versions/main/guides/pulsar.adoc:407
 #, no-wrap
 msgid ""
 "*Negative acknowledgment* or *acknowledgment timeout* methods for redelivery will redeliver the whole batch of messages containing at least an unprocessed message.\n"
@@ -642,18 +748,18 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:348
+#: upstream/_versions/main/guides/pulsar.adoc:409
 #, no-wrap
 msgid "Receiving Pulsar Messages in Batches"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:352
+#: upstream/_versions/main/guides/pulsar.adoc:413
 msgid "By default, incoming methods receive each Pulsar message individually.  You can enable batch mode using `batchReceive=true` property, or setting a `batchReceivePolicy` in consumer configuration."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:368
+#: upstream/_versions/main/guides/pulsar.adoc:429
 #, no-wrap
 msgid ""
 "@Incoming(\"prices\")\n"
@@ -672,7 +778,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:375
+#: upstream/_versions/main/guides/pulsar.adoc:436
 #, no-wrap
 msgid ""
 "@Incoming(\"prices\")\n"
@@ -684,12 +790,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:378
+#: upstream/_versions/main/guides/pulsar.adoc:439
 msgid "Or you can directly receive the list of payloads to the consume method:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:387
+#: upstream/_versions/main/guides/pulsar.adoc:448
 #, no-wrap
 msgid ""
 "@Incoming(\"prices\")\n"
@@ -701,44 +807,44 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:393
+#: upstream/_versions/main/guides/pulsar.adoc:454
 msgid "Quarkus auto-detects batch types for incoming channels and sets batch configuration automatically.  You can configure batch mode explicitly with `mp.messaging.incoming.$channel.batchReceive` property."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/pulsar.adoc:395
+#: upstream/_versions/main/guides/pulsar.adoc:456
 #, no-wrap
 msgid "Sending messages to Pulsar"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:398
+#: upstream/_versions/main/guides/pulsar.adoc:459
 msgid "The Pulsar Connector can write Reactive Messaging Messages as Pulsar Message."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:403
+#: upstream/_versions/main/guides/pulsar.adoc:464
 msgid "Let’s imagine you have a Pulsar broker running, and accessible using the `pulsar:6650` address.  Configure your application to write the messages from the `prices` channel into a Pulsar Messages as follows:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:407
+#: upstream/_versions/main/guides/pulsar.adoc:468
 #, no-wrap
 msgid "mp.messaging.outgoing.prices.serviceUrl=pulsar://pulsar:6650 # <1>\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:416
+#: upstream/_versions/main/guides/pulsar.adoc:477
 msgid "You don’t need to set the Pulsar topic, nor the producer name.  By default, the connector uses the channel name (`prices`).  You can configure the `topic` and `producerName` attributes to override them."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:420
+#: upstream/_versions/main/guides/pulsar.adoc:481
 msgid "Then, your application must send `Message<Double>` to the `prices` channel. It can use `double` payloads as in the following snippet:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:425
+#: upstream/_versions/main/guides/pulsar.adoc:486
 #, no-wrap
 msgid ""
 "import io.smallrye.mutiny.Multi;\n"
@@ -746,7 +852,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:429
+#: upstream/_versions/main/guides/pulsar.adoc:490
 #, no-wrap
 msgid ""
 "import jakarta.enterprise.context.ApplicationScoped;\n"
@@ -755,7 +861,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:432
+#: upstream/_versions/main/guides/pulsar.adoc:493
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -763,13 +869,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:434
+#: upstream/_versions/main/guides/pulsar.adoc:495
 #, no-wrap
 msgid "    private final Random random = new Random();\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:442
+#: upstream/_versions/main/guides/pulsar.adoc:503
 #, no-wrap
 msgid ""
 "    @Outgoing(\"prices-out\")\n"
@@ -782,17 +888,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:448
+#: upstream/_versions/main/guides/pulsar.adoc:509
 msgid "Note that the generate method returns a `Multi<Double>`, which implements the `Flow.Publisher` interface.  This publisher will be used by the framework to generate messages and send them to the configured Pulsar topic."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:450
+#: upstream/_versions/main/guides/pulsar.adoc:511
 msgid "Instead of returning a payload, you can return a `io.smallrye.reactive.messaging.pulsar.OutgoingMessage` to send Pulsar messages:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:458
+#: upstream/_versions/main/guides/pulsar.adoc:519
 #, no-wrap
 msgid ""
 "@Outgoing(\"out\")\n"
@@ -803,12 +909,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:461
+#: upstream/_versions/main/guides/pulsar.adoc:522
 msgid "Payload can be wrapped inside `org.eclipse.microprofile.reactive.messaging.Message` to have more control on the written records:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:473
+#: upstream/_versions/main/guides/pulsar.adoc:534
 #, no-wrap
 msgid ""
 "@Outgoing(\"generated-price\")\n"
@@ -823,84 +929,84 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:477
+#: upstream/_versions/main/guides/pulsar.adoc:538
 msgid "When sending `Messages`, you can add an instance of `io.smallrye.reactive.messaging.pulsar.PulsarOutgoingMessageMetadata` to influence how the message is going to be written to Pulsar."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:480
+#: upstream/_versions/main/guides/pulsar.adoc:541
 msgid "Other than method signatures returning a `Flow.Publisher`, outgoing method can also return single message.  In this case the producer will use this method as generator to create an infinite stream."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:484
+#: upstream/_versions/main/guides/pulsar.adoc:545
 #, no-wrap
 msgid "@Outgoing(\"prices-out\") T generate(); // T excluding void\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:486
+#: upstream/_versions/main/guides/pulsar.adoc:547
 #, no-wrap
 msgid "@Outgoing(\"prices-out\") Message<T> generate();\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:488
+#: upstream/_versions/main/guides/pulsar.adoc:549
 #, no-wrap
 msgid "@Outgoing(\"prices-out\") Uni<T> generate();\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:490
+#: upstream/_versions/main/guides/pulsar.adoc:551
 #, no-wrap
 msgid "@Outgoing(\"prices-out\") Uni<Message<T>> generate();\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:492
+#: upstream/_versions/main/guides/pulsar.adoc:553
 #, no-wrap
 msgid "@Outgoing(\"prices-out\") CompletionStage<T> generate();\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:494
+#: upstream/_versions/main/guides/pulsar.adoc:555
 #, no-wrap
 msgid "@Outgoing(\"prices-out\") CompletionStage<Message<T>> generate();\n"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:496
+#: upstream/_versions/main/guides/pulsar.adoc:557
 #, no-wrap
 msgid "Serialization and Pulsar Schema"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:500
+#: upstream/_versions/main/guides/pulsar.adoc:561
 msgid "The Pulsar Connector allows configuring Schema configuration for the underlying Pulsar producer.  See the xref:pulsar-schema-configuration[Pulsar Schema Configuration & Auto Schema Discovery] for more information."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:501
+#: upstream/_versions/main/guides/pulsar.adoc:562
 #, no-wrap
 msgid "Sending key/value pairs"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:505
+#: upstream/_versions/main/guides/pulsar.adoc:566
 msgid "In order to send Kev/Value pairs to Pulsar, you can configure the Pulsar producer Schema with a https://javadoc.io/doc/org.apache.pulsar/pulsar-client-api/latest/org/apache/pulsar/common/schema/KeyValue.html[KeyValue] schema."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:509
-#: upstream/_versions/main/guides/pulsar.adoc:601
-#: upstream/_versions/main/guides/pulsar.adoc:675
+#: upstream/_versions/main/guides/pulsar.adoc:570
+#: upstream/_versions/main/guides/pulsar.adoc:662
+#: upstream/_versions/main/guides/pulsar.adoc:736
 #, no-wrap
 msgid "package pulsar.outbound;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:512
-#: upstream/_versions/main/guides/pulsar.adoc:775
+#: upstream/_versions/main/guides/pulsar.adoc:573
+#: upstream/_versions/main/guides/pulsar.adoc:836
 #, no-wrap
 msgid ""
 "import jakarta.enterprise.context.ApplicationScoped;\n"
@@ -908,7 +1014,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:517
+#: upstream/_versions/main/guides/pulsar.adoc:578
 #, no-wrap
 msgid ""
 "import org.apache.pulsar.client.api.Schema;\n"
@@ -918,14 +1024,14 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:519
-#: upstream/_versions/main/guides/pulsar.adoc:781
+#: upstream/_versions/main/guides/pulsar.adoc:580
+#: upstream/_versions/main/guides/pulsar.adoc:842
 #, no-wrap
 msgid "import io.smallrye.common.annotation.Identifier;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:522
+#: upstream/_versions/main/guides/pulsar.adoc:583
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -933,7 +1039,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:526
+#: upstream/_versions/main/guides/pulsar.adoc:587
 #, no-wrap
 msgid ""
 "    @Identifier(\"out\")\n"
@@ -942,7 +1048,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:532
+#: upstream/_versions/main/guides/pulsar.adoc:593
 #, no-wrap
 msgid ""
 "    @Incoming(\"in\")\n"
@@ -953,118 +1059,118 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:537
+#: upstream/_versions/main/guides/pulsar.adoc:598
 msgid "If you need more control on the written records, use `PulsarOutgoingMessageMetadata`."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:538
+#: upstream/_versions/main/guides/pulsar.adoc:599
 #, no-wrap
 msgid "Acknowledgement"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:542
+#: upstream/_versions/main/guides/pulsar.adoc:603
 msgid "Upon receiving a message from a Producer, a Pulsar broker assigns a `MessageId` to the message and sends it back to the producer, confirming that the message is published."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:546
+#: upstream/_versions/main/guides/pulsar.adoc:607
 msgid "By default, the connector does wait for Pulsar to acknowledge the record to continue the processing (acknowledging the received `Message`).  You can disable this by setting the `waitForWriteCompletion` attribute to `false`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:548
+#: upstream/_versions/main/guides/pulsar.adoc:609
 msgid "If a record cannot be written, the message is `nacked`."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:553
+#: upstream/_versions/main/guides/pulsar.adoc:614
 msgid "The Pulsar client automatically retries sending messages in case of failure, until the *send timeout* is reached.  The *send timeout* is configurable with `sendTimeoutMs` attribute and by default is 30 seconds."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:555
+#: upstream/_versions/main/guides/pulsar.adoc:616
 #, no-wrap
 msgid "Back-pressure and inflight records"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:559
+#: upstream/_versions/main/guides/pulsar.adoc:620
 msgid "The Pulsar outbound connector handles back-pressure, monitoring the number of pending messages waiting to be written to the Pulsar broker.  The number of pending messages is configured using the `maxPendingMessages` attribute and defaults to 1000."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:563
+#: upstream/_versions/main/guides/pulsar.adoc:624
 msgid "The connector only sends that amount of messages concurrently.  No other messages will be sent until at least one pending message gets acknowledged by the broker.  Then, the connector writes a new message to Pulsar when one of the broker’s pending messages get acknowledged."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:566
+#: upstream/_versions/main/guides/pulsar.adoc:627
 msgid "You can also remove the limit of pending messages by setting `maxPendingMessages` to `0`.  Note that Pulsar also enables to configure the number of pending messages per partition using `maxPendingMessagesAcrossPartitions`."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:568
+#: upstream/_versions/main/guides/pulsar.adoc:629
 #, no-wrap
 msgid "Producer Batching"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:573
+#: upstream/_versions/main/guides/pulsar.adoc:634
 msgid "By default, the Pulsar producer batches individual messages together to be published to the broker.  You can configure batching parameters using `batchingMaxPublishDelayMicros`, `batchingPartitionSwitchFrequencyByPublishDelay`, `batchingMaxMessages`, `batchingMaxBytes` configuration properties, or disable it completely with `batchingEnabled=false`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:575
+#: upstream/_versions/main/guides/pulsar.adoc:636
 msgid "When using `Key_Shared` consumer subscriptions, the `batcherBuilder` can be configured to `BatcherBuilder.KEY_BASED`."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/pulsar.adoc:576
+#: upstream/_versions/main/guides/pulsar.adoc:637
 #, no-wrap
 msgid "Pulsar Transactions and Exactly-Once Processing"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:579
+#: upstream/_versions/main/guides/pulsar.adoc:640
 msgid "https://pulsar.apache.org/docs/3.0.x/txn-why/[Pulsar transactions] enable event streaming applications to consume, process, and produce messages in one atomic operation."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:581
+#: upstream/_versions/main/guides/pulsar.adoc:642
 msgid "Transactions allow one or multiple producers to send batch of messages to multiple topics where all messages in the batch are eventually visible to any consumer, or none is ever visible to consumers."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:585
+#: upstream/_versions/main/guides/pulsar.adoc:646
 msgid "In order to be used, transaction support needs to be activated on the broker configuration, using `transactionCoordinatorEnabled=true` and `systemTopicEnabled=true` broker configuration."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:588
+#: upstream/_versions/main/guides/pulsar.adoc:649
 msgid "On the client side, the transaction support also needs to be enabled on `PulsarClient` configuration:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:592
+#: upstream/_versions/main/guides/pulsar.adoc:653
 #, no-wrap
 msgid "mp.messaging.outgoing.tx-producer.enableTransaction=true\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:595
+#: upstream/_versions/main/guides/pulsar.adoc:656
 msgid "Pulsar connector provides `PulsarTransactions` custom emitter for writing records inside a transaction."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:597
+#: upstream/_versions/main/guides/pulsar.adoc:658
 msgid "It can be used as a regular emitter `@Channel`:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:604
-#: upstream/_versions/main/guides/pulsar.adoc:678
+#: upstream/_versions/main/guides/pulsar.adoc:665
+#: upstream/_versions/main/guides/pulsar.adoc:739
 #, no-wrap
 msgid ""
 "import jakarta.enterprise.context.ApplicationScoped;\n"
@@ -1072,7 +1178,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:608
+#: upstream/_versions/main/guides/pulsar.adoc:669
 #, no-wrap
 msgid ""
 "import org.eclipse.microprofile.reactive.messaging.Channel;\n"
@@ -1081,7 +1187,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:612
+#: upstream/_versions/main/guides/pulsar.adoc:673
 #, no-wrap
 msgid ""
 "import io.smallrye.mutiny.Uni;\n"
@@ -1090,7 +1196,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:615
+#: upstream/_versions/main/guides/pulsar.adoc:676
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -1098,7 +1204,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:619
+#: upstream/_versions/main/guides/pulsar.adoc:680
 #, no-wrap
 msgid ""
 "    @Inject\n"
@@ -1107,7 +1213,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:623
+#: upstream/_versions/main/guides/pulsar.adoc:684
 #, no-wrap
 msgid ""
 "    @Inject\n"
@@ -1116,7 +1222,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:636
+#: upstream/_versions/main/guides/pulsar.adoc:697
 #, no-wrap
 msgid ""
 "    @Incoming(\"in\")\n"
@@ -1134,43 +1240,43 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:643
+#: upstream/_versions/main/guides/pulsar.adoc:704
 msgid "The function given to the `withTransaction` method receives a `TransactionalEmitter` for producing records, and returns a `Uni` that provides the result of the transaction.  If the processing completes successfully, the producer is flushed and the transaction is committed.  If the processing throws an exception, returns a failing `Uni`, or marks the `TransactionalEmitter` for abort, the transaction is aborted."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:648
+#: upstream/_versions/main/guides/pulsar.adoc:709
 msgid "Multiple transactional producers can participate in a single transaction.  This ensures all messages are sent using the started transaction and before the transaction is committed, all participating producers are flushed."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:652
+#: upstream/_versions/main/guides/pulsar.adoc:713
 msgid "If this method is called on a Vert.x context, the processing function is also called on that context.  Otherwise, it is called on the sending thread of the producer."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:653
+#: upstream/_versions/main/guides/pulsar.adoc:714
 #, no-wrap
 msgid "Exactly-Once Processing"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:659
+#: upstream/_versions/main/guides/pulsar.adoc:720
 msgid "Pulsar Transactions API also allows managing consumer offsets inside a transaction, together with produced messages.  This in turn enables coupling a consumer with a transactional producer in a consume-transform-produce pattern, also known as exactly-once processing.  It means that an application consumes messages, processes them, publishes the results to a topic, and commits offsets of the consumed messages in a transaction."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:661
+#: upstream/_versions/main/guides/pulsar.adoc:722
 msgid "The `PulsarTransactions` emitter also provides a way to apply exactly-once processing to an incoming Pulsar message inside a transaction."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:663
+#: upstream/_versions/main/guides/pulsar.adoc:724
 msgid "The following example includes a batch of Pulsar messages inside a transaction."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:670
+#: upstream/_versions/main/guides/pulsar.adoc:731
 #, no-wrap
 msgid ""
 "mp.messaging.outgoing.tx-out-example.enableTransaction=true\n"
@@ -1180,7 +1286,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:681
+#: upstream/_versions/main/guides/pulsar.adoc:742
 #, no-wrap
 msgid ""
 "import org.eclipse.microprofile.reactive.messaging.Channel;\n"
@@ -1188,7 +1294,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:686
+#: upstream/_versions/main/guides/pulsar.adoc:747
 #, no-wrap
 msgid ""
 "import io.smallrye.mutiny.Uni;\n"
@@ -1198,7 +1304,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:689
+#: upstream/_versions/main/guides/pulsar.adoc:750
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -1206,7 +1312,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:693
+#: upstream/_versions/main/guides/pulsar.adoc:754
 #, no-wrap
 msgid ""
 "    @Inject\n"
@@ -1215,7 +1321,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:703
+#: upstream/_versions/main/guides/pulsar.adoc:764
 #, no-wrap
 msgid ""
 "    @Incoming(\"in-channel\")\n"
@@ -1230,32 +1336,32 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:708
+#: upstream/_versions/main/guides/pulsar.adoc:769
 msgid "If the processing completes successfully, the message is acknowledged inside the transaction and the transaction is committed."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:712
+#: upstream/_versions/main/guides/pulsar.adoc:773
 msgid "When using exactly-once processing, messages can only be acked individually rather than cumulatively."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:716
+#: upstream/_versions/main/guides/pulsar.adoc:777
 msgid "If the processing needs to abort, the message is nack'ed. One of the failure strategies can be employed in order to retry the processing or simply fail-stop.  Note that the `Uni` returned from the `withTransaction` will yield a failure if the transaction fails and is aborted."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:720
+#: upstream/_versions/main/guides/pulsar.adoc:781
 msgid "The application can choose to handle the error case, but for the message consumption to continue, `Uni` returned from the `@Incoming` method must not result in failure.  `PulsarTransactions#withTransactionAndAck` method will ack and nack the message but will not stop the reactive stream.  Ignoring the failure simply resets the consumer to the last committed offsets and resumes the processing from there."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:724
+#: upstream/_versions/main/guides/pulsar.adoc:785
 msgid "In order to avoid duplicates in case of failure, it is recommended to enable message deduplication and batch index level acknowledgment on the broker side:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:730
+#: upstream/_versions/main/guides/pulsar.adoc:791
 #, no-wrap
 msgid ""
 "quarkus.pulsar.devservices.broker-config.brokerDeduplicationEnabled=true\n"
@@ -1265,39 +1371,39 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:732
+#: upstream/_versions/main/guides/pulsar.adoc:793
 #, no-wrap
 msgid "mp.messaging.incoming.data.batchIndexAckEnabled=true\n"
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/pulsar.adoc:736
+#: upstream/_versions/main/guides/pulsar.adoc:797
 #, no-wrap
 msgid "Pulsar Schema Configuration & Auto Schema Discovery"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:742
+#: upstream/_versions/main/guides/pulsar.adoc:803
 msgid "Pulsar messages are stored with payloads as unstructured byte array.  A Pulsar **schema** defines how to serialize structured data to the raw message bytes.  The **schema** is applied in producers and consumers to write and read with an enforced data structure.  It serializes data into raw bytes before they are published to a topic and deserializes the raw bytes before they are delivered to consumers."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:746
+#: upstream/_versions/main/guides/pulsar.adoc:807
 msgid "Pulsar uses a schema registry as a central repository to store the registered schema information, which enables producers/consumers to coordinate the schema of a topic's messages through brokers.  By default the Apache BookKeeper is used to store schemas."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:750
+#: upstream/_versions/main/guides/pulsar.adoc:811
 msgid "Pulsar API provides built-in schema information for a number of https://pulsar.apache.org/docs/3.0.x/schema-understand#primitive-type[primitive types] and https://pulsar.apache.org/docs/3.0.x/schema-understand#complex-type[complex types] such as Key/Value, Avro and Protobuf."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:752
+#: upstream/_versions/main/guides/pulsar.adoc:813
 msgid "The Pulsar Connector allows specifying the schema as a primitive type using the `schema` property:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:757
+#: upstream/_versions/main/guides/pulsar.adoc:818
 #, no-wrap
 msgid ""
 "mp.messaging.incoming.prices.connector=smallrye-pulsar\n"
@@ -1305,7 +1411,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:760
+#: upstream/_versions/main/guides/pulsar.adoc:821
 #, no-wrap
 msgid ""
 "mp.messaging.outgoing.prices-out.connector=smallrye-pulsar\n"
@@ -1313,28 +1419,28 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:764
+#: upstream/_versions/main/guides/pulsar.adoc:825
 msgid "If the value for the `schema` property matches a https://javadoc.io/doc/org.apache.pulsar/pulsar-client-api/latest/org/apache/pulsar/common/schema/SchemaType.html[Schema Type] a simple schema will be created with that type and will be used for that channel."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:766
+#: upstream/_versions/main/guides/pulsar.adoc:827
 msgid "The Pulsar Connector allows configuring complex schema types by providing `Schema` beans through CDI, identified with the `@Identifier` qualifier."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:768
+#: upstream/_versions/main/guides/pulsar.adoc:829
 msgid "For example the following bean provides an JSON schema and a Key/Value schema:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:772
+#: upstream/_versions/main/guides/pulsar.adoc:833
 #, no-wrap
 msgid "package pulsar.configuration;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:779
+#: upstream/_versions/main/guides/pulsar.adoc:840
 #, no-wrap
 msgid ""
 "import org.apache.pulsar.client.api.Schema;\n"
@@ -1343,7 +1449,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:784
+#: upstream/_versions/main/guides/pulsar.adoc:845
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -1351,7 +1457,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:788
+#: upstream/_versions/main/guides/pulsar.adoc:849
 #, no-wrap
 msgid ""
 "    @Produces\n"
@@ -1360,7 +1466,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:794
+#: upstream/_versions/main/guides/pulsar.adoc:855
 #, no-wrap
 msgid ""
 "    @Produces\n"
@@ -1371,7 +1477,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:798
+#: upstream/_versions/main/guides/pulsar.adoc:859
 #, no-wrap
 msgid ""
 "    public static class User {\n"
@@ -1380,7 +1486,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:801
+#: upstream/_versions/main/guides/pulsar.adoc:862
 #, no-wrap
 msgid ""
 "    }\n"
@@ -1388,12 +1494,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:804
+#: upstream/_versions/main/guides/pulsar.adoc:865
 msgid "To configure the incoming channel `users` with defined schema, you need to set the `schema` property to the identifier of the schema `user-schema`:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:809
+#: upstream/_versions/main/guides/pulsar.adoc:870
 #, no-wrap
 msgid ""
 "mp.messaging.incoming.users.connector=smallrye-pulsar\n"
@@ -1401,39 +1507,39 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:813
+#: upstream/_versions/main/guides/pulsar.adoc:874
 msgid "If no `schema` property is found, the connector looks for `Schema` beans identified with the channel name.  For example, the outgoing channel `a-channel` will use the key/value schema."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:817
+#: upstream/_versions/main/guides/pulsar.adoc:878
 #, no-wrap
 msgid "mp.messaging.outgoing.a-channel.connector=smallrye-pulsar\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:820
+#: upstream/_versions/main/guides/pulsar.adoc:881
 msgid "If no schema information is provided incoming channels will use `Schema.AUTO_CONSUME()`, whereas outgoing channels will use `Schema.AUTO_PRODUCE_BYTES()` schemas."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:821
+#: upstream/_versions/main/guides/pulsar.adoc:882
 #, no-wrap
 msgid "Auto Schema Discovery"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:825
+#: upstream/_versions/main/guides/pulsar.adoc:886
 msgid "When using SmallRye Reactive Messaging Pulsar (`io.quarkus:quarkus-smallrye-reactive-messaging-pulsar`), Quarkus can often automatically detect the correct Pulsar Schema to configure.  This autodetection is based on declarations of `@Incoming` and `@Outgoing` methods, as well as injected ``@Channel``s."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:827
+#: upstream/_versions/main/guides/pulsar.adoc:888
 msgid "For example, if you declare"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:834
+#: upstream/_versions/main/guides/pulsar.adoc:895
 #, no-wrap
 msgid ""
 "@Outgoing(\"generated-price\")\n"
@@ -1443,17 +1549,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:837
+#: upstream/_versions/main/guides/pulsar.adoc:898
 msgid "and your configuration indicates that the `generated-price` channel uses the `smallrye-pulsar` connector, then Quarkus will automatically set the `schema` attribute of the `generated-price` channel to Pulsar Schema `INT32`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:839
+#: upstream/_versions/main/guides/pulsar.adoc:900
 msgid "Similarly, if you declare"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:846
+#: upstream/_versions/main/guides/pulsar.adoc:907
 #, no-wrap
 msgid ""
 "@Incoming(\"my-pulsar-consumer\")\n"
@@ -1463,17 +1569,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:849
+#: upstream/_versions/main/guides/pulsar.adoc:910
 msgid "and your configuration indicates that the `my-pulsar-consumer` channel uses the `smallrye-pulsar` connector, then Quarkus will automatically set the `schema` attribute to Pulsar `BYTES` Schema."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:851
+#: upstream/_versions/main/guides/pulsar.adoc:912
 msgid "Finally, if you declare"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:857
+#: upstream/_versions/main/guides/pulsar.adoc:918
 #, no-wrap
 msgid ""
 "@Inject\n"
@@ -1482,158 +1588,158 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:860
+#: upstream/_versions/main/guides/pulsar.adoc:921
 msgid "and your configuration indicates that the `price-create` channel uses the `smallrye-pulsar` connector, then Quarkus will automatically set the `schema` to Pulsar `INT64` Schema."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:862
+#: upstream/_versions/main/guides/pulsar.adoc:923
 msgid "The full set of types supported by the Pulsar Schema autodetection is:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:864
+#: upstream/_versions/main/guides/pulsar.adoc:925
 msgid "`short` and `java.lang.Short`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:865
+#: upstream/_versions/main/guides/pulsar.adoc:926
 msgid "`int` and `java.lang.Integer`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:866
+#: upstream/_versions/main/guides/pulsar.adoc:927
 msgid "`long` and `java.lang.Long`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:867
+#: upstream/_versions/main/guides/pulsar.adoc:928
 msgid "`float` and `java.lang.Float`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:868
+#: upstream/_versions/main/guides/pulsar.adoc:929
 msgid "`double` and `java.lang.Double`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:869
+#: upstream/_versions/main/guides/pulsar.adoc:930
 msgid "`byte[]`"
 msgstr "`byte[]`"
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:870
+#: upstream/_versions/main/guides/pulsar.adoc:931
 msgid "`java.time.Instant`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:871
+#: upstream/_versions/main/guides/pulsar.adoc:932
 msgid "`java.sql.Timestamp`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:872
+#: upstream/_versions/main/guides/pulsar.adoc:933
 msgid "`java.time.LocalDate`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:873
+#: upstream/_versions/main/guides/pulsar.adoc:934
 msgid "`java.time.LocalTime`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:874
+#: upstream/_versions/main/guides/pulsar.adoc:935
 msgid "`java.time.LocalDateTime`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:875
+#: upstream/_versions/main/guides/pulsar.adoc:936
 msgid "`java.nio.ByteBuffer`"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:876
+#: upstream/_versions/main/guides/pulsar.adoc:937
 msgid "classes generated from Avro schemas, as well as Avro `GenericRecord`, will be configured with `AVRO` schema type"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:877
+#: upstream/_versions/main/guides/pulsar.adoc:938
 msgid "classes generated from Protobuf schemas, will be configured with `PROTOBUF` schema type"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:878
+#: upstream/_versions/main/guides/pulsar.adoc:939
 msgid "other classes will automatically be configured with `JSON` schema type"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:882
+#: upstream/_versions/main/guides/pulsar.adoc:943
 msgid "Note that `JSON` schema type enforces schema validation."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:885
+#: upstream/_versions/main/guides/pulsar.adoc:946
 msgid "In addition to those Pulsar-provided schemas, Quarkus provides following schema implementations _without enforcing validation_ :"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:887
+#: upstream/_versions/main/guides/pulsar.adoc:948
 msgid "`io.vertx.core.buffer.Buffer` will be configured with `io.quarkus.pulsar.schema.BufferSchema` schema"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:888
+#: upstream/_versions/main/guides/pulsar.adoc:949
 msgid "`io.vertx.core.json.JsonObject` will be configured with `io.quarkus.pulsar.schema.JsonObjectSchema` schema"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:889
+#: upstream/_versions/main/guides/pulsar.adoc:950
 msgid "`io.vertx.core.json.JsonArray` will be configured with `io.quarkus.pulsar.schema.JsonArraySchema` schema"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:892
+#: upstream/_versions/main/guides/pulsar.adoc:953
 msgid "For schema-less Json serialization, if the `schema` configuration is set to `ObjectMapper<fully_qualified_name_of_the_bean>`, a Schema will be generated using the Jackson `ObjectMapper`, without enforcing a Pulsar Schema validation.  `io.quarkus.pulsar.schema.ObjectMapperSchema` can be used to explicitly configure JSON schema without validation."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:894
+#: upstream/_versions/main/guides/pulsar.adoc:955
 msgid "If a `schema` is set by configuration, it won't be replaced by the auto-detection."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:897
+#: upstream/_versions/main/guides/pulsar.adoc:958
 msgid "In case you have any issues with serializer auto-detection, you can switch it off completely by setting `quarkus.reactive-messaging.pulsar.serializer-autodetection.enabled=false`.  If you find you need to do this, please file a bug in the link:https://github.com/quarkusio/quarkus/issues[Quarkus issue tracker] so we can fix whatever problem you have."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/pulsar.adoc:902
+#: upstream/_versions/main/guides/pulsar.adoc:963
 #, no-wrap
 msgid "Configuring Pulsar clients"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:904
+#: upstream/_versions/main/guides/pulsar.adoc:965
 msgid "Pulsar clients, consumers and producers are very customizable to configure how a Pulsar client application behaves."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:907
+#: upstream/_versions/main/guides/pulsar.adoc:968
 msgid "The Pulsar connector creates a Pulsar client and, a consumer or a producer per channel, each with sensible defaults to ease their configuration.  Although the creation is handled, all available configuration options remain configurable through Pulsar channels."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:913
+#: upstream/_versions/main/guides/pulsar.adoc:974
 msgid "While idiomatic way of creating `PulsarClient`, `PulsarConsumer` or `PulsarProducer` are through builder APIs, in its essence those APIs build each time a configuration object, to pass onto the implementation.  Those are https://javadoc.io/doc/org.apache.pulsar/pulsar-client-original/latest/org/apache/pulsar/client/impl/conf/ClientConfigurationData.html[ClientConfigurationData], https://javadoc.io/doc/org.apache.pulsar/pulsar-client-original/latest/org/apache/pulsar/client/impl/conf/ConsumerConfigurationData.html[ConsumerConfigurationData] and https://javadoc.io/doc/org.apache.pulsar/pulsar-client-original/latest/org/apache/pulsar/client/impl/conf/ProducerConfigurationData.html[ProducerConfigurationData]."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:917
+#: upstream/_versions/main/guides/pulsar.adoc:978
 msgid "Pulsar Connector allows receiving properties for those configuration objects directly.  For example, the broker authentication information for `PulsarClient` is received using `authPluginClassName` and `authParams` properties.  In order to configure the authentication for the incoming channel `data` :"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:927
+#: upstream/_versions/main/guides/pulsar.adoc:988
 #, no-wrap
 msgid ""
 "mp.messaging.incoming.data.connector=smallrye-pulsar\n"
@@ -1646,17 +1752,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:930
+#: upstream/_versions/main/guides/pulsar.adoc:991
 msgid "Note that the Pulsar consumer property `subscriptionInitialPosition` is also configured with the `Earliest` value which represents with enum value `SubscriptionInitialPosition.Earliest`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:935
+#: upstream/_versions/main/guides/pulsar.adoc:996
 msgid "This approach covers most of the configuration cases.  However, non-serializable objects such as `CryptoKeyReader`, `ServiceUrlProvider` etc. cannot be configured this way.  The Pulsar Connector allows taking into account instances of Pulsar configuration data objects – `ClientConfigurationData`, `ConsumerConfigurationData`, `ProducerConfigurationData`:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:941
+#: upstream/_versions/main/guides/pulsar.adoc:1002
 #, no-wrap
 msgid ""
 "import jakarta.enterprise.inject.Produces;\n"
@@ -1665,16 +1771,16 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:943
-#: upstream/_versions/main/guides/pulsar.adoc:975
-#: upstream/_versions/main/guides/pulsar.adoc:1001
-#: upstream/_versions/main/guides/pulsar.adoc:1047
+#: upstream/_versions/main/guides/pulsar.adoc:1004
+#: upstream/_versions/main/guides/pulsar.adoc:1036
+#: upstream/_versions/main/guides/pulsar.adoc:1062
+#: upstream/_versions/main/guides/pulsar.adoc:1108
 #, no-wrap
 msgid "class PulsarConfig {\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:955
+#: upstream/_versions/main/guides/pulsar.adoc:1016
 #, no-wrap
 msgid ""
 "    @Produces\n"
@@ -1691,23 +1797,23 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:959
+#: upstream/_versions/main/guides/pulsar.adoc:1020
 msgid "This instance is retrieved and used to configure the client used by the connector.  You need to indicate the name of the client using the `client-configuration`, `consumer-configuration` or `producer-configuration` attributes:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:963
+#: upstream/_versions/main/guides/pulsar.adoc:1024
 #, no-wrap
 msgid "mp.messaging.incoming.prices.consumer-configuration=my-consumer-options\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:966
+#: upstream/_versions/main/guides/pulsar.adoc:1027
 msgid "If no `[client|consumer|producer]-configuration` is configured, the connector will look for instances identified with the channel name:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:973
+#: upstream/_versions/main/guides/pulsar.adoc:1034
 #, no-wrap
 msgid ""
 "import jakarta.enterprise.inject.Produces;\n"
@@ -1717,7 +1823,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:987
+#: upstream/_versions/main/guides/pulsar.adoc:1048
 #, no-wrap
 msgid ""
 "    @Produces\n"
@@ -1734,12 +1840,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:990
+#: upstream/_versions/main/guides/pulsar.adoc:1051
 msgid "You also can provide a `Map<String, Object>` containing configuration values by key:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:999
+#: upstream/_versions/main/guides/pulsar.adoc:1060
 #, no-wrap
 msgid ""
 "import jakarta.enterprise.inject.Produces;\n"
@@ -1751,7 +1857,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:1011
+#: upstream/_versions/main/guides/pulsar.adoc:1072
 #, no-wrap
 msgid ""
 "    @Produces\n"
@@ -1766,53 +1872,53 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1014
+#: upstream/_versions/main/guides/pulsar.adoc:1075
 msgid "Different configuration sources are loaded in the following order of precedence, from the least important to the highest:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1016
+#: upstream/_versions/main/guides/pulsar.adoc:1077
 msgid "`Map<String, Object>` config map produced with default config identifier, `default-pulsar-client`, `default-pulsar-consumer`, `default-pulsar-producer`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1017
+#: upstream/_versions/main/guides/pulsar.adoc:1078
 msgid "`Map<String, Object>` config map produced with identifier in the configuration or channel name"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1018
+#: upstream/_versions/main/guides/pulsar.adoc:1079
 msgid "`[Client|Producer|Consuemr]ConfigurationData` object produced with identifier in the channel configuration or the channel name"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1019
+#: upstream/_versions/main/guides/pulsar.adoc:1080
 msgid "Channel configuration properties named with `[Client|Producer|Consuemr]ConfigurationData` field names."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1021
+#: upstream/_versions/main/guides/pulsar.adoc:1082
 msgid "See xref:configuration-reference[Configuration Reference] for the exhaustive list of configuration options."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:1022
+#: upstream/_versions/main/guides/pulsar.adoc:1083
 #, no-wrap
 msgid "Configuring Pulsar Authentication"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1025
+#: upstream/_versions/main/guides/pulsar.adoc:1086
 msgid "Pulsar provides a pluggable authentication framework, and Pulsar brokers/proxies use this mechanism to authenticate clients."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1027
+#: upstream/_versions/main/guides/pulsar.adoc:1088
 msgid "Clients can be configured in `application.properties` file using `authPluginClassName` and `authParams` attributes:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:1033
+#: upstream/_versions/main/guides/pulsar.adoc:1094
 #, no-wrap
 msgid ""
 "pulsar.client.serviceUrl=pulsar://pulsar:6650\n"
@@ -1821,18 +1927,18 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1036
+#: upstream/_versions/main/guides/pulsar.adoc:1097
 msgid "Or programmatically:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:1040
+#: upstream/_versions/main/guides/pulsar.adoc:1101
 #, no-wrap
 msgid "import java.util.Map;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:1045
+#: upstream/_versions/main/guides/pulsar.adoc:1106
 #, no-wrap
 msgid ""
 "import jakarta.enterprise.inject.Produces;\n"
@@ -1842,7 +1948,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:1058
+#: upstream/_versions/main/guides/pulsar.adoc:1119
 #, no-wrap
 msgid ""
 "    @Produces\n"
@@ -1858,18 +1964,18 @@ msgid ""
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/pulsar.adoc:1060
+#: upstream/_versions/main/guides/pulsar.adoc:1121
 #, no-wrap
 msgid "Configuring access to Datastax Luna Streaming"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1064
+#: upstream/_versions/main/guides/pulsar.adoc:1125
 msgid "Luna Streaming is a production-ready distribution of Apache Pulsar, with tools and support from DataStax.  After creating your DataStax Luna Pulsar tenant, note the auto generated token, and configure the token authentication:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:1070
+#: upstream/_versions/main/guides/pulsar.adoc:1131
 #, no-wrap
 msgid ""
 "pulsar.client.serviceUrl=pulsar+ssl://pulsar-aws-eucentral1.streaming.datastax.com:6651\n"
@@ -1878,34 +1984,187 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1073
+#: upstream/_versions/main/guides/pulsar.adoc:1134
 msgid "Make sure to create topics beforehand, or enable the _Auto Topic Creation_ in the namespace configuration."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1075
+#: upstream/_versions/main/guides/pulsar.adoc:1136
 msgid "Note that the topic configuration needs to reference full name of topics:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:1079
+#: upstream/_versions/main/guides/pulsar.adoc:1140
 #, no-wrap
 msgid "mp.messaging.incoming.prices.topic=persistent://my-tenant/default/prices\n"
 msgstr ""
 
+#. type: Title ====
+#: upstream/_versions/main/guides/pulsar.adoc:1142
+#, no-wrap
+msgid "Configuring access to StreamNative Cloud"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/pulsar.adoc:1146
+msgid "StreamNative Cloud is a fully managed Pulsar-as-a-Service available in different deployment options, whether it is fully-hosted, on a public cloud but managed by StreamNative or self-managed on Kubernetes."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/pulsar.adoc:1150
+msgid "The StreamNative Pulsar clusters use Oauth2 authentication, so you need to make sure that a https://docs.streamnative.io/docs/service-account[service account] exists with required https://docs.streamnative.io/docs/access-control#authorize-namespaces[permissions to the Pulsar namespace/topic] your application is using."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/pulsar.adoc:1154
+msgid "Next, you need to download the **Key file** (which serves as **private key**) of the service account and note the **issuer URL** (typically `https://auth.streamnative.cloud/`)  and the **audience** (for example `urn:sn:pulsar:o-rf3ol:redhat`) for your cluster.  The **Pulsar Clients** page in the **Admin** section in the StreamNative Cloud console helps you with this process."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/pulsar.adoc:1156
+msgid "To configure your application with Pulsar Oauth2 authentication:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:1164
+#, no-wrap
+msgid ""
+"pulsar.tenant=public\n"
+"pulsar.namespace=default\n"
+"pulsar.client.serviceUrl=pulsar+ssl://quarkus-71eaadbf-a6f3-4355-85d2-faf436b23d86.aws-euc1-prod-snci-pool-slug.streamnative.aws.snio.cloud:6651\n"
+"pulsar.client.authPluginClassName=org.apache.pulsar.client.impl.auth.oauth2.AuthenticationOAuth2\n"
+"pulsar.client.authParams={\"type\":\"client_credentials\",\"privateKey\":\"data:application/json;base64,<base64-encoded value>\",\"issuerUrl\":\"https://auth.streamnative.cloud/\",\"audience\":\"urn:sn:pulsar:o-rfwel:redhat\"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/pulsar.adoc:1167
+msgid "Note that the `pulsar.client.authParams` configuration contains a Json string with `issuerUrl`, `audience` and the `privateKey` in the `data:application/json;base64,<base64-encoded-key-file>` format."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/pulsar.adoc:1169
+msgid "Alternatively you can configure the authentication programmatically:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:1173
+#, no-wrap
+msgid "package org.acme.pulsar;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:1176
+#, no-wrap
+msgid ""
+"import java.net.MalformedURLException;\n"
+"import java.net.URL;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:1180
+#, no-wrap
+msgid ""
+"import org.apache.pulsar.client.impl.auth.oauth2.AuthenticationFactoryOAuth2;\n"
+"import org.apache.pulsar.client.impl.conf.ClientConfigurationData;\n"
+"import org.eclipse.microprofile.config.inject.ConfigProperty;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:1184
+#, no-wrap
+msgid ""
+"import io.smallrye.common.annotation.Identifier;\n"
+"import jakarta.enterprise.context.ApplicationScoped;\n"
+"import jakarta.enterprise.inject.Produces;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:1187
+#, no-wrap
+msgid ""
+"@ApplicationScoped\n"
+"public class PulsarAuth {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:1190
+#, no-wrap
+msgid ""
+"    @ConfigProperty(name = \"pulsar.issuerUrl\")\n"
+"    String issuerUrl;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:1193
+#, no-wrap
+msgid ""
+"    @ConfigProperty(name = \"pulsar.credentials\")\n"
+"    String credentials;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:1196
+#, no-wrap
+msgid ""
+"    @ConfigProperty(name = \"pulsar.audience\")\n"
+"    String audience;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:1205
+#, no-wrap
+msgid ""
+"    @Produces\n"
+"    @Identifier(\"pulsar-auth\")\n"
+"    public ClientConfigurationData pulsarClientConfig() throws MalformedURLException {\n"
+"        var data = new ClientConfigurationData();\n"
+"        data.setAuthentication(AuthenticationFactoryOAuth2.clientCredentials(new URL(issuerUrl), PulsarAuth.class.getResource(credentials), audience));\n"
+"        return data;\n"
+"    }\n"
+"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/pulsar.adoc:1208
+msgid "This assumes that the key file is included to the application classpath as a resource, then the configuration would like the following:"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:1212
+#, no-wrap
+msgid "mp.messaging.incoming.prices.client-configuration=pulsar-auth\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/pulsar.adoc:1219
+#, no-wrap
+msgid ""
+"pulsar.tenant=public\n"
+"pulsar.namespace=default\n"
+"pulsar.client.serviceUrl=pulsar+ssl://quarkus-71eaadbf-a6f3-4355-85d2-faf436b23d86.aws-euc1-prod-snci-pool-slug.streamnative.aws.snio.cloud:6651\n"
+"pulsar.issuerUrl=https://auth.streamnative.cloud/\n"
+"pulsar.audience=urn:sn:pulsar:o-rfwel:redhat\n"
+"pulsar.credentials=/o-rfwel-quarkus-app.json\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/pulsar.adoc:1222
+msgid "Note that channels using the client configuration identified with `pulsar-auth` need to set the `client-configuration` attribute."
+msgstr ""
+
 #. type: Title ==
-#: upstream/_versions/main/guides/pulsar.adoc:1082
+#: upstream/_versions/main/guides/pulsar.adoc:1224
 #, no-wrap
 msgid "Health Checks"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1086
+#: upstream/_versions/main/guides/pulsar.adoc:1228
 msgid "The Quarkus extension reports startup, readiness and liveness of each channel managed by the Pulsar connector.  Health checks rely on the Pulsar client to verify that a connection is established with the broker."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1089
+#: upstream/_versions/main/guides/pulsar.adoc:1231
 #, no-wrap
 msgid ""
 "**Startup** and **Readiness** probes for both inbound and outbound channels report *OK* when the\n"
@@ -1913,126 +2172,126 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1092
+#: upstream/_versions/main/guides/pulsar.adoc:1234
 msgid "The **Liveness** probe for both inbound and outbound channels reports *OK* when the connection is established with the broker **AND** that no failures have been caught."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1098
+#: upstream/_versions/main/guides/pulsar.adoc:1240
 msgid "Note that a message processing failures *nacks* the message which is then handled by the failure-strategy. It is the responsibility of the failure-strategy to report the failure and influence the outcome of the liveness checks. The `fail` failure strategy reports the failure and so the liveness check will report the failure."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/pulsar.adoc:1100
+#: upstream/_versions/main/guides/pulsar.adoc:1242
 #, no-wrap
 msgid "Configuration Reference"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1104
+#: upstream/_versions/main/guides/pulsar.adoc:1246
 msgid "Following are the list of configuration attributes for the Pulsar connector channels, consumers, producers and clients.  See the xref:pulsar-client-configuration[Pulsar Client Configuration] for more information on how the Pulsar clients are configured."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:1105
+#: upstream/_versions/main/guides/pulsar.adoc:1247
 #, no-wrap
 msgid "Incoming channel configuration (receiving from Pulsar)"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1108
+#: upstream/_versions/main/guides/pulsar.adoc:1250
 msgid "The following attributes are configured using:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:1112
+#: upstream/_versions/main/guides/pulsar.adoc:1254
 #, no-wrap
 msgid "mp.messaging.incoming.your-channel-name.attribute=value\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1117
+#: upstream/_versions/main/guides/pulsar.adoc:1259
 msgid "You can also configure properties supported by the underlying Pulsar consumer."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1119
+#: upstream/_versions/main/guides/pulsar.adoc:1261
 msgid "These properties can also be globally configured using `pulsar.consumer` prefix:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:1123
+#: upstream/_versions/main/guides/pulsar.adoc:1265
 #, no-wrap
 msgid "pulsar.consumer.subscriptionInitialPosition=Earliest\n"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:1127
+#: upstream/_versions/main/guides/pulsar.adoc:1269
 #, no-wrap
 msgid "Outgoing channel configuration (publishing to Pulsar)"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1132
+#: upstream/_versions/main/guides/pulsar.adoc:1274
 msgid "You can also configure properties supported by the underlying Pulsar producer."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1134
+#: upstream/_versions/main/guides/pulsar.adoc:1276
 msgid "These properties can also be globally configured using `pulsar.producer` prefix:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:1138
+#: upstream/_versions/main/guides/pulsar.adoc:1280
 #, no-wrap
 msgid "pulsar.producer.batchingEnabled=false\n"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/pulsar.adoc:1143
+#: upstream/_versions/main/guides/pulsar.adoc:1285
 #, no-wrap
 msgid "Pulsar Client Configuration"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1147
+#: upstream/_versions/main/guides/pulsar.adoc:1289
 msgid "Following is the configuration reference for the underlying `PulsarClient`.  These options can be configured using the channel attribute:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:1151
+#: upstream/_versions/main/guides/pulsar.adoc:1293
 #, no-wrap
 msgid "mp.messaging.incoming.your-channel-name.numIoThreads=4\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1154
+#: upstream/_versions/main/guides/pulsar.adoc:1296
 msgid "Or configured globally using `pulsar.client` prefix:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/pulsar.adoc:1158
+#: upstream/_versions/main/guides/pulsar.adoc:1300
 #, no-wrap
 msgid "pulsar.client.serviceUrl=pulsar://pulsar:6650\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/pulsar.adoc:1165
+#: upstream/_versions/main/guides/pulsar.adoc:1307
 msgid "Configuration properties not configurable in configuration files (non-serializable) is noted in the column `Config file`."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/pulsar.adoc:1167
+#: upstream/_versions/main/guides/pulsar.adoc:1309
 #, no-wrap
 msgid "Going further"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1171
+#: upstream/_versions/main/guides/pulsar.adoc:1313
 msgid "This guide has shown how you can interact with Pulsar using Quarkus.  It utilizes SmallRye Reactive Messaging to build data streaming applications."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/pulsar.adoc:1172
+#: upstream/_versions/main/guides/pulsar.adoc:1314
 msgid "If you want to go further, check the documentation of https://smallrye.io/smallrye-reactive-messaging[SmallRye Reactive Messaging], the implementation used in Quarkus."
 msgstr ""

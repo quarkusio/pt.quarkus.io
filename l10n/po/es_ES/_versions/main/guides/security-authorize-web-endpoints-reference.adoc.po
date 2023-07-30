@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-06-27 02:51+0000\n"
+"POT-Creation-Date: 2023-07-30 08:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -539,14 +539,14 @@ msgstr ""
 
 #. type: delimited block -
 #: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:261
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:340
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:341
 #, no-wrap
 msgid "import java.security.Principal;\n"
 msgstr ""
 
 #. type: delimited block -
 #: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:269
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:348
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:349
 #, no-wrap
 msgid ""
 "import jakarta.annotation.security.DenyAll;\n"
@@ -560,7 +560,7 @@ msgstr ""
 
 #. type: delimited block -
 #: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:272
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:351
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:352
 #, no-wrap
 msgid ""
 "@Path(\"subject\")\n"
@@ -709,7 +709,7 @@ msgid "Example of a property expressions usage in the `@RolesAllowed` annotation
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:335
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:336
 #, no-wrap
 msgid ""
 "admin=Administrator\n"
@@ -717,33 +717,54 @@ msgid ""
 "tester.role=Tester\n"
 "%prod.secured=User\n"
 "%dev.secured=**\n"
+"all-roles=Administrator,Software,Tester,User\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:360
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:359
 #, no-wrap
 msgid ""
 "    @GET\n"
 "    @Path(\"admin\")\n"
 "    @RolesAllowed(\"${admin}\") <1>\n"
 "    public String getSubjectSecuredAdmin(@Context SecurityContext sec) {\n"
-"        Principal user = sec.getUserPrincipal();\n"
-"        String name = user != null ? user.getName() : \"anonymous\";\n"
-"        return name;\n"
+"        return getUsername(sec);\n"
 "    }\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:369
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:366
 #, no-wrap
 msgid ""
 "    @GET\n"
 "    @Path(\"software-tester\")\n"
 "    @RolesAllowed(\"${tester.group}-${tester.role}\") <2>\n"
 "    public String getSubjectSoftwareTester(@Context SecurityContext sec) {\n"
-"        Principal user = sec.getUserPrincipal();\n"
-"        String name = user != null ? user.getName() : \"anonymous\";\n"
-"        return name;\n"
+"        return getUsername(sec);\n"
+"    }\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:373
+#, no-wrap
+msgid ""
+"    @GET\n"
+"    @Path(\"user\")\n"
+"    @RolesAllowed(\"${customer:User}\") <3>\n"
+"    public String getSubjectUser(@Context SecurityContext sec) {\n"
+"        return getUsername(sec);\n"
+"    }\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:380
+#, no-wrap
+msgid ""
+"    @GET\n"
+"    @Path(\"secured\")\n"
+"    @RolesAllowed(\"${secured}\") <4>\n"
+"    public String getSubjectSecured(@Context SecurityContext sec) {\n"
+"        return getUsername(sec);\n"
 "    }\n"
 msgstr ""
 
@@ -752,17 +773,18 @@ msgstr ""
 #, no-wrap
 msgid ""
 "    @GET\n"
-"    @Path(\"user\")\n"
-"    @RolesAllowed(\"${customer:User}\") <3>\n"
-"    public String getSubjectUser(@Context SecurityContext sec) {\n"
-"        Principal user = sec.getUserPrincipal();\n"
-"        String name = user != null ? user.getName() : \"anonymous\";\n"
-"        return name;\n"
+"    @Path(\"list\")\n"
+"    @RolesAllowed(\"${all-roles}\") <5>\n"
+"    public String getSubjectList(@Context SecurityContext sec) {\n"
+"        return getUsername(sec);\n"
 "    }\n"
-"    @GET\n"
-"    @Path(\"secured\")\n"
-"    @RolesAllowed(\"${secured}\") <4>\n"
-"    public String getSubjectSecured(@Context SecurityContext sec) {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:394
+#, no-wrap
+msgid ""
+"    private String getUsername(SecurityContext sec) {\n"
 "        Principal user = sec.getUserPrincipal();\n"
 "        String name = user != null ? user.getName() : \"anonymous\";\n"
 "        return name;\n"
@@ -771,50 +793,55 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:389
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:396
 msgid "The `@RolesAllowed` annotation value is set to the value of `Administrator`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:391
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:398
 msgid "This `/subject/software-tester` endpoint requires an authenticated user that has been granted the role of \"Software-Tester\".  It is possible to use multiple expressions in the role definition."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:392
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:399
 msgid "This `/subject/user` endpoint requires an authenticated user that has been granted the role \"User\" through the use of the `@RolesAllowed(\"${customer:User}\")` annotation because we did not set the configuration property `customer`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:394
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:401
 msgid "In production, this `/subject/secured` endpoint requires an authenticated user with the `User` role.  In development mode, it allows any authenticated user."
 msgstr ""
 
+#. type: Plain text
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:402
+msgid "Property expression `all-roles` will be treated as a collection type `List`, therefore the endpoint will be accessible for roles `Administrator`, `Software`, `Tester` and `User`."
+msgstr ""
+
 #. type: Title ===
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:395
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:403
 #, no-wrap
 msgid "Permission annotation"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:399
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:407
 msgid "Quarkus also provides the `io.quarkus.security.PermissionsAllowed` annotation, which authorizes any authenticated user with the given permission to access the resource.  This annotation is an extension of the common security annotations and checks the permissions granted to a `SecurityIdentity` instance."
 msgstr ""
 
 #. type: Block title
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:400
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:408
 #, no-wrap
 msgid "Example of endpoints secured with the `@PermissionsAllowed` annotation"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:405
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:413
 #, no-wrap
 msgid "package org.acme.crud;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:412
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:420
 #, no-wrap
 msgid ""
 "import io.quarkus.arc.Arc;\n"
@@ -826,13 +853,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:414
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:422
 #, no-wrap
 msgid "import io.quarkus.security.PermissionsAllowed;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:419
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:427
 #, no-wrap
 msgid ""
 "import java.security.BasicPermission;\n"
@@ -842,7 +869,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:422
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:430
 #, no-wrap
 msgid ""
 "@Path(\"/crud\")\n"
@@ -850,7 +877,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:430
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:438
 #, no-wrap
 msgid ""
 "    @PermissionsAllowed(\"create\") <1>\n"
@@ -863,7 +890,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:437
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:445
 #, no-wrap
 msgid ""
 "    @PermissionsAllowed(value = {\"create\", \"update\"}, inclusive=true) <2>\n"
@@ -875,7 +902,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:444
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:452
 #, no-wrap
 msgid ""
 "    @PermissionsAllowed({\"see:detail\", \"see:all\", \"read\"}) <3>\n"
@@ -887,7 +914,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:452
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:460
 #, no-wrap
 msgid ""
 "    @PermissionsAllowed(value = \"list\", permission = CustomPermission.class) <4>\n"
@@ -900,13 +927,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:454
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:462
 #, no-wrap
 msgid "    public static class CustomPermission extends BasicPermission {\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:458
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:466
 #, no-wrap
 msgid ""
 "        public CustomPermission(String name) {\n"
@@ -915,7 +942,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:468
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:476
 #, no-wrap
 msgid ""
 "        @Override\n"
@@ -930,47 +957,47 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:470
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:478
 msgid "The resource method `createOrUpdate` is only accessible for a user with both `create` and `update` permissions."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:473
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:481
 msgid "By default, at least one of the permissions specified through one annotation instance is required.  You can require all permissions by setting `inclusive=true`.  Both resource methods `createOrUpdate` have equal authorization requirements."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:474
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:482
 msgid "Access is granted to `getItem` if `SecurityIdentity` has either `read` permission or `see` permission and one of the `all` or `detail` actions."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:476
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:484
 msgid "You can use your preferred `java.security.Permission` implementation.  By default, string-based permission is performed by `io.quarkus.security.StringPermission`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:477
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:485
 msgid "Permissions are not beans, therefore the only way to obtain bean instances is programmatically by using `Arc.container()`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:479
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:487
 msgid "If you plan to use the `@PermissionsAllowed` on the IO thread, review the information in xref:security-proactive-authentication.adoc[Proactive Authentication]."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:482
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:490
 msgid "`@PermissionsAllowed` is not repeatable on the class level due to a limitation with Quarkus interceptors.  For more information, see the xref:cdi-reference.adoc#repeatable-interceptor-bindings[Repeatable interceptor bindings] section of the Quarkus \"CDI reference\" guide."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:485
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:493
 msgid "The easiest way to add permissions to a role-enabled `SecurityIdentity` instance is to map roles to permissions.  Use xref:authorization-using-configuration[Authorization using configuration] to grant the required `SecurityIdentity` permissions for `CRUDResource` endpoints to authenticated requests, as outlined in the following example:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:492
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:500
 #, no-wrap
 msgid ""
 "quarkus.http.auth.policy.role-policy1.permissions.user=see:all                                      <1>\n"
@@ -980,7 +1007,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:497
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:505
 #, no-wrap
 msgid ""
 "quarkus.http.auth.policy.role-policy2.permissions.user=list\n"
@@ -990,39 +1017,39 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:500
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:508
 msgid "Add the permission `see` and the action `all` to the `SecurityIdentity` instance of the `user` role.  Similarly, for the `@PermissionsAllowed` annotation, `io.quarkus.security.StringPermission` is used by default."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:501
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:509
 msgid "Permissions `create`, `update`, and `read` are mapped to the role `admin`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:503
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:511
 msgid "The role policy `role-policy1` allows only authenticated requests to access `/crud/modify` and `/crud/id` sub-paths.  For more information about the path-matching algorithm, see xref:matching-multiple-paths[Matching multiple paths: longest path wins] later in this guide."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:506
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:514
 msgid "You can also specify a custom implementation of the `java.security.Permission` class.  Your custom class must define exactly one constructor that accepts the permission name and optionally some actions, for example, `String` array.  In this scenario, the permission `list` is added to the `SecurityIdentity` instance as `new CustomPermission(\"list\")`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:510
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:518
 msgid "You can also create a custom `java.security.Permission` class with additional constructor parameters.  These additional parameters get matched with arguments of the method annotated with the `@PermissionsAllowed` annotation.  Later, Quarkus instantiates your custom permission with actual arguments, with which the method annotated with the `@PermissionsAllowed` has been invoked."
 msgstr ""
 
 #. type: Block title
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:511
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:519
 #, no-wrap
 msgid "Example of a custom `java.security.Permission` class that accepts additional arguments"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:518
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:638
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:526
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:646
 #, no-wrap
 msgid ""
 "import java.security.Permission;\n"
@@ -1031,13 +1058,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:520
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:528
 #, no-wrap
 msgid "public class LibraryPermission extends Permission {\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:523
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:531
 #, no-wrap
 msgid ""
 "    private final Set<String> actions;\n"
@@ -1045,7 +1072,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:529
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:537
 #, no-wrap
 msgid ""
 "    public LibraryPermission(String libraryName, String[] actions, Library library) { <1>\n"
@@ -1056,7 +1083,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:541
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:549
 #, no-wrap
 msgid ""
 "    @Override\n"
@@ -1073,43 +1100,43 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:543
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:551
 #, no-wrap
 msgid "    ...\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:545
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:553
 #, no-wrap
 msgid "    public static abstract class Library {\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:547
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:555
 #, no-wrap
 msgid "        protected String description;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:549
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:557
 #, no-wrap
 msgid "        abstract boolean isParentLibraryOf(Library library);\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:551
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:559
 #, no-wrap
 msgid "    }\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:553
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:561
 #, no-wrap
 msgid "    public static class MediaLibrary extends Library {\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:559
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:567
 #, no-wrap
 msgid ""
 "        @Override\n"
@@ -1120,7 +1147,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:564
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:572
 #, no-wrap
 msgid ""
 "    public static class TvLibrary extends MediaLibrary {\n"
@@ -1130,22 +1157,22 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:569
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:577
 msgid "There must be exactly one constructor of a custom `Permission` class.  The first parameter is always considered to be a permission name and must be of type `String`.  Quarkus can optionally pass permission actions to the constructor.  For this to happen, declare the second parameter as `String[]`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:571
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:579
 msgid "The `LibraryPermission` class permits access to the current or parent library if `SecurityIdentity` is allowed to perform one of the required actions, for example, `read`, `write`, or `list`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:573
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:581
 msgid "The following example shows how the `LibraryPermission` class can be used:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:578
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:586
 #, no-wrap
 msgid ""
 "import io.quarkus.security.PermissionsAllowed;\n"
@@ -1153,7 +1180,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:581
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:589
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -1161,7 +1188,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:587
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:595
 #, no-wrap
 msgid ""
 "    @PermissionsAllowed(value = \"tv:write\", permission = LibraryPermission.class) <1>\n"
@@ -1172,7 +1199,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:594
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:602
 #, no-wrap
 msgid ""
 "    @PermissionsAllowed(value = \"tv:write\", permission = LibraryPermission.class, params = \"library\") <2>\n"
@@ -1184,32 +1211,32 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:596
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:627
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:646
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:709
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:604
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:635
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:654
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:717
 #, no-wrap
 msgid "}\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:599
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:607
 msgid "The formal parameter `update` is identified as the first `Library` parameter and gets passed to the `LibraryPermission` class.  However, the `LibraryPermission` must be instantiated each time the `updateLibrary` method is invoked."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:601
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:609
 msgid "Here, the first `Library` parameter is `migrate`, therefore the `library` parameter gets marked explicitly through `PermissionsAllowed#params`.  The permission constructor and the annotated method must have the parameter `library` set, otherwise, validation fails."
 msgstr ""
 
 #. type: Block title
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:602
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:610
 #, no-wrap
 msgid "Example of a resource secured with the `LibraryPermission`"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:608
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:616
 #, no-wrap
 msgid ""
 "@Path(\"/library\")\n"
@@ -1217,7 +1244,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:611
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:619
 #, no-wrap
 msgid ""
 "    @Inject\n"
@@ -1225,7 +1252,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:618
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:626
 #, no-wrap
 msgid ""
 "    @PermissionsAllowed(value = \"tv:write\", permission = LibraryPermission.class)\n"
@@ -1237,7 +1264,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:625
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:633
 #, no-wrap
 msgid ""
 "    @PUT\n"
@@ -1249,24 +1276,24 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:630
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:638
 msgid "Similarly to the `CRUDResource` example, the following example shows how you can grant a user with the `admin` role permissions to update `MediaLibrary`:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:634
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:642
 #, no-wrap
 msgid "package org.acme.library;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:640
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:648
 #, no-wrap
 msgid "public class MediaLibraryPermission extends LibraryPermission {\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:644
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:652
 #, no-wrap
 msgid ""
 "    public MediaLibraryPermission(String libraryName, String[] actions) {\n"
@@ -1275,12 +1302,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:648
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:656
 msgid "We want to pass the `MediaLibrary` instance to the `LibraryPermission` constructor."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:655
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:663
 #, no-wrap
 msgid ""
 "quarkus.http.auth.policy.role-policy3.permissions.admin=media-library:list,media-library:read,media-library:write   <1>\n"
@@ -1290,23 +1317,23 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:659
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:667
 msgid "Grants the permission `media-library`, which permits `read`, `write`, and `list` actions.  Because `MediaLibrary` is the `TvLibrary` class parent, a user with the `admin` role is also permitted to modify `TvLibrary`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:663
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:671
 msgid "The examples provided so far use role-to-permission mapping.  You can also add permissions to the `SecurityIdentity` instance programmatically.  In the following example, xref:security-customization.adoc#security-identity-customization[`SecurityIdentity` is customized] to add the same permission that was previously granted with the HTTP role-based policy."
 msgstr ""
 
 #. type: Block title
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:664
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:672
 #, no-wrap
 msgid "Example of adding the `LibraryPermission` programmatically to `SecurityIdentity`"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:670
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:678
 #, no-wrap
 msgid ""
 "import java.security.Permission;\n"
@@ -1314,13 +1341,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:672
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:680
 #, no-wrap
 msgid "import jakarta.enterprise.context.ApplicationScoped;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:678
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:686
 #, no-wrap
 msgid ""
 "import io.quarkus.security.identity.AuthenticationRequestContext;\n"
@@ -1331,7 +1358,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:681
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:689
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -1339,7 +1366,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:689
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:697
 #, no-wrap
 msgid ""
 "    @Override\n"
@@ -1352,7 +1379,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:693
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:701
 #, no-wrap
 msgid ""
 "    private boolean isNotAdmin(SecurityIdentity identity) {\n"
@@ -1361,7 +1388,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:707
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:715
 #, no-wrap
 msgid ""
 "    SecurityIdentity build(SecurityIdentity identity) {\n"
@@ -1380,47 +1407,47 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:712
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:720
 msgid "The permission `media-library` that was created can perform `read`, `write`, and `list` actions.  Because `MediaLibrary` is the `TvLibrary` class parent, a user with the `admin` role is also permitted to modify `TvLibrary`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:713
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:721
 msgid "You can add a permission checker through `io.quarkus.security.runtime.QuarkusSecurityIdentity.Builder#addPermissionChecker`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:715
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:723
 msgid "Annotation permissions do not work with the custom xref:security-customization.adoc#jaxrs-security-context[Custom Jakarta REST SecurityContext] because there are no permissions in `jakarta.ws.rs.core.SecurityContext`."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:716
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:724
 #, no-wrap
 msgid "References"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:719
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:727
 msgid "xref:security-overview.adoc[Quarkus Security overview]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:720
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:728
 msgid "xref:security-architecture.adoc[Quarkus Security architecture]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:721
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:729
 msgid "xref:security-authentication-mechanisms.adoc#other-supported-authentication-mechanisms[Authentication mechanisms in Quarkus]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:722
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:730
 msgid "xref:security-basic-authentication.adoc[Basic authentication]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:722
+#: upstream/_versions/main/guides/security-authorize-web-endpoints-reference.adoc:730
 msgid "xref:security-basic-authentication-tutorial.adoc[Secure a Quarkus application with Basic authentication and Jakarta Persistence]"
 msgstr ""
