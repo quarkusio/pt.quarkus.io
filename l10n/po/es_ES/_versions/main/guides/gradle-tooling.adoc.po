@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-06-07 02:37+0000\n"
+"POT-Creation-Date: 2023-08-27 08:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -130,7 +130,7 @@ msgstr ""
 #: upstream/_versions/main/guides/gradle-tooling.adoc:428
 #: upstream/_versions/main/guides/gradle-tooling.adoc:506
 #: upstream/_versions/main/guides/gradle-tooling.adoc:595
-#: upstream/_versions/main/guides/gradle-tooling.adoc:664
+#: upstream/_versions/main/guides/gradle-tooling.adoc:689
 #, no-wrap
 msgid "Groovy DSL"
 msgstr ""
@@ -158,7 +158,7 @@ msgstr ""
 #: upstream/_versions/main/guides/gradle-tooling.adoc:445
 #: upstream/_versions/main/guides/gradle-tooling.adoc:519
 #: upstream/_versions/main/guides/gradle-tooling.adoc:606
-#: upstream/_versions/main/guides/gradle-tooling.adoc:685
+#: upstream/_versions/main/guides/gradle-tooling.adoc:710
 #, no-wrap
 msgid "Kotlin DSL"
 msgstr ""
@@ -961,7 +961,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "quarkus {\n"
-"properties {\n"
+"quarkusBuildProperties {\n"
 "set(\"package.type\", \"uber-jar\")\n"
 "}\n"
 "}\n"
@@ -992,24 +992,66 @@ msgstr ""
 msgid "Use the `quarkusShowEffectiveConfig` task to show the effective configuration options used for a Quarkus build. If you specify the `--save-config-properties` command line option, the configuration properties are also store in the file `build/<final-name>.quarkus-build.properties`."
 msgstr ""
 
-#. type: Title ==
+#. type: Title ===
 #: upstream/_versions/main/guides/gradle-tooling.adoc:653
+#, no-wrap
+msgid "Gradle caching / task inputs"
+msgstr ""
+
+#. type: delimited block *
+#: upstream/_versions/main/guides/gradle-tooling.adoc:659
+msgid "By default, system properties starting with `quarkus.` and environment variables, including those from `~/.env`, starting with `QUARKUS_`, are considered as inputs for the Gradle tasks. This means that only changes to those system properties or environment variables will cause Gradle's up-to-date to trigger a rebuild. Changes to other system properties or environment variables do not change Quarkus' Gradle task inputs and do not trigger an unnecessary rebuild."
+msgstr ""
+
+#. type: delimited block *
+#: upstream/_versions/main/guides/gradle-tooling.adoc:663
+msgid "Configuration properties specified via `quarkus.quarkusBuildProperties` or via the Quarkus `application.*` configuration files are all considered as Gradle task inputs, in other words: every change in these files causes a rebuild."
+msgstr ""
+
+#. type: delimited block *
+#: upstream/_versions/main/guides/gradle-tooling.adoc:667
+msgid "If your Quarkus build references system properties that do not start with `quarkus.` (or environment variables that do not start with `QUARKUS_`), you must reference those via the Quarkus build extension. For example, if your `application.properties` file references an environment variable like this:"
+msgstr ""
+
+#. type: delimited block *
+#: upstream/_versions/main/guides/gradle-tooling.adoc:669
+#, no-wrap
+msgid "   greeting.message=${FOO_MESSAGE:Hello!}\n"
+msgstr ""
+
+#. type: delimited block *
+#: upstream/_versions/main/guides/gradle-tooling.adoc:671
+msgid "it must be explicitly declared as \"caching relevant\":"
+msgstr ""
+
+#. type: delimited block *
+#: upstream/_versions/main/guides/gradle-tooling.adoc:676
+#, no-wrap
+msgid ""
+"   quarkus {\n"
+"      cachingRelevantProperties.add(\"FOO_MESSAGE\")\n"
+"      // Note: `cachingRelevantProperties` accepts regular expressions\n"
+"   }\n"
+msgstr ""
+
+#. type: Title ==
+#: upstream/_versions/main/guides/gradle-tooling.adoc:678
 #, no-wrap
 msgid "Build workers"
 msgstr ""
 
 #. type: delimited block *
-#: upstream/_versions/main/guides/gradle-tooling.adoc:658
+#: upstream/_versions/main/guides/gradle-tooling.adoc:683
 msgid "Quarkus application builds are ran in isolated processes using Gradle's worker API. This includes the Quarkus application build and Quarkus code generation. This is necessary to properly pass the configuration from the `quarkus` extension and Gradle project properties to Quarkus' code generator / application builder."
 msgstr ""
 
 #. type: delimited block *
-#: upstream/_versions/main/guides/gradle-tooling.adoc:662
+#: upstream/_versions/main/guides/gradle-tooling.adoc:687
 msgid "The JVM settings of the processes performing the code generation and/or Quarkus build can be configured as follows.  See link:https://docs.gradle.org/current/javadoc/org/gradle/process/JavaForkOptions.html[JavaForkOptions] for details."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/gradle-tooling.adoc:672
+#: upstream/_versions/main/guides/gradle-tooling.adoc:697
 #, no-wrap
 msgid ""
 "plugins {\n"
@@ -1019,8 +1061,8 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/gradle-tooling.adoc:681
-#: upstream/_versions/main/guides/gradle-tooling.adoc:702
+#: upstream/_versions/main/guides/gradle-tooling.adoc:706
+#: upstream/_versions/main/guides/gradle-tooling.adoc:727
 #, no-wrap
 msgid ""
 "quarkus {\n"
@@ -1034,7 +1076,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/gradle-tooling.adoc:693
+#: upstream/_versions/main/guides/gradle-tooling.adoc:718
 #, no-wrap
 msgid ""
 "plugins {\n"
@@ -1044,73 +1086,73 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/gradle-tooling.adoc:706
+#: upstream/_versions/main/guides/gradle-tooling.adoc:731
 #, no-wrap
 msgid "Cached build artifacts"
 msgstr ""
 
 #. type: delimited block *
-#: upstream/_versions/main/guides/gradle-tooling.adoc:711
+#: upstream/_versions/main/guides/gradle-tooling.adoc:736
 msgid "link:https://docs.gradle.org/current/userguide/build_cache.html[Gradle's build cache] is a very efficient mechanism to improve the overall build runtime, by reusing previously generated outputs (see link:https://docs.gradle.org/current/userguide/incremental_build.html[Incremental build] for technical details)."
 msgstr ""
 
 #. type: delimited block *
-#: upstream/_versions/main/guides/gradle-tooling.adoc:717
+#: upstream/_versions/main/guides/gradle-tooling.adoc:742
 msgid "The Quarkus plugin leverages the Gradle mechanisms of up-to-date checks and the build cache. The build cache can be local or local _plus_ a remote cache server or, if configured in CI environments, remote in the sense of retrieving and storing the whole cache as an artifact, for example using link:https://github.com/gradle/gradle-build-action[Gradle's GitHub action] or directly/manually GitHub's link:https://github.com/actions/cache[GitHub's cache action]."
 msgstr ""
 
 #. type: delimited block *
-#: upstream/_versions/main/guides/gradle-tooling.adoc:720
+#: upstream/_versions/main/guides/gradle-tooling.adoc:745
 msgid "The Quarkus Gradle plugin cares about _what_ is cached _in which environment_ (CI or local development). Big artifacts like uber-jars and native binaries are not cached in CI, but are cached in local development environments."
 msgstr ""
 
 #. type: delimited block *
-#: upstream/_versions/main/guides/gradle-tooling.adoc:722
+#: upstream/_versions/main/guides/gradle-tooling.adoc:747
 msgid "The Quarkus Gradle plugin detects a _CI environment_, if the `CI` environment variable is present."
 msgstr ""
 
 #. type: delimited block *
-#: upstream/_versions/main/guides/gradle-tooling.adoc:725
+#: upstream/_versions/main/guides/gradle-tooling.adoc:750
 msgid "How the various Quarkus package types are cached in non-CI and CI environments is described in the following table.  Note that even if a task's output is not _cached_, the _up-to-date_ checks still apply."
 msgstr ""
 
 #. type: delimited block *
-#: upstream/_versions/main/guides/gradle-tooling.adoc:729
+#: upstream/_versions/main/guides/gradle-tooling.adoc:754
 msgid "The Quarkus application build is split across three tasks. The `quarkusBuild` taskl is responsible to _provide_ a built Quarkus application. The tasks `quarkusDependenciesBuild` and `quarkusAppPartsBuild` are considered internal tasks (may change at any time w/o prior notice). See below for details."
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/gradle-tooling.adoc:732
+#: upstream/_versions/main/guides/gradle-tooling.adoc:757
 #, no-wrap
 msgid "Quarkus package typ"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/gradle-tooling.adoc:732
+#: upstream/_versions/main/guides/gradle-tooling.adoc:757
 #, no-wrap
 msgid "Note"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/gradle-tooling.adoc:732
+#: upstream/_versions/main/guides/gradle-tooling.adoc:757
 #, no-wrap
 msgid "Caching (non-CI)"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/gradle-tooling.adoc:733
+#: upstream/_versions/main/guides/gradle-tooling.adoc:758
 #, no-wrap
 msgid "Caching in CI"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/gradle-tooling.adoc:734
+#: upstream/_versions/main/guides/gradle-tooling.adoc:759
 #, no-wrap
 msgid "`fast-jar`, `jar`"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/gradle-tooling.adoc:743
+#: upstream/_versions/main/guides/gradle-tooling.adoc:768
 #, no-wrap
 msgid ""
 "Dependency jars are stored unmodified as individual files in the `quarkus-app/lib/` directory.\n"
@@ -1125,23 +1167,23 @@ msgid ""
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/gradle-tooling.adoc:744
-#: upstream/_versions/main/guides/gradle-tooling.adoc:746
-#: upstream/_versions/main/guides/gradle-tooling.adoc:751
-#: upstream/_versions/main/guides/gradle-tooling.adoc:757
-#: upstream/_versions/main/guides/gradle-tooling.adoc:759
+#: upstream/_versions/main/guides/gradle-tooling.adoc:769
+#: upstream/_versions/main/guides/gradle-tooling.adoc:771
+#: upstream/_versions/main/guides/gradle-tooling.adoc:776
+#: upstream/_versions/main/guides/gradle-tooling.adoc:782
+#: upstream/_versions/main/guides/gradle-tooling.adoc:784
 #, no-wrap
 msgid "✅"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/gradle-tooling.adoc:747
+#: upstream/_versions/main/guides/gradle-tooling.adoc:772
 #, no-wrap
 msgid "`mutable-jar`, `uber-jar`, `native`, `native-sources`"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/gradle-tooling.adoc:750
+#: upstream/_versions/main/guides/gradle-tooling.adoc:775
 #, no-wrap
 msgid ""
 "The `quarkusBuild` task is responsible for building the Quarkus application.\n"
@@ -1150,19 +1192,19 @@ msgid ""
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/gradle-tooling.adoc:753
+#: upstream/_versions/main/guides/gradle-tooling.adoc:778
 #, no-wrap
 msgid "❌"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/gradle-tooling.adoc:754
+#: upstream/_versions/main/guides/gradle-tooling.adoc:779
 #, no-wrap
 msgid "`legacy-jar`, `legacy`"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/gradle-tooling.adoc:756
+#: upstream/_versions/main/guides/gradle-tooling.adoc:781
 #, no-wrap
 msgid ""
 "`legacy-jar` builds work similar to `fast-jar` builds, except that the directory structure is different and the\n"
@@ -1170,37 +1212,37 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/gradle-tooling.adoc:768
+#: upstream/_versions/main/guides/gradle-tooling.adoc:793
 msgid "In a local development environment, the cost (think: time) of storing (and retrieving) even bigger cache artifacts is lower than the cost of re-building a Quarkus application. This means, that The Quarkus Gradle plugin allows caching even potentially big artifacts like uber-jars or native binaries in non-CI environments. In CI environments, which run builds against varying states of a code base (think: running CI against every commit on a main branch), adding each built (and big) artifact to the build cache would let the build cache become unnecessarily big, which becomes a problem for example in GitHub, where the total amount of cached artifacts is limited to 10 GB."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/gradle-tooling.adoc:773
+#: upstream/_versions/main/guides/gradle-tooling.adoc:798
 msgid "Background information: There are two related mechanisms in Gradle at play to improve build performance:"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/gradle-tooling.adoc:777
+#: upstream/_versions/main/guides/gradle-tooling.adoc:802
 msgid "Up-to-date checks allow a task's execution to be skipped, if the _inputs_ and _outputs_ of the tasks did not change.  For example, consider a Java compile tasks: if the library dependencies and the source files (the _inputs_) did not change and the compiled class files (the _outputs_) are still available, compilation can be skipped."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/gradle-tooling.adoc:779
+#: upstream/_versions/main/guides/gradle-tooling.adoc:804
 msgid "The build cache can store the outputs of (cacheable) tasks in the local build cache. The _output_ of a task can be restored from the cache."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/gradle-tooling.adoc:784
+#: upstream/_versions/main/guides/gradle-tooling.adoc:809
 msgid "The benefits of up-to-date checks and the interaction of the build cache come with the cost of modeling the _inputs_ and _outputs_. Inputs are not only files or directories, but also the Java version used during the build, the operating system, the working directory, configuration options, and so on. So everything that influences the output of a task action must be declared as an input of the task."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/gradle-tooling.adoc:787
+#: upstream/_versions/main/guides/gradle-tooling.adoc:812
 #, no-wrap
 msgid "Gradle configuration cache"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/gradle-tooling.adoc:792
+#: upstream/_versions/main/guides/gradle-tooling.adoc:817
 msgid "The Quarkus Gradle plugin works with builds that have the link:https://docs.gradle.org/current/userguide/configuration_cache.html[Gradle's configuration cache] enabled, but the configuration cache is disabled for the Quarkus tasks. This means, that the Quarkus plugin does not break such Gradle builds."
 msgstr ""

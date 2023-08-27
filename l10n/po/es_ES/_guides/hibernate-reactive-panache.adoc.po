@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-08-06 08:17+0000\n"
+"POT-Creation-Date: 2023-08-27 08:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -144,8 +144,8 @@ msgstr "Si su proyecto ya está configurado para utilizar otros procesadores de 
 #. type: Block title
 #: upstream/_guides/hibernate-reactive-panache.adoc:67
 #: upstream/_guides/hibernate-reactive-panache.adoc:111
-#: upstream/_guides/hibernate-reactive-panache.adoc:909
-#: upstream/_guides/hibernate-reactive-panache.adoc:1019
+#: upstream/_guides/hibernate-reactive-panache.adoc:898
+#: upstream/_guides/hibernate-reactive-panache.adoc:1008
 #, fuzzy, no-wrap
 msgid "pom.xml"
 msgstr "pom.xml"
@@ -174,8 +174,8 @@ msgstr ""
 #. type: Block title
 #: upstream/_guides/hibernate-reactive-panache.adoc:87
 #: upstream/_guides/hibernate-reactive-panache.adoc:127
-#: upstream/_guides/hibernate-reactive-panache.adoc:919
-#: upstream/_guides/hibernate-reactive-panache.adoc:1029
+#: upstream/_guides/hibernate-reactive-panache.adoc:908
+#: upstream/_guides/hibernate-reactive-panache.adoc:1018
 #, fuzzy, no-wrap
 msgid "build.gradle"
 msgstr "build.gradle"
@@ -1633,20 +1633,19 @@ msgstr "La dependencia `quarkus-test-vertx` proporciona la anotación `@io.quark
 
 #. type: Plain text
 #: upstream/_guides/hibernate-reactive-panache.adoc:863
-#, fuzzy
-msgid "You can also extend the `io.quarkus.test.vertx.UniAsserterInterceptor` to wrap the injected `UniAsserter` and customize the behavior.  For example, the interceptor can be used to execute the assert methods within a separate database transaction."
-msgstr "También puede extender `io.quarkus.test.vertx.UniAsserterInterceptor` para envolver el `UniAsserter` inyectado y personalizar el comportamiento. Por ejemplo, el interceptor se puede utilizar para ejecutar los métodos assert dentro de una transacción de base de datos independiente."
+msgid "Moreover, the `quarkus-test-hibernate-reactive-panache` dependency provides the `io.quarkus.test.hibernate.reactive.panache.TransactionalUniAsserter` that can be injected as a method parameter of a test method annotated with `@RunOnVertxContext`.  The `TransactionalUniAsserter` is a `io.quarkus.test.vertx.UniAsserterInterceptor` that wraps each assert method within a separate reactive transaction."
+msgstr ""
 
 #. type: Block title
 #: upstream/_guides/hibernate-reactive-panache.adoc:864
 #, fuzzy, no-wrap
-msgid "`UniAsserterInterceptor` Example"
+msgid "`TransactionalUniAsserter` Example"
 msgstr "`UniAsserterInterceptor` Ejemplo"
 
 #. type: delimited block -
 #: upstream/_guides/hibernate-reactive-panache.adoc:868
 #, no-wrap
-msgid "import io.quarkus.test.vertx.UniAsserterInterceptor;\n"
+msgid "import io.quarkus.test.hibernate.reactive.panache.TransactionalUniAsserter;\n"
 msgstr ""
 
 #. type: delimited block -
@@ -1658,79 +1657,66 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:873
-#, no-wrap
-msgid "    static class TransactionalUniAsserterInterceptor extends UniAsserterInterceptor {\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:877
-#, no-wrap
-msgid ""
-"        public TransactionUniAsserterInterceptor(UniAsserter asserter) {\n"
-"            super(asserter);\n"
-"        }\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:884
-#, no-wrap
-msgid ""
-"        @Override\n"
-"        protected <T> Supplier<Uni<T>> transformUni(Supplier<Uni<T>> uniSupplier) {\n"
-"            // Assert/execute methods are invoked within a database transaction\n"
-"            return () -> Panache.withTransaction(uniSupplier);\n"
-"        }\n"
-"    }\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:894
+#: upstream/_guides/hibernate-reactive-panache.adoc:880
 #, no-wrap
 msgid ""
 "    @Test\n"
 "    @RunOnVertxContext\n"
-"    public void testEntity(UniAsserter asserter) {\n"
-"        asserter = new TransactionalUniAsserterInterceptor(asserter); <1>\n"
-"        asserter.execute(() -> new MyEntity().persist());\n"
-"        asserter.assertEquals(() -> MyEntity.count(), 1l);\n"
-"        asserter.execute(() -> MyEntity.deleteAll());\n"
+"    public void testEntity(TransactionalUniAsserter asserter) { \n"
+"        asserter.execute(() -> new MyEntity().persist()); <1>\n"
+"        asserter.assertEquals(() -> MyEntity.count(), 1l); <2> \n"
+"        asserter.execute(() -> MyEntity.deleteAll()); <3>\n"
 "    }\n"
 "}\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:896
+#: upstream/_guides/hibernate-reactive-panache.adoc:882
+msgid "The first reactive transaction is used to persist the entity."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/hibernate-reactive-panache.adoc:883
+msgid "The second reactive transaction is used to count the entities."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/hibernate-reactive-panache.adoc:884
+msgid "The third reactive transaction is used to delete all entities."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/hibernate-reactive-panache.adoc:886
 #, fuzzy
-msgid "The `TransactionalUniAsserterInterceptor` wraps the injected `UniAsserter`."
+msgid "Of course, you can also define a custom `UniAsserterInterceptor` to wrap the injected `UniAsserter` and customize the behavior."
 msgstr "El `TransactionalUniAsserterInterceptor` envuelve el `UniAsserter` inyectado."
 
 #. type: Title ==
-#: upstream/_guides/hibernate-reactive-panache.adoc:898
+#: upstream/_guides/hibernate-reactive-panache.adoc:887
 #, fuzzy, no-wrap
 msgid "Mocking"
 msgstr "Burlándose de"
 
 #. type: Title ===
-#: upstream/_guides/hibernate-reactive-panache.adoc:900
+#: upstream/_guides/hibernate-reactive-panache.adoc:889
 #, fuzzy, no-wrap
 msgid "Using the active record pattern"
 msgstr "Uso del patrón de registro activo"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:905
+#: upstream/_guides/hibernate-reactive-panache.adoc:894
 #, fuzzy
 msgid "If you are using the active record pattern you cannot use Mockito directly as it does not support mocking static methods, but you can use the `quarkus-panache-mock` module which allows you to use Mockito to mock all provided static methods, including your own."
 msgstr "Si está utilizando el patrón de registro activo, no puede utilizar Mockito directamente, ya que no admite la imitación de métodos estáticos, pero puede utilizar el módulo `quarkus-panache-mock`, que le permite utilizar Mockito para imitar todos los métodos estáticos proporcionados, incluidos los suyos."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:907
+#: upstream/_guides/hibernate-reactive-panache.adoc:896
 #, fuzzy
 msgid "Add this dependency to your build file:"
 msgstr "Añada esta dependencia a su archivo de compilación:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:916
+#: upstream/_guides/hibernate-reactive-panache.adoc:905
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -1741,20 +1727,20 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:922
+#: upstream/_guides/hibernate-reactive-panache.adoc:911
 #, no-wrap
 msgid "testImplementation(\"io.quarkus:quarkus-panache-mock\")\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:925
-#: upstream/_guides/hibernate-reactive-panache.adoc:1035
+#: upstream/_guides/hibernate-reactive-panache.adoc:914
+#: upstream/_guides/hibernate-reactive-panache.adoc:1024
 #, fuzzy
 msgid "Given this simple entity:"
 msgstr "Dada esta simple entidad:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:930
+#: upstream/_guides/hibernate-reactive-panache.adoc:919
 #, no-wrap
 msgid ""
 "@Entity\n"
@@ -1762,13 +1748,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:932
+#: upstream/_guides/hibernate-reactive-panache.adoc:921
 #, no-wrap
 msgid "    public String name;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:937
+#: upstream/_guides/hibernate-reactive-panache.adoc:926
 #, no-wrap
 msgid ""
 "    public static Uni<List<Person>> findOrdered() {\n"
@@ -1778,15 +1764,15 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:940
-#: upstream/_guides/hibernate-reactive-panache.adoc:1062
+#: upstream/_guides/hibernate-reactive-panache.adoc:929
+#: upstream/_guides/hibernate-reactive-panache.adoc:1051
 #, fuzzy
 msgid "You can write your mocking test like this:"
 msgstr "Puedes escribir tu prueba de burla así:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:945
-#: upstream/_guides/hibernate-reactive-panache.adoc:1067
+#: upstream/_guides/hibernate-reactive-panache.adoc:934
+#: upstream/_guides/hibernate-reactive-panache.adoc:1056
 #, no-wrap
 msgid ""
 "import io.quarkus.test.vertx.UniAsserter;\n"
@@ -1794,7 +1780,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:948
+#: upstream/_guides/hibernate-reactive-panache.adoc:937
 #, no-wrap
 msgid ""
 "@QuarkusTest\n"
@@ -1802,7 +1788,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:953
+#: upstream/_guides/hibernate-reactive-panache.adoc:942
 #, no-wrap
 msgid ""
 "    @RunOnVertxContext // <1>\n"
@@ -1812,7 +1798,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:956
+#: upstream/_guides/hibernate-reactive-panache.adoc:945
 #, no-wrap
 msgid ""
 "        // Mocked classes always return a default value\n"
@@ -1820,7 +1806,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:960
+#: upstream/_guides/hibernate-reactive-panache.adoc:949
 #, no-wrap
 msgid ""
 "        // Now let's specify the return value\n"
@@ -1829,7 +1815,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:964
+#: upstream/_guides/hibernate-reactive-panache.adoc:953
 #, no-wrap
 msgid ""
 "        // Now let's change the return value\n"
@@ -1838,7 +1824,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:968
+#: upstream/_guides/hibernate-reactive-panache.adoc:957
 #, no-wrap
 msgid ""
 "        // Now let's call the original method\n"
@@ -1847,7 +1833,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:973
+#: upstream/_guides/hibernate-reactive-panache.adoc:962
 #, no-wrap
 msgid ""
 "        // Check that we called it 4 times\n"
@@ -1857,7 +1843,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:982
+#: upstream/_guides/hibernate-reactive-panache.adoc:971
 #, no-wrap
 msgid ""
 "        // Mock only with specific parameters\n"
@@ -1871,7 +1857,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:992
+#: upstream/_guides/hibernate-reactive-panache.adoc:981
 #, no-wrap
 msgid ""
 "        // Mock throwing\n"
@@ -1886,7 +1872,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:996
+#: upstream/_guides/hibernate-reactive-panache.adoc:985
 #, no-wrap
 msgid ""
 "        // We can even mock your custom methods\n"
@@ -1895,7 +1881,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1002
+#: upstream/_guides/hibernate-reactive-panache.adoc:991
 #, no-wrap
 msgid ""
 "        asserter.execute(() -> {\n"
@@ -1906,8 +1892,8 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1007
-#: upstream/_guides/hibernate-reactive-panache.adoc:1132
+#: upstream/_guides/hibernate-reactive-panache.adoc:996
+#: upstream/_guides/hibernate-reactive-panache.adoc:1121
 #, no-wrap
 msgid ""
 "        // IMPORTANT: We need to execute the asserter within a reactive session\n"
@@ -1917,38 +1903,38 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1009
-#: upstream/_guides/hibernate-reactive-panache.adoc:1134
+#: upstream/_guides/hibernate-reactive-panache.adoc:998
+#: upstream/_guides/hibernate-reactive-panache.adoc:1123
 #, fuzzy
 msgid "Make sure the test method is run on the Vert.x event loop."
 msgstr "Asegúrese de que el método de prueba se ejecuta en el bucle de eventos Vert.x."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1010
+#: upstream/_guides/hibernate-reactive-panache.adoc:999
 #, fuzzy
 msgid "The injected `UniAsserter` argument is used to make assertions."
 msgstr "El agrumento inyectado `UniAsserter` se utiliza para hacer afirmaciones."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1012
+#: upstream/_guides/hibernate-reactive-panache.adoc:1001
 #, fuzzy
 msgid "Be sure to call your `verify` and `do*` methods on `PanacheMock` rather than `Mockito`, otherwise you won't know what mock object to pass."
 msgstr "Asegúrese de llamar a sus métodos `verify` y `do*` en `PanacheMock` en lugar de `Mockito`, de lo contrario no sabrá qué objeto mock pasar."
 
 #. type: Title ===
-#: upstream/_guides/hibernate-reactive-panache.adoc:1013
+#: upstream/_guides/hibernate-reactive-panache.adoc:1002
 #, fuzzy, no-wrap
 msgid "Using the repository pattern"
 msgstr "Uso del patrón de repositorio"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1017
+#: upstream/_guides/hibernate-reactive-panache.adoc:1006
 #, fuzzy
 msgid "If you are using the repository pattern you can use Mockito directly, using the `quarkus-junit5-mockito` module, which makes mocking beans much easier:"
 msgstr "Si estás usando el patrón de repositorio puedes usar Mockito directamente, usando el módulo `quarkus-junit5-mockito`, lo que hace que mockear beans sea mucho más fácil:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1026
+#: upstream/_guides/hibernate-reactive-panache.adoc:1015
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -1959,13 +1945,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1032
+#: upstream/_guides/hibernate-reactive-panache.adoc:1021
 #, no-wrap
 msgid "testImplementation(\"io.quarkus:quarkus-junit5-mockito\")\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1040
+#: upstream/_guides/hibernate-reactive-panache.adoc:1029
 #, no-wrap
 msgid ""
 "@Entity\n"
@@ -1973,7 +1959,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1044
+#: upstream/_guides/hibernate-reactive-panache.adoc:1033
 #, no-wrap
 msgid ""
 "    @Id\n"
@@ -1982,7 +1968,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1047
+#: upstream/_guides/hibernate-reactive-panache.adoc:1036
 #, no-wrap
 msgid ""
 "    public String name;\n"
@@ -1990,13 +1976,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1050
+#: upstream/_guides/hibernate-reactive-panache.adoc:1039
 #, fuzzy
 msgid "And this repository:"
 msgstr "Y este depósito:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1059
+#: upstream/_guides/hibernate-reactive-panache.adoc:1048
 #, no-wrap
 msgid ""
 "@ApplicationScoped\n"
@@ -2008,7 +1994,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1072
+#: upstream/_guides/hibernate-reactive-panache.adoc:1061
 #, no-wrap
 msgid ""
 "@QuarkusTest\n"
@@ -2018,7 +2004,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1076
+#: upstream/_guides/hibernate-reactive-panache.adoc:1065
 #, no-wrap
 msgid ""
 "    @RunOnVertxContext // <1>\n"
@@ -2027,7 +2013,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1079
+#: upstream/_guides/hibernate-reactive-panache.adoc:1068
 #, no-wrap
 msgid ""
 "        // Mocked classes always return a default value\n"
@@ -2035,7 +2021,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1083
+#: upstream/_guides/hibernate-reactive-panache.adoc:1072
 #, no-wrap
 msgid ""
 "        // Now let's specify the return value\n"
@@ -2044,7 +2030,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1087
+#: upstream/_guides/hibernate-reactive-panache.adoc:1076
 #, no-wrap
 msgid ""
 "        // Now let's change the return value\n"
@@ -2053,7 +2039,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1091
+#: upstream/_guides/hibernate-reactive-panache.adoc:1080
 #, no-wrap
 msgid ""
 "        // Now let's call the original method\n"
@@ -2062,7 +2048,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1096
+#: upstream/_guides/hibernate-reactive-panache.adoc:1085
 #, no-wrap
 msgid ""
 "        // Check that we called it 4 times\n"
@@ -2072,7 +2058,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1105
+#: upstream/_guides/hibernate-reactive-panache.adoc:1094
 #, no-wrap
 msgid ""
 "        // Mock only with specific parameters\n"
@@ -2086,7 +2072,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1115
+#: upstream/_guides/hibernate-reactive-panache.adoc:1104
 #, no-wrap
 msgid ""
 "        // Mock throwing\n"
@@ -2101,7 +2087,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1120
+#: upstream/_guides/hibernate-reactive-panache.adoc:1109
 #, no-wrap
 msgid ""
 "        // We can even mock your custom methods\n"
@@ -2111,7 +2097,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1127
+#: upstream/_guides/hibernate-reactive-panache.adoc:1116
 #, no-wrap
 msgid ""
 "        asserter.execute(() -> {\n"
@@ -2123,115 +2109,115 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1135
+#: upstream/_guides/hibernate-reactive-panache.adoc:1124
 #, fuzzy
 msgid "The injected `UniAsserter` agrument is used to make assertions."
 msgstr "El agrumento inyectado `UniAsserter` se utiliza para hacer afirmaciones."
 
 #. type: Title ==
-#: upstream/_guides/hibernate-reactive-panache.adoc:1136
+#: upstream/_guides/hibernate-reactive-panache.adoc:1125
 #, fuzzy, no-wrap
 msgid "How and why we simplify Hibernate Reactive mappings"
 msgstr "Cómo y por qué simplificamos los mapeos de Hibernate Reactive"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1140
+#: upstream/_guides/hibernate-reactive-panache.adoc:1129
 #, fuzzy
 msgid "When it comes to writing Hibernate Reactive entities, there are a number of annoying things that users have grown used to reluctantly deal with, such as:"
 msgstr "Cuando se trata de escribir entidades Reactivas de Hibernate, hay una serie de cosas molestas con las que los usuarios se han acostumbrado a lidiar a regañadientes, tales como:"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1143
+#: upstream/_guides/hibernate-reactive-panache.adoc:1132
 #, fuzzy
 msgid "Duplicating ID logic: most entities need an ID, most people don't care how it is set, because it is not really relevant to your model."
 msgstr "Duplicar la lógica del ID: la mayoría de las entidades necesitan un ID, a la mayoría de la gente no le importa cómo se establece, porque no es realmente relevante para su modelo."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1146
+#: upstream/_guides/hibernate-reactive-panache.adoc:1135
 #, fuzzy
 msgid "Dumb getters and setters: since Java lacks support for properties in the language, we have to create fields, then generate getters and setters for those fields, even if they don't actually do anything more than read/write the fields."
 msgstr "Getters y setters tontos: dado que Java carece de soporte para propiedades en el lenguaje, tenemos que crear campos, y luego generar getters y setters para esos campos, incluso si no hacen nada más que leer/escribir los campos."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1152
+#: upstream/_guides/hibernate-reactive-panache.adoc:1141
 #, fuzzy
 msgid "Traditional EE patterns advise to split entity definition (the model) from the operations you can do on them (DAOs, Repositories), but really that requires an unnatural split between the state and its operations even though we would never do something like that for regular objects in the Object-Oriented architecture, where state and methods are in the same class. Moreover, this requires two classes per entity, and requires injection of the DAO or Repository where you need to do entity operations, which breaks your edit flow and requires you to get out of the code you're writing to set up an injection point before coming back to use it."
 msgstr "Los patrones tradicionales de EE aconsejan dividir la definición de la entidad (el modelo) de las operaciones que puedes hacer sobre ellas (DAOs, Repositorios), pero realmente eso requiere una división antinatural entre el estado y sus operaciones aunque nunca haríamos algo así para los objetos regulares en la arquitectura orientada a objetos, donde el estado y los métodos están en la misma clase. Además, esto requiere dos clases por entidad, y requiere la inyección de la DAO o Repositorio donde necesitas hacer las operaciones de la entidad, lo que rompe tu flujo de edición y requiere que salgas del código que estás escribiendo para establecer un punto de inyección antes de volver a usarlo."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1154
+#: upstream/_guides/hibernate-reactive-panache.adoc:1143
 #, fuzzy
 msgid "Hibernate queries are super powerful, but overly verbose for common operations, requiring you to write queries even when you don't need all the parts."
 msgstr "Las consultas de Hibernate son muy potentes, pero excesivamente prolijas para las operaciones habituales, lo que obliga a escribir consultas incluso cuando no se necesitan todas las partes."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1156
+#: upstream/_guides/hibernate-reactive-panache.adoc:1145
 #, fuzzy
 msgid "Hibernate is very general-purpose, but does not make it trivial to do trivial operations that make up 90% of our model usage."
 msgstr "Hibernate es muy polivalente, pero no permite realizar las operaciones triviales que constituyen el 90% del uso de nuestro modelo."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1158
+#: upstream/_guides/hibernate-reactive-panache.adoc:1147
 #, fuzzy
 msgid "With Panache, we took an opinionated approach to tackle all these problems:"
 msgstr "Con Panache, adoptamos un enfoque de opinión para abordar todos estos problemas:"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1161
+#: upstream/_guides/hibernate-reactive-panache.adoc:1150
 #, fuzzy
 msgid "Make your entities extend `PanacheEntity`: it has an ID field that is auto-generated. If you require a custom ID strategy, you can extend `PanacheEntityBase` instead and handle the ID yourself."
 msgstr "Haga que sus entidades extiendan `PanacheEntity`: tiene un campo ID que se genera automáticamente. Si necesita una estrategia de ID personalizada, puede extender `PanacheEntityBase` en su lugar y manejar el ID usted mismo."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1164
+#: upstream/_guides/hibernate-reactive-panache.adoc:1153
 #, fuzzy
 msgid "Use public fields. Get rid of dumb getter and setters. Under the hood, we will generate all getters and setters that are missing, and rewrite every access to these fields to use the accessor methods. This way you can still write _useful_ accessors when you need them, which will be used even though your entity users still use field accesses."
 msgstr "Utilizar campos públicos. Deshazte de los getter y setters tontos. Bajo el capó, generaremos todos los getters y setters que faltan, y reescribiremos todos los accesos a estos campos para utilizar los métodos de los accessors. De esta forma, podrás seguir escribiendo accesos _útiles_ cuando los necesites, que se utilizarán aunque los usuarios de tu entidad sigan utilizando los accesos a los campos."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1167
+#: upstream/_guides/hibernate-reactive-panache.adoc:1156
 #, fuzzy
 msgid "With the active record pattern: put all your entity logic in static methods in your entity class and don't create DAOs.  Your entity superclass comes with lots of super useful static methods, and you can add your own in your entity class.  Users can just start using your entity `Person` by typing `Person.` and getting completion for all the operations in a single place."
 msgstr "Con el patrón de registro activo: pon toda tu lógica de entidad en métodos estáticos en tu clase de entidad y no crees DAOs. Tu superclase de entidad viene con un montón de métodos estáticos súper útiles, y puedes añadir los tuyos propios en tu clase de entidad. Los usuarios pueden empezar a utilizar su entidad `Person` escribiendo `Person.` y obteniendo la finalización de todas las operaciones en un solo lugar."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1170
+#: upstream/_guides/hibernate-reactive-panache.adoc:1159
 #, fuzzy
 msgid "Don't write parts of the query that you don't need: write `Person.find(\"order by name\")` or `Person.find(\"name = ?1 and status = ?2\", \"stef\", Status.Alive)` or even better `Person.find(\"name\", \"stef\")`."
 msgstr "No escribas partes de la consulta que no necesites: escribe `Person.find(\"order by name\")` o `Person.find(\"name = ?1 and status = ?2\", \"stef\", Status.Alive)` o incluso mejor `Person.find(\"name\", \"stef\")`."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1172
+#: upstream/_guides/hibernate-reactive-panache.adoc:1161
 #, fuzzy
 msgid "That's all there is to it: with Panache, Hibernate Reactive has never looked so trim and neat."
 msgstr "Eso es todo: con Panache, Hibernate Reactive nunca ha tenido un aspecto tan cuidado."
 
 #. type: Title ==
-#: upstream/_guides/hibernate-reactive-panache.adoc:1173
+#: upstream/_guides/hibernate-reactive-panache.adoc:1162
 #, fuzzy, no-wrap
 msgid "Defining entities in external projects or jars"
 msgstr "Definición de entidades en proyectos o tarros externos"
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1176
+#: upstream/_guides/hibernate-reactive-panache.adoc:1165
 #, fuzzy
 msgid "Hibernate Reactive with Panache relies on compile-time bytecode enhancements to your entities."
 msgstr "Hibernate Reactive with Panache se basa en mejoras de código de bytes en tiempo de compilación para sus entidades."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1182
+#: upstream/_guides/hibernate-reactive-panache.adoc:1171
 #, fuzzy
 msgid "It attempts to identify archives with Panache entities (and consumers of Panache entities)  by the presence of the marker file `META-INF/panache-archive.marker`. Panache includes an annotation processor that will automatically create this file in archives that depend on Panache (even indirectly). If you have disabled annotation processors you may need to create this file manually in some cases."
 msgstr "Intenta identificar archivos con entidades Panache (y consumidores de entidades Panache) por la presencia del archivo marcador `META-INF/panache-archive.marker`. Panache incluye un procesador de anotaciones que creará automáticamente este archivo en los archivos que dependen de Panache (incluso indirectamente). Si ha desactivado los procesadores de anotación, es posible que tenga que crear este archivo manualmente en algunos casos."
 
 #. type: Plain text
-#: upstream/_guides/hibernate-reactive-panache.adoc:1186
+#: upstream/_guides/hibernate-reactive-panache.adoc:1175
 #, fuzzy
 msgid "If you include the jpa-modelgen annotation processor this will exclude the Panache annotation processor by default. If you do this you should either create the marker file yourself, or add the `quarkus-panache-common` as well, as shown below:"
 msgstr "Si incluye el procesador de anotaciones jpa-modelgen, éste excluirá por defecto el procesador de anotaciones Panache. Si lo hace, deberá crear usted mismo el archivo de marcadores o añadir también el `quarkus-panache-common`, como se muestra a continuación:"
 
 #. type: delimited block -
-#: upstream/_guides/hibernate-reactive-panache.adoc:1207
+#: upstream/_guides/hibernate-reactive-panache.adoc:1196
 #, no-wrap
 msgid ""
 "<plugin>\n"
@@ -2253,6 +2239,10 @@ msgid ""
 "    </configuration>\n"
 "</plugin>\n"
 msgstr ""
+
+#, fuzzy
+#~ msgid "You can also extend the `io.quarkus.test.vertx.UniAsserterInterceptor` to wrap the injected `UniAsserter` and customize the behavior.  For example, the interceptor can be used to execute the assert methods within a separate database transaction."
+#~ msgstr "También puede extender `io.quarkus.test.vertx.UniAsserterInterceptor` para envolver el `UniAsserter` inyectado y personalizar el comportamiento. Por ejemplo, el interceptor se puede utilizar para ejecutar los métodos assert dentro de una transacción de base de datos independiente."
 
 #, fuzzy
 #~ msgid "Mocking `Mutiny.Session` and entity instance methods"
