@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-08-27 08:17+0000\n"
+"POT-Creation-Date: 2023-09-03 08:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2259,9 +2259,9 @@ msgstr "Es súper fácil de hacer con  link:https://github.com/quarkiverse[Quark
 
 #. type: Block title
 #: upstream/_guides/security-oidc-code-flow-authentication.adoc:1134
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1196
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1229
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1349
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1239
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1272
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1392
 #, no-wrap
 msgid "pom.xml"
 msgstr "pom.xml"
@@ -2279,9 +2279,9 @@ msgstr ""
 
 #. type: Block title
 #: upstream/_guides/security-oidc-code-flow-authentication.adoc:1144
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1217
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1239
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1359
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1260
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1282
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1402
 #, no-wrap
 msgid "build.gradle"
 msgstr "build.gradle"
@@ -2374,24 +2374,150 @@ msgstr "En estos casos, si trabajas con Keycloak, por favor, inícialo con una p
 
 #. type: Title ==
 #: upstream/_guides/security-oidc-code-flow-authentication.adoc:1188
+#, no-wrap
+msgid "OIDC SAML Identity broker"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1191
+msgid "If your identity provider does not implement OpenId Connect but only the legacy XML-based SAML2.0 SSO protocol, then Quarkus can not be used as a SAML 2.0 adapter, similarly to how `quarkus-oidc` is used as an OIDC adapter."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1193
+msgid "However, many OIDC providers such as Keycloak, Okta, Auth0, Microsoft ADFS can offer OIDC to SAML 2.0 bridges. You can create an identity broker connection to SAML 2.0 provider in your OIDC provider and use `quarkus-oidc` to authenticate your users to this SAML 2.0 provider with the OIDC provider coordinating OIDC and SAML 2.0 communications. As far as Quarkus endpoints are concerned, they can continue using the same Quarkus Security and OIDC API and annotations such as `@Authenticated`, `SecurityIdentity`, etc."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1195
+msgid "For example, lets assume `Okta` is your SAML 2.0 provider and `Keycloak` is your OIDC provider. Here is a typical sequence explaining how to configure `Keycloak` to broker with the `Okta` SAML 2.0 provider."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1197
+msgid "First, create a new `SAML2` integration in your `Okta` `Dashboard/Applications`:"
+msgstr ""
+
+#. type: Named 'alt' AttributeList argument for macro 'image'
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1198
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1202
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1206
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1210
+#, no-wrap
+msgid "Okta"
+msgstr ""
+
+#. type: Target for macro image
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1198
+#, no-wrap
+msgid "okta-create-saml-integration.png"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1201
+msgid "For example, name it as `OktaSaml`:"
+msgstr ""
+
+#. type: Target for macro image
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1202
+#, no-wrap
+msgid "okta-saml-general-settings.png"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1205
+msgid "Next, configure it to point to a Keycloak SAML broker endpoint. At this point you need to know the name of the Keycloak realm, for example, `quarkus`, and, assuming that the Keycloak SAML broker alias is `saml`, enter the endpoint address as `http:localhost:8081/realms/quarkus/broker/saml/endpoint` and Service provider (SP) entity id as `http:localhost:8081/realms/quarkus`, where `http://localhost:8081` is a Keycloak base address and `saml` is a broker alias:"
+msgstr ""
+
+#. type: Target for macro image
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1206
+#, no-wrap
+msgid "okta-saml-configuration.png"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1209
+msgid "Next, save this SAML integration and note its Metadata URL:"
+msgstr ""
+
+#. type: Target for macro image
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1210
+#, no-wrap
+msgid "okta-saml-metadata.png"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1213
+msgid "Next, add SAML Provider to Keycloak:"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1215
+msgid "First, as usual, create a new realm or import the existing realm to `Keycloak`, in this case, the realm name has to be `quarkus`."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1217
+msgid "Now, in the `quarkus` Realm properties, navigate to `Identity Providers` and add a new SAML provider:"
+msgstr ""
+
+#. type: Named 'alt' AttributeList argument for macro 'image'
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1218
+#, no-wrap
+msgid "Keycloak"
+msgstr ""
+
+#. type: Target for macro image
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1218
+#, no-wrap
+msgid "keycloak-add-saml-provider.png"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1221
+msgid "Note the alias is set to `saml`, `Redirect URI` is `http:localhost:8081/realms/quarkus/broker/saml/endpoint` and `Service provider entity id` is `http:localhost:8081/realms/quarkus` - these are the same values you have entered when creating the Okta SAML integration in the previous step."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1223
+msgid "Finally, set `Service entity descriptor` to point to the Okta SAML Intregration Metadata URL you noted at the end of the previous step."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1225
+msgid "Next, if you would like, you can register this Keycloak SAML Provider as a Default Provider by navigating to `Authentication/browser/Identity Provider Redirector config` and setting both `Alias` and `Default Identity Provider` properties to `saml`. If you do not configure it as a Default Provider then, at the authentication time, Keycloak will offer 2 options - authenticate with the SAML provider, and authenticate directly to Keycloak with the name and password."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1227
+msgid "Now configure the Quarkus OIDC `web-app` application to point to the Keycloak `quarkus` realm, `quarkus.oidc.auth-server-url=http://localhost:8180/realms/quarkus` and you are ready to start authenticating your Quarkus users to the Okta SAML 2.0 provider using an OIDC to SAML bridge provided by Keycloak OIDC and Okta SAML 2.0 providers."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1229
+msgid "You can configure other OIDC providers to provide a SAML bridge similarly to how it can be done for Keycloak."
+msgstr ""
+
+#. type: Title ==
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1231
 #, fuzzy, no-wrap
 msgid "Testing"
 msgstr "Pruebas"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1192
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1235
 #, fuzzy
 msgid "Testing is often tricky when it comes to authentification to a separate OIDC like server.  Quarkus offers several options from mocking to a local run of an OIDC provider."
 msgstr "Las pruebas suelen ser complicadas cuando se trata de la autenticación de un servidor OIDC independiente. Quarkus ofrece varias opciones, desde la simulación hasta la ejecución local de un proveedor de OIDC."
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1194
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1237
 #, fuzzy
 msgid "Start by adding the following dependencies to your test project:"
 msgstr "Comience por añadir las siguientes dependencias a su proyecto de prueba:"
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1214
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1257
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -2413,7 +2539,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1221
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1264
 #, no-wrap
 msgid ""
 "testImplementation(\"net.sourceforge.htmlunit:htmlunit\")\n"
@@ -2421,19 +2547,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1224
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1267
 #, fuzzy, no-wrap
 msgid "Wiremock"
 msgstr "Wiremock"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1227
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1270
 #, fuzzy
 msgid "Add the following dependency:"
 msgstr "Añade la siguiente dependencia:"
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1236
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1279
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -2444,19 +2570,19 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1242
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1285
 #, no-wrap
 msgid "testImplementation(\"io.quarkus:quarkus-test-oidc-server\")\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1245
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1288
 #, fuzzy
 msgid "Prepare the REST test endpoints, set `application.properties`, for example:"
 msgstr "Prepare los puntos finales de prueba REST, establezca `application.properties`, por ejemplo:"
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1253
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1296
 #, no-wrap
 msgid ""
 "# keycloak.url is set by OidcWiremockTestResource\n"
@@ -2467,25 +2593,25 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1256
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1299
 #, fuzzy
 msgid "and finally write the test code, for example:"
 msgstr "y finalmente escribir el código de prueba, por ejemplo:"
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1260
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1303
 #, no-wrap
 msgid "import static org.junit.jupiter.api.Assertions.assertEquals;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1262
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1305
 #, no-wrap
 msgid "import org.junit.jupiter.api.Test;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1267
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1310
 #, no-wrap
 msgid ""
 "import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;\n"
@@ -2495,7 +2621,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1271
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1314
 #, no-wrap
 msgid ""
 "import io.quarkus.test.common.QuarkusTestResource;\n"
@@ -2504,7 +2630,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1275
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1318
 #, no-wrap
 msgid ""
 "@QuarkusTest\n"
@@ -2513,7 +2639,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1281
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1324
 #, no-wrap
 msgid ""
 "    @Test\n"
@@ -2524,7 +2650,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1286
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1329
 #, no-wrap
 msgid ""
 "            HtmlForm form = page.getFormByName(\"form\");\n"
@@ -2534,13 +2660,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1288
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1331
 #, no-wrap
 msgid "            page = form.getInputByValue(\"login\").click();\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1292
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1335
 #, no-wrap
 msgid ""
 "            assertEquals(\"alice\", page.getBody().asText());\n"
@@ -2549,7 +2675,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1299
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1342
 #, no-wrap
 msgid ""
 "    private WebClient createWebClient() {\n"
@@ -2561,61 +2687,61 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1302
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1345
 #, fuzzy
 msgid "`OidcWiremockTestResource` recognizes `alice` and `admin` users. The user `alice` has the `user` role only by default - it can be customized with a `quarkus.test.oidc.token.user-roles` system property. The user `admin` has the `user` and `admin` roles by default - it can be customized with a `quarkus.test.oidc.token.admin-roles` system property."
 msgstr "`OidcWiremockTestResource` reconoce los usuarios `alice` y `admin`. El usuario `alice` sólo tiene el rol `user` por defecto - puede ser personalizado con una propiedad del sistema `quarkus.test.oidc.token.user-roles`. El usuario `admin` tiene los roles `user` y `admin` por defecto - puede ser personalizado con una propiedad del sistema `quarkus.test.oidc.token.admin-roles`."
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1304
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1347
 #, fuzzy
 msgid "Additionally, `OidcWiremockTestResource` set token issuer and audience to `https://service.example.com` which can be customized with `quarkus.test.oidc.token.issuer` and `quarkus.test.oidc.token.audience` system properties."
 msgstr "Además, `OidcWiremockTestResource` establece el emisor de tokens y la audiencia en `&lt;a href=\"https://service.example.com\" class=\"bare\"&gt;https://service.example.com&lt;/a&gt;` que pueden personalizarse con las propiedades del sistema `quarkus.test.oidc.token.issuer` y `quarkus.test.oidc.token.audience`."
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1306
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1349
 #, fuzzy
 msgid "`OidcWiremockTestResource` can be used to emulate all OpenID Connect providers."
 msgstr "`OidcWiremockTestResource` puede utilizarse para emular todos los proveedores de OpenID Connect."
 
 #. type: Title ===
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1308
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1351
 #, fuzzy, no-wrap
 msgid "Dev services for Keycloak"
 msgstr "Servicios de desarrollo para Keycloak"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1312
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1355
 #, fuzzy
 msgid "Using xref:security-openid-connect-dev-services.adoc[Dev Services for Keycloak] is recommended for the integration testing against Keycloak.  `Dev Services for Keycloak` will launch and initialize a test container: it will create a `quarkus` realm, a `quarkus-app` client (`secret` secret) and add `alice` (`admin` and `user` roles) and `bob` (`user` role) users, where all of these properties can be customized."
 msgstr "Se recomienda el uso de  link:security-openid-connect-dev-services.html[Dev Services para Keycloak] para las pruebas de integración contra Keycloak. `Dev Services for Keycloak` lanzará e inicializará un contenedor de pruebas: creará un dominio `quarkus`, un cliente `quarkus-app` ( `secret` secret) y añadirá usuarios `alice` ( `admin` y `user` roles) y `bob` ( `user` rol), donde todas estas propiedades pueden ser personalizadas."
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1314
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1357
 #, fuzzy
 msgid "First, prepare `application.properties`. You can start with a completely empty `application.properties` as `Dev Services for Keycloak` will register `quarkus.oidc.auth-server-url` pointing to the running test container as well as `quarkus.oidc.client-id=quarkus-app` and `quarkus.oidc.credentials.secret=secret`."
 msgstr "En primer lugar, prepare `application.properties`. Puede empezar con un `application.properties` completamente vacío, ya que `Dev Services for Keycloak` registrará `quarkus.oidc.auth-server-url` apuntando al contenedor de prueba en ejecución, así como `quarkus.oidc.client-id=quarkus-app` y `quarkus.oidc.credentials.secret=secret`."
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1316
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1359
 #, fuzzy
 msgid "But if you already have all the required `quarkus-oidc` properties configured then you only need to associate `quarkus.oidc.auth-server-url` with the `prod` profile for `Dev Services for Keycloak`to start a container, for example:"
 msgstr "Pero si ya tienes configuradas todas las propiedades requeridas de `quarkus-oidc` entonces sólo necesitas asociar `quarkus.oidc.auth-server-url` con el perfil `prod` para `Dev Services for Keycloak` para iniciar un contenedor, por ejemplo:"
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1320
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1363
 #, no-wrap
 msgid "%prod.quarkus.oidc.auth-server-url=http://localhost:8180/realms/quarkus\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1323
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1366
 #, fuzzy
 msgid "If a custom realm file has to be imported into Keycloak before running the tests then you can configure `Dev Services for Keycloak` as follows:"
 msgstr "Si es necesario importar un archivo de dominio personalizado en Keycloak antes de ejecutar las pruebas, puede configurar `Dev Services for Keycloak` de la siguiente manera:"
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1328
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1371
 #, no-wrap
 msgid ""
 "%prod.quarkus.oidc.auth-server-url=http://localhost:8180/realms/quarkus\n"
@@ -2623,13 +2749,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1332
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1375
 #, fuzzy
 msgid "Finally, write a test code the same way as it is described in the xref:integration-testing-wiremock[Wiremock] section.  The only difference is that `@QuarkusTestResource` is no longer needed:"
 msgstr "Por último, escriba un código de prueba de la misma forma que se describe en la sección  link:#integration-testing-wiremock[Wiremock]. La única diferencia es que `@QuarkusTestResource` ya no es necesario:"
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1338
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1381
 #, no-wrap
 msgid ""
 "@QuarkusTest\n"
@@ -2638,25 +2764,25 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1341
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1384
 #, fuzzy, no-wrap
 msgid "Using KeycloakTestResourceLifecycleManager"
 msgstr "Uso de KeycloakTestResourceLifecycleManager"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1345
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1388
 #, fuzzy
 msgid "Use `KeycloakTestResourceLifecycleManager` for your tests only if there is a good reason not to use `Dev Services for Keycloak`.  If you need to do the integration testing against Keycloak then you are encouraged to do it with xref:integration-testing-keycloak-devservices[Dev services For Keycloak]."
 msgstr "Utilice `KeycloakTestResourceLifecycleManager` para sus pruebas sólo si hay una buena razón para no utilizar `Dev Services for Keycloak`. Si necesita realizar las pruebas de integración contra  link:#integration-testing-keycloak-devservices[Keycloak], le animamos a que lo haga con  link:#integration-testing-keycloak-devservices[Dev services For Keycloak]."
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1347
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1390
 #, fuzzy
 msgid "Start with adding the following dependency:"
 msgstr "Empiece por añadir la siguiente dependencia:"
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1356
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1399
 #, no-wrap
 msgid ""
 "<dependency>\n"
@@ -2667,25 +2793,25 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1362
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1405
 #, no-wrap
 msgid "testImplementation(\"io.quarkus:quarkus-test-keycloak-server\")\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1365
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1408
 #, fuzzy
 msgid "which provides `io.quarkus.test.keycloak.server.KeycloakTestResourceLifecycleManager` - an implementation of `io.quarkus.test.common.QuarkusTestResourceLifecycleManager` which starts a Keycloak container."
 msgstr "que proporciona `io.quarkus.test.keycloak.server.KeycloakTestResourceLifecycleManager` - una implementación de `io.quarkus.test.common.QuarkusTestResourceLifecycleManager` que inicia un contenedor Keycloak."
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1367
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1410
 #, fuzzy
 msgid "And configure the Maven Surefire plugin as follows:"
 msgstr "Y configura el plugin Maven Surefire como sigue:"
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1383
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1426
 #, no-wrap
 msgid ""
 "<plugin>\n"
@@ -2704,25 +2830,25 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1386
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1429
 #, fuzzy
 msgid "(and similarly the Maven Failsafe plugin when testing in native image)."
 msgstr "(y de forma similar el plugin Maven Failsafe al probar en imagen nativa)."
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1389
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1432
 #, fuzzy
 msgid "And now set the configuration and write the test code the same way as it is described in the xref:integration-testing-wiremock[Wiremock] section.  The only difference is the name of `QuarkusTestResource`:"
 msgstr "Y ahora establezca la configuración y escriba el código de prueba de la misma manera que se describe en la sección  link:#integration-testing-wiremock[Wiremock]. La única diferencia es el nombre de `QuarkusTestResource`:"
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1393
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1436
 #, no-wrap
 msgid "import io.quarkus.test.keycloak.server.KeycloakTestResourceLifecycleManager;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1398
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1441
 #, no-wrap
 msgid ""
 "@QuarkusTest\n"
@@ -2732,43 +2858,43 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1401
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1444
 #, fuzzy
 msgid "`KeycloakTestResourceLifecycleManager` registers `alice` and `admin` users. The user `alice` has the `user` role only by default - it can be customized with a `keycloak.token.user-roles` system property. The user `admin` has the `user` and `admin` roles by default - it can be customized with a `keycloak.token.admin-roles` system property."
 msgstr "`KeycloakTestResourceLifecycleManager` registra los usuarios `alice` y `admin`. El usuario `alice` sólo tiene el rol `user` por defecto - puede ser personalizado con una propiedad del sistema `keycloak.token.user-roles`. El usuario `admin` tiene los roles `user` y `admin` por defecto - puede ser personalizado con una propiedad del sistema `keycloak.token.admin-roles`."
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1404
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1447
 #, fuzzy
 msgid "By default, `KeycloakTestResourceLifecycleManager` uses HTTPS to initialize a Keycloak instance which can be disabled with `keycloak.use.https=false`.  Default realm name is `quarkus` and client id - `quarkus-web-app` - set `keycloak.realm` and `keycloak.web-app.client` system properties to customize the values if needed."
 msgstr "Por defecto, `KeycloakTestResourceLifecycleManager` utiliza HTTPS para inicializar una instancia de Keycloak, lo que puede desactivarse con `keycloak.use.https=false`. El nombre de dominio por defecto es `quarkus` y el id de cliente - `quarkus-web-app` - configure las propiedades del sistema `keycloak.realm` y `keycloak.web-app.client` para personalizar los valores si es necesario."
 
 #. type: Title ===
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1406
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1449
 #, fuzzy, no-wrap
 msgid "TestSecurity annotation"
 msgstr "Anotación TestSecurity"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1409
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1452
 #, fuzzy
 msgid "See xref:security-oidc-bearer-token-authentication.adoc#integration-testing-security-annotation[Use TestingSecurity with injected JsonWebToken] section for more information about using `@TestSecurity` and `@OidcSecurity` annotations for testing the `web-app` application endpoint code which depends on the injected ID and access `JsonWebToken` as well as `UserInfo` and `OidcConfigurationMetadata`."
 msgstr "Consulte la sección  link:security-oidc-bearer-token-authentication.html#integration-testing-security-annotation[Usar TestingSecurity con JsonWebToken iny] ectado para obtener más información sobre el uso de las anotaciones `@TestSecurity` y `@OidcSecurity` para probar el código del endpoint de la aplicación `web-app` que depende del ID inyectado y acceder a `JsonWebToken` así como a `UserInfo` y `OidcConfigurationMetadata`."
 
 #. type: Title ===
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1410
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1453
 #, fuzzy, no-wrap
 msgid "Checking errors in the logs"
 msgstr "Comprobación de errores en los registros"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1413
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1456
 #, fuzzy
 msgid "To see details about the token verification errors, you must enable `io.quarkus.oidc.runtime.OidcProvider` `TRACE` level logging:"
 msgstr "Para ver detalles sobre los errores de verificación de token, debe activar el registro de nivel `io.quarkus.oidc.runtime.OidcProvider` `TRACE` :"
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1418
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1461
 #, no-wrap
 msgid ""
 "quarkus.log.category.\"io.quarkus.oidc.runtime.OidcProvider\".level=TRACE\n"
@@ -2776,13 +2902,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1421
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1464
 #, fuzzy
 msgid "To see details about the OidcProvider client initialization errors, enable `io.quarkus.oidc.runtime.OidcRecorder` `TRACE` level logging:"
 msgstr "Para ver detalles sobre los errores de inicialización del cliente OidcProvider, habilite el registro de nivel `io.quarkus.oidc.runtime.OidcRecorder` `TRACE` :"
 
 #. type: delimited block -
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1426
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1469
 #, no-wrap
 msgid ""
 "quarkus.log.category.\"io.quarkus.oidc.runtime.OidcRecorder\".level=TRACE\n"
@@ -2790,73 +2916,73 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1429
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1472
 #, fuzzy
 msgid "You can also from `quarkus dev` console hit `j` to change the application global log level."
 msgstr "También puedes desde la consola `quarkus dev` pulsar `j` para cambiar el nivel de registro global de la aplicación."
 
 #. type: Title ==
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1430
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1473
 #, fuzzy, no-wrap
 msgid "References"
 msgstr "Referencias"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1433
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1476
 #, fuzzy
 msgid "xref:security-oidc-configuration-properties-reference.adoc[OIDC configuration properties]"
 msgstr "link:security-oidc-configuration-properties-reference.html[Propiedades de configuración de OIDC]"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1434
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1477
 #, fuzzy
 msgid "xref:security-openid-connect-providers.adoc[Configuring well-known OpenID Connect Providers]"
 msgstr "link:security-openid-connect-providers.html[Configuración de proveedores de OpenID Connect conocidos]"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1435
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1478
 #, fuzzy
 msgid "xref:security-openid-connect-client-reference.adoc[OpenID Connect and OAuth2 Client and Filters Reference Guide]"
 msgstr "link:security-openid-connect-client-reference.html[Guía de referencia del cliente y los filtros de OpenID Connect y OAuth2]"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1436
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1479
 #, fuzzy
 msgid "xref:security-openid-connect-dev-services.adoc[Dev Services for Keycloak]"
 msgstr "link:security-openid-connect-dev-services.html[Servicios de desarrollo para Keycloak]"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1437
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1480
 #, fuzzy
 msgid "xref:security-authentication-mechanisms.adoc#oidc-jwt-oauth2-comparison[Choosing between OpenID Connect, SmallRye JWT, and OAuth2 authentication mechanisms]"
 msgstr "link:security-authentication-mechanisms.html#oidc-jwt-oauth2-comparison[Elegir entre los mecanismos de autenticación OpenID Connect, SmallRye JWT y OAuth2]"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1438
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1481
 #, fuzzy
 msgid "xref:security-authentication-mechanisms.adoc#combining-authentication-mechanisms[Combining authentication mechanisms]"
 msgstr "link:security-authentication-mechanisms.html#combining-authentication-mechanisms[Combinación de mecanismos de autenticación]"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1439
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1482
 #, fuzzy
 msgid "xref:security-overview.adoc[Quarkus Security overview]"
 msgstr "link:security-overview.html[Visión general de Quarkus Security]"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1440
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1483
 #, fuzzy
 msgid "https://www.keycloak.org/documentation.html[Keycloak Documentation]"
 msgstr "link:https://www.keycloak.org/documentation.html[Documentación de Keycloak]"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1441
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1484
 #, fuzzy
 msgid "https://openid.net/connect/[OpenID Connect]"
 msgstr "link:https://openid.net/connect/[OpenID Connect]"
 
 #. type: Plain text
-#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1442
+#: upstream/_guides/security-oidc-code-flow-authentication.adoc:1485
 #, fuzzy
 msgid "https://tools.ietf.org/html/rfc7519[JSON Web Token]"
 msgstr "link:https://tools.ietf.org/html/rfc7519[Token web JSON]"
