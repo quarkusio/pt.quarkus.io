@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-08-13 08:20+0000\n"
+"POT-Creation-Date: 2023-09-10 08:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -280,17 +280,25 @@ msgstr "En criptografía, una sal es un nombre para los datos aleatorios utiliza
 #. type: Plain text
 #: upstream/_guides/security-jpa.adoc:129
 #, fuzzy
-msgid "For manual password hashing, create a class that implements the `CustomPasswordProvider`as shown in the example below."
+msgid "To represent passwords stored in the database which were hashed using different hashing algorithms, create a class that implements `org.wildfly.security.password.PasswordProvider` as shown in the example below."
 msgstr "Para el hash manual de contraseñas, cree una clase que implemente el `CustomPasswordProvider` como se muestra en el siguiente ejemplo."
 
 #. type: Plain text
 #: upstream/_guides/security-jpa.adoc:131
 #, fuzzy
-msgid "The following snippet shows how to set a custom password provider that uses the SHA256 hashing algorithm."
+msgid "The following snippet shows how to set a custom password provider that represents a password which was hashed with the SHA256 hashing algorithm."
 msgstr "El siguiente fragmento muestra cómo configurar un proveedor de contraseñas personalizado que utilice el algoritmo hash SHA256."
 
 #. type: delimited block -
-#: upstream/_guides/security-jpa.adoc:141
+#: upstream/_guides/security-jpa.adoc:136
+#, no-wrap
+msgid ""
+"import org.wildfly.security.password.Password;\n"
+"import org.wildfly.security.password.PasswordProvider;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-jpa.adoc:144
 #, no-wrap
 msgid ""
 "@UserDefinition\n"
@@ -303,7 +311,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-jpa.adoc:145
+#: upstream/_guides/security-jpa.adoc:148
 #, no-wrap
 msgid ""
 "    @Column(name = \"username\")\n"
@@ -312,7 +320,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-jpa.adoc:149
+#: upstream/_guides/security-jpa.adoc:152
 #, no-wrap
 msgid ""
 "    @Column(name = \"password\")\n"
@@ -321,7 +329,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/security-jpa.adoc:153
+#: upstream/_guides/security-jpa.adoc:156
 #, no-wrap
 msgid ""
 "    @Roles\n"
@@ -335,51 +343,58 @@ msgstr ""
 msgid ""
 "public class CustomPasswordProvider implements PasswordProvider {\n"
 "    @Override\n"
-"    public Password getPassword(String pass) {\n"
-"        byte[] digest = DatatypeConverter.parseHexBinary(pass);\n"
+"    public Password getPassword(String passwordInDatabase) {\n"
+"        byte[] digest = DatatypeConverter.parseHexBinary(passwordInDatabase);\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/security-jpa.adoc:166
+#, no-wrap
+msgid ""
+"        // Let the security runtime know that this passwordInDatabase is hashed using the SHA256 hashing algorithm\n"
 "        return SimpleDigestPassword.createRaw(SimpleDigestPassword.ALGORITHM_SIMPLE_DIGEST_SHA_256, digest);\n"
 "    }\n"
 "}\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_guides/security-jpa.adoc:167
+#: upstream/_guides/security-jpa.adoc:172
 #, fuzzy
 msgid "For quick creation of a hashed password, use `String BcryptUtil.bcryptHash(String password)`, which defaults to creating a random salt and hashing in ten iterations.  This method also allows specifying the desired amount of iterations and the salt used."
 msgstr "Cuando necesites crear una contraseña con hash, te ofrecemos la práctica función `String BcryptUtil.bcryptHash(String password)`, que por defecto crea una sal aleatoria y hace un hash en 10 iteraciones (aunque también puedes especificar las iteraciones y la sal)."
 
 #. type: delimited block =
-#: upstream/_guides/security-jpa.adoc:172
+#: upstream/_guides/security-jpa.adoc:177
 #, fuzzy
 msgid "For applications running in a production environment, do not store passwords as plain text."
 msgstr "Para las aplicaciones que se ejecutan en un entorno de producción, no almacene las contraseñas como texto sin formato."
 
 #. type: delimited block =
-#: upstream/_guides/security-jpa.adoc:174
+#: upstream/_guides/security-jpa.adoc:179
 #, fuzzy
 msgid "However, it is possible to store passwords as plain text with the `@Password(PasswordType.CLEAR)` annotation when operating in a test environment."
 msgstr "ADVERTENCIA: también se pueden almacenar contraseñas en texto claro con `@Password(PasswordType.CLEAR)`, pero se desaconseja encarecidamente en producción."
 
 #. type: Title ==
-#: upstream/_guides/security-jpa.adoc:176
+#: upstream/_guides/security-jpa.adoc:181
 #, fuzzy, no-wrap
 msgid "References"
 msgstr "Referencias"
 
 #. type: Plain text
-#: upstream/_guides/security-jpa.adoc:179
+#: upstream/_guides/security-jpa.adoc:184
 #, fuzzy
 msgid "xref:security-basic-authentication-tutorial.adoc[Secure a Quarkus application with Basic authentication and Jakarta Persistence]"
 msgstr "link:security-basic-authentication-tutorial.html[Proteger una aplicación Quarkus con autenticación básica y Jakarta Persistence]"
 
 #. type: Plain text
-#: upstream/_guides/security-jpa.adoc:180
+#: upstream/_guides/security-jpa.adoc:185
 #, fuzzy
 msgid "xref:security-identity-providers.adoc[Identity providers]"
 msgstr "link:security-identity-providers.html[Proveedores de identidad]"
 
 #. type: Plain text
-#: upstream/_guides/security-jpa.adoc:180
+#: upstream/_guides/security-jpa.adoc:185
 #, fuzzy
 msgid "xref:security-overview.adoc[Quarkus Security overview]"
 msgstr "link:security.html[Seguridad Quarkus]"

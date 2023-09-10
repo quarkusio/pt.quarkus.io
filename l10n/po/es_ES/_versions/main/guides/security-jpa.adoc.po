@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-08-06 08:16+0000\n"
+"POT-Creation-Date: 2023-09-10 08:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -259,16 +259,24 @@ msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/security-jpa.adoc:129
-msgid "For manual password hashing, create a class that implements the `CustomPasswordProvider`as shown in the example below."
+msgid "To represent passwords stored in the database which were hashed using different hashing algorithms, create a class that implements `org.wildfly.security.password.PasswordProvider` as shown in the example below."
 msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/security-jpa.adoc:131
-msgid "The following snippet shows how to set a custom password provider that uses the SHA256 hashing algorithm."
+msgid "The following snippet shows how to set a custom password provider that represents a password which was hashed with the SHA256 hashing algorithm."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-jpa.adoc:141
+#: upstream/_versions/main/guides/security-jpa.adoc:136
+#, no-wrap
+msgid ""
+"import org.wildfly.security.password.Password;\n"
+"import org.wildfly.security.password.PasswordProvider;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-jpa.adoc:144
 #, no-wrap
 msgid ""
 "@UserDefinition\n"
@@ -281,7 +289,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-jpa.adoc:145
+#: upstream/_versions/main/guides/security-jpa.adoc:148
 #, no-wrap
 msgid ""
 "    @Column(name = \"username\")\n"
@@ -290,7 +298,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-jpa.adoc:149
+#: upstream/_versions/main/guides/security-jpa.adoc:152
 #, no-wrap
 msgid ""
 "    @Column(name = \"password\")\n"
@@ -299,7 +307,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/security-jpa.adoc:153
+#: upstream/_versions/main/guides/security-jpa.adoc:156
 #, no-wrap
 msgid ""
 "    @Roles\n"
@@ -313,46 +321,53 @@ msgstr ""
 msgid ""
 "public class CustomPasswordProvider implements PasswordProvider {\n"
 "    @Override\n"
-"    public Password getPassword(String pass) {\n"
-"        byte[] digest = DatatypeConverter.parseHexBinary(pass);\n"
+"    public Password getPassword(String passwordInDatabase) {\n"
+"        byte[] digest = DatatypeConverter.parseHexBinary(passwordInDatabase);\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-jpa.adoc:166
+#, no-wrap
+msgid ""
+"        // Let the security runtime know that this passwordInDatabase is hashed using the SHA256 hashing algorithm\n"
 "        return SimpleDigestPassword.createRaw(SimpleDigestPassword.ALGORITHM_SIMPLE_DIGEST_SHA_256, digest);\n"
 "    }\n"
 "}\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/security-jpa.adoc:167
+#: upstream/_versions/main/guides/security-jpa.adoc:172
 msgid "For quick creation of a hashed password, use `String BcryptUtil.bcryptHash(String password)`, which defaults to creating a random salt and hashing in ten iterations.  This method also allows specifying the desired amount of iterations and the salt used."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/security-jpa.adoc:172
+#: upstream/_versions/main/guides/security-jpa.adoc:177
 msgid "For applications running in a production environment, do not store passwords as plain text."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/security-jpa.adoc:174
+#: upstream/_versions/main/guides/security-jpa.adoc:179
 msgid "However, it is possible to store passwords as plain text with the `@Password(PasswordType.CLEAR)` annotation when operating in a test environment."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/security-jpa.adoc:176
+#: upstream/_versions/main/guides/security-jpa.adoc:181
 #, no-wrap
 msgid "References"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-jpa.adoc:179
+#: upstream/_versions/main/guides/security-jpa.adoc:184
 msgid "xref:security-basic-authentication-tutorial.adoc[Secure a Quarkus application with Basic authentication and Jakarta Persistence]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-jpa.adoc:180
+#: upstream/_versions/main/guides/security-jpa.adoc:185
 msgid "xref:security-identity-providers.adoc[Identity providers]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-jpa.adoc:180
+#: upstream/_versions/main/guides/security-jpa.adoc:185
 msgid "xref:security-overview.adoc[Quarkus Security overview]"
 msgstr ""
 
