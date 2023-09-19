@@ -1,8 +1,8 @@
-# es.quarkus.io
+# pt.quarkus.io
 
-Spanish Localization project for [https://github.com/quarkusio/quarkusio.github.io](https://github.com/quarkusio/quarkusio.github.io) (The repository for [quarkus.io website](https://quarkus.io))
+Portuguese Brazilian Localization project for [https://github.com/quarkusio/quarkusio.github.io](https://github.com/quarkusio/quarkusio.github.io) (The repository for [quarkus.io website](https://quarkus.io))
 
-Localized site: [https://es.quarkus.io/](https://es.quarkus.io)
+Localized site: [https://pt.quarkus.io/](https://pt.quarkus.io)
 
 ## Localization architecture
 
