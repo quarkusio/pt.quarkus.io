@@ -8,7 +8,7 @@ Localized site: [https://pt.quarkus.io/](https://pt.quarkus.io)
 
 Original [quarkusio.github.io](https://github.com/quarkusio/quarkusio.github.io) is built with Jekyll, 
 and most of its contents are written in asciidoctor (.adoc) files.
-es-quarkusio extracts texts to po files with [po4a](https://po4a.org/) utility, translates, 
+pt.quarkus.io extracts texts to po files with [po4a](https://po4a.org/) utility, translates, 
 write back to asciidoctor files, and build a localized site.
 Most workflow including pre-translation by DeepL API are automated by GitHub Actions. 
 Translators can focus on post-editing to improve fluency.
@@ -20,7 +20,7 @@ If you are interested in contributing localization, please edit .po files, and s
 
 #### sync workflow
 
-es-quarkusio GitHub repository has a GitHub Actions workflow which checks upstream repository(submodule) update, 
+The `pt.quarkus.io` GitHub repository has a GitHub Actions workflow which checks upstream repository(submodule) update, 
 extracts texts from upstream .adoc files to [.adoc.po files](l10n/po), pre-translate with a translation memory 
 and the DeepL API.
 
@@ -79,5 +79,5 @@ For translators, we have a [translation guide(es)](./translation-guide.es.md).
 
 ## License
 
-es-quarkusio is Open Source Project released under the
+pt.quarkus.io is Open Source Project released under the
 [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html).
