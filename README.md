@@ -75,7 +75,7 @@ We'll appreciate if you post-edit the corresponding .adoc.po files to polish up,
 
 Submitting a pull request, and reporting an issue are all welcome.
 
-For translators, we have a [translation guide(es)](./translation-guide.es.md).
+For translators, we have a [translation guide(pt)](./translation-guide.pt.md).
 
 ## License
 
