@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-09-21 08:25+0900\n"
+"POT-Creation-Date: 2023-09-24 08:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -283,11 +283,26 @@ msgstr "Corpo da mensagem baseado em modelos Qute"
 #. type: Plain text
 #: upstream/_guides/mailer-reference.adoc:158
 #, fuzzy
-msgid "It's possible to inject a mail template, where the message body is created automatically using xref:qute.adoc[Qute templates]."
+msgid "It's also possible to send an e-mail where the message body is created automatically using xref:qute.adoc[Qute templates]."
 msgstr "É possível injetar um modelo de correio, em que o corpo da mensagem é criado automaticamente utilizando  link:qute.html[modelos Qute]."
 
+#. type: Plain text
+#: upstream/_guides/mailer-reference.adoc:161
+msgid "You can define a type-safe mail template in your Java code.  Just annotate a class with `@io.quarkus.qute.CheckedTemplate` and all its `static native` methods that return `MailTemplate` will be used to define type-safe mail templates and the list of parameters they require:"
+msgstr ""
+
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:163
+#: upstream/_guides/mailer-reference.adoc:166
+#: upstream/_guides/mailer-reference.adoc:199
+#, no-wrap
+msgid ""
+"import io.quarkus.mailer.MailTemplate;\n"
+"import io.quarkus.qute.CheckedTemplate;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/mailer-reference.adoc:169
+#: upstream/_guides/mailer-reference.adoc:202
 #, no-wrap
 msgid ""
 "@Path(\"\")\n"
@@ -295,7 +310,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:168
+#: upstream/_guides/mailer-reference.adoc:174
 #, no-wrap
 msgid ""
 "    @CheckedTemplate\n"
@@ -305,7 +320,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:179
+#: upstream/_guides/mailer-reference.adoc:185
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -321,46 +336,84 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:182
+#: upstream/_guides/mailer-reference.adoc:188
 #, fuzzy
 msgid "By convention, the enclosing class name and method names are used to locate the template. In this particular case, we will use the `src/main/resources/templates/MailingResource/hello.html` and `src/main/resources/templates/MailingResource/hello.txt` templates to create the message body."
 msgstr "Por convenção, o nome da classe envolvente e os nomes dos métodos são utilizados para localizar o modelo. Neste caso específico, utilizaremos os modelos `src/main/resources/templates/MailingResource/hello.html` e `src/main/resources/templates/MailingResource/hello.txt` para criar o corpo da mensagem."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:183
-#: upstream/_guides/mailer-reference.adoc:210
+#: upstream/_guides/mailer-reference.adoc:189
+#: upstream/_guides/mailer-reference.adoc:220
+#: upstream/_guides/mailer-reference.adoc:246
 #, fuzzy
 msgid "Set the data used in the template."
 msgstr "Define os dados utilizados no modelo."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:184
-#: upstream/_guides/mailer-reference.adoc:209
+#: upstream/_guides/mailer-reference.adoc:190
+#: upstream/_guides/mailer-reference.adoc:221
+#: upstream/_guides/mailer-reference.adoc:245
 #, fuzzy
 msgid "Create a mail template instance and set the recipient."
 msgstr "Criar uma instância de modelo de correio eletrónico e definir o destinatário."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:185
-#: upstream/_guides/mailer-reference.adoc:211
+#: upstream/_guides/mailer-reference.adoc:191
+#: upstream/_guides/mailer-reference.adoc:222
+#: upstream/_guides/mailer-reference.adoc:247
 #, fuzzy
 msgid "`MailTemplate.send()` triggers the rendering and, once finished, sends the e-mail via a `Mailer` instance."
 msgstr "`MailTemplate.send()` desencadeia a renderização e, uma vez terminada, envia a mensagem de correio eletrónico através de uma instância `Mailer`."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:188
-#, fuzzy
-msgid "Injected mail templates are validated during build.  The build fails if there is no matching template in `src/main/resources/templates`."
-msgstr "Os modelos de correio injectados são validados durante a compilação. A compilação falha se não existir um modelo correspondente em `src/main/resources/templates`."
+#: upstream/_guides/mailer-reference.adoc:194
+msgid "Alternatively, use a Java record that implements `io.quarkus.mailer.MailTemplate`.  The record components represent the template parameters."
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/mailer-reference.adoc:205
+#, no-wrap
+msgid ""
+"    record hello(String name) implements MailTemplateInstance { // <1>\n"
+"    }\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/mailer-reference.adoc:216
+#, no-wrap
+msgid ""
+"    @GET\n"
+"    @Path(\"/mail\")\n"
+"    public Uni<Void> send() {\n"
+"        // the template looks like: Hello {name}! // <2>\n"
+"        return new hello(\"John\")\n"
+"           .to(\"to@acme.org\")  // <3>\n"
+"           .subject(\"Hello from Qute template\")\n"
+"           .send(); // <4>\n"
+"    }\n"
+"}\n"
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:190
+#: upstream/_guides/mailer-reference.adoc:219
+#, fuzzy
+msgid "By convention, the enclosing class name and the record name are used to locate the template. In this particular case, we will use the `src/main/resources/templates/MailingResource/hello.html` and `src/main/resources/templates/MailingResource/hello.txt` templates to create the message body."
+msgstr "Por convenção, o nome da classe envolvente e os nomes dos métodos são utilizados para localizar o modelo. Neste caso específico, utilizaremos os modelos `src/main/resources/templates/MailingResource/hello.html` e `src/main/resources/templates/MailingResource/hello.txt` para criar o corpo da mensagem."
+
+#. type: Plain text
+#: upstream/_guides/mailer-reference.adoc:224
 #, fuzzy
 msgid "You can also do this without type-safe templates:"
 msgstr "Também é possível fazer isso sem modelos seguros para o tipo:"
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:196
+#: upstream/_guides/mailer-reference.adoc:228
+#, no-wrap
+msgid "import io.quarkus.mailer.MailTemplate;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_guides/mailer-reference.adoc:232
 #, no-wrap
 msgid ""
 "@Inject\n"
@@ -369,7 +422,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:205
+#: upstream/_guides/mailer-reference.adoc:241
 #, no-wrap
 msgid ""
 "@GET\n"
@@ -383,49 +436,55 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:208
+#: upstream/_guides/mailer-reference.adoc:244
 #, fuzzy
 msgid "If there is no `@Location` qualifier provided, the field name is used to locate the template.  Otherwise, search for the template as the specified location. In this particular case, we will use the `src/main/resources/templates/hello.html` and `src/main/resources/templates/hello.txt` templates to create the message body."
 msgstr "Se não for fornecido um qualificador `@Location`, o nome do campo é utilizado para localizar o modelo. Caso contrário, procura-se o modelo como a localização especificada. Neste caso específico, utilizaremos os modelos `src/main/resources/templates/hello.html` e `src/main/resources/templates/hello.txt` para criar o corpo da mensagem."
 
+#. type: Plain text
+#: upstream/_guides/mailer-reference.adoc:250
+#, fuzzy
+msgid "Injected mail templates are validated during build.  The build fails if there is no matching template in `src/main/resources/templates`."
+msgstr "Os modelos de correio injectados são validados durante a compilação. A compilação falha se não existir um modelo correspondente em `src/main/resources/templates`."
+
 #. type: Title ==
-#: upstream/_guides/mailer-reference.adoc:213
+#: upstream/_guides/mailer-reference.adoc:252
 #, fuzzy, no-wrap
 msgid "Execution model"
 msgstr "Modelo de execução"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:217
+#: upstream/_guides/mailer-reference.adoc:256
 #, fuzzy
 msgid "The reactive mailer is non-blocking, and the results are provided on an I/O thread.  See the xref:quarkus-reactive-architecture.adoc[Quarkus Reactive Architecture documentation] for further details on this topic."
 msgstr "O mailer reativo não é bloqueante e os resultados são fornecidos numa thread de E/S. Consulte a  link:quarkus-reactive-architecture.html[documentação da Arquitetura Reactiva do Quarkus] para obter mais informações sobre este tópico."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:220
+#: upstream/_guides/mailer-reference.adoc:259
 #, fuzzy
 msgid "The non-reactive mailer blocks until the messages are sent to the SMTP server.  Note that does not mean that the message is delivered, just that it's been sent successfully to the SMTP server, which will be responsible for the delivery."
 msgstr "O mailer não reativo bloqueia até as mensagens serem enviadas para o servidor SMTP. Note-se que isto não significa que a mensagem seja entregue, apenas que foi enviada com êxito para o servidor SMTP, que será responsável pela entrega."
 
 #. type: Title ==
-#: upstream/_guides/mailer-reference.adoc:222
+#: upstream/_guides/mailer-reference.adoc:261
 #, fuzzy, no-wrap
 msgid "Testing email sending"
 msgstr "Testar o envio de correio eletrónico"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:227
+#: upstream/_guides/mailer-reference.adoc:266
 #, fuzzy
 msgid "Because it is very inconvenient to send emails during development and testing, you can set the `quarkus.mailer.mock` boolean configuration to `true` to prevent the actual sending of emails but instead print them on stdout and collect them in a `MockMailbox` bean instead.  This is the default if you are running Quarkus in `DEV` or `TEST` mode."
 msgstr "Como é muito inconveniente enviar mensagens de correio eletrónico durante o desenvolvimento e os testes, pode definir a configuração booleana `quarkus.mailer.mock` para `true` para impedir o envio de mensagens de correio eletrónico, mas imprimi-las no stdout e recolhê-las num bean `MockMailbox`. Esta é a predefinição se estiver a executar o Quarkus no modo `DEV` ou `TEST`."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:229
+#: upstream/_guides/mailer-reference.adoc:268
 #, fuzzy
 msgid "You can then write tests to verify that your emails were sent, for example, by a REST endpoint:"
 msgstr "Pode então escrever testes para verificar se os seus e-mails foram enviados, por exemplo, por um ponto de extremidade REST:"
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:234
+#: upstream/_guides/mailer-reference.adoc:273
 #, no-wrap
 msgid ""
 "@QuarkusTest\n"
@@ -433,13 +492,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:236
+#: upstream/_guides/mailer-reference.adoc:275
 #, no-wrap
 msgid "    private static final String TO = \"foo@quarkus.io\";\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:239
+#: upstream/_guides/mailer-reference.adoc:278
 #, no-wrap
 msgid ""
 "    @Inject\n"
@@ -447,7 +506,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:244
+#: upstream/_guides/mailer-reference.adoc:283
 #, no-wrap
 msgid ""
 "    @BeforeEach\n"
@@ -457,7 +516,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:254
+#: upstream/_guides/mailer-reference.adoc:293
 #, no-wrap
 msgid ""
 "    @Test\n"
@@ -472,7 +531,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:261
+#: upstream/_guides/mailer-reference.adoc:300
 #, no-wrap
 msgid ""
 "        // verify that it was sent\n"
@@ -484,7 +543,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:265
+#: upstream/_guides/mailer-reference.adoc:304
 #, no-wrap
 msgid ""
 "        assertThat(mailbox.getTotalMessagesSent()).isEqualTo(6);\n"
@@ -493,79 +552,79 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/mailer-reference.adoc:267
+#: upstream/_guides/mailer-reference.adoc:306
 #, fuzzy, no-wrap
 msgid "Using the underlying Vert.x Mail Client"
 msgstr "Utilizar o cliente de correio Vert.x subjacente"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:271
+#: upstream/_guides/mailer-reference.adoc:310
 #, fuzzy
 msgid "The Quarkus Mailer is implemented on top of the https://vertx.io/docs/vertx-mail-client/java/[Vert.x Mail Client], providing an asynchronous and non-blocking way to send emails.  If you need fine control on how the mail is sent, for instance if you need to retrieve the message ids, you can inject the underlying client, and use it directly:"
 msgstr "O Quarkus Mailer é implementado em cima do  link:https://vertx.io/docs/vertx-mail-client/java/[Cliente de Correio Vert.x], fornecendo uma forma assíncrona e não bloqueante de enviar e-mails. Se precisar de um controlo preciso sobre a forma como o correio é enviado, por exemplo, se precisar de obter os IDs das mensagens, pode injetar o cliente subjacente e utilizá-lo diretamente:"
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:275
+#: upstream/_guides/mailer-reference.adoc:314
 #, no-wrap
 msgid "@Inject MailClient client;\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:278
+#: upstream/_guides/mailer-reference.adoc:317
 #, fuzzy
 msgid "Three API flavors are exposed:"
 msgstr "São expostos três tipos de API:"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:280
+#: upstream/_guides/mailer-reference.adoc:319
 #, fuzzy
 msgid "the Mutiny client (`io.vertx.mutiny.ext.mail.MailClient`)"
 msgstr "o cliente Mutiny ( `io.vertx.mutiny.ext.mail.MailClient`)"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:281
+#: upstream/_guides/mailer-reference.adoc:320
 #, fuzzy
 msgid "the bare client (`io.vertx.ext.mail.MailClient`)"
 msgstr "o cliente simples ( `io.vertx.ext.mail.MailClient`)"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:283
+#: upstream/_guides/mailer-reference.adoc:322
 #, fuzzy
 msgid "Check the xref:vertx.adoc[Using Vert.x guide] for further details about these different APIs and how to select the most suitable for you."
 msgstr "Consulte o  link:vertx.html[guia Utilizar o Vert.x] para obter mais informações sobre estas diferentes API e como selecionar a mais adequada para si."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:286
+#: upstream/_guides/mailer-reference.adoc:325
 #, fuzzy
 msgid "The retrieved `MailClient` is configured using the configuration key presented above.  You can also create your own instance, and pass your own configuration."
 msgstr "O `MailClient` recuperado é configurado utilizando a chave de configuração apresentada acima. Também pode criar a sua própria instância e passar a sua própria configuração."
 
 #. type: Title ==
-#: upstream/_guides/mailer-reference.adoc:288
+#: upstream/_guides/mailer-reference.adoc:327
 #, fuzzy, no-wrap
 msgid "Using SSL with native executables"
 msgstr "Utilizar SSL com executáveis nativos"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:292
+#: upstream/_guides/mailer-reference.adoc:331
 #, fuzzy
 msgid "Note that if you enable SSL for the mailer and you want to build a native executable, you will need to enable the SSL support.  Please refer to the xref:native-and-ssl.adoc[Using SSL With Native Executables] guide for more information."
 msgstr "Note que se ativar o SSL para o mailer e pretender construir um executável nativo, terá de ativar o suporte SSL. Consulte o guia  link:native-and-ssl.html[Usando SSL com executáveis nativos] para obter mais informações."
 
 #. type: Title ==
-#: upstream/_guides/mailer-reference.adoc:293
+#: upstream/_guides/mailer-reference.adoc:332
 #, fuzzy, no-wrap
 msgid "Configuring the SMTP credentials"
 msgstr "Configurar as credenciais SMTP"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:299
+#: upstream/_guides/mailer-reference.adoc:338
 #, fuzzy
 msgid "It is recommended to encrypt any sensitive data, such as the `quarkus.mailer.password`.  One approach is to save the value into a secure store like HashiCorp Vault, and refer to it from the configuration.  Assuming for instance that Vault contains key `mail-password` at path `myapps/myapp/myconfig`, then the mailer extension can be simply configured as:"
 msgstr "Recomenda-se a encriptação de quaisquer dados sensíveis, tais como `quarkus.mailer.password`. Uma abordagem consiste em guardar o valor num armazenamento seguro, como o HashiCorp Vault, e referi-lo a partir da configuração. Supondo, por exemplo, que o Vault contém a chave `mail-password` no caminho `myapps/myapp/myconfig`, então a extensão de correio pode ser simplesmente configurada como:"
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:306
+#: upstream/_guides/mailer-reference.adoc:345
 #, no-wrap
 msgid ""
 "...\n"
@@ -575,7 +634,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:309
+#: upstream/_guides/mailer-reference.adoc:348
 #, no-wrap
 msgid ""
 "...\n"
@@ -583,37 +642,37 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:312
+#: upstream/_guides/mailer-reference.adoc:351
 #, fuzzy
 msgid "Please note that the password value is evaluated only once, at startup time. If `mail-password` was changed in Vault, the only way to get the new value would be to restart the application."
 msgstr "Tenha em atenção que o valor da palavra-passe é avaliado apenas uma vez, no momento do arranque. Se `mail-password` foi alterado no Vault, a única forma de obter o novo valor seria reiniciar a aplicação."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:316
+#: upstream/_guides/mailer-reference.adoc:355
 #, fuzzy
 msgid "Do use Vault, you need the https://github.com/quarkiverse/quarkus-vault[Quarkus Vault] extension.  More details about this extension and its configuration can be found in the https://quarkiverse.github.io/quarkiverse-docs/quarkus-vault/dev/index.html[extension documentation]."
 msgstr "Para utilizar o Vault, é necessária a extensão  link:https://github.com/quarkiverse/quarkus-vault[Quarkus Vault]. Pode encontrar mais pormenores sobre esta extensão e a sua configuração na  link:https://quarkiverse.github.io/quarkiverse-docs/quarkus-vault/dev/index.html[documentação da extensão]."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:320
+#: upstream/_guides/mailer-reference.adoc:359
 #, fuzzy
 msgid "For more information about the Mailer configuration please refer to the xref:configuration-reference[Configuration Reference]."
 msgstr "Para mais informações sobre a configuração do Mailer, consulte a  link:#configuration-reference[Referência de configuração]."
 
 #. type: Title ==
-#: upstream/_guides/mailer-reference.adoc:321
+#: upstream/_guides/mailer-reference.adoc:360
 #, fuzzy, no-wrap
 msgid "Configuring a trust store"
 msgstr "Configuração de um armazenamento de confiança"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:324
+#: upstream/_guides/mailer-reference.adoc:363
 #, fuzzy
 msgid "If your SMTP requires a trust store, you can configure the trust store as follows:"
 msgstr "Se o SMTP exigir um armazenamento de confiança, pode configurar o armazenamento de confiança da seguinte forma:"
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:333
+#: upstream/_guides/mailer-reference.adoc:372
 #, no-wrap
 msgid ""
 "quarkus.mailer.host=...\n"
@@ -625,43 +684,43 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:338
+#: upstream/_guides/mailer-reference.adoc:377
 #, fuzzy
 msgid "Quarkus mailer supports JKS, PKCS#12 and PEM trust stores.  For PEM, you can configure multiple files.  For JKS and PKCS#12, you can configure the password if any."
 msgstr "O Quarkus mailer suporta armazenamentos fidedignos JKS, PKCS#12 e PEM. No caso do PEM, pode configurar vários ficheiros. Para JKS e PKCS#12, pode configurar a palavra-passe, caso exista."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:341
+#: upstream/_guides/mailer-reference.adoc:380
 #, fuzzy
 msgid "`quarkus.mailer.trust-store.type` is optional and allows configuring the type of trust store (among `JKS`, `PEM` and `PKCS`).  When not set, Quarkus tries to deduce the type from the file name."
 msgstr "`quarkus.mailer.trust-store.type` é opcional e permite configurar o tipo de armazenamento fidedigno (entre `JKS`, `PEM` e `PKCS`). Quando não está definido, o Quarkus tenta deduzir o tipo a partir do nome do ficheiro."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:343
+#: upstream/_guides/mailer-reference.adoc:382
 #, fuzzy
 msgid "You can also configure `quarkus.mailer.trust-all=true` to bypass the verification."
 msgstr "Também é possível configurar `quarkus.mailer.trust-all=true` para ignorar a verificação."
 
 #. type: Title ==
-#: upstream/_guides/mailer-reference.adoc:344
+#: upstream/_guides/mailer-reference.adoc:383
 #, fuzzy, no-wrap
 msgid "Multiple mailer configurations"
 msgstr "Múltiplas configurações de correio"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:347
+#: upstream/_guides/mailer-reference.adoc:386
 #, fuzzy
 msgid "Some applications require to send mails through different SMTP servers."
 msgstr "Algumas aplicações exigem o envio de mensagens de correio eletrónico através de diferentes servidores SMTP."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:349
+#: upstream/_guides/mailer-reference.adoc:388
 #, fuzzy
 msgid "This use case is perfectly supported in Quarkus and you can configure several mailers:"
 msgstr "Este caso de utilização é perfeitamente suportado no Quarkus e pode configurar vários mailers:"
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:354
+#: upstream/_guides/mailer-reference.adoc:393
 #, no-wrap
 msgid ""
 "quarkus.mailer.from=your-from-address@gmail.com <1>\n"
@@ -669,7 +728,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:358
+#: upstream/_guides/mailer-reference.adoc:397
 #, no-wrap
 msgid ""
 "quarkus.mailer.aws.from=your-from-address@gmail.com <2>\n"
@@ -678,7 +737,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:362
+#: upstream/_guides/mailer-reference.adoc:401
 #, no-wrap
 msgid ""
 "quarkus.mailer.sendgrid.from=your-from-address@gmail.com <3>\n"
@@ -687,31 +746,31 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:364
+#: upstream/_guides/mailer-reference.adoc:403
 #, fuzzy
 msgid "Configuration for the default mailer."
 msgstr "Configuração do correio eletrónico predefinido."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:365
+#: upstream/_guides/mailer-reference.adoc:404
 #, fuzzy
 msgid "Configuration for a mailer named `aws`."
 msgstr "Configuração de um mailer com o nome `aws`."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:366
+#: upstream/_guides/mailer-reference.adoc:405
 #, fuzzy
 msgid "Configuration for a mailer named `sendgrid`."
 msgstr "Configuração de um mailer com o nome `sendgrid`."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:368
+#: upstream/_guides/mailer-reference.adoc:407
 #, fuzzy
 msgid "Then, access your named mailers by using the `@MailerName` CDI qualifier:"
 msgstr "Em seguida, aceda aos seus mailers nomeados utilizando o qualificador `@MailerName` CDI:"
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:373
+#: upstream/_guides/mailer-reference.adoc:412
 #, no-wrap
 msgid ""
 "@Inject <1>\n"
@@ -719,7 +778,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:376
+#: upstream/_guides/mailer-reference.adoc:415
 #, no-wrap
 msgid ""
 "@Inject <1>\n"
@@ -727,7 +786,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:380
+#: upstream/_guides/mailer-reference.adoc:419
 #, no-wrap
 msgid ""
 "@Inject <1>\n"
@@ -736,7 +795,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:384
+#: upstream/_guides/mailer-reference.adoc:423
 #, no-wrap
 msgid ""
 "@Inject\n"
@@ -745,7 +804,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:388
+#: upstream/_guides/mailer-reference.adoc:427
 #, no-wrap
 msgid ""
 "@Inject\n"
@@ -754,7 +813,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:393
+#: upstream/_guides/mailer-reference.adoc:432
 #, no-wrap
 msgid ""
 "@Inject\n"
@@ -764,7 +823,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:397
+#: upstream/_guides/mailer-reference.adoc:436
 #, no-wrap
 msgid ""
 "@Inject\n"
@@ -773,7 +832,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:401
+#: upstream/_guides/mailer-reference.adoc:440
 #, no-wrap
 msgid ""
 "@Inject\n"
@@ -782,7 +841,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:406
+#: upstream/_guides/mailer-reference.adoc:445
 #, no-wrap
 msgid ""
 "@Inject\n"
@@ -792,79 +851,79 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:408
+#: upstream/_guides/mailer-reference.adoc:447
 #, fuzzy
 msgid "Inject instances without qualifier for the default configuration."
 msgstr "Injetar instâncias sem qualificador para a configuração predefinida."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:409
+#: upstream/_guides/mailer-reference.adoc:448
 #, fuzzy
 msgid "Inject instances with the `@MailerName(\"aws\")` qualifier for the `aws` configuration."
 msgstr "Injetar instâncias com o qualificador `@MailerName(\"aws\")` para a configuração `aws`."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:410
+#: upstream/_guides/mailer-reference.adoc:449
 #, fuzzy
 msgid "Inject instances with the `@MailerName(\"sendgrid\")` qualifier for the `sendgrid` configuration."
 msgstr "Injetar instâncias com o qualificador `@MailerName(\"sendgrid\")` para a configuração `sendgrid`."
 
 #. type: delimited block =
-#: upstream/_guides/mailer-reference.adoc:414
+#: upstream/_guides/mailer-reference.adoc:453
 #, fuzzy
 msgid "Type-safe template using `@CheckedTemplate` are currently only supported for the default mailer configuration."
 msgstr "O modelo seguro de tipo que utiliza `@CheckedTemplate` só é atualmente suportado na configuração predefinida do mailer."
 
 #. type: delimited block =
-#: upstream/_guides/mailer-reference.adoc:416
+#: upstream/_guides/mailer-reference.adoc:455
 #, fuzzy
 msgid "Use `MailTemplate` injection for the named mailer configurations."
 msgstr "Utilizar `MailTemplate` injeção para as configurações do mailer nomeado."
 
 #. type: Title ==
-#: upstream/_guides/mailer-reference.adoc:419
+#: upstream/_guides/mailer-reference.adoc:458
 #, fuzzy, no-wrap
 msgid "Mailer configuration for popular email services"
 msgstr "Configuração do mailer para serviços de correio eletrónico populares"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:422
+#: upstream/_guides/mailer-reference.adoc:461
 #, fuzzy
 msgid "This section provides the configurations to use with popular mail services."
 msgstr "Esta secção fornece as configurações a utilizar com serviços de correio populares."
 
 #. type: Title ===
-#: upstream/_guides/mailer-reference.adoc:424
+#: upstream/_guides/mailer-reference.adoc:463
 #, fuzzy, no-wrap
 msgid "Gmail specific configuration"
 msgstr "Configuração específica do Gmail"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:427
+#: upstream/_guides/mailer-reference.adoc:466
 #, fuzzy
 msgid "If you want to use the Gmail SMTP server, first create a dedicated password in `Google Account > Security > App passwords` or go to https://myaccount.google.com/apppasswords."
 msgstr "Se pretender utilizar o servidor SMTP do Gmail, comece por criar uma palavra-passe dedicada em `Google Account &amp;gt; Security &amp;gt; App passwords` ou aceda a  https://myaccount.google.com/apppasswords"
 
 #. type: delimited block =
-#: upstream/_guides/mailer-reference.adoc:431
+#: upstream/_guides/mailer-reference.adoc:470
 #, fuzzy
 msgid "You need to switch on 2-Step Verification at https://myaccount.google.com/security in order to access the App passwords page."
 msgstr "É necessário ativar a verificação em duas etapas em  https://myaccount.google.com/security  para aceder à página de palavras-passe da aplicação."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:434
+#: upstream/_guides/mailer-reference.adoc:473
 #, fuzzy
 msgid "When done, you can configure your Quarkus application by adding the following properties to your `application.properties`:"
 msgstr "Quando terminar, pode configurar a sua aplicação Quarkus adicionando as seguintes propriedades ao seu `application.properties`:"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:436
+#: upstream/_guides/mailer-reference.adoc:475
 #, fuzzy
 msgid "With TLS:"
 msgstr "Com TLS:"
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:446
+#: upstream/_guides/mailer-reference.adoc:485
 #, no-wrap
 msgid ""
 "quarkus.mailer.auth-methods=DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN\n"
@@ -877,23 +936,23 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:448
-#: upstream/_guides/mailer-reference.adoc:463
-#: upstream/_guides/mailer-reference.adoc:498
-#: upstream/_guides/mailer-reference.adoc:529
-#: upstream/_guides/mailer-reference.adoc:555
+#: upstream/_guides/mailer-reference.adoc:487
+#: upstream/_guides/mailer-reference.adoc:502
+#: upstream/_guides/mailer-reference.adoc:537
+#: upstream/_guides/mailer-reference.adoc:568
+#: upstream/_guides/mailer-reference.adoc:594
 #, no-wrap
 msgid "quarkus.mailer.mock=false # In dev mode, prevent from using the mock SMTP server\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:451
+#: upstream/_guides/mailer-reference.adoc:490
 #, fuzzy
 msgid "Or with SSL:"
 msgstr "Ou com SSL:"
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:461
+#: upstream/_guides/mailer-reference.adoc:500
 #, no-wrap
 msgid ""
 "quarkus.mailer.auth-methods=DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN\n"
@@ -906,59 +965,59 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_guides/mailer-reference.adoc:469
+#: upstream/_guides/mailer-reference.adoc:508
 #, fuzzy
 msgid "The `quarkus.mailer.auth-methods` configuration option is needed for the Quarkus mailer to support password authentication with Gmail.  By default, both the mailer and Gmail default to `XOAUTH2` which requires registering an application, getting tokens, etc."
 msgstr "A opção de configuração `quarkus.mailer.auth-methods` é necessária para que o servidor de correio Quarkus suporte a autenticação por palavra-passe com o Gmail. Por predefinição, tanto o mailer como o Gmail utilizam `XOAUTH2`, o que exige o registo de uma aplicação, a obtenção de tokens, etc."
 
 #. type: Title ===
-#: upstream/_guides/mailer-reference.adoc:471
+#: upstream/_guides/mailer-reference.adoc:510
 #, fuzzy, no-wrap
 msgid "AWS SES - Simple Email Service"
 msgstr "AWS SES - Serviço de correio eletrónico simples"
 
 #. type: Title ====
-#: upstream/_guides/mailer-reference.adoc:473
-#: upstream/_guides/mailer-reference.adoc:505
-#: upstream/_guides/mailer-reference.adoc:533
+#: upstream/_guides/mailer-reference.adoc:512
+#: upstream/_guides/mailer-reference.adoc:544
+#: upstream/_guides/mailer-reference.adoc:572
 #, fuzzy, no-wrap
 msgid "Prerequisites"
 msgstr "Pré-requisitos"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:476
+#: upstream/_guides/mailer-reference.adoc:515
 #, fuzzy
 msgid "SES Identity Check, follow the process to setup the DKIM verification"
 msgstr "SES Identity Check, siga o processo para configurar a verificação DKIM"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:477
+#: upstream/_guides/mailer-reference.adoc:516
 #, fuzzy
 msgid "Retrieve SMTP endpoint from https://us-east-1.console.aws.amazon.com/ses/home, example: `email-smtp.us-east-1.amazonaws.com`"
 msgstr "Recuperar o ponto final SMTP de  https://us-east-1.console.aws.amazon.com/ses/home  por exemplo: `email-smtp.us-east-1.amazonaws.com`"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:478
+#: upstream/_guides/mailer-reference.adoc:517
 #, fuzzy
 msgid "Create SMTP credentials if needed"
 msgstr "Criar credenciais SMTP, se necessário"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:479
+#: upstream/_guides/mailer-reference.adoc:518
 #, fuzzy
 msgid "If you are in a sandbox, also verify the recipients (using email verification)"
 msgstr "Se estiver numa área restrita, verifique também os destinatários (utilizando a verificação de correio eletrónico)"
 
 #. type: Title ====
-#: upstream/_guides/mailer-reference.adoc:480
-#: upstream/_guides/mailer-reference.adoc:510
-#: upstream/_guides/mailer-reference.adoc:537
+#: upstream/_guides/mailer-reference.adoc:519
+#: upstream/_guides/mailer-reference.adoc:549
+#: upstream/_guides/mailer-reference.adoc:576
 #, fuzzy, no-wrap
 msgid "Configuration"
 msgstr "Configuração"
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:488
+#: upstream/_guides/mailer-reference.adoc:527
 #, no-wrap
 msgid ""
 "ses.smtp=...\n"
@@ -968,7 +1027,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:496
+#: upstream/_guides/mailer-reference.adoc:535
 #, no-wrap
 msgid ""
 "quarkus.mailer.host=${ses.smtp}\n"
@@ -981,31 +1040,31 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/mailer-reference.adoc:500
+#: upstream/_guides/mailer-reference.adoc:539
 #, fuzzy, no-wrap
 msgid "MailJet"
 msgstr "MailJet"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:504
+#: upstream/_guides/mailer-reference.adoc:543
 #, fuzzy
 msgid "The mailjet integration is used on an SMTP relay.  You are going to send the email using this SMTP server."
 msgstr "A integração do mailjet é utilizada num relé SMTP. Vai enviar a mensagem de correio eletrónico utilizando este servidor SMTP."
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:508
+#: upstream/_guides/mailer-reference.adoc:547
 #, fuzzy
 msgid "Create a mailJet account and the API key / Secret Key"
 msgstr "Criar uma conta mailJet e a chave API / chave secreta"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:509
+#: upstream/_guides/mailer-reference.adoc:548
 #, fuzzy
 msgid "The sender address must be verified (SPF + DKIM) and the email explicitly added to the verified list"
 msgstr "O endereço do remetente deve ser verificado (SPF + DKIM) e o correio eletrónico deve ser explicitamente adicionado à lista de verificação"
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:518
+#: upstream/_guides/mailer-reference.adoc:557
 #, no-wrap
 msgid ""
 "mailjet.smtp-host=in-v3.mailjet.com\n"
@@ -1015,7 +1074,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:527
+#: upstream/_guides/mailer-reference.adoc:566
 #, no-wrap
 msgid ""
 "quarkus.mailer.host=${mailjet.smtp-host}\n"
@@ -1029,19 +1088,19 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/mailer-reference.adoc:531
+#: upstream/_guides/mailer-reference.adoc:570
 #, fuzzy, no-wrap
 msgid "Sendgrid"
 msgstr "Sendgrid"
 
 #. type: Plain text
-#: upstream/_guides/mailer-reference.adoc:536
+#: upstream/_guides/mailer-reference.adoc:575
 #, fuzzy
 msgid "Follow the instruction to verify the sender domain using DKIM"
 msgstr "Siga as instruções para verificar o domínio do remetente utilizando o DKIM"
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:544
+#: upstream/_guides/mailer-reference.adoc:583
 #, no-wrap
 msgid ""
 "sendgrid.smtp-host=smtp.sendgrid.net\n"
@@ -1050,7 +1109,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_guides/mailer-reference.adoc:553
+#: upstream/_guides/mailer-reference.adoc:592
 #, no-wrap
 msgid ""
 "quarkus.mailer.host=${sendgrid.smtp-host}\n"
@@ -1064,7 +1123,7 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/mailer-reference.adoc:558
+#: upstream/_guides/mailer-reference.adoc:597
 #, fuzzy, no-wrap
 msgid "Mailer Configuration Reference"
 msgstr "Referência de configuração do Mailer"
