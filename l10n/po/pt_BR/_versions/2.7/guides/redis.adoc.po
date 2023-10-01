@@ -199,7 +199,7 @@ msgstr "Vamos modelar os nossos incrementos utilizando o POJO `Increment`. Crie 
 #: upstream/_versions/2.7/guides/redis.adoc:257
 #, no-wrap
 msgid "package org.acme.redis;\n"
-msgstr ""
+msgstr "package org.acme.redis;\n"
 
 #. type: delimited block -
 #: upstream/_versions/2.7/guides/redis.adoc:114
@@ -405,7 +405,7 @@ msgstr ""
 #: upstream/_versions/2.7/guides/redis.adoc:212
 #, no-wrap
 msgid "import io.smallrye.mutiny.Uni;\n"
-msgstr ""
+msgstr "import io.smallrye.mutiny.Uni;\n"
 
 #. type: delimited block -
 #: upstream/_versions/2.7/guides/redis.adoc:215
@@ -432,6 +432,10 @@ msgid ""
 "        return service.keys();\n"
 "    }\n"
 msgstr ""
+"    @GET\n"
+"    public Uni<List<String>> chaves() {\n"
+"        return service.chaves();\n"
+"    }\n"
 
 #. type: delimited block -
 #: upstream/_versions/2.7/guides/redis.adoc:229
@@ -443,6 +447,11 @@ msgid ""
 "        return increment;\n"
 "    }\n"
 msgstr ""
+"    @POST\n"
+"    public Incremento create(Incremento incremento) {\n"
+"        service.set(incremento.chave, incremento.valor);\n"
+"        return incremento;\n"
+"    }\n"
 
 #. type: delimited block -
 #: upstream/_versions/2.7/guides/redis.adoc:235
@@ -493,31 +502,31 @@ msgstr ""
 #: upstream/_versions/2.7/guides/redis.adoc:259
 #, no-wrap
 msgid "import static org.hamcrest.Matchers.is;\n"
-msgstr ""
+msgstr "import static org.hamcrest.Matchers.is;\n"
 
 #. type: delimited block -
 #: upstream/_versions/2.7/guides/redis.adoc:261
 #, no-wrap
 msgid "import org.junit.jupiter.api.Test;\n"
-msgstr ""
+msgstr "import org.junit.jupiter.api.Test;\n"
 
 #. type: delimited block -
 #: upstream/_versions/2.7/guides/redis.adoc:263
 #, no-wrap
 msgid "import io.quarkus.test.junit.QuarkusTest;\n"
-msgstr ""
+msgstr "import io.quarkus.test.junit.QuarkusTest;\n"
 
 #. type: delimited block -
 #: upstream/_versions/2.7/guides/redis.adoc:265
 #, no-wrap
 msgid "import static io.restassured.RestAssured.given;\n"
-msgstr ""
+msgstr "import static io.restassured.RestAssured.given;\n"
 
 #. type: delimited block -
 #: upstream/_versions/2.7/guides/redis.adoc:267
 #, no-wrap
 msgid "import io.restassured.http.ContentType;\n"
-msgstr ""
+msgstr "import io.restassured.http.ContentType;\n"
 
 #. type: delimited block -
 #: upstream/_versions/2.7/guides/redis.adoc:270
@@ -542,6 +551,16 @@ msgid ""
 "                .statusCode(200)\n"
 "                .body(\"size()\", is(0));\n"
 msgstr ""
+"    @Test\n"
+"    public void testOperacoesRedis() {\n"
+"        // verifique que está vazio\n"
+"        given()\n"
+"                .accept(ContentType.JSON)\n"
+"                .when()\n"
+"                .get(\"/incrementos\")\n"
+"                .then()\n"
+"                .statusCode(200)\n"
+"                .body(\"size()\", is(0));\n"
 
 #. type: delimited block -
 #: upstream/_versions/2.7/guides/redis.adoc:293
@@ -559,6 +578,17 @@ msgid ""
 "                .body(\"key\", is(\"first-key\"))\n"
 "                .body(\"value\", is(0));\n"
 msgstr ""
+"        // cria a primeira chave de incremento com valor inicial 0\n"
+"        given()\n"
+"                .contentType(ContentType.JSON)\n"
+"                .accept(ContentType.JSON)\n"
+"                .body(\"{\\\"chave\\\":\\\"primeira-chave\\\",\\\"valor\\\":0}\")\n"
+"                .when()\n"
+"                .post(\"/incrementos\")\n"
+"                .then()\n"
+"                .statusCode(200)\n"
+"                .body(\"chave\", is(\"primeira-chave\"))\n"
+"                .body(\"valor\", is(0));\n"
 
 #. type: delimited block -
 #: upstream/_versions/2.7/guides/redis.adoc:305
@@ -576,6 +606,17 @@ msgid ""
 "                .body(\"key\", is(\"second-key\"))\n"
 "                .body(\"value\", is(10));\n"
 msgstr ""
+"        // cria a primeira chave de incremento com valor inicial 10\n"
+"        given()\n"
+"                .contentType(ContentType.JSON)\n"
+"                .accept(ContentType.JSON)\n"
+"                .body(\"{\\\"chave\\\":\\\"segunda-chave\\\",\\\"valor\\\":10}\")\n"
+"                .when()\n"
+"                .post(\"/incrementos\")\n"
+"                .then()\n"
+"                .statusCode(200)\n"
+"                .body(\"chave\", is(\"segunda-chave\"))\n"
+"                .body(\"valor\", is(10));\n"
 
 #. type: delimited block -
 #: upstream/_versions/2.7/guides/redis.adoc:314
@@ -704,6 +745,16 @@ msgid ""
 "    }\n"
 "}\n"
 msgstr ""
+"        // verifica que não existem mais chaves\n"
+"        given()\n"
+"                .accept(ContentType.JSON)\n"
+"                .when()\n"
+"                .get(\"/incrementos\")\n"
+"                .then()\n"
+"                .statusCode(200)\n"
+"                .body(\"size()\", is(0));\n"
+"    }\n"
+"}\n"
 
 #. type: Title ==
 #: upstream/_versions/2.7/guides/redis.adoc:390
@@ -742,7 +793,7 @@ msgstr ""
 #: upstream/_versions/2.7/guides/redis.adoc:410
 #, no-wrap
 msgid "curl -X POST -H \"Content-Type: application/json\" -d '{\"key\":\"first\",\"value\":10}' http://localhost:8080/increments <1>\n"
-msgstr ""
+msgstr "curl -X POST -H \"Content-Type: application/json\" -d '{\"chave\":\"primeira\",\"valor\":10}' http://localhost:8080/incrementos <1>\n"
 
 #. type: Plain text
 #: upstream/_versions/2.7/guides/redis.adoc:412
@@ -764,6 +815,10 @@ msgid ""
 "  \"value\": 10\n"
 "}\n"
 msgstr ""
+"{\n"
+"  \"chave\": \"primeira\",\n"
+"  \"valor\": 10\n"
+"}\n"
 
 #. type: Title ===
 #: upstream/_versions/2.7/guides/redis.adoc:423
@@ -780,7 +835,7 @@ msgstr ""
 #: upstream/_versions/2.7/guides/redis.adoc:430
 #, no-wrap
 msgid "curl http://localhost:8080/increments\n"
-msgstr ""
+msgstr "curl http://localhost:8080/incrementos\n"
 
 #. type: Plain text
 #: upstream/_versions/2.7/guides/redis.adoc:433
@@ -802,7 +857,7 @@ msgstr ""
 #: upstream/_versions/2.7/guides/redis.adoc:441
 #, no-wrap
 msgid "curl http://localhost:8080/increments/first <1>\n"
-msgstr ""
+msgstr "curl http://localhost:8080/increments/primeira <1>\n"
 
 #. type: Plain text
 #: upstream/_versions/2.7/guides/redis.adoc:443
@@ -824,7 +879,7 @@ msgstr ""
 #: upstream/_versions/2.7/guides/redis.adoc:459
 #, no-wrap
 msgid "curl -X PUT -H \"Content-Type: application/json\" -d '27' http://localhost:8080/increments/first <1>\n"
-msgstr ""
+msgstr "curl -X PUT -H \"Content-Type: application/json\" -d '27' http://localhost:8080/incrementos/primeira <1>\n"
 
 #. type: Plain text
 #: upstream/_versions/2.7/guides/redis.adoc:461
@@ -834,7 +889,7 @@ msgstr ""
 #. type: Plain text
 #: upstream/_versions/2.7/guides/redis.adoc:463
 msgid "Now, running the command `curl http://localhost:8080/increments/first` should return the following result:"
-msgstr ""
+msgstr "Agora, ao executar o comando `curl http://localhost:8080/incrementos/primeira` deve retornar o seguinte resultado:"
 
 #. type: delimited block -
 #: upstream/_versions/2.7/guides/redis.adoc:470
@@ -845,6 +900,10 @@ msgid ""
 "  \"value\": 37 <1>\n"
 "}\n"
 msgstr ""
+"{\n"
+"  \"chave\": \"primeira\",\n"
+"  \"valor\": 37 <1>\n"
+"}\n"
 
 #. type: Plain text
 #: upstream/_versions/2.7/guides/redis.adoc:472
@@ -866,7 +925,7 @@ msgstr ""
 #: upstream/_versions/2.7/guides/redis.adoc:480
 #, no-wrap
 msgid "curl -X DELETE  http://localhost:8080/increments/first <1>\n"
-msgstr ""
+msgstr "curl -X DELETE  http://localhost:8080/increments/primeira <1>\n"
 
 #. type: Plain text
 #: upstream/_versions/2.7/guides/redis.adoc:482
@@ -876,7 +935,7 @@ msgstr "Excluir o incremento `first`."
 #. type: Plain text
 #: upstream/_versions/2.7/guides/redis.adoc:484
 msgid "Now, running the command `curl http://localhost:8080/increments` should return an empty list `[]`"
-msgstr ""
+msgstr "Agora, ao executar o comando `curl http://localhost:8080/incrementos` deve retornar uma lista vazia `[]`"
 
 #. type: Title ==
 #: upstream/_versions/2.7/guides/redis.adoc:485
