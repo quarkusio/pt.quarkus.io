@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2023-09-21 08:25+0900\n"
-"PO-Revision-Date: 2023-10-01 21:05-0300\n"
+"PO-Revision-Date: 2023-10-01 22:20-0300\n"
 "Last-Translator: Bruno Lellis <brunolellis@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: upstream/_guides/virtual-threads.adoc:7
 #, no-wrap
 msgid "Virtual Thread support reference"
-msgstr "Referência de suporte da Virtual Thread"
+msgstr "Referência para da Threads Virtuais"
 
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:19
@@ -73,7 +73,7 @@ msgstr "Thread virtual"
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:33
 msgid "Lightweight, JVM-managed threads. They extend the link:{thread}[Thread] class but are not tied to one specific OS thread.  Thus, scheduling virtual threads is the responsibility of the JVM."
-msgstr "Threads leves e gerenciadas pela JVM. Elas estendem a classe link:{thread}[Thread], mas não estão vinculadas a uma thread específica do sistema operacional. Assim, o agendamento de threads virtuais é de responsabilidade da JVM."
+msgstr "Threads leves e gerenciadas pela JVM. Elas estendem a classe link:{thread}[Thread], mas não estão vinculadas a uma thread específica do sistema operacional. Portanto, o agendamento de threads virtuais é de responsabilidade da JVM."
 
 #. type: Labeled list
 #: upstream/_guides/virtual-threads.adoc:34
@@ -100,7 +100,7 @@ msgstr "Faremos aqui um breve resumo do tema; para mais informações, consulte 
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:42
 msgid "Virtual threads are a feature available since Java 19, aiming at providing a cheap alternative to platform threads for I/O-bound workloads."
-msgstr "As threads virtuais são uma funcionalidade disponível desde o Java 19, com o objetivo de fornecer uma alternativa barata às threads de plataforma para cargas de trabalho ligadas a E/S."
+msgstr "As threads virtuais são uma funcionalidade disponível desde o Java 19, com o objetivo de fornecer uma alternativa barata às threads de plataforma para operações ligadas a E/S."
 
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:46
@@ -121,7 +121,7 @@ msgstr "Leve "
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:54
 msgid "Virtual threads occupy less space than platform threads in memory.  Hence, it becomes possible to use more virtual threads than platform threads simultaneously without blowing up the memory.  By default, platform threads are created with a stack of about 1 MB, whereas virtual threads stack is \"pay-as-you-go.\" You can find these numbers and other motivations for virtual threads in this https://youtu.be/lIq-x_iI-kc?t=543[presentation] given by the lead developer of project Loom (the project that added the virtual thread support to the JVM)."
-msgstr "As threads virtuais ocupam menos espaço na memória do que as threads de plataforma. Assim, torna-se possível usar mais threads virtuais do que threads de plataforma simultaneamente sem estourar a memória. Por definição, as threads de plataforma são criadas com uma pilha de cerca de 1 MB, ao passo que a pilha das threads virtuais é \"paga à medida que se usa\". Pode encontrar estes números e outras motivações para as threads virtuais nesta  link:https://youtu.be/lIq-x_iI-kc?t=543[apresentação] feita pelo programador principal do projeto Loom (o projeto que adicionou o suporte de threads virtuais à JVM)."
+msgstr "As threads virtuais ocupam menos espaço na memória do que as threads de plataforma. Por isso, torna-se possível usar mais threads virtuais do que threads de plataforma simultaneamente sem estourar a memória. Por definição, as threads de plataforma são criadas com uma pilha de cerca de 1 MB, ao passo que a pilha das threads virtuais é \"paga à medida que se usa\". Você pode encontrar estes números e outras motivações para as threads virtuais nesta  link:https://youtu.be/lIq-x_iI-kc?t=543[apresentação] feita pelo programador principal do projeto Loom (o projeto que adicionou o suporte de threads virtuais à JVM)."
 
 #. type: Labeled list
 #: upstream/_guides/virtual-threads.adoc:55
@@ -143,7 +143,7 @@ msgstr "Barato para bloquear"
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:63
 msgid "When performing blocking I/O, the underlying OS thread wrapped by the Java platform thread is put in a wait queue, and a context switch occurs to load a new thread context onto the CPU core. This operation takes time.  Since the JVM manages virtual threads, no underlying OS thread is blocked when they perform a blocking operation.  Their state is stored in the heap, and another virtual thread is executed on the same Java platform (carrier) thread."
-msgstr "Ao executar E/S bloqueante, a thread do SO relacionada à thread da plataforma Java é colocada numa fila de espera e ocorre uma troca de contexto para carregar um novo contexto de thread no núcleo da CPU. Essa operação leva tempo. Uma vez que a JVM gerencia threads virtuais, nenhuma thread do SO é bloqueada quando uma operação de bloqueio é realizada. O seu estado é armazenado no heap e outra thread virtual é executada na mesma thread da plataforma Java (portadora/carrier)."
+msgstr "Ao executar E/S bloqueante, a thread do SO relacionada à thread da plataforma Java é colocada numa fila de espera e ocorre uma troca de contexto para carregar um novo contexto de thread no núcleo da CPU. Essa operação leva tempo. Uma vez que a JVM gerencia threads virtuais, nenhuma thread do SO é bloqueada quando uma operação de bloqueio é realizada. O seu estado é armazenado na heap e outra thread virtual é executada na mesma thread (carrier) da plataforma Java."
 
 #. type: Title ===
 #: upstream/_guides/virtual-threads.adoc:64
@@ -154,7 +154,7 @@ msgstr "A Dança da Continuação"
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:66
 msgid "As mentioned above, the JVM schedules the virtual threads. These virtual threads are mounted on carrier threads. The scheduling comes with a pinch of magic. When the virtual thread attempts to use blocking I/O, the JVM _transforms_ this call into a non-blocking one, unmounts the virtual thread, and mounts another virtual thread on the carrier thread. When the I/O completes, the _waiting_ virtual thread becomes eligible again and will be re-mounted on a carrier thread to continue its execution. For the user, all this dance is invisible. Your synchronous code is executed asynchronously."
-msgstr "Como mencionado acima, a JVM agenda as threads virtuais. Essas threads virtuais são montadas em carrier threads. O agendamento vem com uma pitada de magia. Quando a thread virtual tenta utilizar E/S bloqueante, a JVM _transforma_ esta chamada numa chamada não bloqueante, desmonta a thread virtual e monta outra thread virtual na carrier thread. Quando a E/S é concluída, a thread virtual _em espera_ torna-se novamente elegível e será montada novamente numa thread de suporte para continuar a sua execução. Para o utilizador, toda esta dança é invisível. O seu código síncrono é executado de forma assíncrona."
+msgstr "Como mencionado acima, a JVM agenda as threads virtuais. Essas threads virtuais são montadas em carrier threads. O agendamento vem com uma pitada de magia. Quando a thread virtual tenta utilizar E/S bloqueante, a JVM _transforma_ esta chamada numa chamada não bloqueante, desmonta a thread virtual e monta outra thread virtual na carrier thread. Quando a E/S é concluída, a thread virtual _em espera_ torna-se novamente elegível e será montada novamente numa carrier thread para continuar a sua execução. Para o utilizador, toda esta dança é invisível. O seu código síncrono é executado de forma assíncrona."
 
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:68
@@ -170,7 +170,7 @@ msgstr "As threads virtuais são úteis apenas para cargas de trabalho vinculada
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:78
 msgid "We now know we can create more virtual threads than platform threads. One could be tempted to use virtual threads to perform long computations (CPU-bound workload).  It is useless and counterproductive.  CPU-bound doesn't consist of quickly swapping threads while they need to wait for the completion of an I/O, but in leaving them attached to a CPU core to compute something.  In this scenario, it is worse than useless to have thousands of threads if we have tens of CPU cores, virtual threads won't enhance the performance of CPU-bound workloads.  Even worse, when running a CPU-bound workload on a virtual thread, the virtual thread monopolizes the carrier thread on which it is mounted.  It will either reduce the chance for the other virtual thread to run or will start creating new carrier threads, leading to high memory usage."
-msgstr "Agora sabemos que podemos criar mais threads virtuais do que threads de plataforma. Poderíamos sentir-nos tentados a utilizar threads virtuais para efetuar cálculos longos (carga de trabalho ligada à CPU). Isso é inútil e contraproducente. CPU-bound não consiste em trocar rapidamente as threads enquanto elas precisam esperar pela conclusão de uma E/S, mas em deixá-las conectadas a um núcleo de CPU para computar algo. Neste cenário, é pior do que inútil ter milhares de threads se temos dezenas de núcleos de CPU, threads virtuais não vão melhorar o desempenho de cargas de trabalho CPU-bound. Pior ainda, ao executar uma carga de trabalho CPU-bound em uma thread virtual, a thread virtual monopoliza a carrier thread na qual está montada. Ela reduzirá a chance de execução de outra thread virtual ou começará a criar novas carrier threads, levando a um alto uso de memória."
+msgstr "Agora sabemos que podemos criar mais threads virtuais do que threads de plataforma. Poderíamos sentir-nos tentados a utilizar threads virtuais para efetuar cálculos longos (carga de trabalho ligada à CPU). Isso é inútil e contraproducente. CPU-bound não consiste em trocar rapidamente as threads enquanto elas precisam esperar pela conclusão de uma E/S, mas em deixá-las conectadas a um núcleo de CPU para computar algo. Neste cenário, é péssimo ter milhares de threads se temos dezenas de núcleos de CPU, ou seja, threads virtuais não vão melhorar o desempenho de cargas de trabalho CPU-bound. Pior ainda, ao executar uma carga de trabalho CPU-bound em uma thread virtual, a thread virtual monopoliza a carrier thread na qual está montada. Isso quer dizer que ela reduzirá a chance de execução de outra thread virtual ou começará a criar novas carrier threads, levando a um alto uso de memória."
 
 #. type: Title ==
 #: upstream/_guides/virtual-threads.adoc:79
@@ -192,12 +192,12 @@ msgstr "Por que não executar tudo em threads virtuais?"
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:93
 msgid "As mentioned above, not everything can run safely on virtual threads.  The risk of **monopolization** can lead to high-memory usage.  Also, there are situations where the virtual thread cannot be unmounted from the carrier thread.  This is called **pinning**.  Finally, some libraries use `ThreadLocal` to store and reuse objects.  Using virtual threads with these libraries will lead to massive allocation, as the intentionally pooled objects will be instantiated for every (disposable and generally short-lived) virtual thread."
-msgstr "Como mencionado acima, nem tudo pode ser executado com segurança em threads virtuais. O risco de *monopolização* pode levar a um alto uso de memória. Além disso, há situações em que a thread virtual não pode ser desmontada da carrier thread. Isso é chamado de *pinning*. Finalmente, algumas bibliotecas utilizam `ThreadLocal` para armazenar e reutilizar objectos. O uso de threads virtuais com essas bibliotecas levará a uma alocação massiva, pois os objetos intencionalmente agrupados serão instanciados para cada thread virtual (descartável e geralmente de curta duração)."
+msgstr "Como mencionado acima, nem tudo pode ser executado com segurança em threads virtuais. O risco de *monopolização* pode levar a um alto uso de memória. Além disso, há situações em que a thread virtual não pode ser desmontada da carrier thread. Isso é chamado de *pinning*. Finalmente, algumas bibliotecas utilizam `ThreadLocal` para armazenar e reutilizar objetos. O uso de threads virtuais com essas bibliotecas levará a uma alocação massiva, pois os objetos intencionalmente agrupados serão instanciados para cada thread virtual (descartável e geralmente de curta duração)."
 
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:99
 msgid "As of today, it is not possible to use virtual threads in a carefree manner.  Following such a laissez-faire approach could quickly lead to memory and resource starvation issues.  Thus, Quarkus uses an explicit model until the aforementioned issues disappear (as the Java ecosystem matures).  It is also the reason why _reactive_ extensions have the virtual thread support, and rarely the _classic_ ones.  We need to know when to dispatch on a virtual thread."
-msgstr "Atualmente, não é possível utilizar threads virtuais de uma forma despreocupada. Seguir uma abordagem tão \"desleixada\" poderia rapidamente levar a problemas de falta de memória e de recursos. Assim, o Quarkus utiliza um modelo explícito até que os problemas acima mencionados desapareçam (à medida que o ecossistema Java amadurece). É também a razão pela qual as extensões _reativas_ têm o suporte de threads virtuais e raramente as _clássicas_. Precisamos saber quando despachar em uma thread virtual."
+msgstr "Atualmente, não é possível utilizar threads virtuais de uma forma despreocupada. Seguir uma abordagem tão \"desleixada\" poderia rapidamente levar a problemas de falta de memória e de recursos. Dessa forma, o Quarkus utiliza um modelo explícito até que os problemas acima mencionados desapareçam (à medida que o ecossistema Java amadurece). É também a razão pela qual as extensões _reativas_ têm o suporte de threads virtuais e raramente as _clássicas_. Precisamos saber quando despachar em uma thread virtual."
 
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:101
@@ -296,7 +296,7 @@ msgstr "No entanto, esse padrão é contraproducente ao usar threads virtuais. T
 #: upstream/_guides/virtual-threads.adoc:150
 #, no-wrap
 msgid "Use @RunVirtualThread with RESTEasy Reactive"
-msgstr "Utilizando @RunVirtualThread com RESTEasy Reactive"
+msgstr "Utilizando @RunOnVirtualThread com RESTEasy Reactive"
 
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:154
@@ -316,13 +316,12 @@ msgstr "Como as threads virtuais são entidades descartáveis, a ideia fundament
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:163
 msgid "To do so, it suffices to add the link:{runonvthread}[@RunOnVirtualThread] annotation to the endpoint.  If the Java Virtual Machine used to **run** the application provides virtual thread support (so, Java 19 or later versions), then the endpoint execution is offloaded to a virtual thread.  It will then be possible to perform blocking operations without blocking the platform thread upon which the virtual thread is mounted."
-msgstr "Para fazer isso, basta adicionar a anotação link:{runonvthread}[@RunOnVirtualThread] ao endpoint. Se a máquina virtual Java utilizada para **executar** a aplicação oferecer suporte a threads virtuais (portanto, Java 19 ou versões posteriores), a execução do endpoint será transferida para uma thread virtual. Portanto, será possível executar operações bloqueantes sem bloquear a thread da plataforma na qual a thread virtual está montada."
+msgstr "Para fazer isso, basta adicionar a anotação link:{runonvthread}[@RunOnVirtualThread] ao endpoint. Se a máquina virtual Java utilizada para **executar** a aplicação oferecer suporte a threads virtuais (ou seja, Java 19 ou versões posteriores), a execução do endpoint será transferida para uma thread virtual. Dessa forma, será possível executar operações bloqueantes sem bloquear a thread da plataforma na qual a thread virtual está montada."
 
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:168
-#, fuzzy
 msgid "In the case of RESTEasy Reactive, this annotation can only be used on endpoints annotated with link:{blockingannotation}[@Blocking] or considered blocking because of their signature.  You can visit xref:resteasy-reactive.adoc#execution-model-blocking-non-blocking[Execution model, blocking, non-blocking] for more information."
-msgstr "No caso do RESTEasy Reactive, essa anotação só pode ser usada em pontos de extremidade anotados com  link:{blockingannotation}[@Blocking] ou considerados bloqueadores devido à sua assinatura. Para mais informações, visite  link:resteasy-reactive.html#execution-model-blocking-non-blocking[Modelo de execução, bloqueio, não-bloqueio]."
+msgstr "No caso do RESTEasy Reactive, essa anotação só pode ser usada em endpoints anotados com link:{blockingannotation}[@Blocking] ou considerados bloqueantes devido à sua assinatura. Para mais informações, visite xref:resteasy-reactive.adoc#execution-model-blocking-non-blocking[Modelo de execução, bloqueio, não-bloqueio]."
 
 #. type: Title ====
 #: upstream/_guides/virtual-threads.adoc:169
@@ -367,7 +366,7 @@ msgstr ""
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:189
 msgid "Then, you also need to make sure that you are using the version 19+ of Java, this can be enforced in your pom.xml file with the following:"
-msgstr "Depois, também precisa se certificar de que está utilizando a versão 19+ do Java, o que pode ser reforçado no seu arquivo pom.xml com o seguinte:"
+msgstr "Depois, é preciso certificar-se de que está utilizando a versão 19+ do Java, o que pode ser reforçado no seu arquivo pom.xml com o seguinte:"
 
 #. type: delimited block -
 #: upstream/_guides/virtual-threads.adoc:197
@@ -382,7 +381,7 @@ msgstr ""
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:201
 msgid "Finally, until Java 21, you need to configure your compiler plugin with the `--enable-preview` flag.  If you use Maven, make sure that the configuration of the Maven compiler plugin is the following:"
-msgstr "Finalmente, até Java 21, é necessário configurar o plug-in do compilador com o parâmetro `--enable-preview`. Se utilizar o Maven, certifique-se de que a configuração do plug-in do compilador Maven é a seguinte:"
+msgstr "Finalmente, até o Java 21, é necessário configurar o plug-in do compilador com o parâmetro `--enable-preview`. Se utilizar o Maven, certifique-se de que a configuração do plug-in do compilador Maven é a seguinte:"
 
 #. type: delimited block -
 #: upstream/_guides/virtual-threads.adoc:214
@@ -606,7 +605,7 @@ msgstr ""
 #: upstream/_guides/virtual-threads.adoc:293
 #, no-wrap
 msgid "Risk of pinning, monopolization and under-efficient object pooling"
-msgstr "Risco de fixação (pinning), monopolização e agrupamento de objectos pouco eficiente"
+msgstr "Risco de fixação (pinning), monopolização e agrupamento de objetos pouco eficiente"
 
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:296
@@ -622,7 +621,7 @@ msgstr "Utilize clientes compatíveis com threads virtuais"
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:301
 msgid "As mentioned in the href:why-not[Why not run everything on virtual threads?] section, the Java ecosystem is not entirely ready for virtual threads.  So, you need to be careful, especially when using a libraries doing I/O."
-msgstr "Como mencionado na seção href:why-not[Porque não executar tudo em threads virtuais?], o ecossistema Java não está totalmente preparado para threads virtuais. Portanto, é preciso ter cuidado, especialmente ao usar bibliotecas que fazem E/S."
+msgstr "Como mencionado na seção xref:why-not[Por que não executar tudo em threads virtuais?], o ecossistema Java não está totalmente preparado para threads virtuais. Portanto, é preciso ter cuidado, especialmente ao usar bibliotecas que fazem E/S."
 
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:304
@@ -680,7 +679,7 @@ msgstr ""
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:333
 msgid "The `--enable-preview` flag is not necessary with Java 21."
-msgstr "O parâmetro `--enable-preview` não é necessário com Java 21."
+msgstr "O parâmetro `--enable-preview` não é necessário a partir do Java 21."
 
 #. type: Title ==
 #: upstream/_guides/virtual-threads.adoc:334
@@ -774,12 +773,12 @@ msgstr "Usando uma instalação local do GraalVM"
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:379
 msgid "To compile a Quarkus applications leveraging `@RunOnVirtualThreads` into native executable, you must be sure to use a GraalVM / Mandrel `native-image` supporting virtual threads, so providing at least Java 19+."
-msgstr "Para compilar uma aplicação Quarkus que utiliza `@RunOnVirtualThreads` em um executável nativo, você deve garantir que está utilizando o `native-image` do GraalVM / Mandrel que suporta threads virtuais, o que requer pelo menos Java 19+."
+msgstr "Para compilar uma aplicação Quarkus que utiliza `@RunOnVirtualThread` em um executável nativo, você deve garantir que está utilizando o `native-image` do GraalVM / Mandrel que suporta threads virtuais, o que requer pelo menos Java 19+."
 
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:381
 msgid "Then, until Java 21, you need to add the following property to your `application.properties` file:"
-msgstr "Em seguida, até Java 21, é necessário adicionar a seguinte propriedade ao seu arquivo `application.properties`:"
+msgstr "Em seguida, até o Java 21, é necessário adicionar a seguinte propriedade ao seu arquivo `application.properties`:"
 
 #. type: delimited block -
 #: upstream/_guides/virtual-threads.adoc:385
@@ -808,7 +807,7 @@ msgstr "Usando uma compilação em contêiner"
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:400
 msgid "In-container build allows building Linux 64 executables by using a `native-image` compiler running in a container.  It avoids having to install `native-image` on your machine, and also allows configuring the GraalVM version you need.  Note that, to use in-container build, you must have Docker or Podman installed on your machine."
-msgstr "A construção em contêiner permite construir executáveis Linux 64 utilizando um compilador `native-image` em execução num contentor. Isso evita ter que instalar `native-image` na sua máquina e também permite configurar a versão do GraalVM que você precisa. Note que, para usar a construção em contentor, tem de ter o Docker ou o Podman instalado na sua máquina."
+msgstr "A construção em contêiner permite construir executáveis Linux 64 utilizando um compilador `native-image` em execução num contêiner. Isso evita ter que instalar `native-image` na sua máquina e também permite configurar a versão do GraalVM que você precisa. Note que, para usar a construção em contêiner, você precisa ter o Docker ou o Podman instalado na sua máquina."
 
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:402
@@ -833,7 +832,7 @@ msgstr ""
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:412
 msgid "The `enable-preview` flag in only necessary until Java 21."
-msgstr "A flag `enable-preview` só é necessária até Java 21."
+msgstr "A flag `enable-preview` só é necessária até o Java 21."
 
 #. type: Plain text
 #: upstream/_guides/virtual-threads.adoc:413
