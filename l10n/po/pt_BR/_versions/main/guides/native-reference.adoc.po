@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-09-21 08:12+0900\n"
+"POT-Creation-Date: 2023-10-15 08:05+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,162 +23,162 @@ msgid "Native Reference Guide"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:19
+#: upstream/_versions/main/guides/native-reference.adoc:20
 msgid "This guide is a companion to the xref:building-native-image.adoc[Building a Native Executable], xref:native-and-ssl.adoc[Using SSL With Native Images], and xref:writing-native-applications-tips.adoc[Writing Native Applications], guides.  It explores advanced topics that help users diagnose issues, increase the reliability and improve the runtime performance of native executables.  These are the high level sections to be found in this guide:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:21
+#: upstream/_versions/main/guides/native-reference.adoc:22
 msgid "xref:native-memory-management[Native Memory Management]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:22
+#: upstream/_versions/main/guides/native-reference.adoc:23
 msgid "xref:inspecting-and-debugging[Inspecting and Debugging Native Executables]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:23
+#: upstream/_versions/main/guides/native-reference.adoc:24
 msgid "xref:native-faq[Frequently Asked Questions]"
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/native-reference.adoc:25
+#: upstream/_versions/main/guides/native-reference.adoc:26
 #, no-wrap
 msgid "Native Memory Management"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:27
+#: upstream/_versions/main/guides/native-reference.adoc:28
 msgid "Memory management for Quarkus native executables is enabled by GraalVM’s SubstrateVM runtime system."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:29
+#: upstream/_versions/main/guides/native-reference.adoc:30
 msgid "For detailed explanations about the memory management component in GraalVM, see the link:https://www.graalvm.org/{graalvm-docs-version}/reference-manual/native-image/optimizations-and-performance/MemoryManagement[GraalVM Memory Management] guide."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:31
+#: upstream/_versions/main/guides/native-reference.adoc:32
 msgid "This guide complements the information available in the GraalVM website with further observations particularly relevant to Quarkus applications."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:32
+#: upstream/_versions/main/guides/native-reference.adoc:33
 #, no-wrap
 msgid "Garbage Collectors"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:34
+#: upstream/_versions/main/guides/native-reference.adoc:35
 msgid "The garbage collectors available for Quarkus users are currently Serial GC and Epsilon GC."
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/native-reference.adoc:35
+#: upstream/_versions/main/guides/native-reference.adoc:36
 #, no-wrap
 msgid "Serial GC"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:39
+#: upstream/_versions/main/guides/native-reference.adoc:40
 msgid "Serial GC, the default option in GraalVM and Quarkus, is a single-threaded non-concurrent GC, just like HotSpot’s Serial GC.  The implementation in GraalVM however is different from the HotSpot one, and there can be significant differences in the runtime behavior."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:50
+#: upstream/_versions/main/guides/native-reference.adoc:51
 msgid "One of the key differences between HotSpot’s Serial GC and GraalVM’s Serial GC is the way they perform full GC cycles.  In HotSpot the algorithm used is mark-sweep-compact whereas in GraalVM it is mark-copy.  Both need to traverse all live objects, but in mark-copy this traversal is also used to copy live objects to a secondary space or semi-space.  As objects are copied from one semi-space to another they’re also compacted.  In mark-sweep-compact, the compacting requires a second pass on the live objects.  This makes full GCs in mark-copy more time efficient (in terms of time spent in each GC cycle) than mark-sweep-compact.  The tradeoff mark-copy makes in order to make individual full GC cycles shorter is space.  The use of semi-spaces means that for an application to maintain the same GC performance that mark-sweep achieves (in terms of allocated MB per second), it requires double the amount of memory."
 msgstr ""
 
 #. type: Title =====
-#: upstream/_versions/main/guides/native-reference.adoc:51
+#: upstream/_versions/main/guides/native-reference.adoc:52
 #, no-wrap
 msgid "GC Collection Policy"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:54
+#: upstream/_versions/main/guides/native-reference.adoc:55
 msgid "GraalVM's Serial GC implementation offers a choice between two different collection policies, the default is called \"adaptive\" and the alternative is called \"space/time\"."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:58
+#: upstream/_versions/main/guides/native-reference.adoc:59
 msgid "The “adaptive” collection policy is based on HotSpot's ParallelGC adaptive size policy.  The main difference with HotSpot is GraalVM's focus on memory footprint.  This means that GraalVM’s adaptive GC policy tries to aggressively trigger GCs in order to keep memory consumption down."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:66
+#: upstream/_versions/main/guides/native-reference.adoc:67
 msgid "Up to version 2.13, Quarkus used the “space/time” GC collection policy by default, but starting with version 2.14, it switched to using the “adaptive” policy instead.  The reason why Quarkus initially chose to use \"space/time\" is because at that time it had considerable performance improvements over \"adaptive\".  Recent performance experiments, however, indicate that the \"space/time\" policy can result in worse out-of-the-box experience compared to the \"adaptive\" policy, while at the same time the benefits it used to offer have diminished considerably after improvements made to the \"adaptive\" policy.  As a result, the \"adaptive\" policy appears to be the best option for most, if not all, Quarkus applications.  Full details on this switch can be read in link:https://github.com/quarkusio/quarkus/issues/28267[this issue]."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:69
+#: upstream/_versions/main/guides/native-reference.adoc:70
 msgid "It is still possible to change the GC collection policy using GraalVM’s `-H:InitialCollectionPolicy` flag.  Switching to the \"space/time\" policy can be done by passing the following via command line:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:73
+#: upstream/_versions/main/guides/native-reference.adoc:74
 #, no-wrap
 msgid "-Dquarkus.native.additional-build-args=-H:InitialCollectionPolicy=com.oracle.svm.core.genscavenge.CollectionPolicy\\$BySpaceAndTime\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:76
+#: upstream/_versions/main/guides/native-reference.adoc:77
 msgid "Or adding this to the `application.properties` file:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:80
+#: upstream/_versions/main/guides/native-reference.adoc:81
 #, no-wrap
 msgid "quarkus.native.additional-build-args=-H:InitialCollectionPolicy=com.oracle.svm.core.genscavenge.CollectionPolicy$BySpaceAndTime\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:86
+#: upstream/_versions/main/guides/native-reference.adoc:87
 msgid "Escaping the `$` character is required to configure the \"space/time\" GC collection policy if passing via command line in Bash.  Other command line environments might have similar requirements."
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/native-reference.adoc:88
+#: upstream/_versions/main/guides/native-reference.adoc:89
 #, no-wrap
 msgid "Epsilon GC"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:92
+#: upstream/_versions/main/guides/native-reference.adoc:93
 msgid "Epsilon GC is a no-op garbage collector which does not do any memory reclamation.  From a Quarkus perspective, some of the most relevant use cases for this garbage collector are extremely short-lived jobs, e.g. serverless functions.  To build Quarkus native with epsilon GC, pass the following argument at build time:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:96
+#: upstream/_versions/main/guides/native-reference.adoc:97
 #, no-wrap
 msgid "-Dquarkus.native.additional-build-args=--gc=epsilon\n"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:98
+#: upstream/_versions/main/guides/native-reference.adoc:99
 #, no-wrap
 msgid "Memory Management Options"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:101
+#: upstream/_versions/main/guides/native-reference.adoc:102
 msgid "For information about options to control maximum heap size, young space, and other typical use cases found in the JVM, see the link:https://www.graalvm.org/{graalvm-docs-version}/reference-manual/native-image/optimizations-and-performance/MemoryManagement[GraalVM Memory Management] guide.  Setting the maximum heap size, either as a percentage or an explicit value, is generally recommended."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:103
+#: upstream/_versions/main/guides/native-reference.adoc:104
 #, no-wrap
 msgid "GC Logging"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:106
+#: upstream/_versions/main/guides/native-reference.adoc:107
 msgid "Multiple options exist to print information about garbage collection cycles, depending on the level of detail required.  The minimum detail is provided `-XX:+PrintGC`, which prints a message for each GC cycle that occurs:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:113
+#: upstream/_versions/main/guides/native-reference.adoc:114
 #, no-wrap
 msgid ""
 "$ quarkus-project-0.1-SNAPSHOT-runner -XX:+PrintGC -Xmx64m\n"
@@ -188,12 +188,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:118
+#: upstream/_versions/main/guides/native-reference.adoc:119
 msgid "When you combine this option with `-XX:+VerboseGC` you still get a message per GC cycle, but it contains extra information.  Also, adding this option shows the sizing decisions made by the GC algorithm at startup:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:137
+#: upstream/_versions/main/guides/native-reference.adoc:138
 #, no-wrap
 msgid ""
 "$ quarkus-project-0.1-SNAPSHOT-runner -XX:+PrintGC -XX:+VerboseGC -Xmx64m\n"
@@ -215,17 +215,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:140
+#: upstream/_versions/main/guides/native-reference.adoc:141
 msgid "Beyond these two options, `-XX:+PrintHeapShape` and `-XX:+TraceHeapChunks` provide even lower level details about memory chunks on top of which the different memory regions are constructed."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:142
+#: upstream/_versions/main/guides/native-reference.adoc:143
 msgid "The most up-to-date information on GC logging flags can be obtained by printing the list of flags that can be passed to native executables:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:155
+#: upstream/_versions/main/guides/native-reference.adoc:156
 #, no-wrap
 msgid ""
 "$ quarkus-project-0.1-SNAPSHOT-runner -XX:PrintFlags=\n"
@@ -241,64 +241,64 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:158
+#: upstream/_versions/main/guides/native-reference.adoc:159
 #, no-wrap
 msgid "Resident Set Size (RSS)"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:165
+#: upstream/_versions/main/guides/native-reference.adoc:166
 msgid "As described in the xref:performance-measure.adoc[Measuring Performance guide], the footprint of Quarkus applications is measured using the resident set size (RSS).  This is also applicable to native applications, but the runtime engine that manages the footprint in this case is built in the native executable itself rather than the JVM."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:170
+#: upstream/_versions/main/guides/native-reference.adoc:171
 msgid "The reporting techniques specified in the xref:performance-measure.adoc[Measuring Performance guide] are applicable to native applications too, but what causes the RSS to be higher or lower is specific to how the generated native executables work."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:173
+#: upstream/_versions/main/guides/native-reference.adoc:174
 msgid "When the RSS is higher in one native version of the application versus another, the following checks should be carried out first:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:177
+#: upstream/_versions/main/guides/native-reference.adoc:178
 msgid "Check the xref:native-reports[native build time reports] and see if there are big discrepancies in the number of used packages, used classes or used methods.  A bigger universe will result in bigger memory footprint."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:182
+#: upstream/_versions/main/guides/native-reference.adoc:183
 msgid "Check the size of the binary for differences.  Using `readelf` you can observe the size of different sections and compare them.  The `.text` section where code lives, and the `.svm_heap` section where heap produced at build time lives, are particularly interesting."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:183
+#: upstream/_versions/main/guides/native-reference.adoc:184
 msgid "Generate xref:heap-dumps[heap dumps] and inspect them with tools such as VisualVM or Eclipse MAT."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:191
+#: upstream/_versions/main/guides/native-reference.adoc:192
 msgid "Often profiling, instrumenting or tracing applications is the best way to figure out how things work.  In the case of RSS and native applications, the techniques that Brendan Gregg explains in the https://www.brendangregg.com/FlameGraphs/memoryflamegraphs.html[\"Memory Leak (and Growth) Flame Graphs\"] guide are particularly useful.  This section will apply the information in that article to show how to use `perf` and https://github.com/iovisor/bcc[bcc/eBPF] to understand what causes Quarkus native executables to consume memory on startup."
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/native-reference.adoc:193
+#: upstream/_versions/main/guides/native-reference.adoc:194
 #, no-wrap
 msgid "Perf"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:198
+#: upstream/_versions/main/guides/native-reference.adoc:199
 msgid "`perf` works in older Linux systems, whereas eBPF requires a newer Linux kernel.  The overhead of `perf` is higher than eBPF, but it can understand stack traces generated with DWARF debug symbols, which eBPF can't."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:205
+#: upstream/_versions/main/guides/native-reference.adoc:206
 msgid "In the context of GraalVM, DWARF stack traces contain more detail and are easier to understand than those generated with frame pointers.  As first step, build a Quarkus native executable with debug info enabled and a couple of extra flags.  One flag to disable optimizations, and another to avoid inlined methods being omitted from the stack traces.  These two flags have been added to obtain stack traces that contain as much information as possible."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:211
+#: upstream/_versions/main/guides/native-reference.adoc:212
 #, no-wrap
 msgid ""
 "$ mvn package -DskipTests -Dnative \\\n"
@@ -307,17 +307,17 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:224
+#: upstream/_versions/main/guides/native-reference.adoc:225
 msgid "Disabling optimizations makes it easier to learn how to use `perf` and get as detailed stack traces as possible, because it shows more info about what gets called where.  However, doing so might lead to more allocations happening which would not happen if optimizations would have been applied.  In other words, passing in `-O0` will change the allocation pattens for many applications, because it disables optimizations such as escape analysis or dead code elimination.  To properly assess the allocations made by an application deployed in production, run with default optimizations (`-O2`).  With default optimizations the stack traces obtained with `perf` maybe be harder to decipher."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:227
+#: upstream/_versions/main/guides/native-reference.adoc:228
 msgid "Let's measure how much RSS a Quarkus native executable takes on startup on this particular environment:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:233
+#: upstream/_versions/main/guides/native-reference.adoc:234
 #, no-wrap
 msgid ""
 "$ ps -o pid,rss,command -p $(pidof code-with-quarkus-1.0.0-SNAPSHOT-runner)\n"
@@ -326,39 +326,39 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:249
+#: upstream/_versions/main/guides/native-reference.adoc:250
 msgid "How come this Quarkus native executable consumes ~35MB RSS on startup? To get an understanding of this number, this section will use `perf` to trace calls to `syscalls:sys_enter_mmap`.  Assuming the default link:https://www.graalvm.org/{graalvm-docs-version}/reference-manual/native-image/optimizations-and-performance/MemoryManagement/#serial-garbage-collector[GraalVM Serial Garbage Collector] is in use, this system call is particularly interesting for native executables generated by GraalVM's `native-image` because of how it allocates heap.  In native executables generated by GraalVM's `native-image`, the heap is allocated using either aligned or unaligned heap chunks.  All non-array objects get allocated in thread local aligned chunks.  Each of these are 1MB in size by default.  For arrays, if they are bigger than 1/8 of the aligned chunk size, they will be allocated in unaligned heap chunks which have a size dependant on the object itself.  The very first time a thread allocates an object or small array, it will request an aligned heap chunk that it will use exclusively until it has run out of space in that chunk, in which case it will request another aligned heap chunk.  So by tracing these system calls, the code paths that end up requesting new aligned or unaligned heap chunks will be recorded.  Next, run the Quarkus native executable through `perf record` tracing the `mmap` system call:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:253
+#: upstream/_versions/main/guides/native-reference.adoc:254
 #, no-wrap
 msgid "$ sudo perf record -e syscalls:sys_enter_mmap --call-graph dwarf -a -- target/code-with-quarkus-1.0.0-SNAPSHOT-runner -Xmx128m\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:260
+#: upstream/_versions/main/guides/native-reference.adoc:261
 msgid "The size of the aligned heap chunks can be changed during native build time.  A custom value (in number of bytes) can be passed via the `-H:AlignedHeapChunkSize` flag.  One caveat is that this value needs to be multiple of 4096 (4KB)."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:263
+#: upstream/_versions/main/guides/native-reference.adoc:264
 msgid "Once the startup completes, stop the process and generate the stacks:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:267
+#: upstream/_versions/main/guides/native-reference.adoc:268
 #, no-wrap
 msgid "$ perf script > out.stacks\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:272
+#: upstream/_versions/main/guides/native-reference.adoc:273
 msgid "As a final step, generate a https://github.com/brendangregg/FlameGraph[flamegraph] with the generated stacks:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:278
+#: upstream/_versions/main/guides/native-reference.adoc:279
 #, no-wrap
 msgid ""
 "$ export FG_HOME=...\n"
@@ -367,39 +367,39 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:281
+#: upstream/_versions/main/guides/native-reference.adoc:282
 msgid "The flamegraph should look similar to this:"
 msgstr ""
 
 #. type: Positional ($1) AttributeList argument for macro 'image'
-#: upstream/_versions/main/guides/native-reference.adoc:282
+#: upstream/_versions/main/guides/native-reference.adoc:283
 #, no-wrap
 msgid "mmap flamegraph"
 msgstr ""
 
 #. type: Target for macro image
-#: upstream/_versions/main/guides/native-reference.adoc:282
+#: upstream/_versions/main/guides/native-reference.adoc:283
 #, no-wrap
 msgid "mmap.svg"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:285
+#: upstream/_versions/main/guides/native-reference.adoc:286
 msgid "There are several things of interest to notice there:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:290
+#: upstream/_versions/main/guides/native-reference.adoc:291
 msgid "First, the stack traces that contain method calls to `com.oracle.svm.core.genscavenge.ThreadLocalAllocation` are related to aligned or unaligned heap chunk allocations explained above.  As noted earlier, for the majority of allocations these chunks will be 1MB by default, so they're interesting because each allocated chunk has a considerable effect on the RSS consumption."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:298
+#: upstream/_versions/main/guides/native-reference.adoc:299
 msgid "Second, of the thread allocation stacks, the ones under `start_thread` are particularly revealing.  In this environment, taking into account the `-Xmx` value passed in, Quarkus creates 12 event loop threads.  Aside from those, there are 6 extra threads.  The names of all those 18 threads exceed 16 characters.  This can be observed via the `ps` command:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:320
+#: upstream/_versions/main/guides/native-reference.adoc:321
 #, no-wrap
 msgid ""
 "$ ps -e -T | grep $(pidof code-with-quarkus-1.0.0-SNAPSHOT-runner)\n"
@@ -424,12 +424,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:329
+#: upstream/_versions/main/guides/native-reference.adoc:330
 msgid "The very first allocation that all these threads do is taking the thread name and trimming it so that it can fall within the character limit enforced by kernels.  For each of those allocations, there are 2 `mmap` calls, one to reserve the memory and the other to commit it.  When recording `syscalls:sys_enter_mmap` system call, the `perf` implementation tracks calls to `__GI___mmap64`.  But this glibc `__GI___mmap64` implementation makes another call into `__GI___mmap64`:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:359
+#: upstream/_versions/main/guides/native-reference.adoc:360
 #, no-wrap
 msgid ""
 "(gdb) break __GI___mmap64\n"
@@ -462,53 +462,53 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:365
+#: upstream/_versions/main/guides/native-reference.adoc:366
 msgid "Setting `set scheduler-locking step` when the Quarkus native executable is running through `gdb` makes it easier to debug multi-threaded applications.  It optimizes for single-stepping by stopping other threads from \"seizing the prompt\" by preempting the current thread is being stepped through."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:369
+#: upstream/_versions/main/guides/native-reference.adoc:370
 msgid "This is how the above flamegraph shows a total of 72 calls to `__GI___mmap64` for the thread name abbreviation stack trace, given that Quarkus native executable runs 18 threads."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:379
+#: upstream/_versions/main/guides/native-reference.adoc:380
 msgid "A third, and final observation, is that if you capture the `syscalls:sys_enter_munmmap` event, you might observe that some allocations also result in calls to `munmap`.  When calculating the size to reserve, the requested size to allocate can be rounded up to the page size.  The maintain alignment, 1MB in case of aligned chunks or 1 byte for unaligned chunks, some of the reserved memory might be unreserved.  That is where these `munmap` calls would come from."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:388
+#: upstream/_versions/main/guides/native-reference.adoc:389
 msgid "Just by looking at the flamegraph and counting the number of `mmap` calls that originate in thread local allocations, an approximate estimation can be made on the RSS a Quarkus native executable uses on startup.  This estimation can't be fully precise because for unaligned heap chunks, the stack trace doesn't record the size of the chunk.  Also, if the additional build args are removed, inlining optimizations might obscure the type of array allocation chunk requested, so it might not be possible to decipher if the allocation is for an aligned or unaligned chunk."
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/native-reference.adoc:391
+#: upstream/_versions/main/guides/native-reference.adoc:392
 #, no-wrap
 msgid "bcc/eBPF"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:401
+#: upstream/_versions/main/guides/native-reference.adoc:402
 msgid "A version of https://github.com/iovisor/bcc[bcc]/ https://ebpf.io/[eBPF] that can do stack traces is only available from Linux kernel 4.8 onwards.  It can do in-kernel summaries, which makes it more efficient and has lower overhead.  Unfortunately it doesn't understand DWARF debug symbols, so the information obtained might be harder to read and contain less detail."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:410
+#: upstream/_versions/main/guides/native-reference.adoc:411
 msgid "bcc/eBPF is very extensible so it's easier to tailor make scripts to track specific metrics.  The `bcc` project contains a `stackcount` program that can be used to count stack traces in similar way to what `perf` did in the previous section.  But in some cases, it might be more useful to have other metrics other than number of calls to a system call.  `malloc` is one such example.  The number of `malloc` calls is not so important, but rather the size of the allocations.  So rather than having a flamegraph showing sample counts, a flamegraph can be generated that shows bytes allocated."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:414
+#: upstream/_versions/main/guides/native-reference.adoc:415
 msgid "Aside from `mmap`, `malloc` system calls are also present in native executables generated by GraalVM.  Let's put bcc/eBPF in action to generate a flamegraph of bytes allocated using `malloc`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:419
+#: upstream/_versions/main/guides/native-reference.adoc:420
 msgid "To do this, first re-generate a Quarkus native executable removing debug info, which bcc/eBPF does not understand, and instead use frame pointer with local symbols to get the stack traces:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:424
+#: upstream/_versions/main/guides/native-reference.adoc:425
 #, no-wrap
 msgid ""
 "$ mvn package -DskipTests -Dnative \\\n"
@@ -516,12 +516,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:434
+#: upstream/_versions/main/guides/native-reference.adoc:435
 msgid "The link:mallocstacks.py[mallocstacks.py] bcc/eBPF script will be used to capture the `malloc` stacktraces with their allocated size.  This script, and other typical bcc/eBPF scripts (e.g. `stackcount`), need to be given a process ID (PID).  This makes a bit tricky when you want to trace startup, but you can use `gdb` (even if you haven't enabled debug info)  to get around this obstacle because it allows you to stop the application at the first instruction.  Let's start by running the native executable via `gdb`:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:440
+#: upstream/_versions/main/guides/native-reference.adoc:441
 #, no-wrap
 msgid ""
 "$ gdb --args ./target/code-with-quarkus-1.0.0-SNAPSHOT-runner -Xmx128m\n"
@@ -530,12 +530,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:443
+#: upstream/_versions/main/guides/native-reference.adoc:444
 msgid "`starti` is a `gdb` command that sets a temporary breakpoint at the very first instruction of the program's execution."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:450
+#: upstream/_versions/main/guides/native-reference.adoc:451
 #, no-wrap
 msgid ""
 "(gdb) starti\n"
@@ -545,23 +545,23 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:455
+#: upstream/_versions/main/guides/native-reference.adoc:456
 msgid "Next invoke the bcc/eBPF script giving it the PID of the Quarkus process, so that it can track the `malloc` calls, capture stack traces and dump them to a file for post-processing:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:459
+#: upstream/_versions/main/guides/native-reference.adoc:460
 #, no-wrap
 msgid "$ sudo ./mallocstacks.py -p $(pidof code-with-quarkus-1.0.0-SNAPSHOT-runner) -f > out.stacks\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:462
+#: upstream/_versions/main/guides/native-reference.adoc:463
 msgid "Then go back to the `gdb` shell and instruct it to continue the startup procedure after hitting the first instruction:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:479
+#: upstream/_versions/main/guides/native-reference.adoc:480
 #, no-wrap
 msgid ""
 "(gdb) continue\n"
@@ -581,50 +581,50 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:483
+#: upstream/_versions/main/guides/native-reference.adoc:484
 msgid "Once the startup has complete, press `Ctrl-C` on the `stackcount` shell."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:487
+#: upstream/_versions/main/guides/native-reference.adoc:488
 msgid "Then process the stacks file as a flamegraph.  Note that the stacks generated by this script are already collapsed, so the flamegraph can be generated just like this:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:491
+#: upstream/_versions/main/guides/native-reference.adoc:492
 #, no-wrap
 msgid "$ cat out.stacks | ${FG_HOME}/flamegraph.pl --color=mem --title=\"malloc bytes Flame Graph\" --countname=\"bytes\" > out.svg\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:494
+#: upstream/_versions/main/guides/native-reference.adoc:495
 msgid "The flamegraph produced should look something like this:"
 msgstr ""
 
 #. type: Positional ($1) AttributeList argument for macro 'image'
-#: upstream/_versions/main/guides/native-reference.adoc:495
+#: upstream/_versions/main/guides/native-reference.adoc:496
 #, no-wrap
 msgid "malloc bytes flamegraph"
 msgstr ""
 
 #. type: Target for macro image
-#: upstream/_versions/main/guides/native-reference.adoc:495
+#: upstream/_versions/main/guides/native-reference.adoc:496
 #, no-wrap
 msgid "malloc-bytes.svg"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:502
+#: upstream/_versions/main/guides/native-reference.adoc:503
 msgid "This shows that most of the memory requested using `malloc` comes from epoll in Java NIO, but the overall amount allocated via `malloc` is barely 268KB.  This amount of 274,269 bytes can be observed by hovering on top of `all` at the bottom of flamegraph (you might need to ask the browser to open the flamegraph in a different tab or window to observe this).  This is very small compared with the amount allocated for the heap with `mmap`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:505
+#: upstream/_versions/main/guides/native-reference.adoc:506
 msgid "Finally, just a brief mention about other bcc/eBPF commands, and how to transform them into flamegraphs."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:510
+#: upstream/_versions/main/guides/native-reference.adoc:511
 #, no-wrap
 msgid ""
 "$ sudo /usr/share/bcc/tools/stackcount -P -p $(pidof code-with-quarkus-1.0.0-SNAPSHOT-runner) \\\n"
@@ -632,7 +632,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:513
+#: upstream/_versions/main/guides/native-reference.adoc:514
 #, no-wrap
 msgid ""
 "$ sudo /usr/share/bcc/tools/stackcount -P -p $(pidof code-with-quarkus-1.0.0-SNAPSHOT-runner) \\\n"
@@ -640,7 +640,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:516
+#: upstream/_versions/main/guides/native-reference.adoc:517
 #, no-wrap
 msgid ""
 "$ sudo /usr/share/bcc/tools/stackcount -P -p $(pidof code-with-quarkus-1.0.0-SNAPSHOT-runner) \\\n"
@@ -648,7 +648,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:519
+#: upstream/_versions/main/guides/native-reference.adoc:520
 #, no-wrap
 msgid ""
 "$ sudo /usr/share/bcc/tools/stackcount -P -p $(pidof code-with-quarkus-1.0.0-SNAPSHOT-runner) \\\n"
@@ -656,12 +656,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:523
+#: upstream/_versions/main/guides/native-reference.adoc:524
 msgid "Stacks produced by `stackcount` need to be collapsed before they can be transformed into flamegraphs.  For example:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:528
+#: upstream/_versions/main/guides/native-reference.adoc:529
 #, no-wrap
 msgid ""
 "${FG_HOME}/stackcollapse.pl < out.stacks | ${FG_HOME}/flamegraph.pl \\\n"
@@ -669,106 +669,106 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/native-reference.adoc:531
+#: upstream/_versions/main/guides/native-reference.adoc:532
 #, no-wrap
 msgid "Inspecting and Debugging Native Executables"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:533
+#: upstream/_versions/main/guides/native-reference.adoc:534
 msgid "This debugging guide provides further details on debugging issues in Quarkus native executables that might arise during development or production."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:536
+#: upstream/_versions/main/guides/native-reference.adoc:537
 msgid "It takes as input the application developed in the xref:getting-started.adoc[Getting Started Guide].  You can find instructions on how to quickly set up this application in this guide."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:537
+#: upstream/_versions/main/guides/native-reference.adoc:538
 #, no-wrap
 msgid "Requirements and Assumptions"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:540
+#: upstream/_versions/main/guides/native-reference.adoc:541
 msgid "This debugging guide has the following requirements:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:542
+#: upstream/_versions/main/guides/native-reference.adoc:543
 msgid "JDK 11 installed with `JAVA_HOME` configured appropriately"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:543
+#: upstream/_versions/main/guides/native-reference.adoc:544
 msgid "Apache Maven {maven-version}"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:544
+#: upstream/_versions/main/guides/native-reference.adoc:545
 msgid "A working container runtime (Docker, podman)"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:549
+#: upstream/_versions/main/guides/native-reference.adoc:550
 msgid "This guide builds and executes Quarkus native executables within a Linux environment.  To offer a homogeneous experience across all environments, the guide relies on a container runtime environment to build and run the native executables.  The instructions below use Docker as example, but very similar commands should work on alternative container runtimes, e.g. podman."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:555
+#: upstream/_versions/main/guides/native-reference.adoc:556
 msgid "Building native executables is an expensive process, so make sure the container runtime has enough CPU and memory to do this.  A minimum of 4 CPUs and 4GB of memory is required."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:559
+#: upstream/_versions/main/guides/native-reference.adoc:560
 msgid "Finally, this guide assumes the use of the link:https://github.com/graalvm/mandrel[Mandrel distribution] of GraalVM for building native executables, and these are built within a container so there is no need for installing Mandrel on the host."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:560
+#: upstream/_versions/main/guides/native-reference.adoc:561
 #, no-wrap
 msgid "Bootstrapping the project"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:564
+#: upstream/_versions/main/guides/native-reference.adoc:565
 msgid "Start by creating a new Quarkus project.  Open a terminal and run the following command:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:566
+#: upstream/_versions/main/guides/native-reference.adoc:567
 msgid "For Linux & MacOS users"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:573
+#: upstream/_versions/main/guides/native-reference.adoc:574
 msgid "For Windows users"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:575
+#: upstream/_versions/main/guides/native-reference.adoc:576
 msgid "If using cmd , (don't use backward slash `\\` and put everything on the same line)"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:576
+#: upstream/_versions/main/guides/native-reference.adoc:577
 msgid "If using Powershell , wrap `-D` parameters in double quotes e.g. `\"-DprojectArtifactId=debugging-native\"`"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:577
+#: upstream/_versions/main/guides/native-reference.adoc:578
 #, no-wrap
 msgid "Configure Quarkus properties"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:583
+#: upstream/_versions/main/guides/native-reference.adoc:584
 msgid "Some Quarkus configuration options will be used constantly throughout this debugging guide, so to help declutter command line invocations, it's recommended to add these options to the `application.properties` file.  So, go ahead and add the following options to that file:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:590
+#: upstream/_versions/main/guides/native-reference.adoc:591
 #, no-wrap
 msgid ""
 "quarkus.native.container-build=true\n"
@@ -778,58 +778,58 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:597
+#: upstream/_versions/main/guides/native-reference.adoc:598
 msgid "Starting with 22.3, Mandrel does not provide a `-java11` version anymore.  Note, however, that this doesn't mean that you may no longer produce native executables with Mandrel for Java 11 projects.  You can still compile your Java 11 projects using OpenJDK 11 and produce native executables from the resulting Java 11 bytecode using the `-java17` Mandrel builder images."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:599
+#: upstream/_versions/main/guides/native-reference.adoc:600
 #, no-wrap
 msgid "First Debugging Steps"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:602
+#: upstream/_versions/main/guides/native-reference.adoc:603
 msgid "As a first step, change to the project directory and build the native executable for the application:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:606
-#: upstream/_versions/main/guides/native-reference.adoc:1071
+#: upstream/_versions/main/guides/native-reference.adoc:607
+#: upstream/_versions/main/guides/native-reference.adoc:1072
 #, no-wrap
 msgid "./mvnw package -DskipTests -Dnative\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:609
+#: upstream/_versions/main/guides/native-reference.adoc:610
 msgid "Run the application to verify it works as expected. In one terminal:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:613
-#: upstream/_versions/main/guides/native-reference.adoc:1079
+#: upstream/_versions/main/guides/native-reference.adoc:614
+#: upstream/_versions/main/guides/native-reference.adoc:1080
 #, no-wrap
 msgid "docker run -i --rm -p 8080:8080 test/debugging-native:1.0.0-SNAPSHOT\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:616
+#: upstream/_versions/main/guides/native-reference.adoc:617
 msgid "In another:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:620
+#: upstream/_versions/main/guides/native-reference.adoc:621
 #, no-wrap
 msgid "curl -w '\\n' http://localhost:8080/hello\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:625
+#: upstream/_versions/main/guides/native-reference.adoc:626
 msgid "The rest of this section explores ways to build the native executable with extra information, but first, stop the running application.  We can obtain this information while building the native executable by adding additional native-image build options using `-Dquarkus.native.additional-build-args`, e.g."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:630
+#: upstream/_versions/main/guides/native-reference.adoc:631
 #, no-wrap
 msgid ""
 "./mvnw package -DskipTests -Dnative \\\n"
@@ -837,12 +837,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:633
+#: upstream/_versions/main/guides/native-reference.adoc:634
 msgid "Executing that will produce additional output lines like this:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:640
+#: upstream/_versions/main/guides/native-reference.adoc:641
 #, no-wrap
 msgid ""
 "...\n"
@@ -852,17 +852,17 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:648
+#: upstream/_versions/main/guides/native-reference.adoc:649
 msgid "Note that `/project` is a folder within the container that is building the native executable.  So, this is not a folder that you will find in the host environment.  `/project` folder is mapped to `target/debugging-native-1.0.0-SNAPSHOT-native-image-source-jar`, so you will find the files under the `reports` folder in that directory."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:653
+#: upstream/_versions/main/guides/native-reference.adoc:654
 msgid "The target info file contains information such as the target platform, the toolchain used to compile the executable, and the C library in use:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:665
+#: upstream/_versions/main/guides/native-reference.adoc:666
 #, no-wrap
 msgid ""
 "$ cat target/*/reports/target_info_*.txt\n"
@@ -877,12 +877,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:668
+#: upstream/_versions/main/guides/native-reference.adoc:669
 msgid "The native library info file contains information on the static libraries added to the binary and the other libraries dynamically linked to the executable:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:683
+#: upstream/_versions/main/guides/native-reference.adoc:684
 #, no-wrap
 msgid ""
 "$ cat target/*/reports/native_library_info_*.txt\n"
@@ -900,12 +900,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:688
+#: upstream/_versions/main/guides/native-reference.adoc:689
 msgid "Even more detail can be obtained by passing in `--verbose` as an additional native-image build argument.  This option can be very useful in detecting whether the options that you pass at a high level via Quarkus are being passed down to the native executable production, or whether some third party jar has some native-image configuration embedded in it that is reaching the native-image invocation:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:693
+#: upstream/_versions/main/guides/native-reference.adoc:694
 #, no-wrap
 msgid ""
 "./mvnw package -DskipTests -Dnative \\\n"
@@ -913,27 +913,27 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:696
+#: upstream/_versions/main/guides/native-reference.adoc:697
 msgid "Running with `--verbose` demonstrates how the native-image building process is two sequential java processes:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:699
+#: upstream/_versions/main/guides/native-reference.adoc:700
 msgid "The first is a very short Java process that does some basic validation and builds the arguments for the second process (in a stock GraalVM distribution, this is executed as native code)."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:702
+#: upstream/_versions/main/guides/native-reference.adoc:703
 msgid "The second Java process is where the main part of the native executable production happens.  The `--verbose` option shows the actual Java process executed.  You could take the output and run it yourself."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:704
+#: upstream/_versions/main/guides/native-reference.adoc:705
 msgid "One may also combine multiple native build options by separating with a comma, e.g.:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:709
+#: upstream/_versions/main/guides/native-reference.adoc:710
 #, no-wrap
 msgid ""
 "./mvnw package -DskipTests -Dnative \\\n"
@@ -941,29 +941,29 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:715
+#: upstream/_versions/main/guides/native-reference.adoc:716
 msgid "Remember that if an argument for `-Dquarkus.native.additional-build-args` includes the `,` symbol, it needs to be escaped to be processed correctly, e.g. `\\\\,`."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:717
+#: upstream/_versions/main/guides/native-reference.adoc:718
 #, no-wrap
 msgid "Inspecting Native Executables"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:723
+#: upstream/_versions/main/guides/native-reference.adoc:724
 msgid "Given a native executable, various Linux tools can be used to inspect it.  To allow supporting a variety of environments, inspections will be done from within a Linux container.  Let's create a Linux container image with all the tools required for this guide:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:727
+#: upstream/_versions/main/guides/native-reference.adoc:728
 #, no-wrap
 msgid "FROM fedora:35\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:734
+#: upstream/_versions/main/guides/native-reference.adoc:735
 #, no-wrap
 msgid ""
 "RUN dnf install -y \\\n"
@@ -975,102 +975,102 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:736
+#: upstream/_versions/main/guides/native-reference.adoc:737
 #, no-wrap
 msgid "ENV FG_HOME /opt/FlameGraph\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:738
+#: upstream/_versions/main/guides/native-reference.adoc:739
 #, no-wrap
 msgid "RUN git clone https://github.com/brendangregg/FlameGraph $FG_HOME\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:740
+#: upstream/_versions/main/guides/native-reference.adoc:741
 #, no-wrap
 msgid "WORKDIR /data\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:742
+#: upstream/_versions/main/guides/native-reference.adoc:743
 #, no-wrap
 msgid "ENTRYPOINT /bin/bash\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:745
+#: upstream/_versions/main/guides/native-reference.adoc:746
 msgid "Using docker in the non-Linux environment, you can create an image using this Dockerfile via:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:749
+#: upstream/_versions/main/guides/native-reference.adoc:750
 #, no-wrap
 msgid "docker build -t fedora-tools:v1 .\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:752
+#: upstream/_versions/main/guides/native-reference.adoc:753
 msgid "Then, go to the root of the project and run the Docker container we have just created as:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:756
+#: upstream/_versions/main/guides/native-reference.adoc:757
 #, no-wrap
 msgid "docker run -t -i --rm -v ${PWD}:/data -p 8080:8080 fedora-tools:v1\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:759
+#: upstream/_versions/main/guides/native-reference.adoc:760
 msgid "`ldd` shows the shared library dependencies of an executable:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:763
+#: upstream/_versions/main/guides/native-reference.adoc:764
 #, no-wrap
 msgid "ldd ./target/debugging-native-1.0.0-SNAPSHOT-runner\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:766
+#: upstream/_versions/main/guides/native-reference.adoc:767
 msgid "`strings` can be used to look for text messages inside the binary:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:770
+#: upstream/_versions/main/guides/native-reference.adoc:771
 #, no-wrap
 msgid "strings ./target/debugging-native-1.0.0-SNAPSHOT-runner | grep Hello\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:773
+#: upstream/_versions/main/guides/native-reference.adoc:774
 msgid "Using `strings` you can also get Mandrel information given the binary:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:777
+#: upstream/_versions/main/guides/native-reference.adoc:778
 #, no-wrap
 msgid "strings ./target/debugging-native-1.0.0-SNAPSHOT-runner | grep core.VM\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:781
+#: upstream/_versions/main/guides/native-reference.adoc:782
 msgid "Finally, using `readelf` we can inspect different sections of the binary.  For example, we can see how the heap and text sections take most of the binary:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:785
+#: upstream/_versions/main/guides/native-reference.adoc:786
 #, no-wrap
 msgid "readelf -SW ./target/debugging-native-1.0.0-SNAPSHOT-runner\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:792
+#: upstream/_versions/main/guides/native-reference.adoc:793
 msgid "Runtime containers produced by Quarkus to run native executables will not include the tools mentioned above.  To explore a native executable within a runtime container, it's best to run the container itself and then `docker cp` the executable locally, e.g.:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:797
+#: upstream/_versions/main/guides/native-reference.adoc:798
 #, no-wrap
 msgid ""
 "docker run -i --rm --name=mytest -p 8080:8080 test/debugging-native:1.0.0-SNAPSHOT\n"
@@ -1078,23 +1078,23 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:800
+#: upstream/_versions/main/guides/native-reference.adoc:801
 msgid "From there, you can either inspect the executable directly or use a tools container like above."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:803
+#: upstream/_versions/main/guides/native-reference.adoc:804
 #, no-wrap
 msgid "Native Reports"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:806
+#: upstream/_versions/main/guides/native-reference.adoc:807
 msgid "Optionally, the native build process can generate reports that show what goes into the binary:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:811
+#: upstream/_versions/main/guides/native-reference.adoc:812
 #, no-wrap
 msgid ""
 "./mvnw package -DskipTests -Dnative \\\n"
@@ -1102,33 +1102,33 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:815
+#: upstream/_versions/main/guides/native-reference.adoc:816
 msgid "The reports will be created under `target/debugging-native-1.0.0-SNAPSHOT-native-image-source-jar/reports/`.  These reports are some of the most useful resources when encountering issues with missing methods/classes, or encountering forbidden methods by Mandrel."
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/native-reference.adoc:816
+#: upstream/_versions/main/guides/native-reference.adoc:817
 #, no-wrap
 msgid "Call Tree Reports"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:822
+#: upstream/_versions/main/guides/native-reference.adoc:823
 msgid "`call_tree` csv file reports are some of the default reports generated when the `-Dquarkus.native.enable-reports` option is passed in.  These csv files can be imported into a graph database, such as Neo4j, to inspect them more easily and run queries against the call tree.  This is useful for getting an approximation on why a method/class is included in the binary."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:824
+#: upstream/_versions/main/guides/native-reference.adoc:825
 msgid "Let’s see this in action."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:826
+#: upstream/_versions/main/guides/native-reference.adoc:827
 msgid "First, start a Neo4j instance:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:837
+#: upstream/_versions/main/guides/native-reference.adoc:838
 #, no-wrap
 msgid ""
 "export NEO_PASS=...\n"
@@ -1142,17 +1142,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:842
+#: upstream/_versions/main/guides/native-reference.adoc:843
 msgid "Once the container is running, you can access the link:http://localhost:7474[Neo4j browser].  Use `neo4j` as the username and the value of `NEO_PASS` as the password to log in."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:845
+#: upstream/_versions/main/guides/native-reference.adoc:846
 msgid "To import the CSV files, we need the following cypher script which will import the data within the CSV files and create graph database nodes and edges:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:850
+#: upstream/_versions/main/guides/native-reference.adoc:851
 #, no-wrap
 msgid ""
 "CREATE CONSTRAINT unique_vm_id ON (v:VM) ASSERT v.vmId IS UNIQUE;\n"
@@ -1160,7 +1160,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:854
+#: upstream/_versions/main/guides/native-reference.adoc:855
 #, no-wrap
 msgid ""
 "LOAD CSV WITH HEADERS FROM 'file:///reports/call_tree_vm.csv' AS row\n"
@@ -1169,7 +1169,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:858
+#: upstream/_versions/main/guides/native-reference.adoc:859
 #, no-wrap
 msgid ""
 "LOAD CSV WITH HEADERS FROM 'file:///reports/call_tree_methods.csv' AS row\n"
@@ -1178,7 +1178,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:862
+#: upstream/_versions/main/guides/native-reference.adoc:863
 #, no-wrap
 msgid ""
 "LOAD CSV WITH HEADERS FROM 'file:///reports/call_tree_virtual_methods.csv' AS row\n"
@@ -1187,7 +1187,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:868
+#: upstream/_versions/main/guides/native-reference.adoc:869
 #, no-wrap
 msgid ""
 "LOAD CSV WITH HEADERS FROM 'file:///reports/call_tree_entry_points.csv' AS row\n"
@@ -1198,7 +1198,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:874
+#: upstream/_versions/main/guides/native-reference.adoc:875
 #, no-wrap
 msgid ""
 "LOAD CSV WITH HEADERS FROM 'file:///reports/call_tree_direct_edges.csv' AS row\n"
@@ -1209,7 +1209,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:880
+#: upstream/_versions/main/guides/native-reference.adoc:881
 #, no-wrap
 msgid ""
 "LOAD CSV WITH HEADERS FROM 'file:///reports/call_tree_override_by_edges.csv' AS row\n"
@@ -1220,7 +1220,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:886
+#: upstream/_versions/main/guides/native-reference.adoc:887
 #, no-wrap
 msgid ""
 "LOAD CSV WITH HEADERS FROM 'file:///reports/call_tree_virtual_edges.csv' AS row\n"
@@ -1231,35 +1231,35 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:889
+#: upstream/_versions/main/guides/native-reference.adoc:890
 msgid "Copy and paste the contents of the script into a file called `import.cypher`."
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:895
+#: upstream/_versions/main/guides/native-reference.adoc:896
 msgid "Mandrel 22.0.0 contains a bug where the symbolic links used by the import cypher file are not correctly set when generating reports within a container (for more details see link:https://github.com/oracle/graal/issues/4355[here]).  This can be worked around by copying the following script into a file and executing it:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:899
+#: upstream/_versions/main/guides/native-reference.adoc:900
 #, no-wrap
 msgid "set -e\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:901
+#: upstream/_versions/main/guides/native-reference.adoc:902
 #, no-wrap
 msgid "project=\"debugging-native\"\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:903
+#: upstream/_versions/main/guides/native-reference.adoc:904
 #, no-wrap
 msgid "pushd target/*-native-image-source-jar/reports\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:906
+#: upstream/_versions/main/guides/native-reference.adoc:907
 #, no-wrap
 msgid ""
 "rm -f call_tree_vm.csv\n"
@@ -1267,7 +1267,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:909
+#: upstream/_versions/main/guides/native-reference.adoc:910
 #, no-wrap
 msgid ""
 "rm -f call_tree_direct_edges.csv\n"
@@ -1275,7 +1275,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:912
+#: upstream/_versions/main/guides/native-reference.adoc:913
 #, no-wrap
 msgid ""
 "rm -f call_tree_entry_points.csv\n"
@@ -1283,7 +1283,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:915
+#: upstream/_versions/main/guides/native-reference.adoc:916
 #, no-wrap
 msgid ""
 "rm -f call_tree_methods.csv\n"
@@ -1291,7 +1291,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:918
+#: upstream/_versions/main/guides/native-reference.adoc:919
 #, no-wrap
 msgid ""
 "rm -f call_tree_virtual_edges.csv\n"
@@ -1299,7 +1299,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:921
+#: upstream/_versions/main/guides/native-reference.adoc:922
 #, no-wrap
 msgid ""
 "rm -f call_tree_virtual_methods.csv\n"
@@ -1307,7 +1307,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:924
+#: upstream/_versions/main/guides/native-reference.adoc:925
 #, no-wrap
 msgid ""
 "rm -f call_tree_override_by_edges.csv\n"
@@ -1315,18 +1315,18 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:926
+#: upstream/_versions/main/guides/native-reference.adoc:927
 #, no-wrap
 msgid "popd\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:930
+#: upstream/_versions/main/guides/native-reference.adoc:931
 msgid "Next, copy the import cypher script and CSV files into Neo4j's import folder:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:936
+#: upstream/_versions/main/guides/native-reference.adoc:937
 #, no-wrap
 msgid ""
 "docker cp \\\n"
@@ -1335,90 +1335,90 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:938
+#: upstream/_versions/main/guides/native-reference.adoc:939
 #, no-wrap
 msgid "docker cp import.cypher testneo4j:/var/lib/neo4j\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:941
+#: upstream/_versions/main/guides/native-reference.adoc:942
 msgid "After copying all the files, invoke the import script:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:945
+#: upstream/_versions/main/guides/native-reference.adoc:946
 #, no-wrap
 msgid "docker exec testneo4j bin/cypher-shell -u neo4j -p ${NEO_PASS} -f import.cypher\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:949
+#: upstream/_versions/main/guides/native-reference.adoc:950
 msgid "Once the import completes (shouldn't take more than a couple of minutes), go to the link:http://localhost:7474[Neo4j browser], and you'll be able to observe a small summary of the data in the graph:"
 msgstr ""
 
 #. type: Positional ($1) AttributeList argument for macro 'image'
-#: upstream/_versions/main/guides/native-reference.adoc:950
+#: upstream/_versions/main/guides/native-reference.adoc:951
 #, no-wrap
 msgid "Neo4j database information after import"
 msgstr ""
 
 #. type: Target for macro image
-#: upstream/_versions/main/guides/native-reference.adoc:950
+#: upstream/_versions/main/guides/native-reference.adoc:951
 #, no-wrap
 msgid "native-reference-neo4j-db-info.png"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:955
+#: upstream/_versions/main/guides/native-reference.adoc:956
 msgid "The data above shows that there are ~60000 methods, and just over ~200000 edges between them.  The Quarkus application demonstrated here is very basic, so there’s not a lot we can explore, but here are some example queries you can run to explore the graph in more detail.  Typically, you’d start by looking for a given method:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:959
+#: upstream/_versions/main/guides/native-reference.adoc:960
 #, no-wrap
 msgid "match (m:Method) where m.name = \"hello\" return *\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:962
+#: upstream/_versions/main/guides/native-reference.adoc:963
 msgid "From there, you can narrow down to a given method on a specific type:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:966
+#: upstream/_versions/main/guides/native-reference.adoc:967
 #, no-wrap
 msgid "match (m:Method) where m.name = \"hello\" and m.type =~ \".*GreetingResource\" return *\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:973
+#: upstream/_versions/main/guides/native-reference.adoc:974
 msgid "Once you’ve located the node for the specific method you’re after, a typical question you’d want to get an answer for is: why does this method get included in the call tree? To do that, start from the method and look for incoming connections at a given depth, starting from the end method.  For example, methods that directly call a method can be located via:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:977
+#: upstream/_versions/main/guides/native-reference.adoc:978
 #, no-wrap
 msgid "match (m:Method) <- [*1..1] - (o) where m.name = \"hello\" and m.type =~ \".*GreetingResource\" return *\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:981
+#: upstream/_versions/main/guides/native-reference.adoc:982
 msgid "Then you can look for direct calls at depth of 2, so you’d search for methods that call methods that call into the target method:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:985
+#: upstream/_versions/main/guides/native-reference.adoc:986
 #, no-wrap
 msgid "match (m:Method) <- [*1..2] - (o) where m.name = \"hello\" and m.type =~ \".*GreetingResource\" return *\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:991
+#: upstream/_versions/main/guides/native-reference.adoc:992
 msgid "You can continue going up layers, but unfortunately if you reach a depth with too many nodes, the Neo4j browser will be unable to visualize them all.  When that happens, you can alternatively run the queries directly against the cypher shell:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:996
+#: upstream/_versions/main/guides/native-reference.adoc:997
 #, no-wrap
 msgid ""
 "docker exec testneo4j bin/cypher-shell -u neo4j -p ${NEO_PASS} \\\n"
@@ -1426,87 +1426,87 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1001
+#: upstream/_versions/main/guides/native-reference.adoc:1002
 msgid "For further information, check out this link:https://quarkus.io/blog/quarkus-native-neo4j-call-tree[blog post] that explores the Quarkus Hibernate ORM quickstart using the techniques explained above."
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/native-reference.adoc:1002
+#: upstream/_versions/main/guides/native-reference.adoc:1003
 #, no-wrap
 msgid "Used Packages/Classes/Methods Reports"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1006
+#: upstream/_versions/main/guides/native-reference.adoc:1007
 msgid "`used_packages`, `used_classes` and `used_methods` text file reports come in handy when comparing different versions of the application, e.g. why does the image take longer to build? Or why is the image bigger now?"
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/native-reference.adoc:1007
+#: upstream/_versions/main/guides/native-reference.adoc:1008
 #, no-wrap
 msgid "Further Reports"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1011
+#: upstream/_versions/main/guides/native-reference.adoc:1012
 msgid "Mandrel can produce further reports beyond the ones that are enabled with the `-Dquarkus.native.enable-reports` option.  These are called expert options and you can learn more about them by running:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1015
+#: upstream/_versions/main/guides/native-reference.adoc:1016
 #, no-wrap
 msgid "docker run quay.io/quarkus/ubi-quarkus-mandrel-builder-image:{mandrel-flavor} --expert-options-all\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:1021
+#: upstream/_versions/main/guides/native-reference.adoc:1022
 msgid "These expert options are not considered part of the GraalVM native image API, so they might change anytime."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1024
+#: upstream/_versions/main/guides/native-reference.adoc:1025
 msgid "To use these expert options, add them comma separated to the `-Dquarkus.native.additional-build-args` parameter."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:1025
+#: upstream/_versions/main/guides/native-reference.adoc:1026
 #, no-wrap
 msgid "Build-time vs Run-time Initialization"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1032
+#: upstream/_versions/main/guides/native-reference.adoc:1033
 msgid "Quarkus instructs Mandrel to initialize as much as possible at build time, so that runtime startup can be as fast as possible.  This is important in containerized environments where the startup speed has a big impact on how quickly an application is ready to do work.  Build time initialization also minimizes the risk of runtime failures due to unsupported features becoming reachable through runtime initialization, thus making Quarkus more reliable."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1036
+#: upstream/_versions/main/guides/native-reference.adoc:1037
 msgid "The most common examples of build-time initialized code are static variables and blocks.  Although Mandrel executes those at run-time by default, Quarkus instructs Mandrel to run them at build-time for the reasons given."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1040
+#: upstream/_versions/main/guides/native-reference.adoc:1041
 msgid "This means that any static variables initialized inline, or initialized in a static block, will keep the same value even if the application is restarted.  This is a different behaviour compared to what would happen if executed as Java."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1043
+#: upstream/_versions/main/guides/native-reference.adoc:1044
 msgid "To see this in action with a very basic example, add a new `TimestampResource` to the application that looks like this:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1047
-#: upstream/_versions/main/guides/native-reference.adoc:1099
-#: upstream/_versions/main/guides/native-reference.adoc:1245
-#: upstream/_versions/main/guides/native-reference.adoc:1437
-#: upstream/_versions/main/guides/native-reference.adoc:1574
+#: upstream/_versions/main/guides/native-reference.adoc:1048
+#: upstream/_versions/main/guides/native-reference.adoc:1100
+#: upstream/_versions/main/guides/native-reference.adoc:1246
+#: upstream/_versions/main/guides/native-reference.adoc:1438
+#: upstream/_versions/main/guides/native-reference.adoc:1575
 #, no-wrap
 msgid "package org.acme;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1052
-#: upstream/_versions/main/guides/native-reference.adoc:1250
+#: upstream/_versions/main/guides/native-reference.adoc:1053
+#: upstream/_versions/main/guides/native-reference.adoc:1251
 #, no-wrap
 msgid ""
 "import jakarta.ws.rs.GET;\n"
@@ -1516,7 +1516,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1055
+#: upstream/_versions/main/guides/native-reference.adoc:1056
 #, no-wrap
 msgid ""
 "@Path(\"/timestamp\")\n"
@@ -1524,13 +1524,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1057
+#: upstream/_versions/main/guides/native-reference.adoc:1058
 #, no-wrap
 msgid "    static long firstAccess = System.currentTimeMillis();\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1064
+#: upstream/_versions/main/guides/native-reference.adoc:1065
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -1542,38 +1542,38 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1067
+#: upstream/_versions/main/guides/native-reference.adoc:1068
 msgid "Rebuild the binary using:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1075
+#: upstream/_versions/main/guides/native-reference.adoc:1076
 msgid "Run the application in one terminal (make sure you stop any other native executable container runs before executing this):"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1082
+#: upstream/_versions/main/guides/native-reference.adoc:1083
 msgid "Send a `GET` request multiple times from another terminal:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1086
+#: upstream/_versions/main/guides/native-reference.adoc:1087
 #, no-wrap
 msgid "curl -w '\\n' http://localhost:8080/timestamp # run this multiple times\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1091
+#: upstream/_versions/main/guides/native-reference.adoc:1092
 msgid "to see how the current time has been baked into the binary.  This time was calculated when the binary was being built, hence application restarts have no effect."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1095
+#: upstream/_versions/main/guides/native-reference.adoc:1096
 msgid "In some situations, built time initializations can lead to errors when building native executables.  One example is when a value gets computed at build time which is forbidden to reside in the heap of the JVM that gets baked into the binary.  To see this in action, add this REST resource:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1108
+#: upstream/_versions/main/guides/native-reference.adoc:1109
 #, no-wrap
 msgid ""
 "import javax.crypto.Cipher;\n"
@@ -1587,7 +1587,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1111
+#: upstream/_versions/main/guides/native-reference.adoc:1112
 #, no-wrap
 msgid ""
 "@Path(\"/encrypt-decrypt\")\n"
@@ -1595,7 +1595,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1114
+#: upstream/_versions/main/guides/native-reference.adoc:1115
 #, no-wrap
 msgid ""
 "    static final KeyPairGenerator KEY_PAIR_GEN;\n"
@@ -1603,7 +1603,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1119
+#: upstream/_versions/main/guides/native-reference.adoc:1120
 #, no-wrap
 msgid ""
 "    static {\n"
@@ -1613,7 +1613,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1125
+#: upstream/_versions/main/guides/native-reference.adoc:1126
 #, no-wrap
 msgid ""
 "            CIPHER = Cipher.getInstance(\"RSA\");\n"
@@ -1624,7 +1624,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1130
+#: upstream/_versions/main/guides/native-reference.adoc:1131
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -1634,13 +1634,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1132
+#: upstream/_versions/main/guides/native-reference.adoc:1133
 #, no-wrap
 msgid "        byte[] text = message.getBytes(StandardCharsets.UTF_8);\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1136
+#: upstream/_versions/main/guides/native-reference.adoc:1137
 #, no-wrap
 msgid ""
 "        // Encrypt with private key\n"
@@ -1649,7 +1649,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1140
+#: upstream/_versions/main/guides/native-reference.adoc:1141
 #, no-wrap
 msgid ""
 "        // Decrypt with public key\n"
@@ -1658,7 +1658,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1144
+#: upstream/_versions/main/guides/native-reference.adoc:1145
 #, no-wrap
 msgid ""
 "        return new String(unencrypted, StandardCharsets.UTF_8);\n"
@@ -1667,12 +1667,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1147
+#: upstream/_versions/main/guides/native-reference.adoc:1148
 msgid "When trying to rebuild the application, you’ll encounter an error:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1166
+#: upstream/_versions/main/guides/native-reference.adoc:1167
 #, no-wrap
 msgid ""
 "./mvnw package -DskipTests -Dnative\n"
@@ -1694,17 +1694,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1174
+#: upstream/_versions/main/guides/native-reference.adoc:1175
 msgid "So, what the message above is telling us is that our application caches a value that is supposed to be random as a constant.  This is not desirable because something that's supposed to be random is no longer so, because the seed is baked in the image.  The message above makes it quite clear what is causing this, but in other situations the cause might be more obfuscated.  As a next step, we'll add some extra flags to the native executable generation to get more information."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1176
+#: upstream/_versions/main/guides/native-reference.adoc:1177
 msgid "As suggested by the message, let's start by adding an option to track object instantiation:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1206
+#: upstream/_versions/main/guides/native-reference.adoc:1207
 #, no-wrap
 msgid ""
 "./mvnw package -DskipTests -Dnative \\\n"
@@ -1737,17 +1737,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1215
+#: upstream/_versions/main/guides/native-reference.adoc:1216
 msgid "The error messages point to the code in the example, but it can be surprising that a reference to `DnsClient` appears.  Why is that? The key is in what happens inside `KeyPairGenerator.initialize()` method call.  It uses `JCAUtil.getSecureRandom()` which is why this is problematic, but sometimes the tracing options can show some stack traces that do not represent what happens in reality.  The best option is to dig through the source code and use tracing output for guidance but not as full truth."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1218
+#: upstream/_versions/main/guides/native-reference.adoc:1219
 msgid "Moving the `KEY_PAIR_GEN.initialize(1024);` call to the run-time executed method `encryptDecrypt` is enough to solve this particular issue.  Rebuild the application and verify that encrypt/decrypt endpoint works as expected by sending any message and check if the reply is the same as the incoming message:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1227
+#: upstream/_versions/main/guides/native-reference.adoc:1228
 #, no-wrap
 msgid ""
 "$ ./mvnw package -DskipTests -Dnative\n"
@@ -1759,34 +1759,34 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1230
+#: upstream/_versions/main/guides/native-reference.adoc:1231
 msgid "Additional information on which classes are initialized and why can be obtained by passing in the `-H:+PrintClassInitialization` flag via `-Dquarkus.native.additional-build-args`."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:1232
+#: upstream/_versions/main/guides/native-reference.adoc:1233
 #, no-wrap
 msgid "Profile Runtime Behaviour"
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/native-reference.adoc:1234
+#: upstream/_versions/main/guides/native-reference.adoc:1235
 #, no-wrap
 msgid "Single Thread"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1238
+#: upstream/_versions/main/guides/native-reference.adoc:1239
 msgid "In this exercise, we profile the runtime behaviour of some Quarkus application that was compiled to a native executable to determine where the bottleneck is.  Assume that you’re in a scenario where profiling the pure Java version is not possible, maybe because the issue only occurs with the native version of the application."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1241
+#: upstream/_versions/main/guides/native-reference.adoc:1242
 msgid "Add a REST resource with the following code (example courtesy of link:https://github.com/apangin/java-profiling-presentation/blob/master/src/demo1/StringBuilderTest.java[Andrei Pangin's Java Profiling presentation]):"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1253
+#: upstream/_versions/main/guides/native-reference.adoc:1254
 #, no-wrap
 msgid ""
 "@Path(\"/string-builder\")\n"
@@ -1794,7 +1794,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1259
+#: upstream/_versions/main/guides/native-reference.adoc:1260
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -1805,7 +1805,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1265
+#: upstream/_versions/main/guides/native-reference.adoc:1266
 #, no-wrap
 msgid ""
 "        do\n"
@@ -1816,7 +1816,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1269
+#: upstream/_versions/main/guides/native-reference.adoc:1270
 #, no-wrap
 msgid ""
 "        return \"Never happens\";\n"
@@ -1825,12 +1825,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1272
+#: upstream/_versions/main/guides/native-reference.adoc:1273
 msgid "Recompile the application, rebuild the binary and run it. Attempting a simple curl will never complete, as expected:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1280
+#: upstream/_versions/main/guides/native-reference.adoc:1281
 #, no-wrap
 msgid ""
 "$ ./mvnw package -DskipTests -Dnative\n"
@@ -1841,33 +1841,33 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1285
+#: upstream/_versions/main/guides/native-reference.adoc:1286
 msgid "However, the question we’re trying to answer here is: what would be the bottleneck of such code? Is it appending the characters? Is it deleting it? Is it checking whether the thread is alive?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1290
+#: upstream/_versions/main/guides/native-reference.adoc:1291
 msgid "Since we're dealing with a linux native executable, we can use tools like `perf` directly.  To use `perf`, go to the root of the project and start the tools container created earlier as a privileged user:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1294
+#: upstream/_versions/main/guides/native-reference.adoc:1295
 #, no-wrap
 msgid "docker run --privileged -t -i --rm -v ${PWD}:/data -p 8080:8080 fedora-tools:v1\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:1301
+#: upstream/_versions/main/guides/native-reference.adoc:1302
 msgid "Note that in order to use `perf` to profile the native executables in the guide, the container needs to run as privileged, or with `--cap-add sys_admin`.  Please note that privileged containers are **NOT** recommended in production, so use this flag with caution!"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1304
+#: upstream/_versions/main/guides/native-reference.adoc:1305
 msgid "Once the container is running, you need to ensure that the kernel is ready for the profiling exercises:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1309
+#: upstream/_versions/main/guides/native-reference.adoc:1310
 #, no-wrap
 msgid ""
 "echo -1 | sudo tee /proc/sys/kernel/perf_event_paranoid\n"
@@ -1875,80 +1875,80 @@ msgid ""
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:1316
+#: upstream/_versions/main/guides/native-reference.adoc:1317
 msgid "The kernel modifications above also apply to Linux virtual machines.  If running on a bare metal Linux machine, tweaking only `perf_event_paranoid` is enough."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1319
+#: upstream/_versions/main/guides/native-reference.adoc:1320
 msgid "Then, from inside the tools container we execute:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1323
-#: upstream/_versions/main/guides/native-reference.adoc:2069
+#: upstream/_versions/main/guides/native-reference.adoc:1324
+#: upstream/_versions/main/guides/native-reference.adoc:2070
 #, no-wrap
 msgid "perf record -F 1009 -g -a ./target/debugging-native-1.0.0-SNAPSHOT-runner\n"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_versions/main/guides/native-reference.adoc:1334
+#: upstream/_versions/main/guides/native-reference.adoc:1335
 msgid "The `perf record` command above takes `1009` samples per second.  Increasing this value means more samples are gathered, which can end up affecting the runtime performance.  This also increases the amount of data generated.  The more data generated, the longer it takes to process it, but the more precision you get on what the application is doing.  So, finding the right value is a balancing act."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1337
+#: upstream/_versions/main/guides/native-reference.adoc:1338
 msgid "While `perf record` is running, open another window and access the endpoint:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1341
+#: upstream/_versions/main/guides/native-reference.adoc:1342
 #, no-wrap
 msgid "curl http://localhost:8080/string-builder # this will never complete\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1350
+#: upstream/_versions/main/guides/native-reference.adoc:1351
 msgid "After a few seconds, halt the `perf record` process.  This will generate a `perf.data` file.  We could use `perf report` to inspect the perf data, but you can often get a better picture showing that data as a flame graph.  To generate flame graphs, we will use https://github.com/brendangregg/FlameGraph[FlameGraph GitHub repository], which has already been installed inside the tools container."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1352
+#: upstream/_versions/main/guides/native-reference.adoc:1353
 msgid "Next, generate a flame graph using the data captured via `perf record`:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1356
-#: upstream/_versions/main/guides/native-reference.adoc:1420
-#: upstream/_versions/main/guides/native-reference.adoc:1527
+#: upstream/_versions/main/guides/native-reference.adoc:1357
+#: upstream/_versions/main/guides/native-reference.adoc:1421
+#: upstream/_versions/main/guides/native-reference.adoc:1528
 #, no-wrap
 msgid "perf script -i perf.data | ${FG_HOME}/stackcollapse-perf.pl | ${FG_HOME}/flamegraph.pl > flamegraph.svg\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1360
+#: upstream/_versions/main/guides/native-reference.adoc:1361
 msgid "The flame graph is a svg file that a web browser, such as Firefox, can easily display.  After the above two commands complete one can open `flamegraph.svg` in their browser:"
 msgstr ""
 
 #. type: Positional ($1) AttributeList argument for macro 'image'
-#: upstream/_versions/main/guides/native-reference.adoc:1361
+#: upstream/_versions/main/guides/native-reference.adoc:1362
 #, no-wrap
 msgid "Perf flamegraph without symbols"
 msgstr ""
 
 #. type: Target for macro image
-#: upstream/_versions/main/guides/native-reference.adoc:1361
+#: upstream/_versions/main/guides/native-reference.adoc:1362
 #, no-wrap
 msgid "native-reference-perf-flamegraph-no-symbols.svg"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1370
+#: upstream/_versions/main/guides/native-reference.adoc:1371
 msgid "We see a big majority of time spent in what is supposed to be our main, but we see no trace of the `StringBuilderResource` class, nor the `StringBuilder` class we're calling.  We should look at the symbol table of the binary: can we find symbols for our class and `StringBuilder`? We need those in order to get meaningful data.  From within the tools container, query the symbol table:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1375
+#: upstream/_versions/main/guides/native-reference.adoc:1376
 #, no-wrap
 msgid ""
 "objdump -t ./target/debugging-native-1.0.0-SNAPSHOT-runner | grep StringBuilder\n"
@@ -1956,18 +1956,18 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1381
+#: upstream/_versions/main/guides/native-reference.adoc:1382
 msgid "No output appears when querying the symbol table.  This is why we don't see any call graphs in the flame graphs.  This is a deliberate decision that native-image makes.  By default, it removes symbols from the binary."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1385
+#: upstream/_versions/main/guides/native-reference.adoc:1386
 msgid "To regain the symbols, we need to rebuild the binary instructing GraalVM not to delete the symbols.  On top of that, enable DWARF debug info so that the stack traces can be populated with that information.  From outside the tools container, execute:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1391
-#: upstream/_versions/main/guides/native-reference.adoc:1506
+#: upstream/_versions/main/guides/native-reference.adoc:1392
+#: upstream/_versions/main/guides/native-reference.adoc:1507
 #, no-wrap
 msgid ""
 "./mvnw package -DskipTests -Dnative \\\n"
@@ -1976,12 +1976,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1396
+#: upstream/_versions/main/guides/native-reference.adoc:1397
 msgid "Next, re-enter the tools container if you exited, and inspect the native executable with `objdump`, and see how the symbols are now present:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1403
+#: upstream/_versions/main/guides/native-reference.adoc:1404
 #, no-wrap
 msgid ""
 "$ objdump -t ./target/debugging-native-1.0.0-SNAPSHOT-runner | grep StringBuilder\n"
@@ -1991,57 +1991,57 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1406
+#: upstream/_versions/main/guides/native-reference.adoc:1407
 msgid "You should see a long list of symbols that match that pattern."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1409
+#: upstream/_versions/main/guides/native-reference.adoc:1410
 msgid "Then, run the executable through perf, *indicating that the call graph is dwarf*:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1413
-#: upstream/_versions/main/guides/native-reference.adoc:1513
+#: upstream/_versions/main/guides/native-reference.adoc:1414
+#: upstream/_versions/main/guides/native-reference.adoc:1514
 #, no-wrap
 msgid "perf record -F 1009 --call-graph dwarf -a ./target/debugging-native-1.0.0-SNAPSHOT-runner\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1416
+#: upstream/_versions/main/guides/native-reference.adoc:1417
 msgid "Run the curl command once again, stop the binary, generate the flamegraphs and open it:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1425
+#: upstream/_versions/main/guides/native-reference.adoc:1426
 msgid "The flamegraph now shows where the bottleneck is.  It's when `StringBuilder.delete()` is called which calls `System.arraycopy()`.  The issue is that 1 million characters need to be shifted in very small increments:"
 msgstr ""
 
 #. type: Positional ($1) AttributeList argument for macro 'image'
-#: upstream/_versions/main/guides/native-reference.adoc:1426
+#: upstream/_versions/main/guides/native-reference.adoc:1427
 #, no-wrap
 msgid "Perf flamegraph with symbols"
 msgstr ""
 
 #. type: Target for macro image
-#: upstream/_versions/main/guides/native-reference.adoc:1426
+#: upstream/_versions/main/guides/native-reference.adoc:1427
 #, no-wrap
 msgid "native-reference-perf-flamegraph-symbols.svg"
 msgstr ""
 
 #. type: Title ====
-#: upstream/_versions/main/guides/native-reference.adoc:1428
+#: upstream/_versions/main/guides/native-reference.adoc:1429
 #, no-wrap
 msgid "Multi-Thread"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1433
+#: upstream/_versions/main/guides/native-reference.adoc:1434
 msgid "Multithreaded programs might require special attention when trying to understand their runtime behaviour.  To demonstrate this, add this `MulticastResource` code to your project (example courtesy of link:https://github.com/apangin/java-profiling-presentation/blob/master/src/demo6/DatagramTest.java[Andrei Pangin's Java Profiling presentation]):"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1449
+#: upstream/_versions/main/guides/native-reference.adoc:1450
 #, no-wrap
 msgid ""
 "import jakarta.ws.rs.GET;\n"
@@ -2058,7 +2058,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1459
+#: upstream/_versions/main/guides/native-reference.adoc:1460
 #, no-wrap
 msgid ""
 "@Path(\"/multicast\")\n"
@@ -2073,7 +2073,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1464
+#: upstream/_versions/main/guides/native-reference.adoc:1465
 #, no-wrap
 msgid ""
 "    static void sendMulticasts() throws Exception {\n"
@@ -2083,7 +2083,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1472
+#: upstream/_versions/main/guides/native-reference.adoc:1473
 #, no-wrap
 msgid ""
 "        ExecutorService pool =\n"
@@ -2096,7 +2096,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1479
+#: upstream/_versions/main/guides/native-reference.adoc:1480
 #, no-wrap
 msgid ""
 "                while (true) {\n"
@@ -2108,7 +2108,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1482
+#: upstream/_versions/main/guides/native-reference.adoc:1483
 #, no-wrap
 msgid ""
 "        System.out.println(\"Warming up...\");\n"
@@ -2116,7 +2116,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1486
+#: upstream/_versions/main/guides/native-reference.adoc:1487
 #, no-wrap
 msgid ""
 "        System.out.println(\"Benchmarking...\");\n"
@@ -2125,13 +2125,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1488
+#: upstream/_versions/main/guides/native-reference.adoc:1489
 #, no-wrap
 msgid "    private static final class ShortNameThreadFactory implements ThreadFactory {\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1491
+#: upstream/_versions/main/guides/native-reference.adoc:1492
 #, no-wrap
 msgid ""
 "        private final AtomicInteger threadNumber = new AtomicInteger(1);\n"
@@ -2139,7 +2139,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1497
+#: upstream/_versions/main/guides/native-reference.adoc:1498
 #, no-wrap
 msgid ""
 "        public Thread newThread(Runnable r) {\n"
@@ -2150,55 +2150,55 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1500
+#: upstream/_versions/main/guides/native-reference.adoc:1501
 msgid "Build the native executable with debug info:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1509
+#: upstream/_versions/main/guides/native-reference.adoc:1510
 msgid "From inside the tools container (as privileged user) run the native executable through `perf`:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1516
+#: upstream/_versions/main/guides/native-reference.adoc:1517
 msgid "Invoke the endpoint to send the multicast packets:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1520
+#: upstream/_versions/main/guides/native-reference.adoc:1521
 #, no-wrap
 msgid "curl -w '\\n' http://localhost:8080/multicast\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1523
+#: upstream/_versions/main/guides/native-reference.adoc:1524
 msgid "Make and open a flamegraph:"
 msgstr ""
 
 #. type: Positional ($1) AttributeList argument for macro 'image'
-#: upstream/_versions/main/guides/native-reference.adoc:1529
+#: upstream/_versions/main/guides/native-reference.adoc:1530
 #, no-wrap
 msgid "Muti-thread perf flamegraph with separate threads"
 msgstr ""
 
 #. type: Target for macro image
-#: upstream/_versions/main/guides/native-reference.adoc:1529
+#: upstream/_versions/main/guides/native-reference.adoc:1530
 #, no-wrap
 msgid "native-reference-multi-flamegraph-separate-threads.svg"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1533
+#: upstream/_versions/main/guides/native-reference.adoc:1534
 msgid "The flamegraph produced looks odd. Each thread is treated independently even though they all do the same work.  This makes it difficult to have a clear picture of the bottlenecks in the program."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1536
+#: upstream/_versions/main/guides/native-reference.adoc:1537
 msgid "This is happening because from a `perf` perspective, each thread is a different command.  We can see that if we inspect `perf report`:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1547
+#: upstream/_versions/main/guides/native-reference.adoc:1548
 #, no-wrap
 msgid ""
 "perf report --stdio\n"
@@ -2212,52 +2212,52 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1551
+#: upstream/_versions/main/guides/native-reference.adoc:1552
 msgid "This can be worked around by applying some modifications to the perf output, in order to make all threads have the same name. E.g."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1555
+#: upstream/_versions/main/guides/native-reference.adoc:1556
 #, no-wrap
 msgid "perf script | sed -E \"s/thread-[0-9]*/thread/\" | ${FG_HOME}/stackcollapse-perf.pl | ${FG_HOME}/flamegraph.pl > flamegraph.svg\n"
 msgstr ""
 
 #. type: Positional ($1) AttributeList argument for macro 'image'
-#: upstream/_versions/main/guides/native-reference.adoc:1557
+#: upstream/_versions/main/guides/native-reference.adoc:1558
 #, no-wrap
 msgid "Muti-thread perf flamegraph with joined threads"
 msgstr ""
 
 #. type: Target for macro image
-#: upstream/_versions/main/guides/native-reference.adoc:1557
+#: upstream/_versions/main/guides/native-reference.adoc:1558
 #, no-wrap
 msgid "native-reference-multi-flamegraph-joined-threads.svg"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1561
+#: upstream/_versions/main/guides/native-reference.adoc:1562
 msgid "When you open the flamegraph, you will see all threads' work collapsed into a single area.  Then, you can clearly see that there's some locking that could affect performance."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:1563
+#: upstream/_versions/main/guides/native-reference.adoc:1564
 #, no-wrap
 msgid "Debugging Native Crashes"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1570
+#: upstream/_versions/main/guides/native-reference.adoc:1571
 msgid "One of the drawbacks of using native executables is that they cannot be debugged using the standard Java debuggers, instead we need to debug them using `gdb`, the GNU Project debugger.  To demonstrate how to do this, we are going to generate a native Quarkus application that crashes due to a Segmentation Fault when accessing http://localhost:8080/crash.  To achieve this, add the following REST resource to the project:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1576
+#: upstream/_versions/main/guides/native-reference.adoc:1577
 #, no-wrap
 msgid "import sun.misc.Unsafe;\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1582
+#: upstream/_versions/main/guides/native-reference.adoc:1583
 #, no-wrap
 msgid ""
 "import jakarta.ws.rs.GET;\n"
@@ -2268,7 +2268,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1585
+#: upstream/_versions/main/guides/native-reference.adoc:1586
 #, no-wrap
 msgid ""
 "@Path(\"/crash\")\n"
@@ -2276,7 +2276,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1601
+#: upstream/_versions/main/guides/native-reference.adoc:1602
 #, no-wrap
 msgid ""
 "    @GET\n"
@@ -2297,12 +2297,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1605
+#: upstream/_versions/main/guides/native-reference.adoc:1606
 msgid "This code will try to copy 256 bytes from address `0x0` to `0x80` resulting in a Segmentation Fault.  To verify this, compile and run the example application:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1613
+#: upstream/_versions/main/guides/native-reference.adoc:1614
 #, no-wrap
 msgid ""
 "$ ./mvnw package -DskipTests -Dnative\n"
@@ -2313,12 +2313,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1616
+#: upstream/_versions/main/guides/native-reference.adoc:1617
 msgid "This will result in the following output:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1623
+#: upstream/_versions/main/guides/native-reference.adoc:1624
 #, no-wrap
 msgid ""
 "$ docker run -i --rm -p 8080:8080 test/debugging-native:1.0.0-SNAPSHOT\n"
@@ -2328,23 +2328,23 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1629
+#: upstream/_versions/main/guides/native-reference.adoc:1630
 msgid "The omitted output above contains clues to what caused the issue, but in this exercise we are going to assume that no information was provided.  Let’s try to debug the segmentation fault using `gdb`.  To do that, go to the root of the project and enter the tools container:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1633
+#: upstream/_versions/main/guides/native-reference.adoc:1634
 #, no-wrap
 msgid "docker run -t -i --rm -v ${PWD}:/data -p 8080:8080 fedora-tools:v1 /bin/bash\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1636
+#: upstream/_versions/main/guides/native-reference.adoc:1637
 msgid "Then start the application in `gdb` and execute `run`."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1645
+#: upstream/_versions/main/guides/native-reference.adoc:1646
 #, no-wrap
 msgid ""
 "gdb ./target/debugging-native-1.0.0-SNAPSHOT-runner\n"
@@ -2356,24 +2356,24 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1648
+#: upstream/_versions/main/guides/native-reference.adoc:1649
 msgid "Next, try to access http://localhost:8080/crash:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1651
+#: upstream/_versions/main/guides/native-reference.adoc:1652
 #, no-wrap
 msgid "curl http://localhost:8080/crash\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1654
-#: upstream/_versions/main/guides/native-reference.adoc:1698
+#: upstream/_versions/main/guides/native-reference.adoc:1655
+#: upstream/_versions/main/guides/native-reference.adoc:1699
 msgid "This will result in the following message in `gdb`:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1660
+#: upstream/_versions/main/guides/native-reference.adoc:1661
 #, no-wrap
 msgid ""
 "Thread 4 \"ecutor-thread-0\" received signal SIGSEGV, Segmentation fault.\n"
@@ -2382,12 +2382,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1663
+#: upstream/_versions/main/guides/native-reference.adoc:1664
 msgid "If we try to get more info about the backtrace that led to this crash we will see that there is not enough information available."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1674
+#: upstream/_versions/main/guides/native-reference.adoc:1675
 #, no-wrap
 msgid ""
 "(gdb) bt\n"
@@ -2401,17 +2401,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1679
+#: upstream/_versions/main/guides/native-reference.adoc:1680
 msgid "This is because we didn’t compile the Quarkus application with `-Dquarkus.native.debug.enabled`, so `gdb` cannot find debugging symbols for our native executable, as indicated by the \"_No debugging symbols found in ./target/debugging-native-1.0.0-SNAPSHOT-runner_\" message in the beginning of `gdb`."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1682
+#: upstream/_versions/main/guides/native-reference.adoc:1683
 msgid "Recompiling the Quarkus application with `-Dquarkus.native.debug.enabled` and rerunning it through `gdb` we are now able to get a backtrace making clear what caused the crash.  On top of that, add `-H:-OmitInlinedMethodDebugLineInfo` option to avoid inlined methods being omitted from the backtrace:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1695
+#: upstream/_versions/main/guides/native-reference.adoc:1696
 #, no-wrap
 msgid ""
 "./mvnw package -DskipTests -Dnative \\\n"
@@ -2427,7 +2427,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1706
+#: upstream/_versions/main/guides/native-reference.adoc:1707
 #, no-wrap
 msgid ""
 "Thread 4 \"ecutor-thread-0\" received signal SIGSEGV, Segmentation fault.\n"
@@ -2438,12 +2438,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1710
+#: upstream/_versions/main/guides/native-reference.adoc:1711
 msgid "We already see that `gdb` is able to tell us which method caused the crash and where it’s located in the source code.  We can also get a backtrace of the call graph that led us to this state:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1723
+#: upstream/_versions/main/guides/native-reference.adoc:1724
 #, no-wrap
 msgid ""
 "(gdb) bt\n"
@@ -2459,17 +2459,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1726
+#: upstream/_versions/main/guides/native-reference.adoc:1727
 msgid "Similarly, we can get a backtrace of the call graph of other threads."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1728
+#: upstream/_versions/main/guides/native-reference.adoc:1729
 msgid "First, we can list the available threads with:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1739
+#: upstream/_versions/main/guides/native-reference.adoc:1740
 #, no-wrap
 msgid ""
 "(gdb) info threads\n"
@@ -2483,12 +2483,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1742
+#: upstream/_versions/main/guides/native-reference.adoc:1743
 msgid "select the thread we want to inspect, e.g. thread 1:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1749
+#: upstream/_versions/main/guides/native-reference.adoc:1750
 #, no-wrap
 msgid ""
 "(gdb) thread 1\n"
@@ -2498,12 +2498,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1752
+#: upstream/_versions/main/guides/native-reference.adoc:1753
 msgid "and, finally, print the stack trace:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1780
+#: upstream/_versions/main/guides/native-reference.adoc:1781
 #, no-wrap
 msgid ""
 "(gdb) bt\n"
@@ -2534,18 +2534,18 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1783
+#: upstream/_versions/main/guides/native-reference.adoc:1784
 msgid "Alternatively, we can list the backtraces of all threads with a single command:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1787
+#: upstream/_versions/main/guides/native-reference.adoc:1788
 #, no-wrap
 msgid "(gdb) thread apply all backtrace\n"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1807
+#: upstream/_versions/main/guides/native-reference.adoc:1808
 #, no-wrap
 msgid ""
 "Thread 22 (Thread 0x7fffc8dff640 (LWP 1028872) \"tloop-thread-15\"):\n"
@@ -2570,7 +2570,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1827
+#: upstream/_versions/main/guides/native-reference.adoc:1828
 #, no-wrap
 msgid ""
 "Thread 21 (Thread 0x7fffc97fa640 (LWP 1028871) \"tloop-thread-14\"):\n"
@@ -2595,7 +2595,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1830
+#: upstream/_versions/main/guides/native-reference.adoc:1831
 #, no-wrap
 msgid ""
 "Thread 20 (Thread 0x7fffc9ffb640 (LWP 1028870) \"tloop-thread-13\"):\n"
@@ -2603,12 +2603,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1833
+#: upstream/_versions/main/guides/native-reference.adoc:1834
 msgid "Note, however, that despite being able to get a backtrace we can still not list the source code at point with the `list` command."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1838
+#: upstream/_versions/main/guides/native-reference.adoc:1839
 #, no-wrap
 msgid ""
 "(gdb) list\n"
@@ -2616,12 +2616,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1844
+#: upstream/_versions/main/guides/native-reference.adoc:1845
 msgid "This is because `gdb` is not aware of the location of the source files.  We are running the executable outside the target directory.  To fix this we can either rerun `gdb` from the target directory or, run `directory target/debugging-native-1.0.0-SNAPSHOT-native-image-source-jar/sources` e.g.:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1860
+#: upstream/_versions/main/guides/native-reference.adoc:1861
 #, no-wrap
 msgid ""
 "(gdb) directory target/debugging-native-1.0.0-SNAPSHOT-native-image-source-jar/sources\n"
@@ -2640,55 +2640,55 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1867
+#: upstream/_versions/main/guides/native-reference.adoc:1868
 msgid "We can now examine line `169` and get a first hint of what might be wrong (in this case we see that it fails at the first read from src which contains the address `0x0000`), or walk up the stack using `gdb`’s `up` command to see what part of our code led to this situation.  For more information about using `gdb` to debug native executables, see the link:https://www.graalvm.org/{graalvm-docs-version}/reference-manual/native-image/debugging-and-diagnostics/DebugInfo/[GraalVM Debug Info Feature] guide."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_versions/main/guides/native-reference.adoc:1869
+#: upstream/_versions/main/guides/native-reference.adoc:1870
 #, no-wrap
 msgid "Frequently Asked Questions"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:1871
+#: upstream/_versions/main/guides/native-reference.adoc:1872
 #, no-wrap
 msgid "Why is the process of generating a native executable slow?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1875
+#: upstream/_versions/main/guides/native-reference.adoc:1876
 msgid "Native executable generation is a multi-step process.  The analysis and compile steps are the most expensive of all and hence the ones that dominate the time spent generating the native executable."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1881
+#: upstream/_versions/main/guides/native-reference.adoc:1882
 msgid "In the analysis phase, a static points-to analysis starts from the main method of the program to find out what is reachable.  As new classes are discovered, some of them will be initialized during this process depending on the configuration.  In the next step, the heap is snapshotted and checks are made to see which types need to be available at runtime.  The initialization and heap snapshotting can cause new types to be discovered, in which case the process is repeated.  The process stops when a fixed point is reached, that is when the reachable program grows no more."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1883
+#: upstream/_versions/main/guides/native-reference.adoc:1884
 msgid "The compilation step is pretty straightforward, it simply compiles all the reachable code."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1890
+#: upstream/_versions/main/guides/native-reference.adoc:1891
 msgid "The time spent in analysis and compilation phases depends on how big the application is.  The bigger the application, the longer it takes to compile it.  However, there are certain features that can have an exponential effect.  For example, when registering types and methods for reflection access, the analysis can’t easily see what’s behind those types or methods, so it has to do more work to complete the analysis step."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:1891
+#: upstream/_versions/main/guides/native-reference.adoc:1892
 #, no-wrap
 msgid "I get a `AnalysisError\\$ParsingError` when building a native executable due to an `UnresolvedElementException`, what can I do?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1896
+#: upstream/_versions/main/guides/native-reference.adoc:1897
 msgid "When building a native executable Quarkus requires all classes being referenced by the code, no matter if they are build-time or run-time initialized, to be present in the classpath.  This way it ensures that there will be no crashes at runtime due to potential `NoClassDefFoundError` exceptions.  To achieve this it makes use of GraalVM's `--link-at-build-time` parameter:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:1902
+#: upstream/_versions/main/guides/native-reference.adoc:1903
 #, no-wrap
 msgid ""
 "--link-at-build-time  require types to be fully defined at image build-time. If used\n"
@@ -2697,186 +2697,186 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1906
+#: upstream/_versions/main/guides/native-reference.adoc:1907
 msgid "This, however, may result in an `AnalysisError\\$ParsingError` due to an `UnresolvedElementException` at build time.  This is often caused because the application references a class from an https://maven.apache.org/guides/introduction/introduction-to-optional-and-excludes-dependencies.html#optional-dependencies[optional dependency]."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1908
+#: upstream/_versions/main/guides/native-reference.adoc:1909
 msgid "If you have access to the source code responsible for the reference to the missing dependency and can alter it, you should consider one of the following:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1910
+#: upstream/_versions/main/guides/native-reference.adoc:1911
 msgid "Remove the reference if it's not actually necessary."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1911
+#: upstream/_versions/main/guides/native-reference.adoc:1912
 msgid "Move the affected code in a sub-module and make the dependency non-optional (as is the best practice)."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1912
+#: upstream/_versions/main/guides/native-reference.adoc:1913
 msgid "Make the dependency non-optional."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1914
+#: upstream/_versions/main/guides/native-reference.adoc:1915
 msgid "In the unfortunate case where the reference causing the issue is made by a 3rd party library, that you cannot modify, you should consider one of the following:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1916
+#: upstream/_versions/main/guides/native-reference.adoc:1917
 msgid "Use a class/method substitution to remove the said reference."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1917
+#: upstream/_versions/main/guides/native-reference.adoc:1918
 msgid "Add the optional dependency as a non-optional dependency of your project."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1921
+#: upstream/_versions/main/guides/native-reference.adoc:1922
 msgid "Note that although option (1) is the best choice performance wise, as it minimizes the applications footprint,it might not be trivial to implement.  To make matters worse, it's also not easy to maintain as it is tightly coupled to the 3rd party library implementation.  Option (2) is a straight forward alternative to work around the issue, but comes at the cost of including possibly never invoked code in the resulting native executable."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:1922
+#: upstream/_versions/main/guides/native-reference.adoc:1923
 #, no-wrap
 msgid "I get an `OutOfMemoryError` (OOME) building native executables, what can I do?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1934
+#: upstream/_versions/main/guides/native-reference.adoc:1935
 msgid "Building native executables is not only time consuming, but it also takes a fair amount of memory.  For example, building a sample native Quarkus Jakarta Persistence application such as the Hibernate ORM quickstart, may use 6GB to 8GB resident set size in memory.  A big chunk of this memory is Java heap, but extra memory is required for other aspects of the JVM that runs the native building process.  It is still possible to build such applications in environments that have total memory close to the limits, but to do that it is necessary to shrink the maximum heap size of the GraalVM native image process.  To do that, set a maximum heap size using the `quarkus.native.native-image-xmx` property.  For example, we can instruct GraalVM to use 5GB of maximum heap size by passing in `-Dquarkus.native.native-image-xmx=5g` in the command line."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1937
+#: upstream/_versions/main/guides/native-reference.adoc:1938
 msgid "Building native executables this way might have the side effect of requiring more time to complete.  This is due to garbage collection having to work harder for native image generation to have free space to do its job."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1940
+#: upstream/_versions/main/guides/native-reference.adoc:1941
 msgid "Note that typical applications are likely bigger than quickstarts, so the memory requirements will also likely be higher."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:1941
+#: upstream/_versions/main/guides/native-reference.adoc:1942
 #, no-wrap
 msgid "Why is runtime performance of a native executable inferior compared to JVM mode?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1946
+#: upstream/_versions/main/guides/native-reference.adoc:1947
 msgid "As with most things in life there are some trade-offs involved when choosing native compilation over JVM mode.  So depending on the application the runtime performance of a native application might be slower compared to JVM mode, though that’s not always the case."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1952
+#: upstream/_versions/main/guides/native-reference.adoc:1953
 msgid "JVM execution of an application includes runtime optimization of the code that profits from profile information built up during execution.  That includes the opportunities to inline a lot more of the code, locate hot code on direct paths (i.e. ensure better instruction cache locality)  and cut out a lot of the code on cold paths (on the JVM a lot of code does not get compiled until something tries to execute it -- it is replaced with a trap that causes deoptimization and recompilation).  Removal of cold paths provides many more optimization opportunities than are available for ahead of time compilation because it significantly reduces the branch complexity and combinatorial logic of the smaller amount of hot code that is compiled."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1955
+#: upstream/_versions/main/guides/native-reference.adoc:1956
 msgid "By contrast, native executable compilation has to cater for all possible execution paths when it compiles code offline since it does not know which are the hot or cold paths and cannot use the trick of planting a trap and recompiling if it is hit. For the same reason it cannot load the dice to ensure that code cache conflicts are minimized by co-locating hot paths adjacent.  Native executable generation is able to remove some code because of the closed world hypothesis but that is often not enough to make up for all the benefits that profiling and runtime deopt & recompile provides to the JVM JIT compiler."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1957
+#: upstream/_versions/main/guides/native-reference.adoc:1958
 msgid "Note, however, that there is a price you pay for that potentially higher JVM speed, and that price is in increased resource usage (both CPU and memory) and startup time because:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1959
+#: upstream/_versions/main/guides/native-reference.adoc:1960
 msgid "it takes some time before the JIT kicks in and fully optimizes the code."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1960
+#: upstream/_versions/main/guides/native-reference.adoc:1961
 msgid "the JIT compiler consumes resources that could be utilized by the application."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1961
+#: upstream/_versions/main/guides/native-reference.adoc:1962
 msgid "the JVM has to retain a lot more metadata and compiler/profiler data to support the better optimizations that it can offer."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1963
+#: upstream/_versions/main/guides/native-reference.adoc:1964
 msgid "The reason for 1) is that code needs to be run interpreted for some time and, possibly, to be compiled several times before all potential optimizations are realized to ensure that:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1965
+#: upstream/_versions/main/guides/native-reference.adoc:1966
 msgid "it’s worth compiling that code path, i.e. it’s being executed enough times, and that"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1966
+#: upstream/_versions/main/guides/native-reference.adoc:1967
 msgid "we have enough profiling data to perform meaningful optimizations."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1969
+#: upstream/_versions/main/guides/native-reference.adoc:1970
 msgid "An implication of 1) is that for small, short-lived applications a native executable may well be a better bet.  Although the compiled code is not as well optimized it is available straight away."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1972
+#: upstream/_versions/main/guides/native-reference.adoc:1973
 msgid "The reason for 2) is that the JVM is essentially running the compiler at runtime in parallel with the application itself.  In the case of native executables the compiler is run ahead of time removing the need to run the compiler in parallel with the application."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1981
+#: upstream/_versions/main/guides/native-reference.adoc:1982
 msgid "There are several reasons for 3). The JVM does not have a closed world assumption.  So, it has to be able to recompile code if loading of new classes implies that it needs to revise optimistic assumptions made at compile time.  For example, if an interface has only one implementation it can make a call jump directly to that code.  However, in the case where a second implementation class is loaded the call site needs to be patched to test the type of the receiver instance and jump to the code that belongs to its class.  Supporting optimizations like this one requires keeping track of a lot more details of the class base than a native executable, including recording the full class and interface hierarchy, details of which methods override other methods, all method bytecode etc.  In a native executable most of the details of class structure and bytecode can be ignored at run time."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1986
+#: upstream/_versions/main/guides/native-reference.adoc:1987
 msgid "The JVM also has to cope with changes to the class base or execution profiles that result in a thread going down a previously cold path.  At that point the JVM has to jump out of the compiled code into the interpreter and recompile the code to cater for a new execution profile that includes the previously cold path.  That requires keeping runtime info that allow a compiled stack frame to be replaced with one or more interpreter frames.  It also requires runtime extensible profile counters to be allocated and updated to track what has or has not been executed."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:1987
+#: upstream/_versions/main/guides/native-reference.adoc:1988
 #, no-wrap
 msgid "Why are native executables “big”?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1990
+#: upstream/_versions/main/guides/native-reference.adoc:1991
 msgid "This can be attributed to a number of different reasons:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:1996
+#: upstream/_versions/main/guides/native-reference.adoc:1997
 msgid "Native executables include not only the application code but also, library code, and JDK code.  As a result a more fair comparison would be to compare the native executable’s size with the size of the application, plus the size of the libraries it uses, plus the size of the JDK.  Especially the JDK part is not negligible even in simple applications like HelloWorld.  To get a glance on what is being pulled in the image one can use `-H:+PrintUniverse` when building the native executable."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2002
+#: upstream/_versions/main/guides/native-reference.adoc:2003
 msgid "Some features are always included in a native executable even though they might never be actually used at run time.  An example of such a feature is garbage collection.  At compile time we can’t be sure whether an application will need to run garbage collection at run time, so garbage collection is always included in native executables increasing their size even if not necessary.  Native executable generation relies on static code analysis to identify which code paths are reachable, and static code analysis can be imprecise leading to more code getting into the image than what’s actually needed."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2005
+#: upstream/_versions/main/guides/native-reference.adoc:2006
 msgid "There is a https://github.com/oracle/graal/issues/287[GraalVM upstream issue] with some interesting discussions about that topic."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:2006
+#: upstream/_versions/main/guides/native-reference.adoc:2007
 #, no-wrap
 msgid "What version of Mandrel was used to generate a binary?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2009
+#: upstream/_versions/main/guides/native-reference.adoc:2010
 msgid "One can see which Mandrel version was used to generate a binary by inspecting the binary as follows:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:2014
+#: upstream/_versions/main/guides/native-reference.adoc:2015
 #, no-wrap
 msgid ""
 "$ strings target/debugging-native-1.0.0-SNAPSHOT-runner | grep GraalVM\n"
@@ -2884,45 +2884,45 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:2016
+#: upstream/_versions/main/guides/native-reference.adoc:2017
 #, no-wrap
 msgid "How do I enable GC logging in native executables?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2019
+#: upstream/_versions/main/guides/native-reference.adoc:2020
 msgid "See xref:gc-logging[Native Memory Management GC Logging section] for details."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:2021
+#: upstream/_versions/main/guides/native-reference.adoc:2022
 #, no-wrap
 msgid "Can I get a heap dump of a native executable? e.g. if it runs out of memory"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2026
+#: upstream/_versions/main/guides/native-reference.adoc:2027
 msgid "Starting with GraalVM 22.2.0 it is possible to create heap dumps upon request, e.g. `kill -SIGUSR1 <pid>`.  Support for dumping the heap dump upon an out of memory error will follow up."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:2027
+#: upstream/_versions/main/guides/native-reference.adoc:2028
 #, no-wrap
 msgid "Can I build and run this examples outside a container in Linux?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2033
+#: upstream/_versions/main/guides/native-reference.adoc:2034
 msgid "Yes you can.  In fact, debugging native executables on a Linux bare metal box offers the best possible experience.  In this kind of environments, root access is not needed except to install packages required to run some debug steps, or to enable `perf` to gather events at the kernel."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2035
+#: upstream/_versions/main/guides/native-reference.adoc:2036
 msgid "These are the packages you'll need on your Linux environment to run through the different debugging sections:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:2042
+#: upstream/_versions/main/guides/native-reference.adoc:2043
 #, no-wrap
 msgid ""
 "# dnf (rpm-based)\n"
@@ -2932,28 +2932,28 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:2044
+#: upstream/_versions/main/guides/native-reference.adoc:2045
 #, no-wrap
 msgid "Generating flame graphs is slow, or produces errors, what can I do?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2048
+#: upstream/_versions/main/guides/native-reference.adoc:2049
 msgid "There are multiple ways in which a native executable produced by Mandrel can be profiled.  All the methods require you to pass in the `-H:-DeleteLocalSymbols` option."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2052
+#: upstream/_versions/main/guides/native-reference.adoc:2053
 msgid "The method shown in this reference guide generates a binary with DWARF debug information, runs it via `perf record` and then uses `perf script` and flame graph tooling to generate the flamegraphs.  However, the `perf script` post-processing step done on this binary can appear to be slow or can show some DWARF errors."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2057
+#: upstream/_versions/main/guides/native-reference.adoc:2058
 msgid "An alternative method to generate flame graphs is to pass in `-H:+PreserveFramePointer` when generating the native executable instead of generating the DWARF debug information.  It instructs the binary to use an extra register for the frame pointer.  This enables `perf` to do stack walking to profile the runtime behaviour.  To generate the native executable using these flags, do the following:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:2062
+#: upstream/_versions/main/guides/native-reference.adoc:2063
 #, no-wrap
 msgid ""
 "./mvnw package -DskipTests -Dnative\n"
@@ -2961,22 +2961,22 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2065
+#: upstream/_versions/main/guides/native-reference.adoc:2066
 msgid "To get runtime profiling information out of the native executable, simply do:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2073
+#: upstream/_versions/main/guides/native-reference.adoc:2074
 msgid "The recommended method for generating runtime profiling information is using the debug information rather than generating a binary that preserves the frame pointer.  This is because adding debug information to the native executable build process has no negative runtime performance whereas preserving the frame pointer does."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2079
+#: upstream/_versions/main/guides/native-reference.adoc:2080
 msgid "DWARF debug info is generated in a separate file and can even be omitted in the default deployment and only be transferred and used on demand, for profiling or debugging purposes.  Furthermore, the presence of debug info enables `perf` to show us the relevant source code lines as well, hence it does not bloat the native executable itself.  To do that, simply call `perf report` with an extra parameter to show source code lines:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:2089
+#: upstream/_versions/main/guides/native-reference.adoc:2090
 #, no-wrap
 msgid ""
 "perf report --stdio -F+srcline\n"
@@ -2989,33 +2989,33 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2095
+#: upstream/_versions/main/guides/native-reference.adoc:2096
 msgid "The performance penalty of preserving the frame pointer is due to using the extra register for stack walking, particularly in `x86_64` compared to `aarch64` where there are fewer registers available.  Using this extra register reduces the number of registers that are available for other work, which can lead to performance penalties."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:2096
+#: upstream/_versions/main/guides/native-reference.adoc:2097
 #, no-wrap
 msgid "I think I’ve found a bug in native-image, how can I debug it with the IDE?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2100
+#: upstream/_versions/main/guides/native-reference.adoc:2101
 msgid "Although it is possible to remote debug processes within containers, it might be easier to step-by-step debug native-image by installing Mandrel locally and adding it to the path of the shell process."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2105
+#: upstream/_versions/main/guides/native-reference.adoc:2106
 msgid "Native executable generation is the result of two Java processes that are executed sequentially.  The first process is very short and its main job is to set things up for the second process.  The second process is the one that takes care of most of the work.  The steps to debug one process or the other vary slightly."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2110
+#: upstream/_versions/main/guides/native-reference.adoc:2111
 msgid "Let’s discuss first how to debug the second process, which is the one you most likely to want to debug.  The starting point for the second process is the `com.oracle.svm.hosted.NativeImageGeneratorRunner` class.  To debug this process, simply add `--debug-attach=*:8000` as an additional build time argument:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:2115
+#: upstream/_versions/main/guides/native-reference.adoc:2116
 #, no-wrap
 msgid ""
 "./mvnw package -DskipTests -Dnative \\\n"
@@ -3023,12 +3023,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2121
+#: upstream/_versions/main/guides/native-reference.adoc:2122
 msgid "The starting point for the first process is the `com.oracle.svm.driver.NativeImages` class.  In GraalVM CE distributions, this first process is a binary, so debugging it in the traditional way with a Java IDE is not possible.  However, Mandrel distributions (or locally built GraalVM CE instances) keep this as a normal Java process, so you can remote debug this process by adding the `--vm.agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000` as an additional build argument, e.g."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:2126
+#: upstream/_versions/main/guides/native-reference.adoc:2127
 #, no-wrap
 msgid ""
 "$ ./mvnw package -DskipTests -Dnative \\\n"
@@ -3036,137 +3036,137 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:2128
+#: upstream/_versions/main/guides/native-reference.adoc:2129
 #, no-wrap
 msgid "Can I use JFR/JMC to debug or profile native binaries?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2137
+#: upstream/_versions/main/guides/native-reference.adoc:2138
 msgid "https://docs.oracle.com/javacomponents/jmc-5-4/jfr-runtime-guide/about.htm#JFRUH170[Java Flight Recorder (JFR)] and https://www.oracle.com/java/technologies/jdk-mission-control.html[JDK Mission Control (JMC)] can be used to profile native binaries since GraalVM CE 21.2.0.  However, JFR in GraalVM is currently limited in capabilities compared to HotSpot.  The custom event API is fully supported, but some VM level features are unavailable.  More events and JFR features will continue to be added in later releases.  The following table outlines Native Image JFR support and limitations by version."
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/native-reference.adoc:2140
+#: upstream/_versions/main/guides/native-reference.adoc:2141
 #, no-wrap
 msgid "GraalVM Version"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/native-reference.adoc:2140
+#: upstream/_versions/main/guides/native-reference.adoc:2141
 #, no-wrap
 msgid "Supports"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/native-reference.adoc:2142
+#: upstream/_versions/main/guides/native-reference.adoc:2143
 #, no-wrap
 msgid "Limitations"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/native-reference.adoc:2143
+#: upstream/_versions/main/guides/native-reference.adoc:2144
 #, no-wrap
 msgid "GraalVM CE 21.3 and Mandrel 21.3"
 msgstr ""
 
 #. type: Bullet: '* '
-#: upstream/_versions/main/guides/native-reference.adoc:2146
+#: upstream/_versions/main/guides/native-reference.adoc:2147
 msgid "Minimal VM Level events"
 msgstr ""
 
 #. type: Bullet: '* '
-#: upstream/_versions/main/guides/native-reference.adoc:2146
+#: upstream/_versions/main/guides/native-reference.adoc:2147
 msgid "Custom events API"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/native-reference.adoc:2146
+#: upstream/_versions/main/guides/native-reference.adoc:2147
 #, no-wrap
 msgid "* Start recordings upon executabe run or JFR Recording API"
 msgstr ""
 
 #. type: Bullet: '* '
-#: upstream/_versions/main/guides/native-reference.adoc:2151
-#: upstream/_versions/main/guides/native-reference.adoc:2158
+#: upstream/_versions/main/guides/native-reference.adoc:2152
+#: upstream/_versions/main/guides/native-reference.adoc:2159
 msgid "No old object sampling"
 msgstr ""
 
 #. type: Bullet: '* '
-#: upstream/_versions/main/guides/native-reference.adoc:2151
-#: upstream/_versions/main/guides/native-reference.adoc:2158
+#: upstream/_versions/main/guides/native-reference.adoc:2152
+#: upstream/_versions/main/guides/native-reference.adoc:2159
 msgid "No stacktrace tracing"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/native-reference.adoc:2151
-#: upstream/_versions/main/guides/native-reference.adoc:2158
+#: upstream/_versions/main/guides/native-reference.adoc:2152
+#: upstream/_versions/main/guides/native-reference.adoc:2159
 #, no-wrap
 msgid "* No event streaming"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/native-reference.adoc:2152
+#: upstream/_versions/main/guides/native-reference.adoc:2153
 #, no-wrap
 msgid "GraalVM CE 22.3 and Mandrel 22.3"
 msgstr ""
 
 #. type: Bullet: '* '
-#: upstream/_versions/main/guides/native-reference.adoc:2154
+#: upstream/_versions/main/guides/native-reference.adoc:2155
 msgid "Everything from GraalVM CE 21.3"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/native-reference.adoc:2154
+#: upstream/_versions/main/guides/native-reference.adoc:2155
 #, no-wrap
 msgid "* Additional monitor and thread events"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/native-reference.adoc:2159
+#: upstream/_versions/main/guides/native-reference.adoc:2160
 #, no-wrap
 msgid "GraalVM CE for JDK 17/20 and Mandrel 23.0"
 msgstr ""
 
 #. type: Bullet: '* '
-#: upstream/_versions/main/guides/native-reference.adoc:2164
+#: upstream/_versions/main/guides/native-reference.adoc:2165
 msgid "Everything from GraalVM CE 22.3"
 msgstr ""
 
 #. type: Bullet: '* '
-#: upstream/_versions/main/guides/native-reference.adoc:2164
+#: upstream/_versions/main/guides/native-reference.adoc:2165
 msgid "Additional monitor, thread, container, and allocation events"
 msgstr ""
 
 #. type: Bullet: '* '
-#: upstream/_versions/main/guides/native-reference.adoc:2164
+#: upstream/_versions/main/guides/native-reference.adoc:2165
 msgid "Stacktraces"
 msgstr ""
 
 #. type: Bullet: '* '
-#: upstream/_versions/main/guides/native-reference.adoc:2164
+#: upstream/_versions/main/guides/native-reference.adoc:2165
 msgid "Sampling based method profiling"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/native-reference.adoc:2164
+#: upstream/_versions/main/guides/native-reference.adoc:2165
 #, no-wrap
 msgid "* Event streaming"
 msgstr ""
 
 #. type: Table
-#: upstream/_versions/main/guides/native-reference.adoc:2166
+#: upstream/_versions/main/guides/native-reference.adoc:2167
 #, no-wrap
 msgid "* No old object sampling"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2171
+#: upstream/_versions/main/guides/native-reference.adoc:2172
 msgid "To add JFR support to your Quarkus executable, add the application property: `-Dquarkus.native.monitoring=jfr`.  E.g."
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:2177
+#: upstream/_versions/main/guides/native-reference.adoc:2178
 #, no-wrap
 msgid ""
 "./mvnw package -DskipTests -Dnative -Dquarkus.native.container-build=true \\\n"
@@ -3175,12 +3175,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2180
+#: upstream/_versions/main/guides/native-reference.adoc:2181
 msgid "Once the image is compiled, enable and start JFR via runtime flags: `-XX:+FlightRecorder` and `-XX:StartFlightRecording`. For example:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:2186
+#: upstream/_versions/main/guides/native-reference.adoc:2187
 #, no-wrap
 msgid ""
 "./target/debugging-native-1.0.0-SNAPSHOT-runner \\\n"
@@ -3189,99 +3189,99 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2189
+#: upstream/_versions/main/guides/native-reference.adoc:2190
 msgid "For more information about using JFR, see the link:https://www.graalvm.org/{graalvm-docs-version}/reference-manual/native-image/debugging-and-diagnostics/JFR/[GraalVM JDK Flight Recorder (JFR) with Native Image] guide."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:2190
+#: upstream/_versions/main/guides/native-reference.adoc:2191
 #, no-wrap
 msgid "How can we troubleshoot performance problems only reproducible in production?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2200
+#: upstream/_versions/main/guides/native-reference.adoc:2201
 msgid "In this situation, switching to JVM mode would be the best thing to try first.  If the performance issues continue after switching to JVM mode, you can use more established and mature tooling to figure out the root cause.  If the performance issue is limited to native mode only, you might not be able to use `perf`, so JFR is the only way to gather any information in this situation.  As JFR support for native expands, the ability to detect root causes of performance issues directly in production will improve."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:2201
+#: upstream/_versions/main/guides/native-reference.adoc:2202
 #, no-wrap
 msgid "What information helps most debug issues that happen either at build-time or run-time?"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2205
+#: upstream/_versions/main/guides/native-reference.adoc:2206
 msgid "To fix classpath, class initialization or forbidden API errors at build time it's best to use xref:native-reports[build time reports] to understand the closed world universe.  A complete picture of the universe, along with the relationships between the different classes and methods will help uncover and fix most of the issues."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2211
+#: upstream/_versions/main/guides/native-reference.adoc:2212
 msgid "To fix runtime native specific errors, it's best to have xref:debug-info[debug info builds] of the native executables around, so that `gdb` can be hooked up quickly to debug the issue.  If you also add local symbols to the debug info builds, you will obtain precise xref:profiling[profiling information] as well."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:2212
+#: upstream/_versions/main/guides/native-reference.adoc:2213
 #, no-wrap
 msgid "Build stalled for minutes, barely using any CPU"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2215
+#: upstream/_versions/main/guides/native-reference.adoc:2216
 msgid "It might so happen that the build gets stalled and even ends up with:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:2219
+#: upstream/_versions/main/guides/native-reference.adoc:2220
 #, no-wrap
 msgid "Image generator watchdog detected no activity.\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2222
+#: upstream/_versions/main/guides/native-reference.adoc:2223
 msgid "One of the possible explanations could be a lack of entropy, e.g. on an entropy constrained VM, if such a source is needed as it is the case with Bouncycastle at build time."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2224
+#: upstream/_versions/main/guides/native-reference.adoc:2225
 msgid "One can check the available entropy on a Linux system with:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:2228
+#: upstream/_versions/main/guides/native-reference.adoc:2229
 #, no-wrap
 msgid "$ cat /proc/sys/kernel/random/entropy_avail\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2230
+#: upstream/_versions/main/guides/native-reference.adoc:2231
 msgid "If the amount is not in hundreds, it could be a problem. A possible workaround is to compromise, acceptable for testing, and set:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:2233
+#: upstream/_versions/main/guides/native-reference.adoc:2234
 #, no-wrap
 msgid "export JAVA_OPTS=-Djava.security.egd=/dev/urandom\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2235
+#: upstream/_versions/main/guides/native-reference.adoc:2236
 msgid "The proper solution is to increase the entropy available for the system. That is specific for each OS vendor and virtualization solution though."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_versions/main/guides/native-reference.adoc:2236
+#: upstream/_versions/main/guides/native-reference.adoc:2237
 #, no-wrap
 msgid "Work around missing CPU features"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2239
+#: upstream/_versions/main/guides/native-reference.adoc:2240
 msgid "When building on recent machines and running your native executable on older machines, you may see the following failure when starting the application:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:2244
+#: upstream/_versions/main/guides/native-reference.adoc:2245
 #, no-wrap
 msgid ""
 "The current machine does not support all of the following CPU features that are required by the image: [CX8, CMOV, FXSR, MMX, SSE, SSE2, SSE3, SSSE3, SSE4_1, SSE4_2, POPCNT, LZCNT, AVX, AVX2, BMI1, BMI2, FMA].\n"
@@ -3289,27 +3289,27 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2248
+#: upstream/_versions/main/guides/native-reference.adoc:2249
 msgid "This error message means that the native compilation used more advanced instruction sets, not supported by the CPU running the application.  To work around that issue, add the following line to the `application.properties`:"
 msgstr ""
 
 #. type: delimited block -
-#: upstream/_versions/main/guides/native-reference.adoc:2252
+#: upstream/_versions/main/guides/native-reference.adoc:2253
 #, no-wrap
 msgid "quarkus.native.additional-build-args=-march=compatibility\n"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2256
+#: upstream/_versions/main/guides/native-reference.adoc:2257
 msgid "Then, rebuild your native executable.  This setting forces the native compilation to use an older instruction set, increasing the chance of compatibility."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2259
+#: upstream/_versions/main/guides/native-reference.adoc:2260
 msgid "To explicitly define the target architecture run `native-image -march=list` to get the supported configurations and then set `-march` to one of them, e.g., `quarkus.native.additional-build-args=-march=x86-64-v4`.  If you are targeting an AMD64 host, `-march=x86-64-v2` would work in most cases."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/native-reference.adoc:2260
+#: upstream/_versions/main/guides/native-reference.adoc:2261
 msgid "The `march` parameter is only available on GraalVM 23+."
 msgstr ""
