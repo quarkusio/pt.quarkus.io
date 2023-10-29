@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-10-15 08:05+0000\n"
+"POT-Creation-Date: 2023-10-29 08:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -363,6 +363,7 @@ msgstr ""
 #: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:764
 #: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:853
 #: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:925
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1095
 #, no-wrap
 msgid "}\n"
 msgstr ""
@@ -686,7 +687,7 @@ msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:340
-msgid "If you plan to consume your OpenID Connect `service` application from a Single Page Application running on a different domain, you will need to configure CORS (Cross-Origin Resource Sharing). Please read the xref:http-reference.adoc#cors-filter[HTTP CORS documentation] for more details."
+msgid "If you plan to consume your OpenID Connect `service` application from a Single Page Application running on a different domain, you will need to configure CORS (Cross-Origin Resource Sharing). Please read the xref:security-cors.adoc#cors-filter[CORS filter] section of the \"Cross-origin resource sharing\" guide for more details."
 msgstr ""
 
 #. type: Title ===
@@ -1805,70 +1806,223 @@ msgstr ""
 #. type: Title ==
 #: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1026
 #, no-wrap
-msgid "References"
-msgstr ""
-
-#. type: Plain text
-#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1029
-msgid "xref:security-oidc-configuration-properties-reference.adoc[OIDC configuration properties]"
-msgstr ""
-
-#. type: Plain text
-#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1030
-msgid "xref:security-oidc-bearer-token-authentication-tutorial.adoc[Protect a service application by using OIDC Bearer token authentication]"
-msgstr ""
-
-#. type: Plain text
-#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1031
-msgid "xref:security-protect-service-applications-by-using-oidc-bearer-authentication-how-to.adoc[Protect service applications by using OIDC Bearer token authentication]"
-msgstr ""
-
-#. type: Plain text
-#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1032
-msgid "https://www.keycloak.org/documentation.html[Keycloak Documentation]"
-msgstr ""
-
-#. type: Plain text
-#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1033
-msgid "https://openid.net/connect/[OpenID Connect]"
+msgid "Authentication after HTTP request has completed"
 msgstr ""
 
 #. type: Plain text
 #: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1034
+msgid "Sometimes, `SecurityIdentity` for a given token must be created when there is no active HTTP request context.  The `quarkus-oidc` extension provides `io.quarkus.oidc.TenantIdentityProvider` to convert a token to a `SecurityIdentity` instance.  For example, one situation when you must verify the token after HTTP request has completed is when you are processing messages with the xref:vertx.adoc#event-bus[Vert.x event bus].  In the example below, the 'product-order' message is consumed within different CDI request context, therefore an injected `SecurityIdentity` would not correctly represent the verified identity and be anonymous."
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1038
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1064
+#, no-wrap
+msgid "package org.acme.quickstart.oidc;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1040
+#, no-wrap
+msgid "import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1045
+#, no-wrap
+msgid ""
+"import jakarta.inject.Inject;\n"
+"import jakarta.ws.rs.POST;\n"
+"import jakarta.ws.rs.Path;\n"
+"import io.vertx.core.eventbus.EventBus;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1048
+#, no-wrap
+msgid ""
+"@Path(\"order\")\n"
+"public class OrderResource {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1051
+#, no-wrap
+msgid ""
+"    @Inject\n"
+"    EventBus eventBus;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1058
+#, no-wrap
+msgid ""
+"    @POST\n"
+"    public void order(String product, @HeaderParam(AUTHORIZATION) String bearer) {\n"
+"        String rawToken = bearer.substring(\"Bearer \".length()); <1>\n"
+"        eventBus.publish(\"product-order\", new Product(product, 1, rawToken));\n"
+"    }\n"
+"}\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1060
+msgid "At this point, token is not verified when proactive authentication is disabled."
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1067
+#, no-wrap
+msgid ""
+"import jakarta.enterprise.context.ApplicationScoped;\n"
+"import jakarta.inject.Inject;\n"
+msgstr ""
+"import jakarta.enterprise.context.ApplicationScoped;\n"
+"import jakarta.inject.Inject;\n"
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1074
+#, no-wrap
+msgid ""
+"import io.quarkus.oidc.AccessTokenCredential;\n"
+"import io.quarkus.oidc.TenantFeature;\n"
+"import io.quarkus.oidc.TenantIdentityProvider;\n"
+"import io.quarkus.security.identity.SecurityIdentity;\n"
+"import io.quarkus.vertx.ConsumeEvent;\n"
+"import io.smallrye.common.annotation.Blocking;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1077
+#, no-wrap
+msgid ""
+"@ApplicationScoped\n"
+"public class OrderService {\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1081
+#, no-wrap
+msgid ""
+"    @TenantFeature(\"tenantId\")\n"
+"    @Inject\n"
+"    TenantIdentityProvider identityProvider;\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1084
+#, no-wrap
+msgid ""
+"    @Inject\n"
+"    TenantIdentityProvider defaultIdentityProvider; <1>\n"
+msgstr ""
+
+#. type: delimited block -
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1093
+#, no-wrap
+msgid ""
+"    @Blocking\n"
+"    @ConsumeEvent(\"product-order\")\n"
+"    void processOrder(Product product) {\n"
+"        String rawToken = product.customerAccessToken;\n"
+"        AccessTokenCredential token = new AccessTokenCredential(rawToken);\n"
+"        SecurityIdentity = identityProvider.authenticate(token).await().indefinitely(); <2>\n"
+"        ...\n"
+"    }\n"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1097
+msgid "For default tenant, the `TenantFeature` qualifier is optional."
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1098
+msgid "Executes token verification and converts the token to a `SecurityIdentity`."
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1104
+msgid "When the provider is used during an HTTP request, the tenant configuration can be resolved as described in the xref:security-openid-connect-multitenancy.adoc[Using OpenID Connect Multi-Tenancy] guide.  However, when there is no active HTTP request, you need to select tenant explicitly with the `io.quarkus.oidc.TenantFeature` qualifier."
+msgstr ""
+
+#. type: delimited block =
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1110
+msgid "xref:security-openid-connect-multitenancy.adoc#tenant-config-resolver[Dynamic tenant configuration resolution] is currently not supported.  Authentication that requires dynamic tenant will fail."
+msgstr ""
+
+#. type: Title ==
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1112
+#, no-wrap
+msgid "References"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1115
+msgid "xref:security-oidc-configuration-properties-reference.adoc[OIDC configuration properties]"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1116
+msgid "xref:security-oidc-bearer-token-authentication-tutorial.adoc[Protect a service application by using OIDC Bearer token authentication]"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1117
+msgid "xref:security-protect-service-applications-by-using-oidc-bearer-authentication-how-to.adoc[Protect service applications by using OIDC Bearer token authentication]"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1118
+msgid "https://www.keycloak.org/documentation.html[Keycloak Documentation]"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1119
+msgid "https://openid.net/connect/[OpenID Connect]"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1120
 msgid "https://tools.ietf.org/html/rfc7519[JSON Web Token]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1035
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1121
 msgid "xref:security-openid-connect-client-reference.adoc[OpenID Connect and OAuth2 Client and Filters Reference Guide]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1036
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1122
 msgid "xref:security-openid-connect-dev-services.adoc[Dev Services for Keycloak]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1037
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1123
 msgid "xref:security-jwt-build.adoc[Sign and encrypt JWT tokens with SmallRye JWT Build]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1038
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1124
 msgid "xref:security-authentication-mechanisms.adoc#oidc-jwt-oauth2-comparison[Choosing between OpenID Connect, SmallRye JWT, and OAuth2 authentication mechanisms]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1039
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1125
 msgid "xref:security-authentication-mechanisms.adoc#combining-authentication-mechanisms[Combining authentication mechanisms]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1040
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1126
 msgid "xref:security-overview.adoc[Quarkus Security overview]"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1040
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1127
 msgid "xref:security-keycloak-admin-client.adoc[Quarkus Keycloak Admin Client]"
+msgstr ""
+
+#. type: Plain text
+#: upstream/_versions/main/guides/security-oidc-bearer-token-authentication.adoc:1127
+msgid "xref:security-openid-connect-multitenancy.adoc[Using OpenID Connect Multi-Tenancy]"
 msgstr ""
