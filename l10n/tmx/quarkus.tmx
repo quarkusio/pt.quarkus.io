@@ -3544,6 +3544,334 @@ As opções disponíveis são as seguintes: +
     </tu>
     <tu>
       <tuv xml:lang="en">
+        <seg>You can define your transaction boundaries either declaratively with `@Transactional` or programmatically with `QuarkusTransaction`. You can also use the JTA `UserTransaction` API directly, however this is less user-friendly than `QuarkusTransaction`.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Você pode definir seus limites de transação declarativamente com '@Transactional' ou programaticamente com 'QuarkusTransaction'. Você também pode usar a API JTA 'UserTransaction' diretamente, no entanto, isso é menos amigável do que 'QuarkusTransaction'.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>The easiest way to define your transaction boundaries is to use the `@Transactional` annotation on your entry method (`jakarta.transaction.Transactional`).</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>A forma mais fácil de definir os limites da sua transação é utilizar a anotação `@Transactional` no seu método de entrada ( `jakarta.transaction.Transactional`).</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>A `RuntimeException` crossing the transaction boundaries will roll back the transaction.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Um 'RuntimeException' cruzando os limites da transação reverterá a transação.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>`@Transactional` can be used to control transaction boundaries on any CDI bean at the method level or at the class level to ensure every method is transactional.  That includes REST endpoints.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>'@Transactional' pode ser usado para controlar limites de transação em qualquer bean CDI no nível do método ou no nível da classe para garantir que cada método seja transacional.  Isso inclui pontos de extremidade REST.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>You can control whether and how the transaction is started with parameters on `@Transactional`:</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Você pode controlar se e como a transação é iniciada com parâmetros em '@Transactional':</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>`@Transactional(REQUIRED)` (default): starts a transaction if none was started, stays with the existing one otherwise.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>'@Transactional(REQUIRED)' (padrão): inicia uma transação se nenhuma foi iniciada, permanece com a existente caso contrário.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>`@Transactional(REQUIRES_NEW)`: starts a transaction if none was started ; if an existing one was started, suspends it and starts a new one for the boundary of that method.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>«@Transactional(REQUIRES_NEW)»: inicia uma transação se não tiver sido iniciada nenhuma; se um existente foi iniciado, suspende-o e inicia um novo para o limite desse método.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>`REQUIRED` or `NOT_SUPPORTED` are probably the most useful ones.  This is how you decide whether a method is to be running within or outside a transaction.  Make sure to check the JavaDoc for the precise semantic.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>‘REQUIRED’ ou 'NOT_SUPPORTED' são provavelmente os mais úteis.  É assim que você decide se um método deve ser executado dentro ou fora de uma transação.  Certifique-se de verificar o JavaDoc para a semântica precisa.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>The transaction context is propagated to all calls nested in the `@Transactional` method as you would expect (in this example `childDAO.addToGiftList()` and `santaDAO.addToSantaTodoList()`).  The transaction will commit unless a runtime exception crosses the method boundary.  You can override whether an exception forces the rollback or not by using `@Transactional(dontRollbackOn=SomeException.class)` (or `rollbackOn`).</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>O contexto da transação é propagado a todas as chamadas aninhadas no método `@Transactional` como seria de esperar (neste exemplo `childDAO.addToGiftList()` e `santaDAO.addToSantaTodoList()`). A transação será confirmada a menos que uma exceção de tempo de execução atravesse o limite do método. É possível substituir se uma exceção força ou não a reversão utilizando `@Transactional(dontRollbackOn=SomeException.class)` (ou `rollbackOn`).</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>You can also programmatically ask for a transaction to be marked for rollback.  Inject a `TransactionManager` for this.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Você também pode solicitar programaticamente que uma transação seja marcada para reversão.  Injete um 'TransactionManager' para isso.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>Inject the `TransactionManager` to be able to activate `setRollbackOnly` semantic.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Injete o `TransactionManager` para poder ativar a semântica `setRollbackOnly`.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>The `@TransactionConfiguration` annotation allows to set a timeout property, in seconds, that applies to transactions created within the annotated method.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>A anotação '@TransactionConfiguration' permite definir uma propriedade de tempo limite, em segundos, que se aplica a transações criadas dentro do método anotado.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>If defined on a class, it is equivalent to defining it on all the methods of the class marked with `@Transactional`.  The configuration defined on a method takes precedence over the configuration defined on a class.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Se for definida numa classe, é equivalente a defini-la em todos os métodos da classe marcados com `@Transactional`. A configuração definida num método tem precedência sobre a configuração definida numa classe.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>If your `@Transactional`-annotated method returns a reactive value, such as:</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Se o método anotado '@Transactional' retornar um valor reativo, como:</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>You can use static methods on `QuarkusTransaction` to define transaction boundaries. This provides two different options, a functional approach that allows you to run a lambda within the scope of a transaction, or by using explicit `begin`, `commit` and `rollback` methods.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Você pode usar métodos estáticos em 'QuarkusTransaction' para definir limites de transação. Isso fornece duas opções diferentes, uma abordagem funcional que permite executar um lambda dentro do escopo de uma transação ou usando métodos explícitos 'begin', 'commit' e 'rollback'.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>The first method simply calls begin, does some work and commits it.  This created transaction is tied to the CDI request scope, so if it is still active when the request scope is destroyed then it will be automatically rolled back. This removes the need to explicitly catch exceptions and call `rollback`, and acts as a safety net against inadvertent transaction leaks, however it does mean that this can only be used when the request scope is active. The second example in the method calls begin with a timeout option, and then rolls back the transaction.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>O primeiro método simplesmente chama começar, faz algum trabalho e o compromete.  Essa transação criada está vinculada ao escopo de requisição do CDI, portanto, se ainda estiver ativa quando o escopo for destruído, ela será revertida automaticamente. Isso elimina a necessidade de capturar explicitamente exceções e chamar `rollback` e atua como uma rede de segurança contra vazamentos inadvertidos de transações, no entanto, significa que isso só pode ser usado quando o escopo da solicitação estiver ativo. O segundo exemplo nas chamadas de método começa com uma opção de tempo limite e, em seguida, reverte a transação.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>The second method shows the use of lambda scoped transactions with `QuarkusTransaction.runner(...)`; the first example just runs a `Runnable` within a new transaction, the second does the same but joining the existing transaction (if any), and the third calls a `Callable` with some specific options.  In particular the `exceptionHandler` method can be used to control if the transaction is rolled back or not on exception.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>O segundo método mostra o uso de transações com escopo lambda com 'QuarkusTransaction.runner(...) `; o primeiro exemplo apenas executa um 'Runnable' dentro de uma nova transação, o segundo faz o mesmo, mas juntando-se à transação existente (se houver), e o terceiro chama um 'Callable' com algumas opções específicas.  Em particular, o método 'exceptionHandler' pode ser usado para controlar se a transação é revertida ou não na exceção.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>If a transaction is already associated with the current thread a `QuarkusTransactionException` will be thrown, otherwise a new transaction is started, and follows all the normal lifecycle rules.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Se uma transação já estiver associada à thread atual, será lançado um `QuarkusTransactionException`. Caso contrário, é iniciada uma nova transação, que segue todas as regras normais do ciclo de vida.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>If no transaction is active then a new transaction will be started, and committed when the method ends.  If an exception is thrown the exception handler registered by `#exceptionHandler(Function)` will be called to decide if the TX should be committed or rolled back.  If an existing transaction is active then the method is run in the context of the existing transaction. If an exception is thrown the exception handler will be called, however a result of `ExceptionResult#ROLLBACK` will result in the TX marked as rollback only, while a result of `ExceptionResult#COMMIT` will result in no action being taken.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Se nenhuma transação estiver ativa, será iniciada uma nova transação, que será confirmada quando o método terminar. Se for lançada uma exceção, o gestor de excepções registado em `#exceptionHandler(Function)` será chamado para decidir se a TX deve ser confirmada ou revertida. Se uma transação existente estiver ativa, o método é executado no contexto da transação existente. Se for lançada uma exceção, o gestor de excepções será chamado, mas um resultado de `ExceptionResult#ROLLBACK` fará com que o TX seja marcado apenas como reversão, enquanto um resultado de `ExceptionResult#COMMIT` fará com que não seja tomada qualquer ação.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>If an existing transaction is already associated with the current thread then the transaction is suspended, then a new transaction is started which follows all the normal lifecycle rules, and when it's complete the original transaction is resumed.  Otherwise, a new transaction is started, and follows all the normal lifecycle rules.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Se uma transação existente já estiver associada ao thread atual, a transação é suspensa, é iniciada uma nova transação que segue todas as regras normais do ciclo de vida e, quando estiver concluída, a transação original é retomada. Caso contrário, é iniciada uma nova transação, que segue todas as regras normais do ciclo de vida.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>If no transaction is active then these semantics are basically a no-op.  If a transaction is active then it is suspended, and resumed after the task is run.  The exception handler will never be consulted when these semantics are in use, specifying both an exception handler and these semantics are considered an error.  These semantics allows for code to easily be run outside the scope of a transaction.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Se nenhuma transação estiver ativa, estas semânticas são basicamente um no-op. Se estiver ativa uma transação, esta é suspensa e retomada após a execução da tarefa. O manipulador de exceção nunca será consultado quando estas semânticas estiverem a ser utilizadas, especificando um manipulador de exceção e estas semânticas são consideradas um erro. Esta semântica permite que o código seja facilmente executado fora do âmbito de uma transação.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>You cannot use `UserTransaction` in a method having a transaction started by a `@Transactional` call.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Não é possível utilizar `UserTransaction` num método com uma transação iniciada por uma chamada `@Transactional`.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>The node name identifier plays a crucial part in the identification of a transaction.  The node name identifier is forged into the transaction id when the transaction is created.  Based on the node name identifier, the transaction manager is capable of recognizing the XA transaction counterparts created in database or JMS broker. The identifier makes possible for the transaction manager to roll back the transaction counterparts during recovery.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>O identificador do nome do nó desempenha um papel crucial na identificação de uma transação. O identificador do nome do nó é forjado na identificação da transação quando esta é criada. Com base no identificador do nome do nó, o gestor de transacções é capaz de reconhecer as contrapartidas da transação XA criadas na base de dados ou no corretor JMS. O identificador permite que o gestor de transacções reverta as contrapartes da transação durante a recuperação.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>The node name identifier needs to be unique per transaction manager deployment.  And the node identifier needs to be stable over the transaction manager restarts.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>O identificador do nome do nó tem de ser único por cada implementação do gestor de transacções. E o identificador do nó tem de ser estável durante os reinícios do gestor de transacções.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>Just assign the transaction xref:cdi.adoc#bean-scope[scope] to such beans using the `@TransactionScoped` annotation:</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Basta atribuir o  link:cdi.html#bean-scope[âmbito] da transação a esses beans utilizando a anotação `@TransactionScoped`:</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>The `event` object represents the transaction ID, and defines `toString()`/`equals()`/`hashCode()` accordingly.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>O objeto `event` representa o ID da transação e define `toString()`/ `equals()`/ `hashCode()` em conformidade.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>Quarkus allows the following JDBC-specific configuration of the object store included in `quarkus.transaction-manager.object-store.&lt;property&gt;` properties, where &lt;property&gt; can be:</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>O Quarkus permite a seguinte configuração específica de JDBC do armazenamento de objectos incluída em `quarkus.transacion-manager.object-store.&amp;amp;lt;property&amp;amp;gt;` propriedades, onde &amp;lt;property&amp;gt; pode ser:</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>`type` (_string_): Configure this property to `jdbc` to enable usage of a Quarkus JDBC datasource for transaction logging.  The default value is `file-system`.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>`type` _(string_): Configure esta propriedade para `jdbc` para permitir a utilização de uma fonte de dados JDBC do Quarkus para registo de transacções. O valor predefinido é `file-system`.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>`datasource` (_string_): Specify the name of the datasource for the transaction log storage.  If no value is provided for the `datasource` property, Quarkus uses the xref:datasource.adoc#configure-datasources[default datasource].</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>`datasource` _(string_): Especifique o nome da fonte de dados para o armazenamento do registo de transacções. Se não for fornecido nenhum valor para a propriedade `datasource`, o Quarkus utiliza a  link:datasource.html#configure-datasources[fonte de dados predefinida].</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>`create-table` (_boolean_): When set to `true`, the transaction log table gets automatically created if it does not already exist.  The default value is `false`.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>`create-table` _(booleano_): Quando definido para `true`, a tabela do registo de transacções é criada automaticamente se ainda não existir. O valor predefinido é `false`.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>`drop-table` (_boolean_): When set to `true`, the tables are dropped on startup if they already exist.  The default value is `false`.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>`drop-table` _(booleano_): Quando definido para `true`, as tabelas são eliminadas no arranque se já existirem. O valor predefinido é `false`.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>`table-prefix` (string): Specify the prefix for a related table name.  The default value is `quarkus_`.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>`table-prefix` (string): Especifique o prefixo para um nome de tabela relacionado. O valor padrão é `quarkus_`.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>JDBC datasources is part of `quarkus-agroal`, and it needs to use `quarkus.datasource.jdbc.transactions=XA`.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Os recursos de dados JDBC fazem parte de `quarkus-agroal` e precisam ser usados em `quarkus.datasource.jdbc.transactions=XA`.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>ActiveMQ Artemis is part of `quarkus-pooled-jms`, and it needs to use `quarkus.pooled-jms.transaction=XA`.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>O ActiveMQ Artemis faz parte do `quarkus-pooled-jms` e precisa usar o `quarkus.pooled-jms.transaction=XA`.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>If your application employs eXtended Architecture (XA) transactions, enable the transaction crash recovery feature by using `quarkus.transaction-manager.enable-recovery=true`, to safeguard your data in the event of application crashes or failures. The default value for XA Recovery is `false`.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Se seu aplicativo empregar transações XA (eXtended Architecture), habilite o recurso de recuperação de falhas de transação usando `quarkus.transaction-manager.enable-recovery=true`, para proteger seus dados em caso de falhas ou falhas do aplicativo. O valor padrão para XA Recovery é `false`.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>To work around the current known issue of link:https://issues.redhat.com/browse/AG-209[Agroal having a different view on running transaction checks], set the datasource transaction type for the datasource responsible for writing the transaction logs to `disabled`:</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Para contornar o problema conhecido atual de link:https://issues.redhat.com/browse/AG-209[Agroal tendo uma exibição diferente sobre a execução de verificações de transação], defina o tipo de transação de fonte de dados para a fonte de dados responsável por gravar os logs de transação como 'disabled':</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>Yep, it works in your Quarkus application, in your IDE, in your tests, because all of these are Quarkus applications.  JTA has some bad press for some people.  I don't know why.  Let's just say that this is not your grandpa's JTA implementation.  What we have is perfectly embeddable and lean.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Sim, funciona na sua aplicação Quarkus, no seu IDE, nos seus testes, porque todas estas são aplicações Quarkus. O JTA tem má fama para algumas pessoas. Não sei porquê. Digamos apenas que esta não é a implementação JTA do seu avô. O que temos é perfeitamente incorporável e simples.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>Wrong. + First off, just disable the transaction by marking your transaction boundary with `@Transactional(NOT_SUPPORTED)` (or `NEVER` or `SUPPORTS` depending on the semantic you want). + Second, it's again fairy tale that not using transaction is faster.  The answer is, it depends on your DB and how many SQL SELECTs you are making.  No transaction means the DB does have a single operation transaction context anyway. + Third, when you do several SELECTs, it's better to wrap them in a single transaction because they will all be consistent with one another.  Say your DB represents your car dashboard, you can see the number of kilometers remaining and the fuel gauge level.  By reading it in one transaction, they will be consistent.  If you read one and the other from two different transactions, then they can be inconsistent.  It can be more dramatic if you read data related to rights and access management for example.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Errado. + Primeiro, basta desativar a transação marcando seu limite de transação com '@Transactional(NOT_SUPPORTED)' (ou ‘NEVER’ ou 'SUPPORTS', dependendo da semântica desejada). + Segundo, é novamente um conto de fadas que não usar transação é mais rápido.  A resposta é, depende do seu banco de dados e quantos SQL SELECTs você está fazendo.  Nenhuma transação significa que o banco de dados tem um único contexto de transação de operação de qualquer maneira. + Terceiro, quando você faz vários SELECTs, é melhor envolvê-los em uma única transação, porque todos eles serão consistentes uns com os outros.  Digamos que seu DB representa o painel do seu carro, você pode ver o número de quilômetros restantes e o nível do medidor de combustível.  Ao lê-lo em uma transação, eles serão consistentes.  Se você ler uma e outra de duas transações diferentes, elas podem ser inconsistentes.  Pode ser mais dramático se você ler dados relacionados a direitos e gerenciamento de acesso, por exemplo.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>Managing the transactions manually via `entityManager.getTransaction().begin()` and friends lead to a butt ugly code with tons of try catch finally that people get wrong.  Transactions are also about JMS and other database access, so one API makes more sense.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Gerenciar as transações manualmente via 'entityManager.getTransaction().begin()' e os amigos levam a um código feio com toneladas de tentativa de pegar finalmente que as pessoas erram.  As transações também são sobre JMS e outros acessos ao banco de dados, portanto, uma API faz mais sentido.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>It's a mess because I don't know if my Jakarta Persistence persistence unit is using `JTA` or `Resource-level` Transaction</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>É uma bagunça porque não sei se minha unidade de persistência Jakarta Persistence está usando a transação 'JTA' ou 'Resource-level'</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>It's not a mess in Quarkus :)  Resource-level was introduced to support Jakarta Persistence in a non managed environment.  But Quarkus is both lean and a managed environment, so we can safely always assume we are in JTA mode.  The end result is that the difficulties of running Hibernate ORM + CDI + a transaction manager in Java SE mode are solved by Quarkus.</seg>
+      </tuv>
+      <tuv xml:lang="pt_BR">
+        <seg>Não é uma confusão no Quarkus :) O Resource-level foi introduzido para suportar a Jakarta Persistence num ambiente não gerido. Mas o Quarkus é um ambiente gerido e não gerido, pelo que podemos sempre assumir que estamos em modo JTA. O resultado final é que as dificuldades de executar o Hibernate ORM + CDI + um gestor de transacções no modo Java SE são resolvidas pelo Quarkus.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
         <seg>It can be reasonably easy to avoid these situations in your code, but verifying every dependency you use is hard.  Typically, while experimenting with virtual threads, we realized that old versions of the link:{pgsql-driver}[postgresql-JDBC driver] results in frequent pinning.  Most JDBC drivers still pin the carrier thread.  Even worse, lots of widespread libraries are pinning and would require code changes.</seg>
       </tuv>
       <tuv xml:lang="pt_BR">
