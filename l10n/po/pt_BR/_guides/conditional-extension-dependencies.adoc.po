@@ -11,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,317 +20,193 @@ msgstr ""
 #. and pull requests should be submitted there:
 #. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
 #. type: Title =
-#: upstream/_guides/conditional-extension-dependencies.adoc:6
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy, no-wrap
 msgid "Conditional Extension Dependencies"
 msgstr "Dependências de extensão condicionais"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:14
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "Quarkus extension dependencies are usually configured in the same way as any other project dependencies in the project's build file, e.g. the Maven `pom.xml` or the Gradle build scripts. However, there are dependency types that aren't yet supported out-of-the-box by Maven and Gradle. What we refer here to as \"conditional dependencies\" is one example."
 msgstr "As dependências da extensão Quarkus são normalmente configuradas da mesma forma que quaisquer outras dependências do projeto no ficheiro de construção do projeto, por exemplo, o Maven `pom.xml` ou os scripts de construção Gradle. No entanto, existem tipos de dependências que ainda não são suportadas pelo Maven e pelo Gradle. O que chamamos aqui de \"dependências condicionais\" é um exemplo."
 
 #. type: Title ==
-#: upstream/_guides/conditional-extension-dependencies.adoc:15
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy, no-wrap
 msgid "Conditional Dependencies"
 msgstr "Dependências condicionais"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:18
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "The idea behind the notion of the conditional dependency is that such a dependency must be activated only if a certain condition is satisfied. If the condition is not satisfied then the dependency **must not** be activated. In that regard, conditional dependencies can be categorized as optional, i.e. they may or may not appear in the resulting set of project dependencies."
 msgstr "A ideia subjacente à noção de dependência condicional é que essa dependência só deve ser activada se uma determinada condição for satisfeita. Se a condição não for satisfeita, a dependência *não deve* ser activada. Nesse sentido, as dependências condicionais podem ser classificadas como opcionais, ou seja, podem ou não aparecer no conjunto resultante de dependências do projeto."
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:20
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "In which cases could conditional dependencies be useful? A typical example would be a component that should be activated **only** in case all of its required dependencies are available. If one or more of the component's required dependencies aren't available, instead of failing, the component should simply not be activated."
 msgstr "Em que casos é que as dependências condicionais podem ser úteis? Um exemplo típico seria um componente que deve ser ativado *apenas* no caso de todas as suas dependências necessárias estarem disponíveis. Se uma ou mais das dependências necessárias do componente não estiverem disponíveis, em vez de falhar, o componente simplesmente não deve ser ativado."
 
 #. type: Title ==
-#: upstream/_guides/conditional-extension-dependencies.adoc:21
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy, no-wrap
 msgid "Quarkus Conditional Extension Dependencies"
 msgstr "Dependências de extensão condicional do Quarkus"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:24
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "Quarkus supports conditional extension dependencies. I.e. one Quarkus extension may declare one or more conditional dependencies on other Quarkus extensions. Conditional dependencies on and from non-extension artifacts aren't supported."
 msgstr "O Quarkus suporta dependências condicionais de extensões. Ou seja, uma extensão Quarkus pode declarar uma ou mais dependências condicionais de outras extensões Quarkus. Não são suportadas dependências condicionais de e para artefactos que não sejam de extensão."
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:26
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "Let's take the following scenario as an example: `quarkus-extension-a` has an optional dependency on `quarkus-extension-b` which should be included in a Quarkus application only if `quarkus-extension-c` is found among its dependencies (direct or transitive). In other words, the presence of `quarkus-extension-c` is the condition which, if satisfied, enables `quarkus-extension-b` during the build of a Quarkus application."
 msgstr "Tomemos como exemplo o seguinte cenário: `quarkus-extension-a` tem uma dependência opcional de `quarkus-extension-b` que só deve ser incluída numa aplicação Quarkus se `quarkus-extension-c` for encontrado entre as suas dependências (directas ou transitivas). Por outras palavras, a presença de `quarkus-extension-c` é a condição que, se satisfeita, ativa `quarkus-extension-b` durante a construção de uma aplicação Quarkus."
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:28
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "The condition which triggers activation of an extension is configured in the extension's descriptor, which is included into the runtime artifact of the extension as `META-INF/quarkus-extension.properties`. Given that extension descriptor is generated by the Quarkus plugin at extension build time, extension developers can add the following configuration to express the condition which would have to be satisfied for the extension to be activated:"
 msgstr "A condição que desencadeia a ativação de uma extensão é configurada no descritor da extensão, que é incluído no artefacto de tempo de execução da extensão como `META-INF/quarkus-extension.properties`. Dado que o descritor da extensão é gerado pelo plugin Quarkus no momento da construção da extensão, os criadores da extensão podem adicionar a seguinte configuração para expressar a condição que teria de ser satisfeita para que a extensão fosse activada:"
 
-#. type: delimited block -
-#: upstream/_guides/conditional-extension-dependencies.adoc:34
-#: upstream/_guides/conditional-extension-dependencies.adoc:85
-#: upstream/_guides/conditional-extension-dependencies.adoc:112
-#: upstream/_guides/conditional-extension-dependencies.adoc:145
-#, no-wrap
-msgid ""
-"<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"
-"         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-"         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd\">\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/conditional-extension-dependencies.adoc:36
-#: upstream/_guides/conditional-extension-dependencies.adoc:40
-#: upstream/_guides/conditional-extension-dependencies.adoc:63
-#: upstream/_guides/conditional-extension-dependencies.adoc:87
-#: upstream/_guides/conditional-extension-dependencies.adoc:91
-#: upstream/_guides/conditional-extension-dependencies.adoc:100
-#: upstream/_guides/conditional-extension-dependencies.adoc:114
-#: upstream/_guides/conditional-extension-dependencies.adoc:118
-#: upstream/_guides/conditional-extension-dependencies.adoc:127
-#: upstream/_guides/conditional-extension-dependencies.adoc:147
-#: upstream/_guides/conditional-extension-dependencies.adoc:151
-#: upstream/_guides/conditional-extension-dependencies.adoc:174
-#, no-wrap
-msgid "  <!-- SKIPPED CONTENT -->\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/conditional-extension-dependencies.adoc:38
-#, no-wrap
-msgid "  <artifactId>quarkus-extension-b</artifactId> <1>\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/conditional-extension-dependencies.adoc:61
-#, no-wrap
-msgid ""
-"  <build>\n"
-"    <plugins>\n"
-"      <plugin>\n"
-"        <groupId>io.quarkus</groupId>\n"
-"        <artifactId>quarkus-extension-maven-plugin</artifactId>\n"
-"        <version>${quarkus.version}</version>\n"
-"        <executions>\n"
-"          <execution>\n"
-"            <phase>process-resources</phase>\n"
-"            <goals>\n"
-"              <goal>extension-descriptor</goal> <2>\n"
-"            </goals>\n"
-"            <configuration>\n"
-"              <dependencyCondition> <3>\n"
-"                <artifact>org.acme:quarkus-extension-c</artifact> <4>\n"
-"              </dependencyCondition>\n"
-"            </configuration>\n"
-"          </execution>\n"
-"        </executions>\n"
-"      </plugin>\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:66
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "runtime Quarkus extension artifact ID, in our example `quarkus-extension-b`;"
 msgstr "ID do artefacto de extensão Quarkus em tempo de execução, no nosso exemplo `quarkus-extension-b`;"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:67
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "the goal that generates the extension descriptor which every Quarkus runtime extension project should be configured with;"
 msgstr "o objetivo que gera o descritor de extensão com o qual cada projeto de extensão de tempo de execução Quarkus deve ser configurado;"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:68
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "configuration of the condition which will have to be satisfied for this extension to be included into a Quarkus application expressed as a list of artifacts that must be present among the application dependencies;"
 msgstr "configuração da condição que terá de ser satisfeita para que esta extensão seja incluída numa aplicação Quarkus, expressa como uma lista de artefactos que devem estar presentes entre as dependências da aplicação;"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:69
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "an artifact key (in the format of `groupId:artifactId[:<classifier>:<extension>]` but typically simply `<groupId>:<artifactId>`) of the artifact that must be present among the application dependencies for the condition to be satisfied."
 msgstr "uma chave de artefacto (no formato de `groupId:artifactId[:&amp;lt;classifier&amp;gt;:&amp;lt;extension&amp;gt;]` mas, normalmente, simplesmente `&amp;lt;groupId&amp;gt;:&amp;lt;artifactId&amp;gt;`) do artefacto que deve estar presente entre as dependências da aplicação para que a condição seja satisfeita."
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:71
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "In the example above the `artifact` used in the condition configuration happens to be a runtime Quarkus extension artifact but it could as well be any other artifact. There could also be more than one `artifact` element in the body of `dependencyCondition`."
 msgstr "No exemplo acima, o `artifact` utilizado na configuração da condição é um artefacto de extensão Quarkus em tempo de execução, mas poderia muito bem ser qualquer outro artefacto. Também pode haver mais do que um elemento `artifact` no corpo de `dependencyCondition`."
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:73
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "Now, having a dependency activating condition in the descriptor of `quarkus-extension-b`, other extensions may declare a conditional dependency on it."
 msgstr "Agora, se houver uma condição de ativação de dependência no descritor de `quarkus-extension-b`, outras extensões podem declarar uma dependência condicional da mesma."
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:75
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "A conditional dependency is configured in the runtime artifact of a Quarkus extension. In our example, it's the `quarkus-extension-a` that has a conditional dependency on `quarkus-extension-b`, which can be expressed in two ways."
 msgstr "Uma dependência condicional é configurada no artefacto de tempo de execução de uma extensão Quarkus. No nosso exemplo, é o `quarkus-extension-a` que tem uma dependência condicional de `quarkus-extension-b`, que pode ser expressa de duas formas."
 
 #. type: Title ===
-#: upstream/_guides/conditional-extension-dependencies.adoc:76
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy, no-wrap
 msgid "Declaring a dependency as `optional`"
 msgstr "Declarar uma dependência como `optional`"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:79
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "If an extension was configured with a dependency condition in its descriptor, other extensions may configure a conditional dependency on it by simply adding `<optional>true</optional>` to the dependency configuration. In our example it would look like this:"
 msgstr "Se uma extensão foi configurada com uma condição de dependência em seu descritor, outras extensões podem configurar uma dependência condicional nela simplesmente adicionando `&amp;lt;optional&amp;gt;true&amp;lt;/optional&amp;gt;` à configuração de dependência. No nosso exemplo, seria assim:"
 
-#. type: delimited block -
-#: upstream/_guides/conditional-extension-dependencies.adoc:89
-#: upstream/_guides/conditional-extension-dependencies.adoc:149
-#, no-wrap
-msgid "  <artifactId>quarkus-extension-a</artifactId> <1>\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/conditional-extension-dependencies.adoc:98
-#, no-wrap
-msgid ""
-"  <dependencies>\n"
-"    <dependency>\n"
-"      <groupId>org.acme</groupId>\n"
-"      <artifactId>quarkus-extension-b</artifactId> <2>\n"
-"      <optional>true</optional>\n"
-"    </dependency>\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:103
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "the runtime extension artifact `quarkus-extension-a`"
 msgstr "o artefacto de extensão de tempo de execução `quarkus-extension-a`"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:104
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "declares an optional Maven dependency on the runtime extension artifact `quarkus-extension-b`"
 msgstr "declara uma dependência Maven opcional do artefacto de extensão de tempo de execução `quarkus-extension-b`"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:106
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "In general, for every runtime extension artifact dependency on another runtime extension artifact there must be a corresponding deployment extension artifact dependency on the other deployment extension artifact. And if the runtime dependency is declared as optional then the corresponding deployment dependency **must** also be configured as optional."
 msgstr "Em geral, para cada dependência de artefato de extensão de tempo de execução em outro artefato de extensão de tempo de execução, deve haver uma dependência de artefato de extensão de implantação correspondente no outro artefato de extensão de implantação. E se a dependência de tempo de execução for declarada como opcional, a dependência de implantação correspondente também *deve* ser configurada como opcional."
 
-#. type: delimited block -
-#: upstream/_guides/conditional-extension-dependencies.adoc:116
-#, no-wrap
-msgid "  <artifactId>quarkus-extension-a-deployment</artifactId> <1>\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/conditional-extension-dependencies.adoc:125
-#, no-wrap
-msgid ""
-"  <dependencies>\n"
-"    <dependency>\n"
-"      <groupId>org.acme</groupId>\n"
-"      <artifactId>quarkus-extension-b-deployment</artifactId> <2>\n"
-"      <optional>true</optional>\n"
-"    </dependency>\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:130
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "the deployment extension artifact `quarkus-extension-a-deployment`"
 msgstr "o artefacto de extensão de implantação `quarkus-extension-a-deployment`"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:131
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "declares an optional Maven dependency on the deployment extension artifact `quarkus-extension-b-deployment`"
 msgstr "declara uma dependência Maven opcional do artefacto de extensão de implantação `quarkus-extension-b-deployment`"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:133
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "Normally, optional Maven extension dependencies are ignored by the Quarkus dependency resolver at build time. In this case though, the optional dependency `quarkus-extension-b` includes a dependency condition in its extension descriptor, which turns this optional Maven dependency into a Quarkus conditional extension dependency."
 msgstr "Normalmente, as dependências opcionais da extensão Maven são ignoradas pelo resolvedor de dependências do Quarkus no momento da compilação. No entanto, neste caso, a dependência opcional `quarkus-extension-b` inclui uma condição de dependência no seu descritor de extensão, o que transforma esta dependência Maven opcional numa dependência de extensão condicional Quarkus."
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:135
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "If `quarkus-extension-b` wasn't declared as `<optional>true</optional>` that would make `quarkus-extension-b` a required dependency of `quarkus-extension-a` and its dependency condition would be ignored."
 msgstr "Se `quarkus-extension-b` não fosse declarado como `&amp;lt;optional&amp;gt;true&amp;lt;/optional&amp;gt;`, isso faria de `quarkus-extension-b` uma dependência obrigatória de `quarkus-extension-a` e a sua condição de dependência seria ignorada."
 
 #. type: Title ===
-#: upstream/_guides/conditional-extension-dependencies.adoc:136
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy, no-wrap
 msgid "Declaring a conditional dependency in the Quarkus extension descriptor"
 msgstr "Declarar uma dependência condicional no descritor de extensão Quarkus"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:139
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "Conditional dependencies can also be configured in the Quarkus extension descriptor. The conditional dependency configured above could be expressed in the extension descriptor of `quarkus-extension-a` as:"
 msgstr "As dependências condicionais também podem ser configuradas no descritor da extensão Quarkus. A dependência condicional configurada acima poderia ser expressa no descritor de extensão de `quarkus-extension-a` como:"
 
-#. type: delimited block -
-#: upstream/_guides/conditional-extension-dependencies.adoc:172
-#, no-wrap
-msgid ""
-"  <build>\n"
-"    <plugins>\n"
-"      <plugin>\n"
-"        <groupId>io.quarkus</groupId>\n"
-"        <artifactId>quarkus-extension-maven-plugin</artifactId>\n"
-"        <version>${quarkus.version}</version>\n"
-"        <executions>\n"
-"          <execution>\n"
-"            <phase>process-resources</phase>\n"
-"            <goals>\n"
-"              <goal>extension-descriptor</goal> <2>\n"
-"            </goals>\n"
-"            <configuration>\n"
-"              <conditionalDependencies> <3>\n"
-"                <extension>org.acme:quarkus-extension-b:${b.version}</extension> <4>\n"
-"              </conditionalDependencies>\n"
-"            </configuration>\n"
-"          </execution>\n"
-"        </executions>\n"
-"      </plugin>\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:177
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "runtime Quarkus extension artifact ID, in our example `quarkus-extension-a`"
 msgstr "ID do artefacto de extensão Quarkus em tempo de execução, no nosso exemplo `quarkus-extension-a`"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:178
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "the goal that generates the extension descriptor which every Quarkus runtime extension project should be configured with"
 msgstr "o objetivo que gera o descritor de extensão com o qual cada projeto de extensão de tempo de execução do Quarkus deve ser configurado"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:179
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "conditional dependency configuration element"
 msgstr "elemento de configuração da dependência condicional"
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:180
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "artifact coordinates of conditional dependencies on other extensions."
 msgstr "coordenadas de artefactos de dependências condicionais de outras extensões."
 
 #. type: Plain text
-#: upstream/_guides/conditional-extension-dependencies.adoc:181
+#: _guides/conditional-extension-dependencies.adoc
 #, fuzzy
 msgid "In this case, the Maven dependency is not at all required in the `pom.xml`."
 msgstr "Neste caso, a dependência Maven não é de todo necessária no sítio `pom.xml`."

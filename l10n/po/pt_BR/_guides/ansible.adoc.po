@@ -11,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,570 +20,181 @@ msgstr ""
 #. and pull requests should be submitted there:
 #. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
 #. type: Title =
-#: upstream/_guides/ansible.adoc:6
+#: _guides/ansible.adoc
 #, fuzzy, no-wrap
 msgid "Automate Quarkus deployment with Ansible"
 msgstr "Automatizar a implantação do Quarkus com o Ansible"
 
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:14
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "Let’s see how to build and deploy a Quarkus app using https://docs.ansible.com/ansible/latest/index.html[Ansible]. We’ll see how we can automate the entire process, from the code checkout to the application compilation using Maven and then its deployment and start of the service, as a https://systemd.io/[systemd service], on the target system using Ansible and its collection for Quarkus."
 msgstr "Vamos ver como criar e implantar um aplicativo Quarkus usando  link:https://docs.ansible.com/ansible/latest/index.html[o Ansible]. Veremos como podemos automatizar todo o processo, desde o checkout do código até à compilação da aplicação utilizando o Maven e, em seguida, a sua implementação e início do serviço, como um  link:https://systemd.io/[serviço systemd], no sistema de destino utilizando o Ansible e a sua coleção para o Quarkus."
 
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:16
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "The first part, the application code checkout, compilation and packaging on the Ansible (where Ansible runs). We’ll use the getting-started sample application provided in its link:{quickstarts-tree-url}/getting-started[Quarkus QuickStarts directory] as a base for this tutorial. We’ll also leverage the https://galaxy.ansible.com/middleware_automation/quarkus[Quarkus collection] for Ansible, an extension for Ansible that alleviates the boilerplate required and to quickly build and deploy a Quarkus using Ansible."
 msgstr "A primeira parte, o checkout do código da aplicação, a compilação e o empacotamento no Ansible (onde o Ansible é executado). Utilizaremos como base para este tutorial a aplicação de exemplo \"getting-started\" fornecida no seu  link:{quickstarts-tree-url}/getting-started[diretório Quarkus QuickStarts]. Também aproveitaremos a  link:https://galaxy.ansible.com/middleware_automation/quarkus[coleção Quarkus] para o Ansible, uma extensão para o Ansible que alivia o boilerplate necessário e para construir e implementar rapidamente um Quarkus utilizando o Ansible."
 
 #. type: Title ==
-#: upstream/_guides/ansible.adoc:17
+#: _guides/ansible.adoc
 #, fuzzy, no-wrap
 msgid "Prerequisites"
 msgstr "Pré-requisitos"
 
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:25
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "You'll need to https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html[install Ansible] on your workstation. Once this is done, you can install this extension for Ansible dedicated to Quarkus with the following command:"
 msgstr "Terá de  link:https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html[instalar o Ansible] na sua estação de trabalho. Uma vez feito isso, pode instalar esta extensão do Ansible dedicada ao Quarkus com o seguinte comando:"
 
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:29
-#, no-wrap
-msgid "$ ansible-galaxy collection install middleware_automation.quarkus\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:32
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "The Ansible collection we just installed only supports RHEL, Fedora, and other Linux distribution using RPMs. Ansible defines these as \"RedHat family\". Using the content on other platforms (Windows, Debian, Ubuntu, ...), while not impossible, will require a few adjustments."
 msgstr "A coleção Ansible que acabámos de instalar apenas suporta RHEL, Fedora e outras distribuições Linux que utilizem RPMs. O Ansible define essas distribuições como \"família RedHat\". Usar o conteúdo em outras plataformas (Windows, Debian, Ubuntu, ...), embora não seja impossível, exigirá alguns ajustes."
 
 #. type: Title ===
-#: upstream/_guides/ansible.adoc:33
+#: _guides/ansible.adoc
 #, fuzzy, no-wrap
 msgid "Inventory file"
 msgstr "Ficheiro de inventário"
 
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:36
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "If you are not familiar with Ansible, please note that the inventory must be provided for the command above to run properly. This is a simple text file providing the information Ansible requires on the target system it manages. Please refer to the Ansible documentation for more information about https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html[Ansible inventory]."
 msgstr "Se não estiver familiarizado com o Ansible, tenha em atenção que o inventário deve ser fornecido para que o comando acima seja executado corretamente. Trata-se de um ficheiro de texto simples que fornece as informações necessárias ao Ansible sobre o sistema de destino que gere. Consulte a documentação do Ansible para obter mais informações sobre o  link:https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html[inventário do Ansible]."
 
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:40
-#, no-wrap
-msgid "[all]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:43
-#, no-wrap
-msgid ""
-"10.0.0.1\n"
-"10.0.0.2\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:46
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "To follow the tutorial, you may want to use only one machine (localhost) and skip the ssh authentication setup. This can be easily achieved by using the following inventory file:"
 msgstr "Para seguir o tutorial, pode querer usar apenas uma máquina (localhost) e ignorar a configuração da autenticação ssh. Isto pode ser facilmente conseguido usando o seguinte ficheiro de inventário:"
 
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:51
-#, no-wrap
-msgid ""
-"[all]\n"
-"localhost ansible_connection=local\n"
-msgstr ""
-
 #. type: Title ===
-#: upstream/_guides/ansible.adoc:53
+#: _guides/ansible.adoc
 #, fuzzy, no-wrap
 msgid "Root access on target system"
 msgstr "Acesso à raiz no sistema de destino"
 
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:56
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "A few tasks performed by the Ansible collection for Quarkus will require administrative privileges on the target (create a group and user account, install packages). If Ansible does run as root, you'll need to add the following options to the `ansible-playbook` command line:"
 msgstr "Algumas tarefas executadas pela coleção Ansible para o Quarkus requerem privilégios administrativos no alvo (criar um grupo e uma conta de utilizador, instalar pacotes). Se o Ansible for executado como root, terá de adicionar as seguintes opções à linha de comando `ansible-playbook`:"
 
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:60
-#, no-wrap
-msgid "$ ansible-playbook -i inventory  --ask-become-pass  ...\n"
-msgstr ""
-
 #. type: Title ==
-#: upstream/_guides/ansible.adoc:62
+#: _guides/ansible.adoc
 #, fuzzy, no-wrap
 msgid "Tutorial"
 msgstr "Tutorial"
 
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:65
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "With the Ansible collection installed on the controller, you can already directly use a playbook provided with it to build and deploy your Quarkus application:"
 msgstr "Com a coleção Ansible instalada no controlador, já pode utilizar diretamente um livro de jogo fornecido com ele para criar e implementar a sua aplicação Quarkus:"
 
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:74
-#, no-wrap
-msgid ""
-"ansible-playbook -i inventory \\\n"
-"  middleware_automation.quarkus.playbook \\\n"
-"  -e app_name=getting-started \\\n"
-"  -e quarkus_app_repo_url='https://github.com/quarkusio/quarkus-quickstarts.git' \\\n"
-"  -e quarkus_app_source_folder='getting-started' \\\n"
-"  -e quarkus_path_to_folder_to_deploy=/opt/quarkus_deploy\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:77
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "The four parameters provided to the playbook are pretty self-explanatory. The first one, `app_name`, is the name of the application, in our case, it's just `getting-started`. The second one, `quarkus_app_repo_url`, is the URL to the Git repository to checkout. The third one is optional, `quarkus_app_source_folder` specifies, if needed, which subfolder from the repo the source code is located. Finally, the fourth one indicates where to install the application on the target."
 msgstr "Os quatro parâmetros fornecidos ao playbook são bastante auto-explicativos. O primeiro, `app_name`, é o nome do aplicativo, no nosso caso, é apenas `getting-started`. O segundo, `quarkus_app_repo_url`, é o URL do repositório Git a ser verificado. O terceiro é opcional, `quarkus_app_source_folder` especifica, se necessário, qual a subpasta do repositório onde se encontra o código-fonte. Finalmente, o quarto indica onde instalar a aplicação no destino."
 
 #. type: Title ===
-#: upstream/_guides/ansible.adoc:78
+#: _guides/ansible.adoc
 #, fuzzy, no-wrap
 msgid "Playbook run"
 msgstr "Execução do livro de jogo"
 
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:81
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "Once the command above has successfully run, you should have an output similar to the one below:"
 msgstr "Quando o comando acima tiver sido executado com êxito, deverá obter um resultado semelhante ao seguinte:"
 
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:85
-#, no-wrap
-msgid "…\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:87
-#, no-wrap
-msgid "PLAY [Build and deploy a Quarkus app using Ansible] ****************************\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:89
-#, no-wrap
-msgid "TASK [Build the Quarkus from https://github.com/quarkusio/quarkus-quickstarts.git.] ***\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:92 upstream/_guides/ansible.adoc:118
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Ensure required parameters are provided.] ***\n"
-"ok: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:95
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Define path to mvnw script.] *****\n"
-"ok: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:98
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Ensure that builder host localhost has appropriate JDK installed: java-17-openjdk] ***\n"
-"ok: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:101
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Delete previous workdir (if requested).] ***\n"
-"ok: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:104
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Ensure app workdir exists: /tmp/workdir] ***\n"
-"changed: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:107
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Checkout the application source code.] ***\n"
-"changed: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:110
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Build the App using Maven] *******\n"
-"ok: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:113
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Display build application log] ***\n"
-"skipping: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:115
-#, no-wrap
-msgid "TASK [Deploy webapp on target.] ************************************************\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:121
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Ensure required OpenJDK is installed on target.] ***\n"
-"skipping: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:124
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Ensure Quarkus system group exists on target system] ***\n"
-"ok: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:127
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Ensure Quarkus user exists on target system.] ***\n"
-"ok: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:130
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Ensure deployement directory exits: /opt/quarkus_deploy.] ***\n"
-"ok: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:133
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Set Quarkus app source dir (if not defined).] ***\n"
-"ok: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:136
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Deploy application from  to target system] ***\n"
-"ok: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:139
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Deploy Systemd configuration for Quarkus app] ***\n"
-"ok: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:142
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Perform daemon-reload to ensure the changes are picked up] ***\n"
-"skipping: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:145
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Ensure Quarkus app service is running.] ***\n"
-"ok: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:148
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Ensure firewalld is available.] ***\n"
-"skipping: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:151
-#, no-wrap
-msgid ""
-"TASK [middleware_automation.quarkus.quarkus : Configure firewall for 8080 ports] ***\n"
-"skipping: [localhost]\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:155
-#, no-wrap
-msgid ""
-"PLAY RECAP *********************************************************************\n"
-"localhost              \t: ok=15   changed=2\tunreachable=0\tfailed=0\tskipped=5\trescued=0\tignored=0\n"
-"…\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:158
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "The Ansible collection for Quarkus does all the `heavy lifting` here. First, it checks out the code from Github and builds the application from its sources. It also ensures the system used for this step does have the required OpenJDK installed. By default, the application is built on the localhost (the Ansible controller), but it can be performed on a remote system if needed. Once the application is built, the collection will take care of the deployment."
 msgstr "A coleção Ansible para Quarkus faz tudo `heavy lifting` aqui. Primeiro, verifica o código do Github e constrói a aplicação a partir das suas fontes. Ela também garante que o sistema usado para esta etapa tenha o OpenJDK necessário instalado. Por predefinição, a aplicação é criada no localhost (o controlador Ansible), mas pode ser executada num sistema remoto, se necessário. Assim que a aplicação for criada, a coleção tratará da implementação."
 
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:160
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "Here again, it checks that the appropriate OpenJDK is available on the target system. Then we ensure that the required user and group exist on the target. This is recommended mostly to be able to run the Quarkus app with a regular user, rather than with the root account."
 msgstr "Aqui, mais uma vez, ele verifica se o OpenJDK apropriado está disponível no sistema de destino. Em seguida, garantimos que o utilizador e o grupo necessários existem no destino. Isto é recomendado principalmente para poder executar a aplicação Quarkus com um utilizador normal, em vez de com a conta de raiz."
 
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:162
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "With those requirements in place, the jar can be deployed on the target, along with the required configuration for the app integration into systemd as a service. Any change to the systemd configuration requires reloading its daemon, which the collection ensures will happen whenever it is needed. With all of that in place, the only thing that remains is to start the service itself, which Ansible will also take care of."
 msgstr "Com esses requisitos em vigor, o jar pode ser implantado no destino, juntamente com a configuração necessária para a integração do aplicativo no systemd como um serviço. Qualquer alteração na configuração do systemd requer o recarregamento de seu daemon, o que a coleção garante que acontecerá sempre que for necessário. Com tudo isso no lugar, a única coisa que resta é iniciar o serviço em si, o que o Ansible também fará."
 
 #. type: delimited block =
-#: upstream/_guides/ansible.adoc:166
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "By default, the Ansible collection for Quarkus will install and use the OpenJDK 17 available in the Yum repositories of the target host (or the controller). If you want to use a different version of OpenJDK, define the following variable:"
 msgstr "Por predefinição, a coleção Ansible para o Quarkus irá instalar e utilizar o OpenJDK 17 disponível nos repositórios Yum do anfitrião de destino (ou do controlador). Se pretender utilizar uma versão diferente do OpenJDK, defina a seguinte variável:"
 
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:171
-#, no-wrap
-msgid ""
-"$ ansible-playbook -i inventory ...\n"
-"    -e quarkus_java_package_version: java-11-openjdk\n"
-msgstr ""
-
 #. type: Title ===
-#: upstream/_guides/ansible.adoc:174
+#: _guides/ansible.adoc
 #, fuzzy, no-wrap
 msgid "Validate that deployment was successful"
 msgstr "Validar se a implantação foi bem-sucedida"
 
 #. type: delimited block =
-#: upstream/_guides/ansible.adoc:177
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "For the purpose of this tutorial, you may want to check manually, that the playbook did indeed deployed the app properly. Here is the few ways to do so."
 msgstr "Para o propósito deste tutorial, você pode querer verificar manualmente se o playbook realmente implantou o aplicativo corretamente. Aqui estão algumas maneiras de fazer isso."
 
 #. type: delimited block =
-#: upstream/_guides/ansible.adoc:179
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "First, because the collection integrated, we can check the status of the service on one of the targets:"
 msgstr "Primeiro, porque a coleção está integrada, podemos verificar o estado do serviço num dos alvos:"
 
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:191
-#, no-wrap
-msgid ""
-"# systemctl status getting-started.service\n"
-"● getting-started.service - A Quarkus service named getting-started\n"
-"   Loaded: loaded (/usr/lib/systemd/system/getting-started.service; enabled; vendor preset: disabled)\n"
-"   Active: active (running) since Thu 2023-04-13 12:48:18 UTC; 2min 40s ago\n"
-" Main PID: 853 (java)\n"
-"\tTasks: 43 (limit: 1638)\n"
-"   Memory: 73.3M\n"
-"   CGroup: /system.slice/getting-started.service\n"
-"       \t└─853 /usr/bin/java -jar /opt/quarkus_deploy/quarkus-run.jar\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:200
-#, no-wrap
-msgid ""
-"Apr 13 12:48:18 bd71f39642c8 systemd[1]: Started A Quarkus service named getting-started.\n"
-"Apr 13 12:48:19 bd71f39642c8 java[853]: __  ____  __  _____   ___  __ ____  ______\n"
-"Apr 13 12:48:19 bd71f39642c8 java[853]:  --/ __ \\/ / / / _ | / _ \\/ //_/ / / / __/\n"
-"Apr 13 12:48:19 bd71f39642c8 java[853]:  -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\\ \\\n"
-"Apr 13 12:48:19 bd71f39642c8 java[853]: --\\___\\_\\____/_/ |_/_/|_/_/|_|\\____/___/\n"
-"Apr 13 12:48:19 bd71f39642c8 java[853]: 2023-04-13 12:48:19,284 INFO  [io.quarkus] (main) getting-started 1.0.0-SNAPSHOT on JVM (powered by Quarkus 2.16.6.Final) started in 0.607s. Listening on: http://0.0.0.0:8080\n"
-"Apr 13 12:48:19 bd71f39642c8 java[853]: 2023-04-13 12:48:19,309 INFO  [io.quarkus] (main) Profile prod activated.\n"
-"Apr 13 12:48:19 bd71f39642c8 java[853]: 2023-04-13 12:48:19,310 INFO  [io.quarkus] (main) Installed features: [cdi, resteasy-reactive, smallrye-context-propagation, vertx]\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:203
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "Manually, you can also test if the app is reachable:"
 msgstr "Manualmente, também pode testar se a aplicação está acessível:"
 
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:213
-#, no-wrap
-msgid ""
-"# curl -I http://localhost:8080/\n"
-"HTTP/1.1 200 OK\n"
-"accept-ranges: bytes\n"
-"content-length: 3918\n"
-"cache-control: public, immutable, max-age=86400\n"
-"last-modified: Thu, 2 Mar 2023 11:03:18 GMT\n"
-"date: Thu, 2 Mar 2023 11:03:18 GMT\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:216
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "We'll see how to automate those validation in the next and last part of this tutorial."
 msgstr "Veremos como automatizar essa validação na próxima e última parte deste tutorial."
 
 #. type: Title ===
-#: upstream/_guides/ansible.adoc:217
+#: _guides/ansible.adoc
 #, fuzzy, no-wrap
 msgid "Writing a playbook"
 msgstr "Escrever um manual"
 
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:220
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "Of course, you’ll most likely need to build on this, so you may want to write up your own playbook, rather than just using the one provided by the collection. Below is an example of such playbook:"
 msgstr "É claro que, muito provavelmente, precisará de desenvolver isto, pelo que poderá querer escrever o seu próprio livro de jogo, em vez de utilizar apenas o fornecido pela coleção. Abaixo está um exemplo de tal manual:"
 
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:231
-#, no-wrap
-msgid ""
-"- name: \"Build and deploy a Quarkus app using Ansible\"\n"
-"  hosts: all\n"
-"  gather_facts: true\n"
-"  vars:\n"
-"    quarkus_app_repo_url: 'https://github.com/quarkusio/quarkus-quickstarts.git'\n"
-"    app_name: getting-started\n"
-"    quarkus_app_source_folder: getting-started\n"
-"    quarkus_path_to_folder_to_deploy: /opt/quarkus_deploy\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:242
-#, no-wrap
-msgid ""
-"  pre_tasks:\n"
-"    - name: \"Build the Quarkus from {{ quarkus_app_repo_url }}.\"\n"
-"      ansible.builtin.include_role:\n"
-"        name: quarkus\n"
-"        tasks_from: build.yml\n"
-"  tasks:\n"
-"    - name: \"Deploy Quarkus app on target.\"\n"
-"      ansible.builtin.include_role:\n"
-"        name: quarkus\n"
-"        tasks_from: deploy.yml\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:245
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "To run this playbook, you use again the ansible-playbook command, but providing now the path to the playbook:"
 msgstr "Para executar este livro de jogo, utiliza novamente o comando ansible-playbook, mas fornecendo agora o caminho para o livro de jogo:"
 
-#. type: delimited block -
-#: upstream/_guides/ansible.adoc:249
-#, no-wrap
-msgid "$ ansible-playbook -i inventory playbook.yml\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:252
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "You also can automate the validation part we mentioned in the previous section. You can use the https://docs.ansible.com/ansible/latest/collections/ansible/builtin/assert_module.html[ansible.builtin.assert] module and populate the https://docs.ansible.com/ansible/latest/collections/ansible/builtin/service_facts_module.html#examples[service facts] to ensure the systemd service of the Quarkus app is running, along with https://docs.ansible.com/ansible/latest/collections/ansible/builtin/uri_module.html[ansible.builtin.uri] to check that the Quarkus app is accessible."
 msgstr "Também pode automatizar a parte de validação que mencionámos na secção anterior. Pode utilizar o módulo  link:https://docs.ansible.com/ansible/latest/collections/ansible/builtin/assert_module.html[ansible.builtin.assert] e preencher os  link:https://docs.ansible.com/ansible/latest/collections/ansible/builtin/service_facts_module.html#examples[factos do serviço] para garantir que o serviço systemd da aplicação Quarkus está em execução, juntamente com o módulo  link:https://docs.ansible.com/ansible/latest/collections/ansible/builtin/uri_module.html[ansible.builtin.uri] para verificar se a aplicação Quarkus está acessível."
 
 #. type: Plain text
-#: upstream/_guides/ansible.adoc:255
-#, fuzzy, no-wrap
-msgid ""
-"```\n"
-" post_tasks:\n"
-msgstr "<pre class=\"highlight\"> `post_tasks:`</pre>"
-
-#. type: Plain text
-#: upstream/_guides/ansible.adoc:257
-#, fuzzy, no-wrap
-msgid ""
-"name: Populate service facts\n"
-"ansible.builtin.service_facts:\n"
-msgstr "nome: Preencher os factos do serviço ansible.builtin.service_facts:"
-
-#. type: Plain text
-#: upstream/_guides/ansible.adoc:260
-#, fuzzy
-msgid "name: \"Check that systemd service {{ app_name }} is running.\" ansible.builtin.assert:"
-msgstr "name: \"Verificar se o serviço systemd {{nome_da_aplicação }} está a funcionar.\" ansible.builtin.assert:"
-
-#. type: Plain text
-#: upstream/_guides/ansible.adoc:261
-#, fuzzy, no-wrap
-msgid "that:\n"
-msgstr "isso:"
-
-#. type: Plain text
-#: upstream/_guides/ansible.adoc:262
-#, fuzzy, no-wrap
-msgid "ansible_facts.services is defined\n"
-msgstr "ansible_facts.services está definido"
-
-#. type: Plain text
-#: upstream/_guides/ansible.adoc:263
-#, fuzzy, no-wrap
-msgid "ansible_facts.services[\"{{ app_name }}.service\"] is defined\n"
-msgstr "ansible_facts.services[\"{{ app_name }}.service\"] está definido"
-
-#. type: Plain text
-#: upstream/_guides/ansible.adoc:264
-#, fuzzy, no-wrap
-msgid "ansible_facts.services[\"{{ app_name }}.service\"]['state'] == 'running'\n"
-msgstr "ansible_facts.services[\"{{ app_name }}.service\"]['state'] == 'running'"
-
-#. type: Plain text
-#: upstream/_guides/ansible.adoc:265
-#, fuzzy, no-wrap
-msgid "ansible_facts.services[\"{{ app_name }}.service\"]['status'] == 'enabled'\n"
-msgstr "ansible_facts.services[\"{{ app_name }}.service\"]['status'] == 'enabled'"
-
-#. type: Plain text
-#: upstream/_guides/ansible.adoc:266
-#, fuzzy, no-wrap
-msgid "quiet: true\n"
-msgstr "silencioso: verdadeiro"
-
-#. type: Plain text
-#: upstream/_guides/ansible.adoc:269
-#, fuzzy
-msgid "name: \"Check that Quarkus app is accessible\" ansible.builtin.uri:"
-msgstr "name: \"Verificar se a aplicação Quarkus está acessível\" ansible.builtin.uri:"
-
-#. type: Plain text
-#: upstream/_guides/ansible.adoc:271
-#, fuzzy, no-wrap
-msgid ""
-"url: 'http://localhost:8080/'\n"
-"```\n"
-msgstr "url: 'http://localhost:8080/'"
-
-#. type: Plain text
-#: upstream/_guides/ansible.adoc:272
+#: _guides/ansible.adoc
 #, fuzzy
 msgid "And that’s all, folks!"
 msgstr "E é tudo, amigos!"

@@ -11,562 +11,472 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #. type: Title =
-#: upstream/_guides/duplicated-context.adoc:7
+#: _guides/duplicated-context.adoc
 #, fuzzy, no-wrap
 msgid "Duplicated context, context locals, asynchronous processing and propagation"
 msgstr "Contexto duplicado, locais de contexto, processamento assíncrono e propagação"
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:18
-#, fuzzy
-msgid "When using a traditional, blocking, and synchronous framework, processing of each request is performed in a dedicated thread.  So, the same thread is used for the entire processing.  You know that this thread will not be used to execute anything else until the completion of the processing.  When you need to propagate data along the processing, such as the security principal or a trace id, you can use `ThreadLocals`.  The propagated data is cleared once the processing is complete."
-msgstr "Quando se utiliza uma estrutura tradicional, bloqueante e síncrona, o processamento de cada pedido é efectuado numa thread dedicada. Assim, o mesmo thread é utilizado para todo o processamento. Você sabe que esse thread não será usado para executar mais nada até a conclusão do processamento. Quando é necessário propagar dados ao longo do processamento, como a entidade de segurança ou um ID de rastreio, pode utilizar `ThreadLocals`. Os dados propagados são limpos quando o processamento é concluído."
+#: _guides/duplicated-context.adoc
+msgid ""
+"When using a traditional, blocking, and synchronous framework, processing of each request is performed in a dedicated thread.\n"
+"So, the same thread is used for the entire processing.\n"
+"You know that this thread will not be used to execute anything else until the completion of the processing.\n"
+"When you need to propagate data along the processing, such as the security principal or a trace id, you can use `ThreadLocals`.\n"
+"The propagated data is cleared once the processing is complete."
+msgstr ""
+
+#: _guides/duplicated-context.adoc
+msgid ""
+"When using a reactive and asynchronous execution model, you cannot use the same mechanism.\n"
+"To avoid using many process threads, and reduce resource usage (and also increase the concurrency of the application), the same thread can be used to handle multiple concurrent processing.\n"
+"Thus, you cannot use `ThreadLocals` as the values would be leaked between the various concurrent processing."
+msgstr ""
+
+#: _guides/duplicated-context.adoc
+msgid ""
+"Vert.x _duplicated context_ is a construct that provides the same kind of propagation but for asynchronous processing.\n"
+"It can also be used with synchronous code."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:22
-#, fuzzy
-msgid "When using a reactive and asynchronous execution model, you cannot use the same mechanism.  To avoid using many process threads, and reduce resource usage (and also increase the concurrency of the application), the same thread can be used to handle multiple concurrent processing.  Thus, you cannot use `ThreadLocals` as the values would be leaked between the various concurrent processing."
-msgstr "Quando se utiliza um modelo de execução reativo e assíncrono, não é possível utilizar o mesmo mecanismo. Para evitar a utilização de muitos threads de processo e reduzir a utilização de recursos (e também aumentar a simultaneidade da aplicação), o mesmo thread pode ser utilizado para tratar vários processamentos simultâneos. Assim, não é possível utilizar `ThreadLocals`, uma vez que os valores seriam divulgados entre os vários processamentos simultâneos."
-
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:25
-#, fuzzy
-msgid "Vert.x _duplicated context_ is a construct that provides the same kind of propagation but for asynchronous processing.  It can also be used with synchronous code."
-msgstr "_O contexto duplicado_ Vert.x é uma construção que fornece o mesmo tipo de propagação, mas para processamento assíncrono. Também pode ser utilizado com código síncrono."
-
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:27
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "This document explains duplicated contexts, how to retrieve one, use it, and how it's propagated along the (asynchronous) processing."
 msgstr "Este documento explica os contextos duplicados, como obter um, utilizá-lo e como é propagado ao longo do processamento (assíncrono)."
 
 #. type: Title ==
-#: upstream/_guides/duplicated-context.adoc:28
+#: _guides/duplicated-context.adoc
 #, fuzzy, no-wrap
 msgid "The reactive model"
 msgstr "O modelo reativo"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:31
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "This section is not an explanation of the reactive model. Refer to that xref:quarkus-reactive-architecture.adoc[the Quarkus Reactive Architecture] for more details."
 msgstr "Esta secção não é uma explicação do modelo reativo. Consulte  link:quarkus-reactive-architecture.html[a Arquitetura Reactiva do Quarkus] para obter mais informações."
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:34
-#, fuzzy
-msgid "Under the hood, Quarkus uses a reactive engine.  This engine provides the efficiency and concurrency to cope with modern, containerized, and cloud-native applications."
-msgstr "Sob o capô, o Quarkus usa um mecanismo reativo. Esse mecanismo fornece a eficiência e a simultaneidade para lidar com aplicativos modernos, em contêineres e nativos da nuvem."
+#: _guides/duplicated-context.adoc
+msgid ""
+"Under the hood, Quarkus uses a reactive engine.\n"
+"This engine provides the efficiency and concurrency to cope with modern, containerized, and cloud-native applications."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:37
-#, fuzzy
-msgid "For example, when you use RESTEasy Reactive or gRPC, Quarkus can invoke your business logic on I/O threads.  These threads are named https://en.wikipedia.org/wiki/Event_loop[event loops] and implement a https://en.wikipedia.org/wiki/Reactor_pattern[multi-reactor pattern]."
-msgstr "Por exemplo, quando utiliza o RESTEasy Reactive ou o gRPC, o Quarkus pode invocar a sua lógica empresarial em threads de E/S. Estes segmentos são designados por  link:https://en.wikipedia.org/wiki/Event_loop[loops de eventos] e implementam um  link:https://en.wikipedia.org/wiki/Reactor_pattern[padrão multi-reator]."
+#: _guides/duplicated-context.adoc
+msgid ""
+"For example, when you use RESTEasy Reactive or gRPC, Quarkus can invoke your business logic on I/O threads.\n"
+"These threads are named https://en.wikipedia.org/wiki/Event_loop[event loops] and implement a https://en.wikipedia.org/wiki/Reactor_pattern[multi-reactor pattern]."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:41
-#, fuzzy
-msgid "When using the imperative model, Quarkus associates a worker thread to each processing unit (like an HTTP request or a gRPC invocation).  That thread is dedicated to this specific processing until the processing completes.  Thus, you can use _Thread Locals_ to propagate data along the processing, and no other processing unit will use that thread until the completion of the current one."
-msgstr "Ao utilizar o modelo imperativo, o Quarkus associa um thread de trabalho a cada unidade de processamento (como um pedido HTTP ou uma invocação gRPC). Essa thread é dedicada a esse processamento específico até que o processamento seja concluído. Assim, é possível usar _Thread Locals_ para propagar dados ao longo do processamento, e nenhuma outra unidade de processamento usará essa thread até a conclusão da atual."
+#: _guides/duplicated-context.adoc
+msgid ""
+"When using the imperative model, Quarkus associates a worker thread to each processing unit (like an HTTP request or a gRPC invocation).\n"
+"That thread is dedicated to this specific processing until the processing completes.\n"
+"Thus, you can use _Thread Locals_ to propagate data along the processing, and no other processing unit will use that thread until the completion of the current one."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:46
-#, fuzzy
-msgid "With the reactive model, the code runs on event loop threads.  These event loops execute multiple concurrent processing units. For example, the same event loop can handle multiple concurrent HTTP requests.  The following picture illustrates this reactive execution model:"
-msgstr "Com o modelo reativo, o código é executado em threads de ciclos de eventos. Esses loops de eventos executam várias unidades de processamento simultâneas. Por exemplo, o mesmo loop de eventos pode tratar vários pedidos HTTP simultâneos. A imagem seguinte ilustra este modelo de execução reativo:"
+#: _guides/duplicated-context.adoc
+msgid ""
+"With the reactive model, the code runs on event loop threads.\n"
+"These event loops execute multiple concurrent processing units. For example,\n"
+"the same event loop can handle multiple concurrent HTTP requests.\n"
+"The following picture illustrates this reactive execution model:"
+msgstr ""
 
-#. type: Named 'alt' AttributeList argument for macro 'image'
-#: upstream/_guides/duplicated-context.adoc:47
-#: upstream/_guides/duplicated-context.adoc:120
-#, fuzzy, no-wrap
-msgid "Continuation"
-msgstr "Continuação"
-
-#. type: Target for macro image
-#: upstream/_guides/duplicated-context.adoc:47
-#, no-wrap
-msgid "reactive-continuation.png"
+#: _guides/duplicated-context.adoc
+msgid ""
+"You must **NEVER** block these event loops.\n"
+"If you do, the whole model collapses.\n"
+"Thus, when the processing of an HTTP request needs to execute an I/O operation (such as calling an external service), it:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:52
-#, fuzzy
-msgid "You must **NEVER** block these event loops.  If you do, the whole model collapses.  Thus, when the processing of an HTTP request needs to execute an I/O operation (such as calling an external service), it:"
-msgstr "*NUNCA* deve bloquear estes ciclos de eventos. Se o fizer, todo o modelo entra em colapso. Assim, quando o processamento de um pedido HTTP precisa executar uma operação de E/S (como chamar um serviço externo), ele:"
-
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:54
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "schedules the operation,"
 msgstr "programa a operação,"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:55
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "passes a continuation (the code to call when the I/O completes),"
 msgstr "passa uma continuação (o código a chamar quando a E/S estiver concluída),"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:56
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "releases the thread."
 msgstr "liberta o fio."
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:59
-#, fuzzy
-msgid "That thread can then handle another concurrent request.  When the scheduled operation completes, it executes the passed continuation **on the same event loop**."
-msgstr "Esse thread pode então tratar de outro pedido simultâneo. Quando a operação programada é concluída, executa a continuação passada *no mesmo ciclo de eventos*."
+#: _guides/duplicated-context.adoc
+msgid ""
+"That thread can then handle another concurrent request.\n"
+"When the scheduled operation completes, it executes the passed continuation **on the same event loop**."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:63
-#, fuzzy
-msgid "That model is particularly efficient (low number of threads) and performant (avoid context switches).  However, it requires a different development model, and you cannot use _Thread Locals_, as the concurrent requests would see the same value.  Indeed, they are all processed by the same thread: the event loop."
-msgstr "Esse modelo é particularmente eficiente (baixo número de threads) e eficaz (evita trocas de contexto). No entanto, requer um modelo de desenvolvimento diferente e não é possível utilizar _Thread Locals_, uma vez que os pedidos concorrentes veriam o mesmo valor. De facto, todos eles são processados pela mesma thread: o ciclo de eventos."
+#: _guides/duplicated-context.adoc
+msgid ""
+"That model is particularly efficient (low number of threads) and performant (avoid context switches).\n"
+"However, it requires a different development model, and you cannot use _Thread Locals_, as the concurrent requests would see the same value.\n"
+"Indeed, they are all processed by the same thread: the event loop."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:68
-#, fuzzy
-msgid "The xref:context-propagation.adoc[MicroProfile Context Propagation] specification addresses this issue.  It saves and restores the values stored in thread locals whenever we switch to another processing unit.  However, that model is expensive.  Context locals (also known as _duplicated context_) is another way to do this and requires fewer mechanics."
-msgstr "A especificação  link:context-propagation.html[MicroProfile Context Propagation] aborda esta questão. Guarda e restaura os valores armazenados nos locais das threads sempre que mudamos para outra unidade de processamento. No entanto, esse modelo é caro. Os locais de contexto (também conhecidos como _contexto duplicado_) são outra forma de o fazer e requerem menos mecânica."
+#: _guides/duplicated-context.adoc
+msgid ""
+"The xref:context-propagation.adoc[MicroProfile Context Propagation] specification addresses this issue.\n"
+"It saves and restores the values stored in thread locals whenever we switch to another processing unit.\n"
+"However, that model is expensive.\n"
+"Context locals (also known as _duplicated context_) is another way to do this and requires fewer mechanics."
+msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/duplicated-context.adoc:69
+#: _guides/duplicated-context.adoc
 #, fuzzy, no-wrap
 msgid "Context and duplicated context"
 msgstr "Contexto e contexto duplicado"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:72
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "In Quarkus, when you execute reactive code, you run in a _Context_, representing the execution thread (event loop or worker thread)."
 msgstr "No Quarkus, quando se executa código reativo, executa-se num _contexto_, que representa o segmento de execução (ciclo de eventos ou segmento de trabalho)."
 
-#. type: delimited block -
-#: upstream/_guides/duplicated-context.adoc:82
-#, no-wrap
-msgid ""
-"@GET\n"
-"@NonBlocking // Force the usage of the event loop\n"
-"@Path(\"/hello1\")\n"
-"public String hello1() {\n"
-"   Context context = Vertx.currentContext();\n"
-"   return \"Hello, you are running on context: %s and on thread %s\".formatted(context, Thread.currentThread());  <1>\n"
-"}\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/duplicated-context.adoc:89
-#, no-wrap
-msgid ""
-"@GET\n"
-"@Path(\"/hello2\")\n"
-"public String hello2() { // Called on a worker thread (because it has a blocking signature)\n"
-"   Context context = Vertx.currentContext();\n"
-"   return \"Hello, you are running on context: %s and on thread %s\".formatted(context, Thread.currentThread()); <2>\n"
-"}\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:91
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "Produces: `Hello 1, you are running on context: io.vertx.core.impl.DuplicatedContext@5dc42d4f and on thread Thread[vert.x-eventloop-thread-1,5,main]` - so invoked on an event loop."
 msgstr "Produz: `Hello 1, you are running on context: io.vertx.core.impl.DuplicatedContext@5dc42d4f and on thread Thread[vert.x-eventloop-thread-1,5,main]` - invocado num ciclo de eventos."
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:92
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "Produces: `Hello 2, you are running on context: io.vertx.core.impl.DuplicatedContext@41781ccb and on thread Thread[executor-thread-1,5,main]` - so invoked on a worker thread."
 msgstr "Produz: `Hello 2, you are running on context: io.vertx.core.impl.DuplicatedContext@41781ccb and on thread Thread[executor-thread-1,5,main]` - invocado num thread de trabalho."
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:96
-#, fuzzy
-msgid "With this _Context_ object, you can schedule operations in the same context.  The context is handy for executing the continuation on the same event loop (as contexts are attached to event loops), as described in the picture above.  For example, when you need to call something asynchronous, you capture the current context, and when the response arrives, it invokes the continuation in that context:"
-msgstr "Com este objeto _Context_, é possível programar operações no mesmo contexto. O contexto é útil para executar a continuação no mesmo ciclo de eventos (uma vez que os contextos estão ligados a ciclos de eventos), como descrito na figura acima. Por exemplo, quando é necessário chamar algo assíncrono, captura-se o contexto atual e, quando a resposta chega, invoca-se a continuação nesse contexto:"
-
-#. type: delimited block -
-#: upstream/_guides/duplicated-context.adoc:104
-#, no-wrap
+#: _guides/duplicated-context.adoc
 msgid ""
-"public Uni<String> invoke() {\n"
-"   Context context = Vertx.currentContext();\n"
-"   return invokeRemoteService()\n"
-"       .emitOn(runnable -> context.runOnContext(runnable)); <1>\n"
-"}\n"
+"With this _Context_ object, you can schedule operations in the same context.\n"
+"The context is handy for executing the continuation on the same event loop (as contexts are attached to event loops), as described in the picture above.\n"
+"For example, when you need to call something asynchronous, you capture the current context, and when the response arrives, it invokes the continuation in that context:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:106
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "Emit the result in the same context."
 msgstr "Emitir o resultado no mesmo contexto."
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:108
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "Most Quarkus clients do this automatically, invoking the continuation in the proper context."
 msgstr "A maioria dos clientes Quarkus faz isso automaticamente, invocando a continuação no contexto adequado."
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:110
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "There are two levels of contexts:"
 msgstr "Existem dois níveis de contextos:"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:112
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "the root contexts representing the event loop, and thus cannot be used to propagate data without leaking it between concurrent processing"
 msgstr "os contextos de raiz que representam o ciclo de eventos, pelo que não podem ser utilizados para propagar dados sem fugas entre processamentos concorrentes"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:113
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "the duplicated contexts, which are based on a root context, but are NOT shared and represent the processing unit"
 msgstr "os contextos duplicados, que se baseiam num contexto de raiz, mas NÃO são partilhados e representam a unidade de processamento"
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:119
-#, fuzzy
-msgid "Thus, a duplicated context is associated with each processing unit.  A duplicated context is still associated with a root context, and scheduling operations using a duplicated context run them in the associated root context.  But, unlike the root context, they are not shared between processing units.  Yet, continuations of a processing unit use the same duplicated context.  So, in the previous code snippet, the continuation is not only called on the same event loop but on the same duplicated context (supposing that the captured context is a duplicated context, more on that later)."
-msgstr "Assim, um contexto duplicado é associado a cada unidade de processamento. Um contexto duplicado continua associado a um contexto raiz, e as operações de programação que utilizam um contexto duplicado executam-nas no contexto raiz associado. Mas, ao contrário do contexto raiz, não são partilhados entre unidades de processamento. No entanto, as continuações de uma unidade de processamento utilizam o mesmo contexto duplicado. Assim, no trecho de código anterior, a continuação não é chamada apenas no mesmo loop de eventos, mas no mesmo contexto duplicado (supondo que o contexto capturado seja um contexto duplicado, mais sobre isso adiante)."
-
-#. type: Target for macro image
-#: upstream/_guides/duplicated-context.adoc:120
-#, no-wrap
-msgid "duplicated-context-continuation.png"
+#: _guides/duplicated-context.adoc
+msgid ""
+"Thus, a duplicated context is associated with each processing unit.\n"
+"A duplicated context is still associated with a root context, and scheduling operations using a duplicated context run them in the associated root context.\n"
+"But, unlike the root context, they are not shared between processing units.\n"
+"Yet, continuations of a processing unit use the same duplicated context.\n"
+"So, in the previous code snippet, the continuation is not only called on the same event loop but on the same duplicated context (supposing that the captured context is a duplicated context, more on that later)."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/duplicated-context.adoc:122
+#: _guides/duplicated-context.adoc
 #, fuzzy, no-wrap
 msgid "Context local data"
 msgstr "Dados locais de contexto"
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:127
-#, fuzzy
-msgid "When executed in a duplicated context, the code can store data without sharing it with the other concurrent processing.  So, you can store, retrieve and remove local data.  The continuation invokes on the same duplicated context, will have access to that data:"
-msgstr "Quando executado num contexto duplicado, o código pode armazenar dados sem os partilhar com o outro processamento simultâneo. Assim, é possível armazenar, recuperar e remover dados locais. A continuação invoca no mesmo contexto duplicado, terá acesso a esses dados:"
-
-#. type: delimited block -
-#: upstream/_guides/duplicated-context.adoc:131
-#, no-wrap
-msgid "import io.smallrye.common.vertx.ContextLocals;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/duplicated-context.adoc:133
-#, no-wrap
-msgid "AtomicInteger counter = new AtomicInteger();\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/duplicated-context.adoc:136
-#, no-wrap
+#: _guides/duplicated-context.adoc
 msgid ""
-"public Uni<String> invoke() {\n"
-"   Context context = Vertx.currentContext();\n"
+"When executed in a duplicated context, the code can store data without sharing it with the other concurrent processing.\n"
+"So, you can store, retrieve and remove local data.\n"
+"The continuation invokes on the same duplicated context, will have access to that data:"
 msgstr ""
 
-#. type: delimited block -
-#: upstream/_guides/duplicated-context.adoc:139
-#, no-wrap
+#: _guides/duplicated-context.adoc
 msgid ""
-"   ContextLocals.put(\"message\", \"hello\");\n"
-"   ContextLocals.put(\"id\", counter.incrementAndGet());\n"
+"The previous code snippet uses `io.smallrye.common.vertx.ContextLocals`, which eases access to the local data.\n"
+"You can also access them using `Vertx.currentContext().getLocal(\"key\")`."
 msgstr ""
 
-#. type: delimited block -
-#: upstream/_guides/duplicated-context.adoc:150
-#, no-wrap
+#: _guides/duplicated-context.adoc
 msgid ""
-"   return invokeRemoteService()\n"
-"       .emitOn(runnable -> context.runOnContext(runnable))\n"
-"       .map(res -> {\n"
-"           // Can still access the context local data\n"
-"           // `get(...)` returns an Optional\n"
-"           String msg = ContextLocals.<String>get(\"message\").orElseThrow();\n"
-"           Integer id = ContextLocals.<Integer>get(\"id\").orElseThrow();\n"
-"           return \"%s - %s - %d\".formatted(res, msg, id);\n"
-"       });\n"
-"}\n"
+"Context local data provides an efficient way to propagate objects during a reactive execution.\n"
+"Tracing metadata, metrics, and sessions can be stored and retrieved safely."
 msgstr ""
-
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:154
-#, fuzzy
-msgid "The previous code snippet uses `io.smallrye.common.vertx.ContextLocals`, which eases access to the local data.  You can also access them using `Vertx.currentContext().getLocal(\"key\")`."
-msgstr "O trecho de código anterior utiliza `io.smallrye.common.vertx.ContextLocals`, o que facilita o acesso aos dados locais. Também é possível aceder aos mesmos utilizando `Vertx.currentContext().getLocal(\"key\")`."
-
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:157
-#, fuzzy
-msgid "Context local data provides an efficient way to propagate objects during a reactive execution.  Tracing metadata, metrics, and sessions can be stored and retrieved safely."
-msgstr "Os dados locais de contexto fornecem uma forma eficiente de propagar objectos durante uma execução reactiva. Metadados de rastreamento, métricas e sessões podem ser armazenados e recuperados com segurança."
 
 #. type: Title ===
-#: upstream/_guides/duplicated-context.adoc:158
+#: _guides/duplicated-context.adoc
 #, fuzzy, no-wrap
 msgid "Context locals restrictions"
 msgstr "Restrições locais de contexto"
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:163
-#, fuzzy
-msgid "However, such a feature must only be used with duplicated contexts.  As said above, it's transparent for the code.  A duplicated context is a context, so they expose the same API."
-msgstr "No entanto, esta funcionalidade só deve ser utilizada com contextos duplicados. Como já foi dito, é transparente para o código. Um contexto duplicado é um contexto, pelo que expõem a mesma API."
+#: _guides/duplicated-context.adoc
+msgid ""
+"However, such a feature must only be used with duplicated contexts.\n"
+"As said above, it's transparent for the code.\n"
+"A duplicated context is a context, so they expose the same API."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:167
-#, fuzzy
-msgid "In Quarkus, access to the local data is restricted to duplicated contexts.  If you try to access local data from a root context, it throws an `UnsupportedOperationException`.  It prevents accessing data shared among different units of processing."
-msgstr "No Quarkus, o acesso aos dados locais é limitado aos contextos duplicados. Se tentar aceder aos dados locais a partir de um contexto de raiz, é lançado um `UnsupportedOperationException`. Impede o acesso a dados partilhados entre diferentes unidades de processamento."
-
-#. type: delimited block -
-#: upstream/_guides/duplicated-context.adoc:171
-#, no-wrap
-msgid "java.lang.UnsupportedOperationException: Access to Context.putLocal(), Context.getLocal() and Context.removeLocal() are forbidden from a 'root' context  as it can leak data between unrelated processing. Make sure the method runs on a 'duplicated' (local) Context.\n"
+#: _guides/duplicated-context.adoc
+msgid ""
+"In Quarkus, access to the local data is restricted to duplicated contexts.\n"
+"If you try to access local data from a root context, it throws an `UnsupportedOperationException`.\n"
+"It prevents accessing data shared among different units of processing."
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/duplicated-context.adoc:173
+#: _guides/duplicated-context.adoc
 #, fuzzy, no-wrap
 msgid "Safe context"
 msgstr "Contexto seguro"
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:178
-#, fuzzy
-msgid "You can mark a context _safe_.  It is meant for other extensions to integrate with to help identify which contexts are isolated and guarantee access by a unique thread.  Hibernate Reactive uses this feature to check if the current context is safe to store the currently opened session to protect users from mistakenly interleaving multiple reactive operations that could unintentionally share the same session."
-msgstr "É possível marcar um contexto como _seguro_. Destina-se à integração de outras extensões para ajudar a identificar quais os contextos que estão isolados e garantir o acesso por um único segmento. O Hibernate Reactive utiliza esta funcionalidade para verificar se o contexto atual é seguro para armazenar a sessão atualmente aberta, de modo a proteger os utilizadores de intercalarem por engano várias operações reactivas que poderiam partilhar involuntariamente a mesma sessão."
+#: _guides/duplicated-context.adoc
+msgid ""
+"You can mark a context _safe_.\n"
+"It is meant for other extensions to integrate with to help identify which contexts are isolated and guarantee access by a unique thread.\n"
+"Hibernate Reactive uses this feature to check if the current context is safe to store the currently opened session to protect users from mistakenly interleaving multiple reactive operations that could unintentionally share the same session."
+msgstr ""
+
+#: _guides/duplicated-context.adoc
+msgid ""
+"Vert.x web will create a new duplicated context for each http web request; Quarkus RESTEasy Reactive will mark such contexts as safe.\n"
+"Other extensions should follow a similar pattern when they are setting up a new context that is safe to be used for a local context guaranteeing sequential use, non-concurrent access, and scoped to the current reactive chain as a convenience not to have to pass a \"context\" object along explicitly."
+msgstr ""
+
+#: _guides/duplicated-context.adoc
+msgid ""
+"In other cases, it might be helpful to mark the current context as not safe instead explicitly; for example, if an existing context needs to be shared across multiple workers to process some operations in parallel: by marking and un-marking appropriately the same\n"
+"context can have spans in which it's safe, followed by spans in which it's not safe."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:181
-#, fuzzy
-msgid "Vert.x web will create a new duplicated context for each http web request; Quarkus RESTEasy Reactive will mark such contexts as safe.  Other extensions should follow a similar pattern when they are setting up a new context that is safe to be used for a local context guaranteeing sequential use, non-concurrent access, and scoped to the current reactive chain as a convenience not to have to pass a \"context\" object along explicitly."
-msgstr "O Vert.x web criará um novo contexto duplicado para cada pedido http web; o Quarkus RESTEasy Reactive marcará esses contextos como seguros. Outras extensões devem seguir um padrão semelhante quando estão a criar um novo contexto que é seguro para ser utilizado para um contexto local, garantindo a utilização sequencial, o acesso não concorrente e o âmbito da cadeia reactiva atual como uma conveniência para não ter de passar um objeto \"contexto\" explicitamente."
-
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:184
-#, fuzzy
-msgid "In other cases, it might be helpful to mark the current context as not safe instead explicitly; for example, if an existing context needs to be shared across multiple workers to process some operations in parallel: by marking and un-marking appropriately the same context can have spans in which it's safe, followed by spans in which it's not safe."
-msgstr "Noutros casos, pode ser útil marcar explicitamente o contexto atual como não seguro; por exemplo, se um contexto existente tiver de ser partilhado por vários trabalhadores para processar algumas operações em paralelo: ao marcar e desmarcar adequadamente o mesmo contexto pode ter períodos em que é seguro, seguidos de períodos em que não é seguro."
-
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:186
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "To mark a context as safe, you can:"
 msgstr "Para marcar um contexto como seguro, pode:"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:188
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "Use the `io.quarkus.vertx.SafeVertxContext` annotation"
 msgstr "Utilizar a anotação `io.quarkus.vertx.SafeVertxContext`"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:189
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "Use the `io.quarkus.vertx.core.runtime.context.VertxContextSafetyToggle` class"
 msgstr "Utilizar a classe `io.quarkus.vertx.core.runtime.context.VertxContextSafetyToggle`"
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:192
-#, fuzzy
-msgid "By using the `io.quarkus.vertx.core.runtime.context.VertxContextSafetyToggle` class, the current context can be explicitly marked as `safe`, or it can be explicitly marked as `unsafe`; there's a third state which is the default of any new context: `unmarked`.  The default is to consider any unmarked context to be `unsafe`, unless the system property `io.quarkus.vertx.core.runtime.context.VertxContextSafetyToggle.UNRESTRICTED_BY_DEFAULT` is set to `true`;"
-msgstr "Utilizando a classe `io.quarkus.vertx.core.runtime.context.VertxContextSafetyToggle`, o contexto atual pode ser explicitamente marcado como `safe`, ou pode ser explicitamente marcado como `unsafe`; existe um terceiro estado que é a predefinição de qualquer novo contexto: `unmarked`. A predefinição é considerar qualquer contexto não marcado como `unsafe`, a menos que a propriedade de sistema `io.quarkus.vertx.core.runtime.context.VertxContextSafetyToggle.UNRESTRICTED_BY_DEFAULT` seja definida como `true`;"
+#: _guides/duplicated-context.adoc
+msgid ""
+"By using the `io.quarkus.vertx.core.runtime.context.VertxContextSafetyToggle` class, the current context can be explicitly marked as `safe`, or it can be explicitly marked as `unsafe`; there's a third state which is the default of any new context: `unmarked`.\n"
+"The default is to consider any unmarked context to be `unsafe`, unless the system property `io.quarkus.vertx.core.runtime.context.VertxContextSafetyToggle.UNRESTRICTED_BY_DEFAULT` is set to `true`;"
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:196
-#, fuzzy
-msgid "The `SafeVertxContext` annotation marks the current duplicated context as safe and invokes the annotated method if the context is `unmarked` or already marked as `safe`.  If the context is marked as `unsafe`, you can force it to be `safe` using the `force=true` parameter.  However, this possibility must be used carefully."
-msgstr "A anotação `SafeVertxContext` marca o contexto duplicado atual como seguro e invoca o método anotado se o contexto for `unmarked` ou já estiver marcado como `safe`. Se o contexto estiver marcado como `unsafe`, pode forçá-lo a ser `safe` utilizando o parâmetro `force=true`. No entanto, esta possibilidade deve ser utilizada com cuidado."
+#: _guides/duplicated-context.adoc
+msgid ""
+"The `SafeVertxContext` annotation marks the current duplicated context as safe and invokes the annotated method if the context is `unmarked` or already marked as `safe`.\n"
+"If the context is marked as `unsafe`, you can force it to be `safe` using the `force=true` parameter.\n"
+"However, this possibility must be used carefully."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:199
-#, fuzzy
-msgid "The `@SafeVertxContext` annotation is a CDI interceptor binding annotation.  Therefore, it only works for CDI beans and on non-private methods."
-msgstr "A anotação `@SafeVertxContext` é uma anotação de ligação de intercetor CDI. Por conseguinte, só funciona para beans CDI e em métodos não privados."
+#: _guides/duplicated-context.adoc
+msgid ""
+"The `@SafeVertxContext` annotation is a CDI interceptor binding annotation.\n"
+"Therefore, it only works for CDI beans and on non-private methods."
+msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/duplicated-context.adoc:200
+#: _guides/duplicated-context.adoc
 #, fuzzy, no-wrap
 msgid "Extensions supporting duplicated contexts"
 msgstr "Extensões que suportam contextos duplicados"
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:205
-#, fuzzy
-msgid "In general, Quarkus invokes reactive code on duplicated contexts.  So it can safely access the local data.  It is the case with:"
-msgstr "Em geral, o Quarkus invoca código reativo em contextos duplicados. Assim, pode aceder com segurança aos dados locais. É o caso de:"
+#: _guides/duplicated-context.adoc
+msgid ""
+"In general, Quarkus invokes reactive code on duplicated contexts.\n"
+"So it can safely access the local data.\n"
+"It is the case with:"
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:207
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "RESTEasy Reactive"
 msgstr "RESTEasy Reativo"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:208
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "gRPC"
 msgstr "gRPC"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:209
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "Reactive Routes"
 msgstr "Rotas reactivas"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:210
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "Vert.x Event Bus `@ConsumeEvent`"
 msgstr "Barramento de eventos Vert.x `@ConsumeEvent`"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:211
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "Reactive REST Client"
 msgstr "Cliente REST reativo"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:212
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "Reactive Messaging (Kafka, AMQP)"
 msgstr "Mensagens reactivas (Kafka, AMQP)"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:213
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "Funqy"
 msgstr "Funqy"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:214
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "Quarkus scheduler and Quartz"
 msgstr "Agendador Quarkus e Quartz"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:215
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "Redis Client (for the pub/sub commands)"
 msgstr "Cliente Redis (para os comandos pub/sub)"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:216
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "GraphQL"
 msgstr "GraphQL"
 
 #. type: Title ==
-#: upstream/_guides/duplicated-context.adoc:217
+#: _guides/duplicated-context.adoc
 #, fuzzy, no-wrap
 msgid "Distinguish between root and duplicated contexts"
 msgstr "Distinguir entre contextos de raiz e duplicados"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:219
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "You can distinguish between a root and a duplicated context using the following:"
 msgstr "É possível distinguir entre um contexto de raiz e um contexto duplicado utilizando o seguinte:"
 
-#. type: delimited block -
-#: upstream/_guides/duplicated-context.adoc:223
-#, no-wrap
-msgid "boolean isDuplicated = VertxContext.isDuplicatedContext(context);\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:226
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "This code uses the `io.smallrye.common.vertx.VertxContext` helper class."
 msgstr "Este código utiliza a classe auxiliar `io.smallrye.common.vertx.VertxContext`."
 
 #. type: Title ===
-#: upstream/_guides/duplicated-context.adoc:227
+#: _guides/duplicated-context.adoc
 #, fuzzy, no-wrap
 msgid "Duplicated contexts and mapped diagnostic context (MDC)"
 msgstr "Contextos duplicados e contexto de diagnóstico mapeado (MDC)"
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:231
-#, fuzzy
-msgid "When using loggers, the MDC (contextual data added to the log messages) is stored in duplicated context when available.  Check the xref:logging.adoc#mdc-propagation[logging reference guide] for more details."
-msgstr "Ao utilizar registadores, o MDC (dados contextuais adicionados às mensagens de registo) é armazenado em contexto duplicado, quando disponível. Para mais informações, consulte o  link:logging.html#mdc-propagation[guia de referência do registo]."
+#: _guides/duplicated-context.adoc
+msgid ""
+"When using loggers, the MDC (contextual data added to the log messages) is stored in duplicated context when available.\n"
+"Check the xref:logging.adoc#mdc-propagation[logging reference guide] for more details."
+msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/duplicated-context.adoc:232
+#: _guides/duplicated-context.adoc
 #, fuzzy, no-wrap
 msgid "CDI request scope"
 msgstr "Âmbito do pedido de CDI"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:235
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "In Quarkus, the CDI request scope is stored in a duplicated context, meaning it gets automatically propagated alongside the reactive processing of a request."
 msgstr "No Quarkus, o âmbito do pedido CDI é armazenado num contexto duplicado, o que significa que é automaticamente propagado juntamente com o processamento reativo de um pedido."
 
 #. type: Title ===
-#: upstream/_guides/duplicated-context.adoc:236
+#: _guides/duplicated-context.adoc
 #, fuzzy, no-wrap
 msgid "Reactive Messaging"
 msgstr "Mensagens reactivas"
 
-#. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:240
-#, fuzzy
-msgid "The Kafka and AMQP connector creates a duplicated context for each message, implementing a _message context_.  This message context is used for the complete message processing and thus can be used to propagate data."
-msgstr "O conetor Kafka e AMQP cria um contexto duplicado para cada mensagem, implementando um _contexto de mensagem_. Este contexto de mensagem é utilizado para o processamento completo da mensagem e, por conseguinte, pode ser utilizado para propagar dados."
+#: _guides/duplicated-context.adoc
+msgid ""
+"The Kafka and AMQP connector creates a duplicated context for each message, implementing a _message context_.\n"
+"This message context is used for the complete message processing and thus can be used to propagate data."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:242
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "See the https://smallrye.io/smallrye-reactive-messaging/latest/concepts/message-context/[Message Context] documentation for further information."
 msgstr "Para mais informações, consulte a documentação sobre  link:https://smallrye.io/smallrye-reactive-messaging/latest/concepts/message-context/[o contexto da mensagem]."
 
 #. type: Title ===
-#: upstream/_guides/duplicated-context.adoc:243
+#: _guides/duplicated-context.adoc
 #, fuzzy, no-wrap
 msgid "OpenTelemetry"
 msgstr "OpenTelemetry"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:246
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "The OpenTelemetry extension stores the traces in the duplicated context, ensuring propagation even when using reactive and asynchronous code."
 msgstr "A extensão OpenTelemetry armazena os traços no contexto duplicado, garantindo a propagação mesmo quando se utiliza código reativo e assíncrono."
 
 #. type: Title ==
-#: upstream/_guides/duplicated-context.adoc:247
+#: _guides/duplicated-context.adoc
 #, fuzzy, no-wrap
 msgid "References"
 msgstr "Referências"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:250
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "xref:quarkus-reactive-architecture.adoc[Quarkus Reactive Architecture]"
 msgstr "link:quarkus-reactive-architecture.html[Arquitetura reactiva Quarkus]"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:251
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "https://vertx.io/docs/vertx-core/java/#_reactor_and_multi_reactor[Vert.x Reactor and Multi-Reactor documentation]"
 msgstr "link:https://vertx.io/docs/vertx-core/java/#_reactor_and_multi_reactor[Documentação do Vert.x Reator e Multi-Reator]"
 
 #. type: Plain text
-#: upstream/_guides/duplicated-context.adoc:251
+#: _guides/duplicated-context.adoc
 #, fuzzy
 msgid "xref:logging.adoc[Quarkus logging]"
 msgstr "link:logging.html[Registo de Quarkus]"

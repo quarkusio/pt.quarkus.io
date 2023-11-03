@@ -20,933 +20,809 @@ msgstr ""
 #. and pull requests should be submitted there:
 #. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
 #. type: Title =
-#: upstream/_guides/virtual-threads.adoc:7
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Virtual Thread support reference"
 msgstr "Referência de apoio para Threads Virtuais"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:21
+#: _guides/virtual-threads.adoc
 #, fuzzy
 msgid "This guide explains how to benefit from Java 21+ virtual threads in Quarkus application."
 msgstr "Este guia explica como tirar proveito das threads virtuais do Java 19+ na aplicação Quarkus."
 
 #. type: Title ==
-#: upstream/_guides/virtual-threads.adoc:22
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "What are virtual threads?"
 msgstr "O que são threads virtuais?"
 
 #. type: Title ===
-#: upstream/_guides/virtual-threads.adoc:24
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Terminology"
 msgstr "Terminologia"
 
 #. type: Labeled list
-#: upstream/_guides/virtual-threads.adoc:25
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "OS thread"
 msgstr "Thread do SO"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:27
+#: _guides/virtual-threads.adoc
 msgid "A \"thread-like\" data structure managed by the Operating System."
 msgstr "Uma estrutura de dados \"semelhante à uma thread\" gerenciada pelo sistema operacional."
 
 #. type: Labeled list
-#: upstream/_guides/virtual-threads.adoc:28
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Platform thread"
 msgstr "Thread de plataforma"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:31
-msgid "Until Java 19, every instance of the link:{thread}[Thread] class was a platform thread, a wrapper around an OS thread.  Creating a platform thread creates an OS thread, and blocking a platform thread blocks an OS thread."
-msgstr "Até o Java 19, cada instância da classe link:{thread}[Thread] era uma thread de plataforma, um wrapper em torno de uma thread do sistema operacional. A criação de uma thread de plataforma cria uma thread de SO, e o bloqueio de uma thread de plataforma bloqueia uma thread de SO."
+#: _guides/virtual-threads.adoc
+msgid ""
+"Until Java 19, every instance of the link:{thread}[Thread] class was a platform thread, a wrapper around an OS thread.\n"
+"Creating a platform thread creates an OS thread, and blocking a platform thread blocks an OS thread."
+msgstr ""
 
 #. type: Labeled list
-#: upstream/_guides/virtual-threads.adoc:32
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Virtual thread"
 msgstr "Thread virtual"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:35
-msgid "Lightweight, JVM-managed threads. They extend the link:{thread}[Thread] class but are not tied to one specific OS thread.  Thus, scheduling virtual threads is the responsibility of the JVM."
-msgstr "Threads leves e gerenciadas pela JVM. Elas estendem a classe link:{thread}[Thread], mas não estão vinculadas a uma thread específica do sistema operacional. Portanto, o agendamento de threads virtuais é de responsabilidade da JVM."
+#: _guides/virtual-threads.adoc
+msgid ""
+"Lightweight, JVM-managed threads. They extend the link:{thread}[Thread] class but are not tied to one specific OS thread.\n"
+"Thus, scheduling virtual threads is the responsibility of the JVM."
+msgstr ""
 
 #. type: Labeled list
-#: upstream/_guides/virtual-threads.adoc:36
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Carrier thread"
 msgstr "Carrier thread"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:39
-msgid "A platform thread used to execute a virtual thread is called a **carrier** thread.  It isn't a class distinct from link:{Thread}[Thread] or `VirtualThread` but rather a functional denomination."
-msgstr "Uma thread de plataforma usada para executar uma thread virtual é chamada de **carrier** thread. Não se trata de uma classe distinta da link:{Thread}[Thread] ou `VirtualThread`, mas sim de uma denominação funcional."
+#: _guides/virtual-threads.adoc
+msgid ""
+"A platform thread used to execute a virtual thread is called a **carrier** thread.\n"
+"It isn't a class distinct from link:{Thread}[Thread] or `VirtualThread` but rather a functional denomination."
+msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/virtual-threads.adoc:40
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Differences between virtual threads and platform threads"
 msgstr "Diferenças entre threads virtuais e threads de plataforma"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:42
+#: _guides/virtual-threads.adoc
 msgid "We will give a brief overview of the topic here; please refer to the link:{vthreadjep}[JEP 425] for more information."
 msgstr "Faremos aqui um breve resumo do tema; para mais informações, consulte o link:{vthreadjep}[JEP 425]."
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:45
-#, fuzzy
-msgid "Virtual threads are a feature available since Java 19 (Java 21 is the first LTS version including virtual threads), aiming at providing a cheap alternative to platform threads for I/O-bound workloads."
-msgstr "As threads virtuais são uma funcionalidade disponível desde o Java 19, com o objetivo de fornecer uma alternativa barata às threads de plataforma para operações ligadas a E/S."
+#: _guides/virtual-threads.adoc
+msgid ""
+"Virtual threads are a feature available since Java 19 (Java 21 is the first LTS version including virtual threads),\n"
+"aiming at providing a cheap alternative to platform threads for I/O-bound workloads."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:49
-msgid "Until now, platform threads were the concurrency unit of the JVM.  They are a wrapper over OS structures.  Creating a Java platform thread creates a \"thread-like\" structure in your operating system."
-msgstr "Até agora, as threads de plataforma eram a unidade de concorrência da JVM. Elas são um invólucro sobre as estruturas do sistema operacional. A criação de uma thread de plataforma Java cria uma estrutura \"semelhante a uma thread\" no seu sistema operacional."
+#: _guides/virtual-threads.adoc
+msgid ""
+"Until now, platform threads were the concurrency unit of the JVM.\n"
+"They are a wrapper over OS structures.\n"
+"Creating a Java platform thread creates a \"thread-like\" structure in your operating system."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:52
-msgid "Virtual threads, on the other hand, are managed by the JVM. To be executed, they need to be mounted on a platform thread (which acts as a carrier to that virtual thread).  As such, they have been designed to offer the following characteristics:"
-msgstr "As threads virtuais, por outro lado, são gerenciadas pela JVM. Para serem executadas, elas têm de ser montadas numa thread de plataforma (que atua como um suporte para essa thread virtual). Como tal, elas foram concebidas para oferecer as seguintes características:"
+#: _guides/virtual-threads.adoc
+msgid ""
+"Virtual threads, on the other hand, are managed by the JVM. To be executed, they need to be mounted on a platform thread (which acts as a carrier to that virtual thread).\n"
+"As such, they have been designed to offer the following characteristics:"
+msgstr ""
 
 #. type: Labeled list
-#: upstream/_guides/virtual-threads.adoc:53
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Lightweight "
 msgstr "Leve "
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:57
-msgid "Virtual threads occupy less space than platform threads in memory.  Hence, it becomes possible to use more virtual threads than platform threads simultaneously without blowing up the memory.  By default, platform threads are created with a stack of about 1 MB, whereas virtual threads stack is \"pay-as-you-go.\" You can find these numbers and other motivations for virtual threads in this https://youtu.be/lIq-x_iI-kc?t=543[presentation] given by the lead developer of project Loom (the project that added the virtual thread support to the JVM)."
-msgstr "As threads virtuais ocupam menos espaço na memória do que as threads de plataforma. Por isso, torna-se possível usar mais threads virtuais do que threads de plataforma simultaneamente sem estourar a memória. Por definição, as threads de plataforma são criadas com uma pilha de cerca de 1 MB, ao passo que a pilha das threads virtuais é \"paga à medida que se usa\". Você pode encontrar estes números e outras motivações para as threads virtuais nesta  link:https://youtu.be/lIq-x_iI-kc?t=543[apresentação] feita pelo programador principal do projeto Loom (o projeto que adicionou o suporte de threads virtuais à JVM)."
+#: _guides/virtual-threads.adoc
+msgid ""
+"Virtual threads occupy less space than platform threads in memory.\n"
+"Hence, it becomes possible to use more virtual threads than platform threads simultaneously without blowing up the memory.\n"
+"By default, platform threads are created with a stack of about 1 MB, whereas virtual threads stack is \"pay-as-you-go.\"\n"
+"You can find these numbers and other motivations for virtual threads in this https://youtu.be/lIq-x_iI-kc?t=543[presentation] given by the lead developer of project Loom (the project that added the virtual thread support to the JVM)."
+msgstr ""
 
 #. type: Labeled list
-#: upstream/_guides/virtual-threads.adoc:58
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Cheap to create"
 msgstr "Barato para criar"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:62
-msgid "Creating a platform thread in Java takes time.  Currently, techniques such as pooling, where threads are created once and then reused, are strongly encouraged to minimize the time lost in starting them (as well as limiting the maximum number of threads to keep memory consumption low).  Virtual threads are supposed to be disposable entities that we create when we need them, it is discouraged to pool them or reuse them for different tasks."
-msgstr "Criar uma thread de plataforma em Java leva tempo. Atualmente, técnicas como o pooling, em que as threads são criadas uma vez e depois reutilizadas, são fortemente encorajadas para minimizar o tempo perdido ao iniciá-las (bem como limitar o número máximo de threads para manter o consumo de memória baixo). As threads virtuais devem ser entidades descartáveis que criamos quando precisamos delas, não sendo aconselhável agrupá-las ou reutilizá-las para diferentes tarefas."
+#: _guides/virtual-threads.adoc
+msgid ""
+"Creating a platform thread in Java takes time.\n"
+"Currently, techniques such as pooling, where threads are created once and then reused, are strongly encouraged to minimize the time lost in starting them (as well as limiting the maximum number of threads to keep memory consumption low).\n"
+"Virtual threads are supposed to be disposable entities that we create when we need them,\n"
+"it is discouraged to pool them or reuse them for different tasks."
+msgstr ""
 
 #. type: Labeled list
-#: upstream/_guides/virtual-threads.adoc:63
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Cheap to block"
 msgstr "Barato para bloquear"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:66
-msgid "When performing blocking I/O, the underlying OS thread wrapped by the Java platform thread is put in a wait queue, and a context switch occurs to load a new thread context onto the CPU core. This operation takes time.  Since the JVM manages virtual threads, no underlying OS thread is blocked when they perform a blocking operation.  Their state is stored in the heap, and another virtual thread is executed on the same Java platform (carrier) thread."
-msgstr "Ao executar E/S bloqueante, a thread do SO relacionada à thread da plataforma Java é colocada numa fila de espera e ocorre uma troca de contexto para carregar um novo contexto de thread no núcleo da CPU. Essa operação leva tempo. Uma vez que a JVM gerencia threads virtuais, nenhuma thread do SO é bloqueada quando uma operação de bloqueio é realizada. O seu estado é armazenado na heap e outra thread virtual é executada na mesma thread (carrier) da plataforma Java."
+#: _guides/virtual-threads.adoc
+msgid ""
+"When performing blocking I/O, the underlying OS thread wrapped by the Java platform thread is put in a wait queue, and a context switch occurs to load a new thread context onto the CPU core. This operation takes time.\n"
+"Since the JVM manages virtual threads, no underlying OS thread is blocked when they perform a blocking operation.\n"
+"Their state is stored in the heap, and another virtual thread is executed on the same Java platform (carrier) thread."
+msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/virtual-threads.adoc:67
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "The Continuation Dance"
 msgstr "O Processo de Continuação"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:69
+#: _guides/virtual-threads.adoc
 msgid "As mentioned above, the JVM schedules the virtual threads. These virtual threads are mounted on carrier threads. The scheduling comes with a pinch of magic. When the virtual thread attempts to use blocking I/O, the JVM _transforms_ this call into a non-blocking one, unmounts the virtual thread, and mounts another virtual thread on the carrier thread. When the I/O completes, the _waiting_ virtual thread becomes eligible again and will be re-mounted on a carrier thread to continue its execution. For the user, all this dance is invisible. Your synchronous code is executed asynchronously."
 msgstr "Como mencionado acima, a JVM agenda as threads virtuais. Essas threads virtuais são montadas em carrier threads. O agendamento vem com uma pitada de magia. Quando a thread virtual tenta utilizar E/S bloqueante, a JVM _transforma_ esta chamada numa chamada não bloqueante, desmonta a thread virtual e monta outra thread virtual na carrier thread. Quando a E/S é concluída, a thread virtual _em espera_ torna-se novamente elegível e será montada novamente numa carrier thread para continuar a sua execução. Para o usuário, todo esse processo é invisível. O seu código síncrono é executado de forma assíncrona."
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:71
+#: _guides/virtual-threads.adoc
 msgid "Note that the virtual thread may not be re-mounted on the same carrier thread."
 msgstr "Note-se que a thread virtual pode não ser montada novamente na mesma carrier thread."
 
 #. type: Title ===
-#: upstream/_guides/virtual-threads.adoc:73
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Virtual threads are useful for I/O-bound workloads only"
 msgstr "As threads virtuais são úteis apenas para cargas de trabalho vinculadas a E/S"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:81
-msgid "We now know we can create more virtual threads than platform threads. One could be tempted to use virtual threads to perform long computations (CPU-bound workload).  It is useless and counterproductive.  CPU-bound doesn't consist of quickly swapping threads while they need to wait for the completion of an I/O, but in leaving them attached to a CPU core to compute something.  In this scenario, it is worse than useless to have thousands of threads if we have tens of CPU cores, virtual threads won't enhance the performance of CPU-bound workloads.  Even worse, when running a CPU-bound workload on a virtual thread, the virtual thread monopolizes the carrier thread on which it is mounted.  It will either reduce the chance for the other virtual thread to run or will start creating new carrier threads, leading to high memory usage."
-msgstr "Agora sabemos que podemos criar mais threads virtuais do que threads de plataforma. Poderíamos sentir-nos tentados a utilizar threads virtuais para efetuar cálculos longos (carga de trabalho ligada à CPU). Isso é inútil e contraproducente. Trabalhos que exigem muita CPU não se beneficiam de alternar rapidamente entre threads enquanto esperam pela conclusão de uma operação de E/S, mas sim de manter as threads conectadas a um núcleo de CPU para realizar cálculos. Neste cenário, é péssimo ter milhares de threads se temos dezenas de núcleos de CPU, ou seja, threads virtuais não vão melhorar o desempenho de cargas de trabalho CPU-bound. Pior ainda, ao executar uma carga de trabalho CPU-bound em uma thread virtual, a thread virtual monopoliza a carrier thread na qual está montada. Isso quer dizer que ela reduzirá a chance de execução de outra thread virtual ou começará a criar novas carrier threads, levando a um alto uso de memória."
+#: _guides/virtual-threads.adoc
+msgid ""
+"We now know we can create more virtual threads than platform threads. One could be tempted to use virtual threads to perform long computations (CPU-bound workload).\n"
+"It is useless and counterproductive.\n"
+"CPU-bound doesn't consist of quickly swapping threads while they need to wait for the completion of an I/O, but in leaving\n"
+"them attached to a CPU core to compute something.\n"
+"In this scenario, it is worse than useless to have thousands of threads if we have tens of CPU cores, virtual threads won't enhance the performance of CPU-bound workloads.\n"
+"Even worse, when running a CPU-bound workload on a virtual thread, the virtual thread monopolizes the carrier thread on which it is mounted.\n"
+"It will either reduce the chance for the other virtual thread to run or will start creating new carrier threads, leading to high memory usage."
+msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/virtual-threads.adoc:82
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Run code on virtual threads using @RunOnVirtualThread"
 msgstr "Execute código em threads virtuais usando @RunOnVirtualThread"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:87
-#, fuzzy
-msgid "In Quarkus, the support of virtual thread is implemented using the link:{runonvthread}[@RunOnVirtualThread] annotation.  This section briefly overviews the rationale and how to use it.  There are dedicated guides for extensions supporting that annotation, such as:"
-msgstr "No Quarkus, o suporte de thread virtual é implementado utilizando a anotação link:{runonvthread}[@RunOnVirtualThread]. Esta seção apresenta uma breve descrição do fundamento e da forma de utilizá-la. Existem guias dedicados para extensões que suportam essa anotação, tais como // TODO."
+#: _guides/virtual-threads.adoc
+msgid ""
+"In Quarkus, the support of virtual thread is implemented using the link:{runonvthread}[@RunOnVirtualThread] annotation.\n"
+"This section briefly overviews the rationale and how to use it.\n"
+"There are dedicated guides for extensions supporting that annotation, such as:"
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:89
+#: _guides/virtual-threads.adoc
 #, fuzzy
 msgid "xref:./resteasy-reactive-virtual-threads.adoc[Virtual threads in REST applications]"
 msgstr "link:./resteasy-reactive-virtual-threads.html[Threads virtuais em aplicativos REST]"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:90
+#: _guides/virtual-threads.adoc
 #, fuzzy
 msgid "xref:./messaging-virtual-threads.adoc[Virtual threads in reactive messaging applications]"
 msgstr "link:./messaging-virtual-threads.html[Threads virtuais em aplicativos de mensagens reativas]"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:91
+#: _guides/virtual-threads.adoc
 #, fuzzy
 msgid "xref:./grpc-virtual-threads.adoc[Virtual threads in gRPC services]"
 msgstr "link:./grpc-virtual-threads.html[Threads virtuais em serviços gRPC]"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:92
+#: _guides/virtual-threads.adoc
 #, fuzzy
 msgid "xref:./scheduler-reference.adoc#virtual_threads[Execute periodic tasks on virtual threads]"
 msgstr "link:./scheduler-reference.html#virtual_threads[Executar tarefas periódicas em threads virtuais]"
 
 #. type: Title ===
-#: upstream/_guides/virtual-threads.adoc:94
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Why not run everything on virtual threads?"
 msgstr "Por que não executar tudo em threads virtuais?"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:101
-msgid "As mentioned above, not everything can run safely on virtual threads.  The risk of **monopolization** can lead to high-memory usage.  Also, there are situations where the virtual thread cannot be unmounted from the carrier thread.  This is called **pinning**.  Finally, some libraries use `ThreadLocal` to store and reuse objects.  Using virtual threads with these libraries will lead to massive allocation, as the intentionally pooled objects will be instantiated for every (disposable and generally short-lived) virtual thread."
-msgstr "Como mencionado acima, nem tudo pode ser executado com segurança em threads virtuais. O risco de *monopolização* pode levar a um alto uso de memória. Além disso, há situações em que a thread virtual não pode ser desmontada da carrier thread. Isso é chamado de *pinning*. Finalmente, algumas bibliotecas utilizam `ThreadLocal` para armazenar e reutilizar objetos. O uso de threads virtuais com essas bibliotecas levará a uma alocação massiva, pois os objetos intencionalmente agrupados serão instanciados para cada thread virtual (descartável e geralmente de curta duração)."
+#: _guides/virtual-threads.adoc
+msgid ""
+"As mentioned above, not everything can run safely on virtual threads.\n"
+"The risk of **monopolization** can lead to high-memory usage.\n"
+"Also, there are situations where the virtual thread cannot be unmounted from the carrier thread.\n"
+"This is called **pinning**.\n"
+"Finally, some libraries use `ThreadLocal` to store and reuse objects.\n"
+"Using virtual threads with these libraries will lead to massive allocation, as the intentionally pooled objects will be instantiated for every (disposable and generally short-lived) virtual thread."
+msgstr ""
+
+#: _guides/virtual-threads.adoc
+msgid ""
+"As of today, it is not possible to use virtual threads in a carefree manner.\n"
+"Following such a laissez-faire approach could quickly lead to memory and resource starvation issues.\n"
+"Thus, Quarkus uses an explicit model until the aforementioned issues disappear (as the Java ecosystem matures).\n"
+"It is also the reason why _reactive_ extensions have the virtual thread support, and rarely the _classic_ ones.\n"
+"We need to know when to dispatch on a virtual thread."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:107
-msgid "As of today, it is not possible to use virtual threads in a carefree manner.  Following such a laissez-faire approach could quickly lead to memory and resource starvation issues.  Thus, Quarkus uses an explicit model until the aforementioned issues disappear (as the Java ecosystem matures).  It is also the reason why _reactive_ extensions have the virtual thread support, and rarely the _classic_ ones.  We need to know when to dispatch on a virtual thread."
-msgstr "Atualmente, não é possível utilizar threads virtuais de uma forma despreocupada. Seguir uma abordagem tão \"descuidada\" poderia rapidamente levar a problemas de falta de memória e de recursos. Dessa forma, o Quarkus utiliza um modelo explícito até que os problemas acima mencionados desapareçam (à medida que o ecossistema Java amadurece). É também a razão pela qual as extensões _reativas_ têm o suporte de threads virtuais e raramente as _clássicas_. Precisamos saber quando despachar em uma thread virtual."
-
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:109
+#: _guides/virtual-threads.adoc
 msgid "It is essential to understand that these issues are not Quarkus limitations or bugs but are due to the current state of the Java ecosystem which needs to evolve to become virtual thread friendly."
 msgstr "É essencial compreender que estes problemas não são limitações ou bugs do Quarkus, mas sim devidos ao estado atual do ecossistema Java, que precisa evoluir para se tornar compatível com as threads virtuais."
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:111
+#: _guides/virtual-threads.adoc
 msgid "To learn more about the internal design and choices, check the https://dl.acm.org/doi/10.1145/3583678.3596895[Considerations for integrating virtual threads in a Java framework: a Quarkus example in a resource-constrained environment] paper."
 msgstr "Para saber mais sobre o design interno e as escolhas, consulte o documento https://dl.acm.org/doi/10.1145/3583678.3596895[Considerações sobre a integração de threads virtuais numa estrutura Java: um exemplo Quarkus num ambiente com recursos limitados]."
 
 #. type: Title ====
-#: upstream/_guides/virtual-threads.adoc:113
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Monopolization cases"
 msgstr "Casos de monopolização"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:117
-msgid "The monopolization has been explained in the xref:cpu-bound[Virtual threads are useful for I/O-bound workloads only] section.  When running long computations, we do not allow the JVM to unmount and switch to another virtual thread until the virtual thread terminates.  Indeed, the current scheduler does not support preempting tasks."
-msgstr "A monopolização foi explicada na seção xref:#cpu-bound[Threads virtuais são úteis apenas para cargas de trabalho ligadas a E/S]. Ao executar cálculos longos, não permitimos que a JVM desmonte e mude para outra thread virtual até que a thread virtual atual termine. De fato, o agendador atual não suporta a interrupção de tarefas."
+#: _guides/virtual-threads.adoc
+msgid ""
+"The monopolization has been explained in the xref:cpu-bound[Virtual threads are useful for I/O-bound workloads only] section.\n"
+"When running long computations, we do not allow the JVM to unmount and switch to another virtual thread until the virtual thread terminates.\n"
+"Indeed, the current scheduler does not support preempting tasks."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:121
-msgid "This monopolization can lead to the creation of new carrier threads to execute other virtual threads.  Creating carrier threads results in creating platform threads.  So, there is a memory cost associated with this creation."
-msgstr "Esta monopolização pode levar à criação de novas carrier threads para executar outras threads virtuais. A criação de carrier threads resulta na criação de threads de plataforma. Portanto, há um custo de memória associado a essa criação."
+#: _guides/virtual-threads.adoc
+msgid ""
+"This monopolization can lead to the creation of new carrier threads to execute other virtual threads.\n"
+"Creating carrier threads results in creating platform threads.\n"
+"So, there is a memory cost associated with this creation."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:124
-msgid "Suppose you run in a constrained environment, such as containers. In that case, monopolization can quickly become a concern, as the high memory usage can lead to out-of-memory issues and container termination.  The memory usage may be higher than with regular worker threads because of the inherent cost of the scheduling and virtual threads."
-msgstr "Suponha que você execute em um ambiente restrito, como contêineres. Nesse caso, a monopolização pode rapidamente se tornar uma preocupação, pois o alto uso de memória pode levar a problemas de falta de memória e ao encerramento do contêiner. O uso de memória pode ser maior do que com worker threads regulares devido ao custo inerente do agendamento e das threads virtuais."
+#: _guides/virtual-threads.adoc
+msgid ""
+"Suppose you run in a constrained environment, such as containers. In that case, monopolization can quickly become a concern, as the high memory usage can lead to out-of-memory issues and container termination.\n"
+"The memory usage may be higher than with regular worker threads because of the inherent cost of the scheduling and virtual threads."
+msgstr ""
 
 #. type: Title ====
-#: upstream/_guides/virtual-threads.adoc:126
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Pinning cases"
 msgstr "Casos de fixação (pinning)"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:129
-msgid "The promise of \"cheap blocking\" might not always hold: a virtual thread might _pin_ its carrier on certain occasions.  The platform thread is blocked in this situation, precisely as it would have been in a typical blocking scenario."
-msgstr "A promessa de \"bloqueio barato\" pode nem sempre ser cumprida: uma thread virtual pode _fixar_ o seu portador (carrier) em determinadas ocasiões. A thread da plataforma fica bloqueada nesta situação, exatamente como teria sido num cenário de bloqueio típico."
+#: _guides/virtual-threads.adoc
+msgid ""
+"The promise of \"cheap blocking\" might not always hold: a virtual thread might _pin_ its carrier on certain occasions.\n"
+"The platform thread is blocked in this situation, precisely as it would have been in a typical blocking scenario."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:131
+#: _guides/virtual-threads.adoc
 msgid "According to link:{vthreadjep}[JEP 425] this can happen in two situations:"
 msgstr "Segundo o link:{vthreadjep}[JEP 425], isto pode acontecer em duas situações:"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:133
+#: _guides/virtual-threads.adoc
 msgid "when a virtual thread performs a blocking operation inside a `synchronized` block or method"
 msgstr "quando uma thread virtual executa uma operação de bloqueio dentro de um bloco ou método `synchronized`"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:134
+#: _guides/virtual-threads.adoc
 msgid "when it executes a blocking operation inside a native method or a foreign function"
 msgstr "quando executa uma operação bloqueante dentro de um método nativo ou de uma função externa"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:140
-msgid "It can be reasonably easy to avoid these situations in your code, but verifying every dependency you use is hard.  Typically, while experimenting with virtual threads, we realized that old versions of the link:{pgsql-driver}[postgresql-JDBC driver] results in frequent pinning.  Most JDBC drivers still pin the carrier thread.  Even worse, lots of widespread libraries are pinning and would require code changes."
-msgstr "Pode ser razoavelmente fácil evitar essas situações no seu código, mas verificar cada dependência que você usa é difícil. Tipicamente, enquanto experimentávamos com threads virtuais, percebemos que as versões antigas do  link:{pgsql-driver}[driver postgresql-JDBC] resultavam em pinagem frequente. A maioria dos drivers JDBC ainda fixam a carrier thread. Pior ainda, muitas bibliotecas comuns estão fixando e exigiriam alterações no código."
+#: _guides/virtual-threads.adoc
+msgid ""
+"It can be reasonably easy to avoid these situations in your code, but verifying every dependency you use is hard.\n"
+"Typically, while experimenting with virtual threads, we realized that old versions of the link:{pgsql-driver}[postgresql-JDBC driver]\n"
+"results in frequent pinning.\n"
+"Most JDBC drivers still pin the carrier thread.\n"
+"Even worse, lots of widespread libraries are pinning and would require code changes."
+msgstr ""
 
 #. type: Title ====
-#: upstream/_guides/virtual-threads.adoc:142
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "The pooling case"
 msgstr "O caso do agrupamento (pooling)"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:145
-msgid "Some libraries are using `ThreadLocal` as an object pooling mechanism.  Extremely popular libraries like https://github.com/FasterXML/jackson-core/issues/919[Jackson] and Netty assume that the application uses a limited number of threads, which are recycled (using a thread pool) to run multiple (unrelated but sequential) tasks."
-msgstr "Algumas bibliotecas utilizam `ThreadLocal` como um mecanismo de pooling de objetos. Bibliotecas extremamente populares como link:https://github.com/FasterXML/jackson-core/issues/919[Jackson] e Netty assumem que a aplicação utiliza um número limitado de threads, que são reciclados (usando um pool de threads) para executar múltiplas tarefas (não relacionadas, mas sequenciais)."
+#: _guides/virtual-threads.adoc
+msgid ""
+"Some libraries are using `ThreadLocal` as an object pooling mechanism.\n"
+"Extremely popular libraries like https://github.com/FasterXML/jackson-core/issues/919[Jackson] and Netty assume that the application uses a limited number of threads, which are recycled (using a thread pool) to run multiple (unrelated but sequential) tasks."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:147
+#: _guides/virtual-threads.adoc
 msgid "This pattern has multiple advantages, such as:"
 msgstr "Este padrão tem várias vantagens, tais como:"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:149
+#: _guides/virtual-threads.adoc
 msgid "Allocation benefit: heavy objects are only allocated once per thread, but because the number of these threads was intended to be limited, it would not use too much memory."
 msgstr "Vantagem da alocação: objetos pesados só são atribuídos uma vez por thread, mas como o número destas threads seria limitado, não consumiria memória excessivamente."
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:150
+#: _guides/virtual-threads.adoc
 msgid "Thread safety: only one thread can access the object stored in the thread local - preventing concurrent accesses."
 msgstr "Segurança da thread: apenas uma thread pode acessar o objeto armazenado na thread local - prevenindo acessos concorrentes."
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:157
-msgid "However, this pattern is counter-productive when using virtual threads.  Virtual threads are not pooled and generally short-lived.  So, instead of a few of them, we now have many of them.  For each of them, the object stored in the `ThreadLocal` is created (often large and expensive) and won't be reused, as the virtual thread is not pooled (and won't be used to run another task once the execution completes).  This problem leads to high memory usage.  Unfortunately, it requires sophisticated code changes in the libraries themselves."
-msgstr "No entanto, esse padrão é contraproducente ao usar threads virtuais. Threads virtuais não são agrupadas e geralmente têm vida curta. Portanto, em vez de algumas threads virtuais, agora temos muitas. Para cada uma delas, o objeto armazenado no `ThreadLocal` é criado (geralmente grande e caro) e não será reutilizado, pois a thread virtual não é gerenciada em um pool (e não será utilizada para executar outra tarefa quando a execução for concluída). Esse problema leva a um alto uso de memória. Infelizmente, requer mudanças significativas no código dessas bibliotecas."
+#: _guides/virtual-threads.adoc
+msgid ""
+"However, this pattern is counter-productive when using virtual threads.\n"
+"Virtual threads are not pooled and generally short-lived.\n"
+"So, instead of a few of them, we now have many of them.\n"
+"For each of them, the object stored in the `ThreadLocal` is created (often large and expensive) and won't be reused, as the virtual thread is not pooled (and won't be used to run another task once the execution completes).\n"
+"This problem leads to high memory usage.\n"
+"Unfortunately, it requires sophisticated code changes in the libraries themselves."
+msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/virtual-threads.adoc:158
+#: _guides/virtual-threads.adoc
 #, fuzzy, no-wrap
 msgid "Use @RunOnVirtualThread with RESTEasy Reactive"
 msgstr "Utilizando @RunOnVirtualThread com RESTEasy Reactive"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:162
-msgid "This section shows a brief example of using the link:{runonvthread}[@RunOnVirtualThread] annotation.  It also explains the various development and execution models offered by Quarkus."
-msgstr "Esta seção mostra um breve exemplo de utilização da anotação link:{runonvthread}[@RunOnVirtualThread]. Ela também explica os vários modelos de desenvolvimento e execução oferecidos pelo Quarkus."
+#: _guides/virtual-threads.adoc
+msgid ""
+"This section shows a brief example of using the link:{runonvthread}[@RunOnVirtualThread] annotation.\n"
+"It also explains the various development and execution models offered by Quarkus."
+msgstr ""
+
+#: _guides/virtual-threads.adoc
+msgid ""
+"The `@RunOnVirtualThread` annotation instructs Quarkus to invoke the annotated method on a **new** virtual thread instead of the current one.\n"
+"Quarkus handles the creation of the virtual thread and the offloading."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:165
-msgid "The `@RunOnVirtualThread` annotation instructs Quarkus to invoke the annotated method on a **new** virtual thread instead of the current one.  Quarkus handles the creation of the virtual thread and the offloading."
-msgstr "A anotação `@RunOnVirtualThread` dá instruções ao Quarkus para invocar o método anotado numa **nova** thread virtual em vez da atual. O Quarkus trata da criação da thread virtual e do descarregamento."
-
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:167
+#: _guides/virtual-threads.adoc
 msgid "Since virtual threads are disposable entities, the fundamental idea of `@RunOnVirtualThread` is to offload the execution of an endpoint handler on a new virtual thread instead of running it on an event-loop or worker thread (in the case of RESTEasy Reactive)."
 msgstr "Como as threads virtuais são entidades descartáveis, a ideia fundamental do `@RunOnVirtualThread` é descarregar a execução de uma requisição para um determinado endpoint em uma nova thread virtual em vez de executá-la em um loop de eventos ou em uma worker thread (no caso do RESTEasy Reactive)."
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:171
-#, fuzzy
-msgid "To do so, it suffices to add the link:{runonvthread}[@RunOnVirtualThread] annotation to the endpoint.  If the Java Virtual Machine used to **run** the application provides virtual thread support (so Java 21 or later versions), then the endpoint execution is offloaded to a virtual thread.  It will then be possible to perform blocking operations without blocking the platform thread upon which the virtual thread is mounted."
-msgstr "Para fazer isso, basta adicionar a anotação link:{runonvthread}[@RunOnVirtualThread] ao endpoint. Se a máquina virtual Java utilizada para **executar** a aplicação oferecer suporte a threads virtuais (ou seja, Java 19 ou versões posteriores), a execução do endpoint será transferida para uma thread virtual. Dessa forma, será possível executar operações bloqueantes sem bloquear a thread da plataforma na qual a thread virtual está montada."
+#: _guides/virtual-threads.adoc
+msgid ""
+"To do so, it suffices to add the link:{runonvthread}[@RunOnVirtualThread] annotation to the endpoint.\n"
+"If the Java Virtual Machine used to **run** the application provides virtual thread support (so Java 21 or later versions), then the endpoint execution is offloaded to a virtual thread.\n"
+"It will then be possible to perform blocking operations without blocking the platform thread upon which the virtual thread is mounted."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:176
-msgid "In the case of RESTEasy Reactive, this annotation can only be used on endpoints annotated with link:{blockingannotation}[@Blocking] or considered blocking because of their signature.  You can visit xref:resteasy-reactive.adoc#execution-model-blocking-non-blocking[Execution model, blocking, non-blocking] for more information."
-msgstr "No caso do RESTEasy Reactive, essa anotação só pode ser usada em endpoints anotados com link:{blockingannotation}[@Blocking] ou considerados bloqueantes devido à sua assinatura. Para mais informações, visite xref:resteasy-reactive.adoc#execution-model-blocking-non-blocking[Modelo de execução, bloqueio, não-bloqueio]."
+#: _guides/virtual-threads.adoc
+msgid ""
+"In the case of RESTEasy Reactive, this annotation can only be used on endpoints annotated with link:{blockingannotation}[@Blocking] or\n"
+"considered blocking because of their signature.\n"
+"You can visit xref:resteasy-reactive.adoc#execution-model-blocking-non-blocking[Execution model, blocking, non-blocking]\n"
+"for more information."
+msgstr ""
 
 #. type: Title ====
-#: upstream/_guides/virtual-threads.adoc:177
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Get started with virtual threads with RESTEasy Reactive"
 msgstr "Comece a usar threads virtuais com o RESTEasy Reactive"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:180
+#: _guides/virtual-threads.adoc
 msgid "Add the following dependency to your build file:"
 msgstr "Adicione a seguinte dependência ao seu arquivo de build:"
 
 #. type: Block title
-#: upstream/_guides/virtual-threads.adoc:182
-#: upstream/_guides/virtual-threads.adoc:199
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "pom.xml"
 msgstr "pom.xml"
 
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:188
-#, no-wrap
-msgid ""
-"<dependency>\n"
-"    <groupId>io.quarkus</groupId>\n"
-"    <artifactId>quarkus-resteasy-reactive</artifactId>\n"
-"</dependency>\n"
-msgstr ""
-
 #. type: Block title
-#: upstream/_guides/virtual-threads.adoc:191
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "build.gradle"
 msgstr "build.gradle"
 
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:194
-#, no-wrap
-msgid "implementation(\"io.quarkus:quarkus-resteasy-reactive\")\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:197
+#: _guides/virtual-threads.adoc
 #, fuzzy
 msgid "Then, you also need to make sure that you are using Java 21+, this can be enforced in your pom.xml file with the following:"
 msgstr "Depois, é preciso certificar-se de que está utilizando a versão 19+ do Java, o que pode ser reforçado no seu arquivo pom.xml com o seguinte:"
 
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:205
-#, no-wrap
-msgid ""
-"<properties>\n"
-"    <maven.compiler.source>21</maven.compiler.source>\n"
-"    <maven.compiler.target>21</maven.compiler.target>\n"
-"</properties>\n"
-msgstr ""
-
 #. type: Title ====
-#: upstream/_guides/virtual-threads.adoc:207
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Three development and execution models"
 msgstr "Três modelos de desenvolvimento e execução"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:211
-msgid "The example below shows the differences between three endpoints, all of them querying a _fortune_ in the database then returning it to the client."
-msgstr "O exemplo abaixo mostra as diferenças entre três endpoints, todos eles consultando uma _fortune_ na base de dados e devolvendo-a ao cliente."
+#: _guides/virtual-threads.adoc
+msgid ""
+"The example below shows the differences between three endpoints, all of them querying a _fortune_ in the database then\n"
+"returning it to the client."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:213
+#: _guides/virtual-threads.adoc
 msgid "the first one uses the traditional blocking style, it is considered blocking due to its signature."
 msgstr "o primeiro utiliza o estilo de bloqueio tradicional, que é considerado bloqueante devido à sua assinatura."
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:214
+#: _guides/virtual-threads.adoc
 msgid "the second one uses Mutiny, it is considered non-blocking due to its signature."
 msgstr "o segundo utiliza o Mutiny, que é considerado não bloqueante devido à sua assinatura."
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:216
-msgid "the third one uses Mutiny but in a synchronous way, since it doesn't return a \"reactive type\" it is considered blocking and the link:{runonvthread}[@RunOnVirtualThread] annotation can be used."
-msgstr "a terceira utiliza Mutiny, mas de forma síncrona, uma vez que não devolve um \"tipo reativo\", é considerada bloqueante e pode ser utilizada a anotação link:{runonvthread}[@RunOnVirtualThread]."
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:220
-#, no-wrap
-msgid "package org.acme.rest;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:225
-#, no-wrap
+#: _guides/virtual-threads.adoc
 msgid ""
-"import org.acme.fortune.model.Fortune;\n"
-"import org.acme.fortune.repository.FortuneRepository;\n"
-"import io.smallrye.common.annotation.RunOnVirtualThread;\n"
-"import io.smallrye.mutiny.Uni;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:230
-#, no-wrap
-msgid ""
-"import jakarta.ws.rs.GET;\n"
-"import jakarta.ws.rs.Path;\n"
-"import java.util.List;\n"
-"import java.util.Random;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:234
-#, no-wrap
-msgid ""
-"@Path(\"\")\n"
-"public class FortuneResource {\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:236
-#, no-wrap
-msgid "    @Inject FortuneRepository repository;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:244
-#, no-wrap
-msgid ""
-"    @GET\n"
-"    @Path(\"/blocking\")\n"
-"    public Fortune blocking() {\n"
-"        // Runs on a worker (platform) thread\n"
-"        var list = repository.findAllBlocking();\n"
-"        return pickOne(list);\n"
-"    }\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:252
-#, no-wrap
-msgid ""
-"    @GET\n"
-"    @Path(\"/reactive\")\n"
-"    public Uni<Fortune> reactive() {\n"
-"        // Runs on the event loop\n"
-"        return repository.findAllAsync()\n"
-"                .map(this::pickOne);\n"
-"    }\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:261
-#, no-wrap
-msgid ""
-"    @GET\n"
-"    @Path(\"/virtual\")\n"
-"    @RunOnVirtualThread\n"
-"    public Fortune virtualThread() {\n"
-"        // Runs on a virtual thread\n"
-"        var list = repository.findAllAsyncAndAwait();\n"
-"        return pickOne(list);\n"
-"    }\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:263
-#: upstream/_guides/virtual-threads.adoc:510
-#, no-wrap
-msgid "}\n"
+"the third one uses Mutiny but in a synchronous way, since it doesn't return a \"reactive type\" it is\n"
+"considered blocking and the link:{runonvthread}[@RunOnVirtualThread] annotation can be used."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:266
+#: _guides/virtual-threads.adoc
 msgid "The following table summarizes the options:"
 msgstr "A tabela seguinte resume as opções:"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:268
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Model"
 msgstr "Modelo"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:268
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Example of signature"
 msgstr "Exemplo de assinatura"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:268
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Pros"
 msgstr "Prós"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:270
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Cons"
 msgstr "Contras"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:271
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Synchronous code on worker thread"
 msgstr "Código síncrono na worker thread"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:272
+#: _guides/virtual-threads.adoc
 #, fuzzy, no-wrap
 msgid "`Fortune blocking()`"
 msgstr "`Fortune blocking()`"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:273
-#: upstream/_guides/virtual-threads.adoc:283
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Simple code"
 msgstr "Código simples"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:275
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Use worker thread (limit concurrency)"
 msgstr "Utiliza worker thread (limita a concorrência)"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:276
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Reactive code on event loop"
 msgstr "Código reativo no event loop"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:277
+#: _guides/virtual-threads.adoc
 #, fuzzy, no-wrap
 msgid "`Uni<Fortune> reactive()`"
 msgstr "`Uni&amp;lt;Fortune&amp;gt; reactive()`"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:278
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "High concurrency and low resource usage"
 msgstr "Alta concorrência e baixo uso de recursos"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:280
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "More complex code"
 msgstr "Código mais complexo"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:281
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Synchronous code on virtual thread"
 msgstr "Código síncrono em thread virtual"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:282
+#: _guides/virtual-threads.adoc
 #, fuzzy, no-wrap
 msgid "`@RunOnVirtualThread Fortune vt()`"
 msgstr "`@RunOnVirtualThread Fortune vt()`"
 
 #. type: Table
-#: upstream/_guides/virtual-threads.adoc:284
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Risk of pinning, monopolization and under-efficient object pooling"
 msgstr "Risco de fixação (pinning), monopolização e agrupamento de objetos pouco eficiente"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:287
+#: _guides/virtual-threads.adoc
 msgid "Note that all three models can be used in a single application."
 msgstr "Note-se que os três modelos podem ser utilizados numa única aplicação."
 
 #. type: Title ==
-#: upstream/_guides/virtual-threads.adoc:288
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Use virtual thread friendly clients"
 msgstr "Utilize clientes compatíveis com threads virtuais"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:292
-#, fuzzy
-msgid "As mentioned in the xref:why-not[Why not run everything on virtual threads?] section, the Java ecosystem is not entirely ready for virtual threads.  So, you need to be careful, especially when using a libraries doing I/O."
-msgstr "Como mencionado na seção xref:why-not[Por que não executar tudo em threads virtuais?], o ecossistema Java não está totalmente preparado para threads virtuais. Portanto, é preciso ter cuidado, especialmente ao usar bibliotecas que fazem E/S."
+#: _guides/virtual-threads.adoc
+msgid ""
+"As mentioned in the xref:why-not[Why not run everything on virtual threads?] section, the Java ecosystem is not entirely ready for virtual threads.\n"
+"So, you need to be careful, especially when using a libraries doing I/O."
+msgstr ""
+
+#: _guides/virtual-threads.adoc
+msgid ""
+"Fortunately, Quarkus provides a massive ecosystem that is ready to be used in virtual threads.\n"
+"Mutiny, the reactive programming library used in Quarkus, and the Vert.x Mutiny bindings provides the ability to write blocking code (so, no fear, no learning curve) which do not pin the carrier thread."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:295
-msgid "Fortunately, Quarkus provides a massive ecosystem that is ready to be used in virtual threads.  Mutiny, the reactive programming library used in Quarkus, and the Vert.x Mutiny bindings provides the ability to write blocking code (so, no fear, no learning curve) which do not pin the carrier thread."
-msgstr "Felizmente, o Quarkus oferece um ecossistema enorme que está pronto para ser usado em threads virtuais. O Mutiny, a biblioteca de programação reativa utilizada no Quarkus, e as ligações Mutiny do Vert.x permitem escrever código bloqueante (sem medo, sem curva de aprendizado) que não bloqueia a carrier thread."
-
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:297
+#: _guides/virtual-threads.adoc
 msgid "As a result:"
 msgstr "Como resultado:"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:300
-msgid "Quarkus extensions providing blocking APIs on top of reactive APIs can be used in virtual threads.  This includes the reactive rest client, the redis client, the mailer..."
-msgstr "As extensões Quarkus que fornecem APIs bloqueantes em cima de APIs reativas podem ser utilizadas em threads virtuais. Isto inclui o cliente reativo rest, o cliente redis, o mailer..."
+#: _guides/virtual-threads.adoc
+msgid ""
+"Quarkus extensions providing blocking APIs on top of reactive APIs can be used in virtual threads.\n"
+"This includes the reactive rest client, the redis client, the mailer..."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:301
+#: _guides/virtual-threads.adoc
 msgid "API returning `Uni` can be used directly using `uni.await().atMost(...)`. It blocks the virtual thread, without blocking the carrier thread, and also improves the resilience of your application with an easy (non-blocking) timeout support."
 msgstr "A API que retornar `Uni` pode ser utilizada diretamente através de `uni.await().atMost(…​)`. Bloqueia a thread virtual, sem bloquear a carrier thread, e também melhora a resiliência da sua aplicação com um suporte fácil de timeout (não bloqueante)."
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:302
+#: _guides/virtual-threads.adoc
 msgid "If you use a https://smallrye.io/smallrye-mutiny-vertx-bindings/latest/[Vert.x client using the Mutiny bindings], use the `andAwait()` methods which block until you get the result without pinning the carrier thread. It includes all the reactive SQL drivers."
 msgstr "Se você estiver utilizando um link:https://smallrye.io/smallrye-mutiny-vertx-bindings/latest/[cliente Vert.x que utilize as ligações Mutiny], use os métodos `andAwait()` que bloqueiam até obter o resultado sem fixar a carrier thread. Isso inclui todos os drivers SQL reativos."
 
 #. type: Title ==
-#: upstream/_guides/virtual-threads.adoc:303
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Detect pinned thread in tests"
 msgstr "Detectar thread fixada em testes"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:307
-msgid "We recommend to use the following configuration when running tests in application using virtual threads.  If would not fail the tests, but at least dump start traces if the code pins the carrier thread:"
-msgstr "Recomendamos a utilização da seguinte configuração ao executar testes em aplicações que utilizam threads virtuais. Isso não fará os testes falharem, mas, pelo menos, gerará os rastros (dumps) de início se o código fixar a carrier thread:"
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:321
-#, no-wrap
+#: _guides/virtual-threads.adoc
 msgid ""
-"<plugin>\n"
-"  <artifactId>maven-surefire-plugin</artifactId>\n"
-"  <version>${surefire-plugin.version}</version>\n"
-"  <configuration>\n"
-"      <systemPropertyVariables>\n"
-"        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>\n"
-"        <maven.home>${maven.home}</maven.home>\n"
-"      </systemPropertyVariables>\n"
-"      <argLine>--enable-preview -Djdk.tracePinnedThreads</argLine>\n"
-"  </configuration>\n"
-"</plugin>\n"
+"We recommend to use the following configuration when running tests in application using virtual threads.\n"
+"If would not fail the tests, but at least dump start traces if the code pins the carrier thread:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:324
+#: _guides/virtual-threads.adoc
 msgid "The `--enable-preview` flag is not necessary with Java 21."
 msgstr "O parâmetro `--enable-preview` não é necessário a partir do Java 21."
 
 #. type: Title ==
-#: upstream/_guides/virtual-threads.adoc:325
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Run application using virtual threads"
 msgstr "Executar a aplicação utilizando threads virtuais"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:328
+#: _guides/virtual-threads.adoc
 msgid "Prior to Java 21, virtual threads are still an experimental feature, you need to start your application with the `--enable-preview` flag:"
 msgstr "Antes de Java 21, as threads virtuais ainda são uma funcionalidade experimental, portanto é necessário iniciar a aplicação com o parâmetro `--enable-preview`:"
 
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:332
-#, no-wrap
-msgid "java --enable-preview -jar target/quarkus-app/quarkus-run.jar\n"
-msgstr ""
-
 #. type: Title ==
-#: upstream/_guides/virtual-threads.adoc:334
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Build containers for application using virtual threads"
 msgstr "Construir contêineres para aplicação que utiliza threads virtuais"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:337
+#: _guides/virtual-threads.adoc
 msgid "When running your application in JVM mode (so not compiled into native, for native check xref:native[the dedicated section]), you can follow the xref:./container-image.adoc[containerization guide] to build a container."
 msgstr "Ao executar a sua aplicação em modo JVM (portanto, não compilada em modo nativo, para nativo consulte xref:native[a seção dedicada]), pode seguir o xref:./container-image.html[guia de conteinerização] para construir um contêiner."
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:340
-msgid "In this section, we use JIB to build the container.  Refer to the xref:./container-image.adoc[containerization guide] to learn more about the alternatives."
-msgstr "Nesta seção, utilizamos o JIB para construir o contêiner. Consulte o xref:./container-image.html[guia de conteinerização] para saber mais sobre as alternativas."
-
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:342
-msgid "To containerize your Quarkus application that use `@RunOnVirtualThread`, add the following properties in your `application.properties`:"
-msgstr "Para conteinerizar a sua aplicação Quarkus que utiliza `@RunOnVirtualThread`, adicione as seguintes propriedades ao seu `application.properties`:"
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:351
-#, no-wrap
+#: _guides/virtual-threads.adoc
 msgid ""
-"quarkus.container-image.build=true\n"
-"quarkus.container-image.group=<your-group-name>\n"
-"quarkus.container-image.name=<you-container-name>\n"
-"quarkus.jib.base-jvm-image=eclipse-temurin:20.0.1_9-jre-ubi9-minimal <1>\n"
-"quarkus.jib.platforms=linux/amd64,linux/arm64 <2>\n"
-"quarkus.jib.jvm-arguments=--enable-preview <3>\n"
+"In this section, we use JIB to build the container.\n"
+"Refer to the xref:./container-image.adoc[containerization guide] to learn more about the alternatives."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:353
+#: _guides/virtual-threads.adoc
+msgid "To containerize your Quarkus application that use `@RunOnVirtualThread`, add the following properties in your `application.properties`:"
+msgstr "Para conteinerizar a sua aplicação Quarkus que utiliza `@RunOnVirtualThread`, adicione as seguintes propriedades ao seu `application.properties`:"
+
+#. type: Plain text
+#: _guides/virtual-threads.adoc
 msgid "Make sure you use a base image supporting virtual threads. Here we use an image providing Java 20."
 msgstr "Certifique-se de que você utiliza uma imagem base que suporta threads virtuais. Aqui usamos uma imagem que fornece Java 20."
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:354
+#: _guides/virtual-threads.adoc
 msgid "Select the target architecture. You can select more than one to build multi-archs images."
 msgstr "Selecione a arquitetura de destino. Você pode selecionar mais do que uma para criar imagens multiarquitetura."
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:355
+#: _guides/virtual-threads.adoc
 msgid "Don't forget to use the `--enable-preview` flag if you are not using Java 21+."
 msgstr "Não se esqueça de utilizar o parâmetro `--enable-preview` se não estiver utilizando Java 21+."
 
-#. type: delimited block =
-#: upstream/_guides/virtual-threads.adoc:358
-#: upstream/_guides/virtual-threads.adoc:417
-msgid "Then, build your container as you would do usually.  For example, if you are using Maven, run:"
-msgstr "Em seguida, construa o seu contêiner como faria normalmente. Por exemplo, se estiver a utilizar o Maven, execute:"
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:362
-#, no-wrap
-msgid "mvn package\n"
+#: _guides/virtual-threads.adoc
+msgid ""
+"Then, build your container as you would do usually.\n"
+"For example, if you are using Maven, run:"
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/virtual-threads.adoc:365
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Compiling Quarkus application using virtual threads into native executable"
 msgstr "Compilando a aplicação Quarkus utilizando threads virtuais num executável nativo"
 
 #. type: Title ===
-#: upstream/_guides/virtual-threads.adoc:367
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Using a local GraalVM installation"
 msgstr "Usando uma instalação local do GraalVM"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:370
+#: _guides/virtual-threads.adoc
 #, fuzzy
 msgid "To compile a Quarkus applications leveraging `@RunOnVirtualThread` into a native executable, you must be sure to use a GraalVM / Mandrel `native-image` supporting virtual threads, so providing at least Java 21."
 msgstr "Para compilar uma aplicação Quarkus que utiliza `@RunOnVirtualThread` em um executável nativo, você deve garantir que está utilizando o `native-image` do GraalVM / Mandrel que suporta threads virtuais, o que requer pelo menos Java 19+."
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:373
-msgid "Build the native executable as indicated on xref:./building-native-image.adoc[the native compilation guide].  For example, with Maven, run:"
-msgstr "Construa o executável nativo conforme indicado no xref:./building-native-image.html[guia de compilação nativa]. Por exemplo, com o Maven, execute:"
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:377
-#: upstream/_guides/virtual-threads.adoc:421
-#, no-wrap
-msgid "mvn package -Dnative\n"
+#: _guides/virtual-threads.adoc
+msgid ""
+"Build the native executable as indicated on xref:./building-native-image.adoc[the native compilation guide].\n"
+"For example, with Maven, run:"
 msgstr ""
 
 #. type: Title ===
-#: upstream/_guides/virtual-threads.adoc:379
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Using an in-container build"
 msgstr "Usando uma compilação em contêiner"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:384
-msgid "In-container build allows building Linux 64 executables by using a `native-image` compiler running in a container.  It avoids having to install `native-image` on your machine, and also allows configuring the GraalVM version you need.  Note that, to use in-container build, you must have Docker or Podman installed on your machine."
-msgstr "A construção em contêiner permite construir executáveis Linux 64 utilizando um compilador `native-image` em execução num contêiner. Isso evita ter que instalar `native-image` na sua máquina e também permite configurar a versão do GraalVM que você precisa. Note que, para usar a construção em contêiner, você precisa ter o Docker ou o Podman instalado na sua máquina."
-
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:386
-msgid "Then, add to your `application.properties` file:"
-msgstr "Em seguida, adicione ao seu arquivo `application.properties`:"
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:391
-#, no-wrap
+#: _guides/virtual-threads.adoc
 msgid ""
-"# In-container build to get a linux 64 executable\n"
-"quarkus.native.container-build=true <1>\n"
+"In-container build allows building Linux 64 executables by using a `native-image` compiler running in a container.\n"
+"It avoids having to install `native-image` on your machine, and also allows configuring the GraalVM version you need.\n"
+"Note that, to use in-container build, you must have Docker or Podman installed on your machine."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:393
+#: _guides/virtual-threads.adoc
+msgid "Then, add to your `application.properties` file:"
+msgstr "Em seguida, adicione ao seu arquivo `application.properties`:"
+
+#. type: Plain text
+#: _guides/virtual-threads.adoc
 msgid "Enables the in-container build"
 msgstr "Permite a compilação no contêiner"
 
 #. type: Block title
-#: upstream/_guides/virtual-threads.adoc:395
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "From ARM/64 to AMD/64"
 msgstr "De ARM/64 para AMD/64"
 
-#. type: delimited block =
-#: upstream/_guides/virtual-threads.adoc:399
-msgid "If you are using a Mac M1 or M2 (using an ARM64 CPU), you need to be aware that the native executable you will get using an in-container build will be a Linux executable, but using your host (ARM 64) architecture.  You can use emulation to force the architecture when using Docker with the following property:"
-msgstr "Se estiver utilizando um Mac M1 ou M2 (utilizando uma CPU ARM64), esteja ciente de que o executável nativo que obterá utilizando uma compilação dentro do contêiner será um executável Linux, mas utilizando a arquitetura do seu host (ARM 64). Você pode forçar a arquitetura usando emulação ao usar o Docker com a seguinte propriedade:"
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:403
-#, no-wrap
-msgid "quarkus.native.container-runtime-options=--platform=linux/amd64\n"
+#: _guides/virtual-threads.adoc
+msgid ""
+"If you are using a Mac M1 or M2 (using an ARM64 CPU), you need to be aware that the native executable you will get using an in-container build will be a Linux executable, but using your host (ARM 64) architecture.\n"
+"You can use emulation to force the architecture when using Docker with the following property:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:406
+#: _guides/virtual-threads.adoc
 msgid "Be aware that it increases the compilation time... a lot (>10 minutes)."
 msgstr "Fique ciente de que isso aumenta significativamente o tempo de compilação... bastante (>10 minutos)."
 
 #. type: Title ===
-#: upstream/_guides/virtual-threads.adoc:408
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Containerize native applications using virtual threads"
 msgstr "Conteinerização de aplicações nativas usando threads virtuais"
 
-#. type: delimited block =
-#: upstream/_guides/virtual-threads.adoc:412
-msgid "To build a container running a Quarkus application using virtual threads compiled into a native executable, you must make sure you have a Linux/AMD64 executable (or ARM64 if you are targeting ARM machines)."
-msgstr "Para construir um contêiner que executa uma aplicação Quarkus com threads virtuais compiladas em um executável nativo, primeiro certifique-se de ter um executável Linux/AMD64. Se o seu objetivo são máquinas ARM, você precisará de um executável ARM64."
+#: _guides/virtual-threads.adoc
+msgid ""
+"To build a container running a Quarkus application using virtual threads compiled into a native executable, you must\n"
+"make sure you have a Linux/AMD64 executable (or ARM64 if you are targeting ARM machines)."
+msgstr ""
 
 #. type: delimited block =
-#: upstream/_guides/virtual-threads.adoc:414
+#: _guides/virtual-threads.adoc
 msgid "Make sure your `application.properties` contains the configuration explained in xref:native[the native compilation section]."
 msgstr "Certifique-se de que o seu `application.properties` contém a configuração explicada na xref:native[seção de compilação nativa]."
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:424
+#: _guides/virtual-threads.adoc
 msgid "If you ever want to build a native container image and already have an existing native image you can set `-Dquarkus.native.reuse-existing=true` and the native image build will not be re-run."
 msgstr "Se você quiser construir uma imagem de contêiner nativa e já tiver uma imagem nativa existente, você pode definir `-Dquarkus.native.reuse-existing=true`. Isso evitará que a imagem nativa seja construída novamente"
 
 #. type: Title ==
-#: upstream/_guides/virtual-threads.adoc:425
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Use the duplicated context in virtual threads"
 msgstr "Utilize o contexto duplicado em threads virtuais"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:429
-msgid "Methods annotated with `@RunOnVirtualThread` inherit from the original duplicated context (See the xref:duplicated-context.adoc[duplicated context reference guide] for details).  So, the data written in the duplicated context (and the request scope, as the request scoped is stored in the duplicated context) by filters and interceptors are available during the method execution (even if the filters and interceptors are not run on the virtual thread)."
-msgstr "Os métodos anotados com `@RunOnVirtualThread` herdam do contexto duplicado original (consulte o xref:duplicated-context.adoc[guia de referência do contexto duplicado] para mais detalhes). Portanto, os dados escritos no contexto duplicado (e o escopo da requisição, uma vez que o escopo da requisição é armazenado no contexto duplicado) por filtros e interceptadores estão disponíveis durante a execução do método (mesmo que os filtros e interceptadores não sejam executados na thread virtual)."
+#: _guides/virtual-threads.adoc
+msgid ""
+"Methods annotated with `@RunOnVirtualThread` inherit from the original duplicated context (See the xref:duplicated-context.adoc[duplicated context reference guide] for details).\n"
+"So, the data written in the duplicated context (and the request scope, as the request scoped is stored in the duplicated context) by filters and interceptors are available during the method execution (even if the filters and interceptors are not run on the virtual thread)."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:431
+#: _guides/virtual-threads.adoc
 msgid "However, thread locals are not propagated."
 msgstr "No entanto, as thread locals não são propagadas."
 
 #. type: Title ==
-#: upstream/_guides/virtual-threads.adoc:432
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Virtual thread names"
 msgstr "Nomes de threads virtuais"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:437
-msgid "Virtual threads are created without a thread name by default, which is not practical to identify the execution for debugging and logging purposes.  Quarkus managed virtual threads are named and prefixed with `quarkus-virtual-thread-`.  You can customize this prefix, or disable the naming altogether configuring an empty value:"
-msgstr "As threads virtuais são criadas sem um nome, o que pode dificultar a identificação da execução para fins de depuração e registro. As threads virtuais gerenciadas pelo Quarkus são nomeadas e prefixadas com `quarkus-virtual-thread-`. É possível personalizar esse prefixo ou desativar a nomeação configurando um valor vazio:"
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:441
-#, no-wrap
-msgid "quarkus.virtual-threads.name-prefix=\n"
+#: _guides/virtual-threads.adoc
+msgid ""
+"Virtual threads are created without a thread name by default, which is not practical to identify the execution for debugging and logging purposes.\n"
+"Quarkus managed virtual threads are named and prefixed with `quarkus-virtual-thread-`.\n"
+"You can customize this prefix, or disable the naming altogether configuring an empty value:"
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/virtual-threads.adoc:444
+#: _guides/virtual-threads.adoc
 #, fuzzy, no-wrap
 msgid "Testing virtual thread applications"
 msgstr "Utilize clientes compatíveis com threads virtuais"
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:449
-#, fuzzy
-msgid "As mentioned above, virtual threads have a few limitations that can drastically affect your application performance and memory usage.  The _junit5-virtual-threads_ extension provides a way to detect pinned carrier threads while running your tests.  Thus, you can eliminate one of the most prominent limitations or be aware of the problem."
-msgstr "Conforme mencionado acima, os threads virtuais têm algumas limitações que podem afetar drasticamente o desempenho do aplicativo e o uso da memória. A extensão _junit5-virtual-threads_ fornece uma maneira de detectar threads portadoras fixadas durante a execução dos testes. Assim, você pode eliminar uma das limitações mais proeminentes ou estar ciente do problema."
+#: _guides/virtual-threads.adoc
+msgid ""
+"As mentioned above, virtual threads have a few limitations that can drastically affect your application performance and memory usage.\n"
+"The _junit5-virtual-threads_ extension provides a way to detect pinned carrier threads while running your tests.\n"
+"Thus, you can eliminate one of the most prominent limitations or be aware of the problem."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:451
+#: _guides/virtual-threads.adoc
 #, fuzzy
 msgid "To enable this detection:"
 msgstr "Para ativar essa detecção:"
 
-#. type: Bullet: '1) '
-#: upstream/_guides/virtual-threads.adoc:453
-#, fuzzy
-msgid "Add the `junit5-virtual-threads` dependency to your project:"
-msgstr "Adicione a dependência `junit5-virtual-threads` ao seu projeto:"
+#: _guides/virtual-threads.adoc
+msgid "1) Add the `junit5-virtual-threads` dependency to your project:"
+msgstr ""
 
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:460
-#, no-wrap
+#: _guides/virtual-threads.adoc
 msgid ""
 "<dependency>\n"
 "    <groupId>io.quarkus.junit5</groupId>\n"
 "    <artifactId>junit5-virtual-threads</artifactId>\n"
 "    <scope>test</scope>\n"
-"</dependency>\n"
+"</dependency>"
 msgstr ""
 
-#. type: Bullet: '2) '
-#: upstream/_guides/virtual-threads.adoc:463
-#, fuzzy
-msgid "In your test case, add the `io.quarkus.test.junit5.virtual.VirtualThreadUnit` and `io.quarkus.test.junit.virtual.ShouldNotPin` annotations:"
-msgstr "Em seu caso de teste, adicione as anotações `io.quarkus.test.junit5.virtual.VirtualThreadUnit` e `io.quarkus.test.junit.virtual.ShouldNotPin`:"
+#: _guides/virtual-threads.adoc
+msgid "2) In your test case, add the `io.quarkus.test.junit5.virtual.VirtualThreadUnit`  and `io.quarkus.test.junit.virtual.ShouldNotPin` annotations:"
+msgstr ""
 
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:472
-#, no-wrap
+#: _guides/virtual-threads.adoc
 msgid ""
 "@QuarkusTest\n"
 "@TestMethodOrder(MethodOrderer.OrderAnnotation.class)\n"
@@ -954,95 +830,34 @@ msgid ""
 "@ShouldNotPin // Detect pinned carrier thread\n"
 "class TodoResourceTest {\n"
 "    // ...\n"
-"}\n"
+"}"
+msgstr ""
+
+#: _guides/virtual-threads.adoc
+msgid ""
+"When you run your test (remember to use Java 21+), Quarkus detects pinned carrier threads.\n"
+"When it happens, the test fails."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:476
-#, fuzzy
-msgid "When you run your test (remember to use Java 21+), Quarkus detects pinned carrier threads.  When it happens, the test fails."
-msgstr "Quando você executa o teste (lembre-se de usar Java 21+), o Quarkus detecta threads de suporte fixadas. Quando isso acontece, o teste falha."
-
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:478
+#: _guides/virtual-threads.adoc
 #, fuzzy
 msgid "The `@ShouldNotPin` can also be used on methods directly."
 msgstr "O `@ShouldNotPin` também pode ser usado diretamente nos métodos."
 
-#. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:481
-#, fuzzy
-msgid "The _junit5-virtual-threads_ also provides a `@ShouldPin` annotation for cases where pinning is unavoidable.  The following snippet demonstrates the `@ShouldPin` annotation usage and the possibility to inject a `ThreadPinnedEvents` instance in your test to verify when the carrier thread was pinned manually."
-msgstr "O _junit5-virtual-threads_ também fornece uma anotação `@ShouldPin` para os casos em que a fixação é inevitável. O snippet a seguir demonstra o uso da anotação `@ShouldPin` e a possibilidade de injetar uma instância `ThreadPinnedEvents` em seu teste para verificar quando o thread portador foi fixado manualmente."
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:486
-#, no-wrap
+#: _guides/virtual-threads.adoc
 msgid ""
-"@VirtualThreadUnit // Use the extension\n"
-"public class LoomUnitExampleTest {\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:488
-#, no-wrap
-msgid "    CodeUnderTest codeUnderTest = new CodeUnderTest();\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:494
-#, no-wrap
-msgid ""
-"    @Test\n"
-"    @ShouldNotPin\n"
-"    public void testThatShouldNotPin() {\n"
-"        // ...\n"
-"    }\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:500
-#, no-wrap
-msgid ""
-"    @Test\n"
-"    @ShouldPin(atMost = 1)\n"
-"    public void testThatShouldPinAtMostOnce() {\n"
-"        codeUnderTest.pin();\n"
-"    }\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/virtual-threads.adoc:508
-#, no-wrap
-msgid ""
-"    @Test\n"
-"    public void testThatShouldNotPin(ThreadPinnedEvents events) { // Inject an object to check the pin events\n"
-"        Assertions.assertTrue(events.getEvents().isEmpty());\n"
-"        codeUnderTest.pin();\n"
-"        await().until(() -> events.getEvents().size() > 0);\n"
-"        Assertions.assertEquals(events.getEvents().size(), 1);\n"
-"    }\n"
+"The _junit5-virtual-threads_ also provides a `@ShouldPin` annotation for cases where pinning is unavoidable.\n"
+"The following snippet demonstrates the `@ShouldPin` annotation usage and the possibility to inject a `ThreadPinnedEvents` instance in your test to verify when the carrier thread was pinned manually."
 msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/virtual-threads.adoc:512
+#: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Additional references"
 msgstr "Referências adicionais"
 
 #. type: Plain text
-#: upstream/_guides/virtual-threads.adoc:514
+#: _guides/virtual-threads.adoc
 msgid "https://dl.acm.org/doi/10.1145/3583678.3596895[Considerations for integrating virtual threads in a Java framework: a Quarkus example in a resource-constrained environment]"
 msgstr "https://dl.acm.org/doi/10.1145/3583678.3596895[Considerações sobre a integração de threads virtuais num framework Java: um exemplo do Quarkus num ambiente com recursos limitados]"
-
-#~ msgid "Finally, until Java 21, you need to configure your compiler plugin with the `--enable-preview` flag.  If you use Maven, make sure that the configuration of the Maven compiler plugin is the following:"
-#~ msgstr "Finalmente, até o Java 21, é necessário configurar o plug-in do compilador com o parâmetro `--enable-preview`. Se utilizar o Maven, certifique-se de que a configuração do plug-in do compilador Maven é a seguinte:"
-
-#~ msgid "Then, until Java 21, you need to add the following property to your `application.properties` file:"
-#~ msgstr "Em seguida, até o Java 21, é necessário adicionar a seguinte propriedade ao seu arquivo `application.properties`:"
-
-#~ msgid "The `enable-preview` flag in only necessary until Java 21."
-#~ msgstr "A flag `enable-preview` só é necessária até o Java 21."
-
-#~ msgid "The builder container to use. Make sure it supports virtual threads"
-#~ msgstr "O contêiner de compilação a ser utilizado. Certifique-se de que ele suporta threads virtuais"

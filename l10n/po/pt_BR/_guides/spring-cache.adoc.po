@@ -11,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,513 +20,291 @@ msgstr ""
 #. and pull requests should be submitted there:
 #. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
 #. type: Title =
-#: upstream/_guides/spring-cache.adoc:6
+#: _guides/spring-cache.adoc
 #, fuzzy, no-wrap
 msgid "Quarkus Extension for Spring Cache API"
 msgstr "Extensão Quarkus para a API Spring Cache"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:14
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "While users are encouraged to use xref:cache.adoc[Quarkus annotations for caching], Quarkus nevertheless provides a compatibility layer for Spring Cache annotations in the form of the `spring-cache` extension."
 msgstr "Embora os utilizadores sejam encorajados a utilizar  link:cache.html[anotações Quarkus para armazenamento em cache], o Quarkus fornece, no entanto, uma camada de compatibilidade para anotações Spring Cache sob a forma da extensão `spring-cache`."
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:16
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "This guide explains how a Quarkus application can leverage the well known Spring Cache annotations to enable application data caching for their Spring beans."
 msgstr "Este guia explica como uma aplicação Quarkus pode aproveitar as bem conhecidas anotações do Spring Cache para permitir o armazenamento em cache de dados da aplicação para os seus beans Spring."
 
 #. type: Title ==
-#: upstream/_guides/spring-cache.adoc:17
+#: _guides/spring-cache.adoc
 #, fuzzy, no-wrap
 msgid "Prerequisites"
 msgstr "Pré-requisitos"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:21
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "Some familiarity with the Spring DI extension"
 msgstr "Alguma familiaridade com a extensão Spring DI"
 
 #. type: Title ==
-#: upstream/_guides/spring-cache.adoc:22
+#: _guides/spring-cache.adoc
 #, fuzzy, no-wrap
 msgid "Creating the Maven project"
 msgstr "Criar o projeto Maven"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:25
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "First, we need a new project. Create a new project with the following command:"
 msgstr "Em primeiro lugar, precisamos de um novo projeto. Crie um novo projeto com o seguinte comando:"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:31
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "This command generates a project which imports the `spring-cache` and `spring-di` extensions."
 msgstr "Este comando gera um projeto que importa as extensões `spring-cache` e `spring-di`."
 
-#. type: Plain text
-#: upstream/_guides/spring-cache.adoc:34
-#, fuzzy
-msgid "If you already have your Quarkus project configured, you can add the `spring-cache` extension to your project by running the following command in your project base directory:"
-msgstr "Se já tiver o seu projeto Quarkus configurado, pode adicionar a extensão `spring-cache` ao seu projeto executando o seguinte comando no diretório de base do seu projeto:"
+#: _guides/spring-cache.adoc
+msgid ""
+"If you already have your Quarkus project configured, you can add the `spring-cache` extension\n"
+"to your project by running the following command in your project base directory:"
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:39
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "This will add the following to your build file:"
 msgstr "Isto irá adicionar o seguinte ao seu ficheiro de compilação:"
 
 #. type: Block title
-#: upstream/_guides/spring-cache.adoc:41
+#: _guides/spring-cache.adoc
 #, fuzzy, no-wrap
 msgid "pom.xml"
 msgstr "pom.xml"
 
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:47
-#, no-wrap
-msgid ""
-"<dependency>\n"
-"    <groupId>io.quarkus</groupId>\n"
-"    <artifactId>quarkus-spring-cache</artifactId>\n"
-"</dependency>\n"
-msgstr ""
-
 #. type: Block title
-#: upstream/_guides/spring-cache.adoc:50
+#: _guides/spring-cache.adoc
 #, fuzzy, no-wrap
 msgid "build.gradle"
 msgstr "build.gradle"
 
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:53
-#, no-wrap
-msgid "implementation(\"io.quarkus:quarkus-spring-cache\")\n"
-msgstr ""
-
 #. type: Title ==
-#: upstream/_guides/spring-cache.adoc:55
+#: _guides/spring-cache.adoc
 #, fuzzy, no-wrap
 msgid "Creating the REST API"
 msgstr "Criando a API REST"
 
-#. type: Plain text
-#: upstream/_guides/spring-cache.adoc:59
-#, fuzzy
-msgid "Let's start by creating a service which will simulate an extremely slow call to an external meteorological service.  Create `src/main/java/org/acme/spring/cache/WeatherForecastService.java` with the following content:"
-msgstr "Comecemos por criar um serviço que simulará uma chamada extremamente lenta para um serviço meteorológico externo. Crie `src/main/java/org/acme/spring/cache/WeatherForecastService.java` com o seguinte conteúdo:"
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:63 upstream/_guides/spring-cache.adoc:104
-#: upstream/_guides/spring-cache.adoc:133
-#, no-wrap
-msgid "package org.acme.spring.cache;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:65 upstream/_guides/spring-cache.adoc:197
-#, no-wrap
-msgid "import java.time.LocalDate;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:67
-#, no-wrap
-msgid "import org.springframework.stereotype.Component;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:70 upstream/_guides/spring-cache.adoc:203
-#, no-wrap
+#: _guides/spring-cache.adoc
 msgid ""
-"@Component\n"
-"public class WeatherForecastService {\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:79
-#, no-wrap
-msgid ""
-"    public String getDailyForecast(LocalDate date, String city) {\n"
-"        try {\n"
-"            Thread.sleep(2000L); // <1>\n"
-"        } catch (InterruptedException e) {\n"
-"            Thread.currentThread().interrupt();\n"
-"        }\n"
-"        return date.getDayOfWeek() + \" will be \" + getDailyResult(date.getDayOfMonth() % 4) + \" in \" + city;\n"
-"    }\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:95 upstream/_guides/spring-cache.adoc:229
-#, no-wrap
-msgid ""
-"    private String getDailyResult(int dayOfMonthModuloFour) {\n"
-"        switch (dayOfMonthModuloFour) {\n"
-"            case 0:\n"
-"                return \"sunny\";\n"
-"            case 1:\n"
-"                return \"cloudy\";\n"
-"            case 2:\n"
-"                return \"chilly\";\n"
-"            case 3:\n"
-"                return \"rainy\";\n"
-"            default:\n"
-"                throw new IllegalArgumentException();\n"
-"        }\n"
-"    }\n"
-"}\n"
+"Let's start by creating a service which will simulate an extremely slow call to an external meteorological service.\n"
+"Create `src/main/java/org/acme/spring/cache/WeatherForecastService.java` with the following content:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:97
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "This is where the slowness comes from."
 msgstr "É daí que vem a lentidão."
 
-#. type: Plain text
-#: upstream/_guides/spring-cache.adoc:100
-#, fuzzy
-msgid "We also need a class which contains the response sent to the users when they ask for the next three days weather forecast.  Create `src/main/java/org/acme/spring/cache/WeatherForecast.java` this way:"
-msgstr "Precisamos também de uma classe que contenha a resposta enviada aos utilizadores quando estes pedem a previsão meteorológica para os próximos três dias. Crie `src/main/java/org/acme/spring/cache/WeatherForecast.java` desta forma:"
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:106
-#, no-wrap
-msgid "import java.util.List;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:108
-#, no-wrap
-msgid "public class WeatherForecast {\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:110
-#, no-wrap
-msgid "    private List<String> dailyForecasts;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:112
-#, no-wrap
-msgid "    private long executionTimeInMs;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:117
-#, no-wrap
+#: _guides/spring-cache.adoc
 msgid ""
-"    public WeatherForecast(List<String> dailyForecasts, long executionTimeInMs) {\n"
-"        this.dailyForecasts = dailyForecasts;\n"
-"        this.executionTimeInMs = executionTimeInMs;\n"
-"    }\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:121
-#, no-wrap
-msgid ""
-"    public List<String> getDailyForecasts() {\n"
-"        return dailyForecasts;\n"
-"    }\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:126
-#, no-wrap
-msgid ""
-"    public long getExecutionTimeInMs() {\n"
-"        return executionTimeInMs;\n"
-"    }\n"
-"}\n"
+"We also need a class which contains the response sent to the users when they ask for the next three days weather forecast.\n"
+"Create `src/main/java/org/acme/spring/cache/WeatherForecast.java` this way:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:129
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "Now, we just need to create the `src/main/java/org/acme/spring/cache/WeatherForecastResource.java` class to use the service and response:"
 msgstr "Agora, só precisamos de criar a classe `src/main/java/org/acme/spring/cache/WeatherForecastResource.java` para utilizar o serviço e a resposta:"
 
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:137
-#, no-wrap
+#: _guides/spring-cache.adoc
 msgid ""
-"import java.time.LocalDate;\n"
-"import java.util.Arrays;\n"
-"import java.util.List;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:141
-#, no-wrap
-msgid ""
-"import jakarta.inject.Inject;\n"
-"import jakarta.ws.rs.GET;\n"
-"import jakarta.ws.rs.Path;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:143
-#, no-wrap
-msgid "import org.jboss.resteasy.reactive.RestQuery;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:146
-#, no-wrap
-msgid ""
-"@Path(\"/weather\")\n"
-"public class WeatherForecastResource {\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:149
-#, no-wrap
-msgid ""
-"    @Inject\n"
-"    WeatherForecastService service;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:162
-#, no-wrap
-msgid ""
-"    @GET\n"
-"    public WeatherForecast getForecast(@RestQuery String city, @RestQuery long daysInFuture) { // <1>\n"
-"        long executionStart = System.currentTimeMillis();\n"
-"        List<String> dailyForecasts = Arrays.asList(\n"
-"                service.getDailyForecast(LocalDate.now().plusDays(daysInFuture), city),\n"
-"                service.getDailyForecast(LocalDate.now().plusDays(daysInFuture + 1L), city),\n"
-"                service.getDailyForecast(LocalDate.now().plusDays(daysInFuture + 2L), city)\n"
-"        );\n"
-"        long executionEnd = System.currentTimeMillis();\n"
-"        return new WeatherForecast(dailyForecasts, executionEnd - executionStart);\n"
-"    }\n"
-"}\n"
+"If the `daysInFuture` query parameter is omitted, the three days weather forecast will start from the current day.\n"
+"Otherwise, it will start from the current day plus the `daysInFuture` value."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:165
-#, fuzzy
-msgid "If the `daysInFuture` query parameter is omitted, the three days weather forecast will start from the current day.  Otherwise, it will start from the current day plus the `daysInFuture` value."
-msgstr "Se o parâmetro de consulta `daysInFuture` for omitido, a previsão meteorológica de três dias começará a partir do dia atual. Caso contrário, começará a partir do dia atual mais o valor `daysInFuture`."
-
-#. type: Plain text
-#: upstream/_guides/spring-cache.adoc:167
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "We're all done! Let's check if everything's working."
 msgstr "Já está tudo pronto! Vamos verificar se tudo está a funcionar."
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:169
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "First, run the application using:"
 msgstr "Primeiro, execute a aplicação utilizando:"
 
-#. type: Plain text
-#: upstream/_guides/spring-cache.adoc:174
-#, fuzzy
-msgid "Then, call `http://localhost:8080/weather?city=Raleigh` from a browser.  After six long seconds, the application will answer something like this:"
-msgstr "Em seguida, chame `&lt;a href=\"http://localhost:8080/weather?city=Raleigh\" class=\"bare\"&gt;http://localhost:8080/weather?city=Raleigh&lt;/a&gt;` de um navegador. Após seis longos segundos, a aplicação responderá algo como isto:"
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:178
-#, no-wrap
-msgid "{\"dailyForecasts\":[\"MONDAY will be cloudy in Raleigh\",\"TUESDAY will be chilly in Raleigh\",\"WEDNESDAY will be rainy in Raleigh\"],\"executionTimeInMs\":6001}\n"
+#: _guides/spring-cache.adoc
+msgid ""
+"Then, call `http://localhost:8080/weather?city=Raleigh` from a browser.\n"
+"After six long seconds, the application will answer something like this:"
 msgstr ""
 
 #. type: delimited block =
-#: upstream/_guides/spring-cache.adoc:183
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "The response content may vary depending on the day you run the code."
 msgstr "O conteúdo da resposta pode variar consoante o dia em que o código é executado."
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:186
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "You can try calling the same URL again and again, it will always take six seconds to answer."
 msgstr "Pode tentar ligar repetidamente para o mesmo URL, mas a resposta demorará sempre seis segundos."
 
 #. type: Title ==
-#: upstream/_guides/spring-cache.adoc:187
+#: _guides/spring-cache.adoc
 #, fuzzy, no-wrap
 msgid "Enabling the cache"
 msgstr "Ativar a cache"
 
-#. type: Plain text
-#: upstream/_guides/spring-cache.adoc:191
-#, fuzzy
-msgid "Now that your Quarkus application is up and running, let's tremendously improve its response time by caching the external meteorological service responses.  Update the `WeatherForecastService` class as follows:"
-msgstr "Agora que a sua aplicação Quarkus está a funcionar, vamos melhorar tremendamente o seu tempo de resposta, armazenando em cache as respostas do serviço meteorológico externo. Actualize a classe `WeatherForecastService` da seguinte forma:"
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:195
-#, no-wrap
-msgid "package org.acme.cache;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:200
-#, no-wrap
+#: _guides/spring-cache.adoc
 msgid ""
-"import org.springframework.cache.annotation.Cacheable;\n"
-"import org.springframework.stereotype.Component;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/spring-cache.adoc:213
-#, no-wrap
-msgid ""
-"    @Cacheable(\"weather-cache\") // <1>\n"
-"    public String getDailyForecast(LocalDate date, String city) {\n"
-"        try {\n"
-"            Thread.sleep(2000L);\n"
-"        } catch (InterruptedException e) {\n"
-"            Thread.currentThread().interrupt();\n"
-"        }\n"
-"        return date.getDayOfWeek() + \" will be \" + getDailyResult(date.getDayOfMonth() % 4) + \" in \" + city;\n"
-"    }\n"
+"Now that your Quarkus application is up and running, let's tremendously improve its response time by caching the external meteorological service responses.\n"
+"Update the `WeatherForecastService` class as follows:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:231
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "We only added this annotation (and the associated import of course)."
 msgstr "Apenas adicionámos esta anotação (e a importação associada, claro)."
 
-#. type: Plain text
-#: upstream/_guides/spring-cache.adoc:235
-#, fuzzy
-msgid "Let's try to call `http://localhost:8080/weather?city=Raleigh` again.  You're still waiting a long time before receiving an answer.  This is normal since the server just restarted and the cache was empty."
-msgstr "Vamos tentar telefonar `&lt;a href=\"http://localhost:8080/weather?city=Raleigh\" class=\"bare\"&gt;http://localhost:8080/weather?city=Raleigh&lt;/a&gt;` novamente. Continua a esperar muito tempo antes de receber uma resposta. Isto é normal, uma vez que o servidor acabou de ser reiniciado e a cache estava vazia."
+#: _guides/spring-cache.adoc
+msgid ""
+"Let's try to call `http://localhost:8080/weather?city=Raleigh` again.\n"
+"You're still waiting a long time before receiving an answer.\n"
+"This is normal since the server just restarted and the cache was empty."
+msgstr ""
+
+#: _guides/spring-cache.adoc
+msgid ""
+"Wait a second! The server restarted by itself after the `WeatherForecastService` update?\n"
+"Yes, this is one of Quarkus amazing features for developers called `live coding`."
+msgstr ""
+
+#: _guides/spring-cache.adoc
+msgid ""
+"Now that the cache was loaded during the previous call, try calling the same URL.\n"
+"This time, you should get a super fast answer with an `executionTimeInMs` value close to 0."
+msgstr ""
+
+#: _guides/spring-cache.adoc
+msgid ""
+"Let's see what happens if we start from one day in the future using the `http://localhost:8080/weather?city=Raleigh&daysInFuture=1` URL.\n"
+"You should get an answer two seconds later since two of the requested days were already loaded in the cache."
+msgstr ""
+
+#: _guides/spring-cache.adoc
+msgid ""
+"You can also try calling the same URL with a different city and see the cache in action again.\n"
+"The first call will take six seconds and the following ones will be answered immediately."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:238
-#, fuzzy
-msgid "Wait a second! The server restarted by itself after the `WeatherForecastService` update? Yes, this is one of Quarkus amazing features for developers called `live coding`."
-msgstr "Espera um segundo! O servidor reiniciou-se sozinho após a atualização de `WeatherForecastService`? Sim, esta é uma das fantásticas funcionalidades do Quarkus para programadores chamada `live coding`."
-
-#. type: Plain text
-#: upstream/_guides/spring-cache.adoc:241
-#, fuzzy
-msgid "Now that the cache was loaded during the previous call, try calling the same URL.  This time, you should get a super fast answer with an `executionTimeInMs` value close to 0."
-msgstr "Agora que o cache foi carregado durante a chamada anterior, tente chamar o mesmo URL. Desta vez, você deve obter uma resposta super rápida com um valor `executionTimeInMs` próximo de 0."
-
-#. type: Plain text
-#: upstream/_guides/spring-cache.adoc:244
-#, fuzzy
-msgid "Let's see what happens if we start from one day in the future using the `http://localhost:8080/weather?city=Raleigh&daysInFuture=1` URL.  You should get an answer two seconds later since two of the requested days were already loaded in the cache."
-msgstr "Vamos ver o que acontece se começarmos a partir de um dia no futuro usando o `&lt;a href=\"http://localhost:8080/weather?city=Raleigh&amp;amp;daysInFuture=1\" class=\"bare\"&gt;http://localhost:8080/weather?city=Raleigh&amp;amp;daysInFuture=1&lt;/a&gt;` URL. Deverá obter uma resposta dois segundos mais tarde, uma vez que dois dos dias pedidos já foram carregados na cache."
-
-#. type: Plain text
-#: upstream/_guides/spring-cache.adoc:247
-#, fuzzy
-msgid "You can also try calling the same URL with a different city and see the cache in action again.  The first call will take six seconds and the following ones will be answered immediately."
-msgstr "Também pode tentar ligar para o mesmo URL com uma cidade diferente e ver a cache em ação novamente. A primeira chamada demorará seis segundos e as seguintes serão respondidas imediatamente."
-
-#. type: Plain text
-#: upstream/_guides/spring-cache.adoc:249
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "Congratulations! You just added application data caching to your Quarkus application with a single line of code!"
 msgstr "Parabéns! Acabou de adicionar o caching de dados de aplicação à sua aplicação Quarkus com uma única linha de código!"
 
 #. type: Title ==
-#: upstream/_guides/spring-cache.adoc:250
+#: _guides/spring-cache.adoc
 #, fuzzy, no-wrap
 msgid "Supported features"
 msgstr "Funcionalidades suportadas"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:253
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "Quarkus provides compatibility with the following Spring Cache annotations:"
 msgstr "O Quarkus é compatível com as seguintes anotações do Spring Cache:"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:255
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "`@Cacheable`"
 msgstr "`@Cacheable`"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:256
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "`@CachePut`"
 msgstr "`@CachePut`"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:257
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "`@CacheEvict`"
 msgstr "`@CacheEvict`"
 
-#. type: Plain text
-#: upstream/_guides/spring-cache.adoc:261
-#, fuzzy
-msgid "Note that in this first version of the Spring Cache annotations extension, not all features of these annotations are supported (with proper errors being logged when trying to use an unsupported feature).  However, additional features are planned for future releases."
-msgstr "Observe que, nesta primeira versão da extensão de anotações do Spring Cache, nem todos os recursos dessas anotações são suportados (com erros apropriados sendo registrados ao tentar usar um recurso não suportado). No entanto, estão planeadas funcionalidades adicionais para versões futuras."
+#: _guides/spring-cache.adoc
+msgid ""
+"Note that in this first version of the Spring Cache annotations extension, not all features of these annotations are supported\n"
+"(with proper errors being logged when trying to use an unsupported feature).\n"
+"However, additional features are planned for future releases."
+msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/spring-cache.adoc:262
+#: _guides/spring-cache.adoc
 #, fuzzy, no-wrap
 msgid "More Spring guides"
 msgstr "Mais guias da primavera"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:265
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "Quarkus has more Spring compatibility features. See the following guides for more details:"
 msgstr "O Quarkus tem mais funcionalidades de compatibilidade com o Spring. Para mais informações, consulte os seguintes guias:"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:267
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "xref:spring-di.adoc[Quarkus - Extension for Spring DI]"
 msgstr "link:spring-di.html[Quarkus - Extensão para Spring DI]"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:268
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "xref:spring-web.adoc[Quarkus - Extension for Spring Web]"
 msgstr "link:spring-web.html[Quarkus - Extensão para Spring Web]"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:269
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "xref:spring-security.adoc[Quarkus - Extension for Spring Security]"
 msgstr "link:spring-security.html[Quarkus - Extensão para segurança do Spring]"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:270
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "xref:spring-data-jpa.adoc[Quarkus - Extension for Spring Data JPA]"
 msgstr "link:spring-data-jpa.html[Quarkus - Extensão para Spring Data JPA]"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:271
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "xref:spring-data-rest.adoc[Quarkus - Extension for Spring Data REST]"
 msgstr "link:spring-data-rest.html[Quarkus - Extensão para Spring Data REST]"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:272
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "xref:spring-cloud-config-client.adoc[Quarkus - Reading properties from Spring Cloud Config Server]"
 msgstr "link:spring-cloud-config-client.html[Quarkus - Leitura de propriedades do servidor de configuração do Spring Cloud]"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:273
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "xref:spring-boot-properties.adoc[Quarkus - Extension for Spring Boot properties]"
 msgstr "link:spring-boot-properties.html[Quarkus - Extensão para propriedades do Spring Boot]"
 
 #. type: Plain text
-#: upstream/_guides/spring-cache.adoc:273
+#: _guides/spring-cache.adoc
 #, fuzzy
 msgid "xref:spring-scheduled.adoc[Quarkus - Extension for Spring Scheduled]"
 msgstr "link:spring-scheduled.html[Quarkus - Extensão para a primavera programada]"
