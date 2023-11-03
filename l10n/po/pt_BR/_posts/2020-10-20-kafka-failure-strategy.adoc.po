@@ -29,23 +29,26 @@ msgid "Failure handling in the Kafka connector"
 msgstr "Tratamento de falhas no conetor Kafka"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "Failures are inevitable.\n"
 "There is nothing we can do about that, and that also applies to Kafka applications.\n"
 "Your application may contain a faulty component misbehaving once in a while, or unable to process a specific Kafka record.\n"
 "In this post, we are going to see how we can manage these failures."
-msgstr ""
+msgstr "As falhas são inevitáveis. Não há nada que possamos fazer a respeito, e isso também se aplica aos aplicativos Kafka. Seu aplicativo pode conter um componente defeituoso que se comporta mal de vez em quando ou que não consegue processar um registro específico do Kafka. Nesta postagem, veremos como podemos gerenciar essas falhas."
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid "Ack and Nack"
-msgstr ""
+msgstr "Ack e Nack"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "But, first, we need to explain how it works under the hood.\n"
 "When using reactive messaging, your application receives https://smallrye.io/smallrye-reactive-messaging/smallrye-reactive-messaging/2.4/concepts.html#messages[Messages].\n"
 "Even if your method handles _payloads_, there are Messages under the hood, and it unwraps the payload just before calling your method."
-msgstr ""
+msgstr "Mas, primeiro, precisamos explicar como isso funciona nos bastidores. Ao usar mensagens reativas, seu aplicativo recebe link:https://smallrye.io/smallrye-reactive-messaging/smallrye-reactive-messaging/2.4/concepts.html#messages[mensagens] . Mesmo que seu método lide com _cargas úteis_ , há mensagens sob o capô, e ele desembrulha a carga útil pouco antes de chamar seu método."
 
 #. type: Plain text
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
@@ -54,13 +57,14 @@ msgid "image:/assets/images/posts/kafka-failure-strategy/messages.png[]"
 msgstr "image:/assets/images/posts/kafka-failure-strategy/messages.png[alt=messages]"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "A message can be _acked_ or _nacked_.\n"
 "If the message processing completes successfully, the message is acknowledged.\n"
 "You can manually trigger the acknowledgment (by calling the `ack()` method) or let the framework handle it automatically.\n"
 "In general, it's the outbound connector that acknowledges the message once the outgoing message has been sent to the broker successfully.\n"
 "If not configured otherwise, acknowledging a message acknowledges the _source_ message, acknowledging its source, until we reach the root message, most probably created by an inbound connector:"
-msgstr ""
+msgstr "Uma mensagem pode ser _confirmada_ ou _não_ . Se o processamento da mensagem for concluído com êxito, a mensagem será confirmada. O senhor pode acionar manualmente a confirmação (chamando o método `ack()` ) ou deixar que a estrutura trate disso automaticamente. Em geral, é o conector de saída que confirma a mensagem depois que a mensagem de saída é enviada com êxito ao agente. Se não for configurado de outra forma, a confirmação de uma mensagem reconhece a mensagem _de origem_ , reconhecendo sua origem, até chegarmos à mensagem raiz, provavelmente criada por um conector de entrada:"
 
 #. type: Plain text
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
@@ -69,13 +73,15 @@ msgid "image:/assets/images/posts/kafka-failure-strategy/ack-chain.png[Acknowled
 msgstr "image:/assets/images/posts/kafka-failure-strategy/ack-chain.png[alt=Acknowledgement chain]"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "When the inbound connector receives the acknowledgment, it can act upon it and, for example, indicate to the broker that the message processing succeeded.\n"
 "In the context of Kafka, there are various commit strategies.\n"
 "We will cover these in a future post."
-msgstr ""
+msgstr "Quando o conector de entrada recebe a confirmação, ele pode agir de acordo com ela e, por exemplo, indicar ao corretor que o processamento da mensagem foi bem-sucedido. No contexto do Kafka, há várias estratégias de confirmação. Abordaremos essas estratégias em um post futuro."
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "But as said earlier, failures are inevitable.\n"
 "For example, you may have a misbehaving component throwing exceptions, or the outbound connector cannot send the messages because the remote broker is unavailable.\n"
@@ -83,7 +89,7 @@ msgid ""
 "Similarly to successful acknowledgment, negative acknowledgment can be triggered manually (using the `nack` method) or handled automatically.\n"
 "For example, if your method throws an exception, the message is nacked.\n"
 "As with _ack_, nacking a message nacks its source, and the nack is propagated until the inbound connector:"
-msgstr ""
+msgstr "Mas, como dito anteriormente, as falhas são inevitáveis. Por exemplo, o senhor pode ter um componente com mau comportamento lançando exceções ou o conector de saída não pode enviar as mensagens porque o corretor remoto não está disponível. Nesses casos, a mensagem é _nacked_ , indicando que o processamento falhou. Da mesma forma que a confirmação bem-sucedida, a confirmação negativa pode ser acionada manualmente (usando o método `nack` ) ou tratada automaticamente. Por exemplo, se o seu método lançar uma exceção, a mensagem será nacked. Assim como ocorre com o _ack_ , o nacking de uma mensagem nackifica sua origem e o nack é propagado até o conector de entrada:"
 
 #. type: Plain text
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
@@ -92,10 +98,11 @@ msgid "image:/assets/images/posts/kafka-failure-strategy/nack-chain.png[Negative
 msgstr "image:/assets/images/posts/kafka-failure-strategy/nack-chain.png[alt=Negative acknowledgment chain]"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "It's the responsibility of the connector to decide how to react in this case.\n"
 "The Kafka connector proposes three failure handling strategies, and that's what we are going to detail now."
-msgstr ""
+msgstr "É responsabilidade do conector decidir como reagir nesse caso. O conector Kafka propõe três estratégias de tratamento de falhas, e é isso que vamos detalhar agora."
 
 #. type: Title ==
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
@@ -104,12 +111,13 @@ msgid "The \"Fail-Fast\" strategy"
 msgstr "A estratégia \"Fail-Fast"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "The first strategy is the simplest, but not sure we can qualify it with \"smoothly.\"\n"
 "It's the default strategy.\n"
 "As soon as a message is nacked, the connector reports the failure, and the application stops.\n"
 "If you use the health checks extension, the application is marked as unhealthy, and your orchestrator may restart the application."
-msgstr ""
+msgstr "A primeira estratégia é a mais simples, mas não temos certeza se podemos qualificá-la como \"sem problemas\". É a estratégia padrão. Assim que uma mensagem é bloqueada, o conector informa a falha e o aplicativo é interrompido. Se o senhor usar a extensão de verificações de integridade, o aplicativo será marcado como não saudável, e o orquestrador poderá reiniciar o aplicativo."
 
 #. type: Plain text
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
@@ -118,32 +126,37 @@ msgid "image:/assets/images/posts/kafka-failure-strategy/fail-fast.png[Fail-Fast
 msgstr "image:/assets/images/posts/kafka-failure-strategy/fail-fast.png[alt=Fail-Fast]"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "But, it's time to demonstrate it.\n"
 "I've created a simple application receiving movie titles from Kafka and failing (with an exception) if the title contains a `'` or `,`.\n"
 "You can check the code on this https://gist.github.com/cescoffier/23ca7b2bcc8c49cee3db29b3f2b59e4a#file-kafkafailfast-java[Gist], or run it using:"
-msgstr ""
+msgstr "Mas chegou a hora de demonstrá-lo. Criei um aplicativo simples que recebe títulos de filmes do Kafka e falha (com uma exceção) se o título contiver um `'` ou `,` . O senhor pode verificar o código neste link:https://gist.github.com/cescoffier/23ca7b2bcc8c49cee3db29b3f2b59e4a#file-kafkafailfast-java[Gist] ou executá-lo usando:"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "Starting the application starts a Kafka broker using Docker.\n"
 "The first start may require downloading the appropriate container image."
-msgstr ""
+msgstr "Iniciar o aplicativo inicia um broker Kafka usando o Docker. A primeira inicialização pode exigir o download da imagem de contêiner apropriada."
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid "If you ran the application and check the log, you will see:"
-msgstr ""
+msgstr "Se o senhor executar o aplicativo e verificar o registro, verá:"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid "Now, if you open your browser to http://localhost:8080/health, you will see that the failure has been caught and the application is unhealthy:"
-msgstr ""
+msgstr "Agora, se o senhor abrir o navegador em link:http://localhost:8080/health[http://localhost:8080/health,] verá que a falha foi detectada e o aplicativo não está saudável:"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "This approach works well with sporadic, network-related issues.\n"
 "Still, if the source of the failure is your application code, you may enter a restart loop.\n"
 "Indeed, when the application restarts, it may again receive the message (the red one from the previous picture) that would produce the same failure again and again."
-msgstr ""
+msgstr "Essa abordagem funciona bem com problemas esporádicos relacionados à rede. Ainda assim, se a origem da falha for o código do aplicativo, o senhor poderá entrar em um loop de reinicialização. De fato, quando o aplicativo for reiniciado, ele poderá receber novamente a mensagem (a vermelha da imagem anterior) que produziria a mesma falha repetidas vezes."
 
 #. type: Title ==
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
@@ -152,30 +165,33 @@ msgid "The \"Ignore\" strategy"
 msgstr "A estratégia \"Ignorar"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "The second strategy is also straightforward: just close your eyes.\n"
 "When a message is nacked, it ignores the failure and continues the processing:"
-msgstr ""
+msgstr "A segunda estratégia também é simples: basta fechar os olhos. Quando uma mensagem é bloqueada, ela ignora a falha e continua o processamento:"
 
 #. type: delimited block -
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
 msgid "image:/assets/images/posts/kafka-failure-strategy/ignore.png[Ignore strategy]"
-msgstr ""
+msgstr "image:/assets/images/posts/kafka-failure-strategy/ignore.png[Ignore strategy]"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "The log indicates the failure, but it continues the processing with the next one.\n"
 "You can only use this strategy if you don't need to manage all the messages or if your application is handling the failure internally."
-msgstr ""
+msgstr "O log indica a falha, mas continua o processamento com a próxima. Só é possível usar essa estratégia se o senhor não precisar gerenciar todas as mensagens ou se o aplicativo estiver tratando a falha internamente."
 
 #. type: delimited block -
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
 msgid "To enable this strategy, configure the channel with:"
-msgstr ""
+msgstr "To enable this strategy, configure the channel with:"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid "You can try this strategy with https://gist.github.com/cescoffier/23ca7b2bcc8c49cee3db29b3f2b59e4a#file-kafkaignorefailure-java[Gist], or run it using:"
-msgstr ""
+msgstr "O senhor pode experimentar essa estratégia com o link:https://gist.github.com/cescoffier/23ca7b2bcc8c49cee3db29b3f2b59e4a#file-kafkaignorefailure-java[Gist] ou executá-la usando:"
 
 #. type: Plain text
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
@@ -184,10 +200,11 @@ msgid "If you ran the application and check the log, you will see two exceptions
 msgstr "Se executar a aplicação e verificar o registo, verá duas excepções:"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "Look at the last line.\n"
 "As explained, it continues the processing with the next message."
-msgstr ""
+msgstr "Observe a última linha. Conforme explicado, ela continua o processamento com a próxima mensagem."
 
 #. type: Plain text
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
@@ -202,12 +219,13 @@ msgid "The \"Dead-Letter Topic\" strategy"
 msgstr "A estratégia do \"tópico morto\""
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "The https://en.wikipedia.org/wiki/Dead_letter_queue[dead-letter queue] is a well-known pattern to handle message processing failure.\n"
 "Instead of failing fast or ignoring and continuing the processing, it stores the failing messages into a specific destination: a dead letter.\n"
 "An administrator, human or software, can review the failing messages and decide what can be done (retry, skip, etc.).\n"
 "Note that you can only apply this strategy if the ordering is not essential to the application."
-msgstr ""
+msgstr "A link:https://en.wikipedia.org/wiki/Dead_letter_queue[fila de cartas mort] as é um padrão bem conhecido para lidar com falhas no processamento de mensagens. Em vez de falhar rapidamente ou ignorar e continuar o processamento, ele armazena as mensagens com falha em um destino específico: uma letra morta. Um administrador, humano ou de software, pode analisar as mensagens com falha e decidir o que pode ser feito (tentar novamente, ignorar etc.). Observe que o senhor só pode aplicar essa estratégia se a ordenação não for essencial para o aplicativo."
 
 #. type: Plain text
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
@@ -228,11 +246,12 @@ msgid "To enable this strategy, you need to add the following attribute to your 
 msgstr "Para ativar esta estratégia, é necessário adicionar o seguinte atributo à sua configuração:"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "By default, it writes to the `dead-letter-topic-$topic-name` topic.\n"
 "In our demo, it's `dead-letter-topic-movies`.\n"
 "But you can also configure the topic by setting the `dead-letter-queue.topic` attribute."
-msgstr ""
+msgstr "Por padrão, ele grava no tópico `dead-letter-topic-$topic-name` . Em nossa demonstração, é `dead-letter-topic-movies` . Mas o senhor também pode configurar o tópico definindo o atributo `dead-letter-queue.topic` ."
 
 #. type: Plain text
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
@@ -241,11 +260,12 @@ msgid "Depending on your Kafka configuration, you may have to create the topic b
 msgstr "Dependendo da sua configuração do Kafka, poderá ter de criar previamente o tópico e configurar o fator de replicação."
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "Let's try it!\n"
 "The https://gist.github.com/cescoffier/23ca7b2bcc8c49cee3db29b3f2b59e4a#file-kafkadeadlettertopic-java[KafkaDeadLetterTopic.java] file extends our previous application.\n"
 "It uses the dead-letter-topic failure strategy and contains a component reading the dead-letter topic (`dead-letter-topic-movies`)."
-msgstr ""
+msgstr "Vamos experimentar! O arquivo link:https://gist.github.com/cescoffier/23ca7b2bcc8c49cee3db29b3f2b59e4a#file-kafkadeadlettertopic-java[KafkaDeadLetterTopic.java] amplia nosso aplicativo anterior. Ele usa a estratégia de falha dead-letter-topic e contém um componente que lê o tópico dead-letter ( `dead-letter-topic-movies` )."
 
 #. type: Plain text
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
@@ -254,10 +274,11 @@ msgid "You can run the application using:"
 msgstr "Pode executar a aplicação utilizando:"
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "If you check the log, you will see the two expected exceptions and that all the titles are processed.\n"
 "You will also notice:"
-msgstr ""
+msgstr "Se o senhor verificar o log, verá as duas exceções esperadas e que todos os títulos foram processados. O senhor também notará:"
 
 #. type: Plain text
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
@@ -302,7 +323,8 @@ msgid "`dead-letter-queue` sends failing messages to another Kafka topic for fur
 msgstr "`dead-letter-queue` envia as mensagens que falharam para outro tópico Kafka para investigação posterior."
 
 #: _posts/2020-10-20-kafka-failure-strategy.adoc
+#, fuzzy
 msgid ""
 "Next time, we will talk about the commit strategies because failures are inevitable, but successful processing happens sometimes!\n"
 "Stay tuned!"
-msgstr ""
+msgstr "Na próxima vez, falaremos sobre as estratégias de comprometimento porque as falhas são inevitáveis, mas o processamento bem-sucedido acontece às vezes! Fique ligado!"

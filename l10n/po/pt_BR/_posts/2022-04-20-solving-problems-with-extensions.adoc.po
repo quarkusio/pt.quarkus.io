@@ -35,20 +35,23 @@ msgid "This is the first post of what I hope will be a series of several article
 msgstr "Este é o primeiro post do que eu espero que seja uma série de vários artigos mostrando como você pode resolver problemas complexos aproveitando a infraestrutura de construção e a estrutura de extensão exclusivas do Quarkus."
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "First things first, bootstraping a Quarkus extension is easy: in one command, you can get it scaffolded and get started on the actual implementation.\n"
 "But that's not the subject of this post!"
-msgstr ""
+msgstr "Antes de mais nada, inicializar uma extensão do Quarkus é fácil: em um comando, o senhor pode obter um andaime e começar a implementação real. Mas esse não é o assunto deste post!"
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "An extension, apart from providing some runtime code to your application, also allows to tweak the build of your application and do all sorts of things at the build level.\n"
 "This is what we will focus on in this series."
-msgstr ""
+msgstr "Uma extensão, além de fornecer algum código de tempo de execução ao seu aplicativo, também permite ajustar a compilação do aplicativo e fazer todo tipo de coisa no nível da compilação. É nisso que vamos nos concentrar nesta série."
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid "**Problem of the day:** to ensure binary compatibility, the Hub4j GitHub API introduces some bridge methods that confuse Mockito and more specifically ByteBuddy and ultimately make our tests unreliable. How can we solve that?"
-msgstr ""
+msgstr "*Problema do dia:* para garantir a compatibilidade binária, a API do GitHub do Hub4j introduz alguns métodos de ponte que confundem o Mockito e, mais especificamente, o ByteBuddy e, por fim, tornam nossos testes não confiáveis. Como podemos resolver isso?"
 
 #. type: Title ==
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
@@ -57,19 +60,21 @@ msgid "Some context"
 msgstr "Algum contexto"
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "You might have heard about https://github.com/quarkiverse/quarkus-github-app[my Quarkus GitHub App extension]\n"
 "that allows you to develop GitHub Apps based on Quarkus at light speed with very little boilerplate\n"
 "(shameless ad: it is awesome!)."
-msgstr ""
+msgstr "O senhor já deve ter ouvido falar da link:https://github.com/quarkiverse/quarkus-github-app[minha extensão Quarkus GitHub App] , que permite desenvolver aplicativos GitHub baseados no Quarkus na velocidade da luz, com pouquíssimo boilerplate (anúncio sem vergonha: é incrível!)."
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "My dear colleague https://github.com/yrodiere[Yoann Rodière] (he is awesome too!) wrote some test infrastructure for it based on https://site.mockito.org[Mockito]\n"
 "(which uses https://bytebuddy.net/[ByteBuddy] under the hood).\n"
 "That was all good until we started noticing confusing and non reproducible failures in our tests\n"
 "with Mockito sometimes not actually calling the method we would expect."
-msgstr ""
+msgstr "Meu querido colega link:https://github.com/yrodiere[Yoann Rodière] (ele também é incrível!) escreveu uma infraestrutura de teste para ele com base no link:https://site.mockito.org[Mockito] (que usa link:https://bytebuddy.net/[o ByteBuddy] por trás do capô). Tudo estava bem até que começamos a notar falhas confusas e não reproduzíveis em nossos testes, com o Mockito às vezes não chamando o método que esperávamos."
 
 #. type: Plain text
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
@@ -84,18 +89,20 @@ msgid "For instance, let's take this method of the `GitHub` class of the GitHub 
 msgstr "Por exemplo, vamos utilizar este método da classe `GitHub` da API do GitHub:"
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "Historically, it used to return a `GHUser` but, in newer versions, it returns a `GHMyself`,\n"
 "which broke the binary compatibility."
-msgstr ""
+msgstr "Historicamente, ele costumava retornar um `GHUser` , mas, em versões mais recentes, ele retorna um `GHMyself` , o que quebrou a compatibilidade binária."
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "To restore it and with the help of the `@WithBridgeMethods` annotation, the GitHub API build will create two methods in the bytecode:\n"
 "one returning `GHMyself` and one returning `GHUser`.\n"
 "This is very useful if you have compiled your application with an old version of the GitHub API and you just want to use the new version without recompiling your application.\n"
 "Typically, in the case of Jenkins, you can switch to a new version of the GitHub API without having to recompile all the Jenkins plugins using GitHub API."
-msgstr ""
+msgstr "Para restaurá-lo e com a ajuda da anotação `@WithBridgeMethods` , a compilação da API do GitHub criará dois métodos no bytecode: um que retorna `GHMyself` e outro que retorna `GHUser` . Isso é muito útil se o senhor tiver compilado seu aplicativo com uma versão antiga da API do GitHub e quiser usar a nova versão sem recompilar o aplicativo. Normalmente, no caso do Jenkins, o senhor pode mudar para uma nova versão da API do GitHub sem precisar recompilar todos os plug-ins do Jenkins que usam a API do GitHub."
 
 #. type: Plain text
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
@@ -116,17 +123,19 @@ msgid "And if your existing compiled code calls `GHUser getMyself()`, it will st
 msgstr "E se o seu código compilado atual chamar `GHUser getMyself()`, continuará a funcionar após a alteração do tipo de retorno."
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "This bridge methods approach solves a real problem and it's not that big of a deal as it's fully transparent for the developer...\n"
 "except when you start using Mockito due to https://github.com/raphw/byte-buddy/issues/1162[a ByteBuddy issue]:\n"
 "ByteBuddy can get confused if there are several methods with the same signature but different return types."
-msgstr ""
+msgstr "Essa abordagem de métodos de ponte resolve um problema real e não é um grande problema, pois é totalmente transparente para o desenvolvedor... exceto quando o senhor começa a usar o Mockito devido a link:https://github.com/raphw/byte-buddy/issues/1162[um problema do ByteBuddy] : O ByteBuddy pode se confundir se houver vários métodos com a mesma assinatura, mas com tipos de retorno diferentes."
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "ByteBuddy is an amazing library and this blog post should not be seen as a critique of ByteBuddy.\n"
 "This is an extreme corner case that doesn't happen with standard bytecode."
-msgstr ""
+msgstr "O ByteBuddy é uma biblioteca incrível e esta postagem do blog não deve ser vista como uma crítica ao ByteBuddy. Esse é um caso extremo que não acontece com o bytecode padrão."
 
 #. type: Plain text
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
@@ -141,17 +150,19 @@ msgid "How can we work around this?"
 msgstr "Como é que podemos contornar esta situação?"
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "In the case of Quarkus GitHub App, we don't really care about binary compatibility:\n"
 "when upgrading to a new version of the GitHub API,\n"
 "users will rebuild their application."
-msgstr ""
+msgstr "No caso do Quarkus GitHub App, não nos preocupamos com a compatibilidade binária: ao atualizar para uma nova versão da API do GitHub, os usuários reconstruirão seu aplicativo."
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "So given these bridge methods are problematic,\n"
 "one solution would be to get rid of them."
-msgstr ""
+msgstr "Portanto, como esses métodos de ponte são problemáticos, uma solução seria eliminá-los."
 
 #. type: Plain text
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
@@ -160,10 +171,11 @@ msgid "Obviously, we could fork the GitHub API and avoid generating the bridge m
 msgstr "Obviamente, poderíamos bifurcar a API do GitHub e evitar a geração dos métodos de ponte."
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "But forking and maintaining a fork forever is definitely not something we should consider if we can avoid it.\n"
 "Especially since we want to continue benefiting from all the future improvements of the GitHub API."
-msgstr ""
+msgstr "Mas bifurcar e manter uma bifurcação para sempre definitivamente não é algo que devemos considerar se pudermos evitar. Especialmente porque queremos continuar nos beneficiando de todas as melhorias futuras da API do GitHub."
 
 #. type: Plain text
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
@@ -172,10 +184,11 @@ msgid "So could we somehow keep the library standard but have Quarkus adjust the
 msgstr "Poderíamos, então, manter a biblioteca padrão, mas fazer com que o Quarkus ajustasse o bytecode ao construir a aplicação?"
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "If you are in a rush, the short answer is yes.\n"
 "Now let's go for the (not so) long answer."
-msgstr ""
+msgstr "Se o senhor estiver com pressa, a resposta curta é sim. Agora vamos à resposta (não tão) longa."
 
 #. type: Title ===
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
@@ -184,30 +197,34 @@ msgid "Let's identify the methods"
 msgstr "Vamos identificar os métodos"
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "In Quarkus, we can index the annotations with Jandex so, in a perfect world,\n"
 "we would index the GitHub API jar with Jandex (which we already do for other purposes)\n"
 "and interrogate Jandex to get all the methods annotated with `@WithBridgeMethods`:"
-msgstr ""
+msgstr "No Quarkus, podemos indexar as anotações com o Jandex, portanto, em um mundo perfeito, indexaríamos o jar da API do GitHub com o Jandex (o que já fazemos para outras finalidades) e interrogaríamos o Jandex para obter todos os métodos anotados com `@WithBridgeMethods` :"
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "Unfortunately, `@WithBridgeMethods` has a `CLASS` retention policy\n"
 "- which makes perfect sense for its usage -\n"
 "and Jandex only considers annotations with a `RUNTIME` retention policy."
-msgstr ""
+msgstr "Infelizmente, o site `@WithBridgeMethods` tem uma política de retenção `CLASS` , o que faz todo o sentido para seu uso, e o Jandex só considera anotações com uma política de retenção `RUNTIME` ."
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "This limitation will be alleviated in Jandex 3 but, for the time being,\n"
 "we cannot use Jandex."
-msgstr ""
+msgstr "Essa limitação será atenuada no Jandex 3, mas, por enquanto, não podemos usar o Jandex."
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "Unfortunately, until then, we don't have many options here:\n"
 "we have to list the methods manually."
-msgstr ""
+msgstr "Infelizmente, até lá, não temos muitas opções aqui: temos que listar os métodos manualmente."
 
 #. type: Plain text
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
@@ -222,10 +239,11 @@ msgid "And we will produce a `GitHubApiClassWithBridgeMethodsBuildItem` for each
 msgstr "E produziremos um `GitHubApiClassWithBridgeMethodsBuildItem` para cada turma:"
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "Once this is done, we are able to consume the `GitHubApiClassWithBridgeMethodsBuildItem` from any Quarkus `@BuildStep`\n"
 "so this list is generally available to the Quarkus build."
-msgstr ""
+msgstr "Uma vez feito isso, podemos consumir o `GitHubApiClassWithBridgeMethodsBuildItem` de qualquer Quarkus `@BuildStep` para que essa lista esteja disponível de forma geral para a compilação do Quarkus."
 
 #. type: delimited block =
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
@@ -276,16 +294,18 @@ msgid "Now that we have the list of methods handy, the next step is to remove th
 msgstr "Agora que temos a lista de métodos à mão, o próximo passo é removê-los."
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "To manipulate bytecode during the build, Quarkus offers the `BytecodeTransformerBuildItem`.\n"
 "Adjusting the bytecode of a class is just a matter of producing one for the given class."
-msgstr ""
+msgstr "Para manipular o bytecode durante a compilação, o Quarkus oferece o `BytecodeTransformerBuildItem` . Ajustar o bytecode de uma classe é apenas uma questão de produzir um para a classe em questão."
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "For instance, to remove the bridge methods from our GitHub API methods,\n"
 "we add the following build step to our extension:"
-msgstr ""
+msgstr "Por exemplo, para remover os métodos de ponte dos nossos métodos da API do GitHub, adicionamos a seguinte etapa de compilação à nossa extensão:"
 
 #. type: Plain text
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
@@ -330,11 +350,12 @@ msgid "And that's it!"
 msgstr "E pronto!"
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "During the build process, Quarkus will create a class file containing the modified bytecode\n"
 "and will use it instead of the class coming from the GitHub API jar.\n"
 "Thus the bridge methods we wanted to remove will never be visible to ByteBuddy."
-msgstr ""
+msgstr "Durante o processo de compilação, o Quarkus criará um arquivo de classe contendo o bytecode modificado e o usará em vez da classe proveniente do jar da API do GitHub. Assim, os métodos de ponte que queríamos remover nunca ficarão visíveis para o ByteBuddy."
 
 #. type: Title ==
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
@@ -343,10 +364,11 @@ msgid "Conclusion"
 msgstr "Conclusão"
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid ""
 "At conferences, we often say that Quarkus is doing things differently from other frameworks\n"
 "and that the magic relies in its innovative build process."
-msgstr ""
+msgstr "Em conferências, costumamos dizer que o Quarkus está fazendo as coisas de forma diferente de outras estruturas e que a mágica está em seu processo de construção inovador."
 
 #. type: Plain text
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
@@ -355,5 +377,6 @@ msgid "This build process is the key to the low memory footprint and fast startu
 msgstr "Este processo de compilação é a chave para o baixo consumo de memória e os tempos de arranque rápidos do Quarkus."
 
 #: _posts/2022-04-20-solving-problems-with-extensions.adoc
+#, fuzzy
 msgid "**But it is also a very powerful tool to customize the build of your applications.**"
-msgstr ""
+msgstr "*Mas também é uma ferramenta muito poderosa para personalizar a construção de seus aplicativos.*"
