@@ -29,11 +29,12 @@ msgid "Running concurrent asynchronous actions with Mutiny"
 msgstr "Executar acções assíncronas simultâneas com o Mutiny"
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid ""
 "This week, I've been asked about a widespread use case around concurrency.\n"
 "This user wanted to call two microservices _in parallel_, and when both results are received, join them and continue the processing.\n"
 "Basically, the following pattern:"
-msgstr ""
+msgstr "Esta semana, perguntaram-me sobre um caso de uso generalizado de concorrência. Esse usuário queria chamar dois microsserviços _em paralelo_ e, quando ambos os resultados fossem recebidos, juntá-los e continuar o processamento. Basicamente, o seguinte padrão:"
 
 #. type: Plain text
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
@@ -42,10 +43,11 @@ msgid "image:/assets/images/posts/mutiny-concurrent-uni/pattern.png[width=50%]"
 msgstr "image:/assets/images/posts/mutiny-concurrent-uni/pattern.png[alt=pattern]"
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid ""
 "In a non-reactive approach, both calls would block the caller thread, and, except if you use a worker thread pool, the calls are not concurrent.\n"
 "Even if you use a worker thread pool, these threads are likely blocked, consuming resources for nothing."
-msgstr ""
+msgstr "Em uma abordagem não reativa, ambas as chamadas bloqueariam o thread do chamador e, exceto se o senhor usar um pool de threads de trabalho, as chamadas não são simultâneas. Mesmo que o senhor use um pool de threads de trabalho, esses threads provavelmente estarão bloqueados, consumindo recursos para nada."
 
 #. type: Plain text
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
@@ -54,22 +56,25 @@ msgid "But no worries, Quarkus reactive nature and Mutiny have everything to han
 msgstr "Mas não se preocupe, a natureza reactiva de Quarkus e o Mutiny têm tudo para lidar com este cenário."
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid "Let's call two services"
-msgstr ""
+msgstr "Vamos chamar dois serviços"
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid ""
 "In this post, I'm going to use the Vert.x Web Client, a reactive HTTP client.\n"
 "It leverages non-blocking I/O to be highly performant and truly non-blocking.\n"
 "It does not rely on a hidden thread pool.\n"
 "You can also use the Quarkus Rest Client, but, at the moment, it still uses worker threads."
-msgstr ""
+msgstr "Neste post, usarei o Vert.x Web Client, um cliente HTTP reativo. Ele aproveita a E/S sem bloqueio para ter alto desempenho e ser verdadeiramente sem bloqueio. Ele não depende de um pool de threads oculto. O senhor também pode usar o Quarkus Rest Client, mas, no momento, ele ainda usa threads de trabalho."
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid ""
 "No matter which client we use, we need some remote services to call.\n"
 "Let's use:"
-msgstr ""
+msgstr "Independentemente do cliente que usamos, precisamos de alguns serviços remotos para chamar. Vamos usar:"
 
 #. type: Plain text
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
@@ -84,13 +89,15 @@ msgid "https://api.chucknorris.io/ - to get a quote about _Chuck Norris_"
 msgstr "https://api.chucknorris.io/  - para obter um orçamento sobre _Chuck Norris_"
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid ""
 "First thing first, let's see the code required to retrieve our quotes:\n"
 "While both services are similar, the structure of the response differs a little bit.\n"
 "So we end up with:"
-msgstr ""
+msgstr "Antes de mais nada, vamos ver o código necessário para recuperar nossas cotações: Embora os dois serviços sejam semelhantes, a estrutura da resposta é um pouco diferente. Portanto, terminamos com:"
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid ""
 "These two methods receive a `WebClient`, invoke the services, retrieve the JSON responses, and extract them.\n"
 "They both return a `Uni`.\n"
@@ -98,17 +105,19 @@ msgid ""
 "The result (the quote) is provided _later_ when available.\n"
 "Also, returning a `Uni` means that the services will only be invoked when someone subscribes to the returned `Uni`.\n"
 "If you subscribe multiple times, you will call the service multiple times."
-msgstr ""
+msgstr "Esses dois métodos recebem um `WebClient` , invocam os serviços, recuperam as respostas JSON e as extraem. Ambos retornam um `Uni` . Portanto, são assíncronos. O resultado (a citação) é fornecido _posteriormente_ , quando disponível. Além disso, retornar um `Uni` significa que os serviços só serão chamados quando alguém se inscrever no `Uni` retornado. Se o senhor se inscrever várias vezes, chamará o serviço várias vezes."
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid "Combining Unis"
-msgstr ""
+msgstr "Combinando Unis"
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid ""
 "So far, we have two methods to call our services.\n"
 "But we want to call them concurrently, as depicted above."
-msgstr ""
+msgstr "Até agora, temos dois métodos para chamar nossos serviços. Mas queremos chamá-los simultaneamente, como mostrado acima."
 
 #. type: Plain text
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
@@ -117,10 +126,11 @@ msgid "Mutiny provides a way to _combine_ items produced by `Unis`:"
 msgstr "O Motim proporciona uma forma de _combinar_ itens produzidos por `Unis`:"
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid ""
 "When someone subscribes to the `Uni tuple`, it subscribes to the `getProgrammingQuote(client)` and `getChuckNorrisQuote(client)` `Unis`, which invoke the services.\n"
 "So the requests are emitted, and the services are invoked concurrently."
-msgstr ""
+msgstr "Quando alguém se inscreve no `Uni tuple` , ele se inscreve no `getProgrammingQuote(client)` e no `getChuckNorrisQuote(client)` `Unis` , que invocam os serviços. Assim, as solicitações são emitidas e os serviços são chamados simultaneamente."
 
 #. type: Plain text
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
@@ -129,22 +139,26 @@ msgid "When both responses are available, it combines them into a _Tuple_, a sim
 msgstr "Quando ambas as respostas estão disponíveis, combina-as numa _tupla_, uma estrutura simples que contém vários itens."
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid ""
 "In other words, concurrently calling our services is pretty straightforward.\n"
 "Just create the `Unis` representing the services or the asynchronous action you want to achieve and combine them using `Uni.combine().all()`\n"
 "You can decide to combine the results using _tuples_ or to use a combinator function."
-msgstr ""
+msgstr "Em outras palavras, a chamada simultânea de nossos serviços é bastante simples. Basta criar o `Unis` que representa os serviços ou a ação assíncrona que o senhor deseja realizar e combiná-los usando `Uni.combine().all()` . O senhor pode decidir combinar os resultados usando _tuplas_ ou uma função combinadora."
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid "Putting everything together"
-msgstr ""
+msgstr "Juntando tudo"
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid ""
 "That's it!\n"
 "If you want to see this code in action, check this https://gist.github.com/cescoffier/1ed68bef12b798529e10350f77686e9a[gist]. You even can run it directly with JBang:"
-msgstr ""
+msgstr "É isso aí! Se o senhor quiser ver esse código em ação, consulte este link:https://gist.github.com/cescoffier/1ed68bef12b798529e10350f77686e9a[gist] . O senhor pode até mesmo executá-lo diretamente com o JBang:"
 
 #: _posts/2020-09-29-mutiny-concurrent-uni.adoc
+#, fuzzy
 msgid "Enjoy!"
-msgstr ""
+msgstr "Aproveite!"
