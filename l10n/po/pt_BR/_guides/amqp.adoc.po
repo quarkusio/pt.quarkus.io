@@ -11,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,855 +20,421 @@ msgstr ""
 #. and pull requests should be submitted there:
 #. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
 #. type: Title =
-#: upstream/_guides/amqp.adoc:6
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "Getting Started to SmallRye Reactive Messaging with AMQP 1.0"
 msgstr "Primeiros passos para o envio de mensagens reativas SmallRye com AMQP 1.0"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:14
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "This guide demonstrates how your Quarkus application can utilize SmallRye Reactive Messaging to interact with AMQP 1.0."
 msgstr "Este guia demonstra como sua aplicação Quarkus pode utilizar o SmallRye Reactive Messaging para interagir com o AMQP 1.0."
 
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:19
-#, fuzzy
-msgid "If you want to use RabbitMQ, you should use the xref:rabbitmq.adoc[SmallRye Reactive Messaging RabbitMQ extension].  Alternatively, if you want to use RabbitMQ with AMQP 1.0 you need to enable the AMQP 1.0 plugin in the RabbitMQ broker; check the https://smallrye.io/smallrye-reactive-messaging/smallrye-reactive-messaging/3.9/amqp/amqp.html#amqp-rabbitmq[connecting to RabbitMQ] documentation."
-msgstr "Se você quiser usar o RabbitMQ, você deve usar a  link:rabbitmq.html[extensão SmallRye Reactive Messaging RabbitMQ]. Alternativamente, se quiser usar o RabbitMQ com AMQP 1.0, você precisa habilitar o plugin AMQP 1.0 no broker RabbitMQ; verifique a documentação de  link:https://smallrye.io/smallrye-reactive-messaging/smallrye-reactive-messaging/3.9/amqp/amqp.html#amqp-rabbitmq[conexão com o RabbitMQ]."
+#: _guides/amqp.adoc
+msgid ""
+"If you want to use RabbitMQ, you should use the xref:rabbitmq.adoc[SmallRye Reactive Messaging RabbitMQ extension].\n"
+"Alternatively, if you want to use RabbitMQ with AMQP 1.0 you need to enable the AMQP 1.0 plugin in the RabbitMQ broker;\n"
+"check the https://smallrye.io/smallrye-reactive-messaging/smallrye-reactive-messaging/3.9/amqp/amqp.html#amqp-rabbitmq[connecting to RabbitMQ]\n"
+"documentation."
+msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/amqp.adoc:20
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "Prerequisites"
 msgstr "Pré-requisitos"
 
 #. type: Title ==
-#: upstream/_guides/amqp.adoc:25
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "Architecture"
 msgstr "Arquitetura"
 
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:31
-#, fuzzy
-msgid "In this guide, we are going to develop two applications communicating with an AMQP broker.  We will use https://activemq.apache.org/components/artemis/[Artemis], but you can use any AMQP 1.0 broker.  The first application sends a _quote request_ to an AMQP queue and consumes messages from the _quote_ queue.  The second application receives the _quote request_ and sends a _quote_ back."
-msgstr "Neste guia, vamos desenvolver dois aplicativos que se comunicam com um broker AMQP. Usaremos  link:https://activemq.apache.org/components/artemis/[o Artemis], mas você pode usar qualquer broker AMQP 1.0. A primeira aplicação envia um _pedido de cotação_ para uma fila AMQP e consome mensagens da fila de _cotação_. A segunda aplicação recebe o _pedido de cotação_ e envia uma _cotação_ de volta."
+#: _guides/amqp.adoc
+msgid ""
+"In this guide, we are going to develop two applications communicating with an AMQP broker.\n"
+"We will use https://activemq.apache.org/components/artemis/[Artemis], but you can use any AMQP 1.0 broker.\n"
+"The first application sends a _quote request_ to an AMQP queue and consumes messages from the _quote_ queue.\n"
+"The second application receives the _quote request_ and sends a _quote_ back."
+msgstr ""
 
-#. type: Named 'alt' AttributeList argument for macro 'image'
-#: upstream/_guides/amqp.adoc:32
-#, fuzzy, no-wrap
-msgid "Architecture,"
-msgstr "Arquitetura,"
-
-#. type: Target for macro image
-#: upstream/_guides/amqp.adoc:32
-#, no-wrap
-msgid "amqp-qs-architecture.png"
+#: _guides/amqp.adoc
+msgid ""
+"The first application, the `producer`, will let the user request some quotes over an HTTP endpoint.\n"
+"For each quote request, a random identifier is generated and returned to the user, to put the quote request on _pending_.\n"
+"At the same time the generated request id is sent over the `quote-requests` queue."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:37
-#, fuzzy
-msgid "The first application, the `producer`, will let the user request some quotes over an HTTP endpoint.  For each quote request, a random identifier is generated and returned to the user, to put the quote request on _pending_.  At the same time the generated request id is sent over the `quote-requests` queue."
-msgstr "A primeira aplicação, a `producer`, permitirá ao utilizador solicitar algumas cotações através de um ponto de extremidade HTTP. Para cada pedido de cotação, é gerado um identificador aleatório que é devolvido ao utilizador, para colocar o pedido de cotação em _espera_. Ao mesmo tempo, o identificador do pedido gerado é enviado para a fila `quote-requests`."
-
-#. type: Named 'alt' AttributeList argument for macro 'image'
-#: upstream/_guides/amqp.adoc:38
-#, fuzzy, no-wrap
-msgid "Producer"
-msgstr "Produtor"
-
-#. type: Target for macro image
-#: upstream/_guides/amqp.adoc:38
-#, no-wrap
-msgid "amqp-qs-app-screenshot.png"
-msgstr ""
-
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:41
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "The second application, the `processor`, in turn, will read from the `quote-requests` queue put a random price to the quote, and send it to a queue named `quotes`."
 msgstr "A segunda aplicação, a `processor`, por sua vez, irá ler a partir da fila `quote-requests` colocar um preço aleatório na cotação, e enviá-lo para uma fila denominada `quotes`."
 
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:44
-#, fuzzy
-msgid "Lastly, the `producer` will read the quotes and send them to the browser using server-sent events.  The user will therefore see the quote price updated from _pending_ to the received price in real-time."
-msgstr "Por fim, o `producer` lê as cotações e envia-as para o browser utilizando eventos enviados pelo servidor. Assim, o utilizador verá o preço da cotação atualizado em tempo real, desde o preço _pendente_ até ao preço recebido."
+#: _guides/amqp.adoc
+msgid ""
+"Lastly, the `producer` will read the quotes and send them to the browser using server-sent events.\n"
+"The user will therefore see the quote price updated from _pending_ to the received price in real-time."
+msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/amqp.adoc:45
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "Solution"
 msgstr "Solução"
 
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:49
-#, fuzzy
-msgid "We recommend that you follow the instructions in the next sections and create applications step by step.  However, you can go right to the completed example."
-msgstr "Recomendamos que siga as instruções nas secções seguintes e crie aplicações passo a passo. No entanto, pode ir diretamente para o exemplo concluído."
+#: _guides/amqp.adoc
+msgid ""
+"We recommend that you follow the instructions in the next sections and create applications step by step.\n"
+"However, you can go right to the completed example."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:51
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "Clone the Git repository: `git clone {quickstarts-clone-url}`, or download an {quickstarts-archive-url}[archive]."
 msgstr "Clonar o repositório Git: `git clone {quickstarts-clone-url}`, ou descarregar um {quickstarts-archive-url}[arquivo]."
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:53
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "The solution is located in the `amqp-quickstart` link:{quickstarts-tree-url}/amqp-quickstart[directory]."
 msgstr "A solução está localizada no  link:{quickstarts-tree-url}/amqp-quickstart[diretório] `amqp-quickstart`."
 
 #. type: Title ==
-#: upstream/_guides/amqp.adoc:54
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "Creating the Maven Project"
 msgstr "Criar o projeto Maven"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:57
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "First, we need to create two projects: the _producer_ and the _processor_."
 msgstr "Em primeiro lugar, temos de criar dois projectos: o _produtor_ e o _processador_."
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:59
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "To create the _producer_ project, in a terminal run:"
 msgstr "Para criar o projeto _produtor_, num terminal, execute:"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:66
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "This command creates the project structure and select the two Quarkus extensions we will be using:"
 msgstr "Este comando cria a estrutura do projeto e selecciona as duas extensões Quarkus que vamos utilizar:"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:68
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "RESTEasy Reactive and its Jackson support to handle JSON payloads"
 msgstr "RESTEasy Reactive e o seu suporte Jackson para tratar cargas úteis JSON"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:69
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "The Reactive Messaging AMQP connector"
 msgstr "O conetor AMQP do serviço de mensagens reactivas"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:71
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "To create the _processor_ project, from the same directory, run:"
 msgstr "Para criar o projeto _do processador_, a partir do mesmo diretório, execute:"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:78
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "At that point you should have the following structure:"
 msgstr "Nessa altura, deverá ter a seguinte estrutura:"
 
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:104
-#, no-wrap
-msgid ""
-".\n"
-"├── amqp-quickstart-processor\n"
-"│  ├── README.md\n"
-"│  ├── mvnw\n"
-"│  ├── mvnw.cmd\n"
-"│  ├── pom.xml\n"
-"│  └── src\n"
-"│     └── main\n"
-"│        ├── docker\n"
-"│        ├── java\n"
-"│        └── resources\n"
-"│           └── application.properties\n"
-"└── amqp-quickstart-producer\n"
-"   ├── README.md\n"
-"   ├── mvnw\n"
-"   ├── mvnw.cmd\n"
-"   ├── pom.xml\n"
-"   └── src\n"
-"      └── main\n"
-"         ├── docker\n"
-"         ├── java\n"
-"         └── resources\n"
-"            └── application.properties\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:107
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "Open the two projects in your favorite IDE."
 msgstr "Abra os dois projectos no seu IDE favorito."
 
 #. type: Title ==
-#: upstream/_guides/amqp.adoc:108
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "The Quote object"
 msgstr "O objeto Quote"
 
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:113
-#, fuzzy
-msgid "The `Quote` class will be used in both `producer` and `processor` projects.  For the sake of simplicity we will duplicate the class.  In both projects, create the `src/main/java/org/acme/amqp/model/Quote.java` file, with the following content:"
-msgstr "A classe `Quote` será utilizada nos projectos `producer` e `processor`. Por uma questão de simplicidade, vamos duplicar a classe. Em ambos os projetos, crie o arquivo `src/main/java/org/acme/amqp/model/Quote.java`, com o seguinte conteúdo:"
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:117
-#, no-wrap
-msgid "package org.acme.amqp.model;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:119
-#, no-wrap
-msgid "import io.quarkus.runtime.annotations.RegisterForReflection;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:122
-#, no-wrap
+#: _guides/amqp.adoc
 msgid ""
-"@RegisterForReflection\n"
-"public class Quote {\n"
+"The `Quote` class will be used in both `producer` and `processor` projects.\n"
+"For the sake of simplicity we will duplicate the class.\n"
+"In both projects, create the `src/main/java/org/acme/amqp/model/Quote.java` file, with the following content:"
 msgstr ""
 
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:125
-#, no-wrap
+#: _guides/amqp.adoc
 msgid ""
-"    public String id;\n"
-"    public int price;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:130
-#, no-wrap
-msgid ""
-"    /**\n"
-"    * Default constructor required for Jackson serializer\n"
-"    */\n"
-"    public Quote() { }\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:135
-#, no-wrap
-msgid ""
-"    public Quote(String id, int price) {\n"
-"        this.id = id;\n"
-"        this.price = price;\n"
-"    }\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:144
-#, no-wrap
-msgid ""
-"    @Override\n"
-"    public String toString() {\n"
-"        return \"Quote{\" +\n"
-"                \"id='\" + id + '\\'' +\n"
-"                \", price=\" + price +\n"
-"                '}';\n"
-"    }\n"
-"}\n"
+"JSON representation of `Quote` objects will be used in messages sent to the AMQP queues\n"
+"and also in the server-sent events sent to browser clients."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:148
-#, fuzzy
-msgid "JSON representation of `Quote` objects will be used in messages sent to the AMQP queues and also in the server-sent events sent to browser clients."
-msgstr "A representação JSON dos objectos `Quote` será utilizada nas mensagens enviadas para as filas AMQP e também nos eventos enviados pelo servidor para os clientes do browser."
-
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:150
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "Quarkus has built-in capabilities to deal with JSON AMQP messages."
 msgstr "O Quarkus tem capacidades incorporadas para lidar com mensagens JSON AMQP."
 
 #. type: Block title
-#: upstream/_guides/amqp.adoc:152
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "@RegisterForReflection"
 msgstr "@RegistoParaReflexão"
 
-#. type: delimited block =
-#: upstream/_guides/amqp.adoc:157
-#, fuzzy
-msgid "The `@RegisterForReflection` annotation instructs Quarkus to include the class (including fields and methods) when building the native executable.  This will be useful later when we run the applications as native executables inside containers.  Without, the native compilation would remove the fields and methods during the dead-code elimination phase."
-msgstr "A anotação `@RegisterForReflection` instrui o Quarkus a incluir a classe (incluindo campos e métodos) ao construir o executável nativo. Isto será útil mais tarde, quando executarmos as aplicações como executáveis nativos dentro de contentores. Sem isso, a compilação nativa removeria os campos e métodos durante a fase de eliminação de código morto."
+#: _guides/amqp.adoc
+msgid ""
+"The `@RegisterForReflection` annotation instructs Quarkus to include the class (including fields and methods) when building the native executable.\n"
+"This will be useful later when we run the applications as native executables inside containers.\n"
+"Without, the native compilation would remove the fields and methods during the dead-code elimination phase."
+msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/amqp.adoc:159
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "Sending quote request"
 msgstr "Envio de pedido de orçamento"
 
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:162
-#, fuzzy
-msgid "Inside the `producer` project locate the generated `src/main/java/org/acme/amqp/producer/QuotesResource.java` file, and update the content to be:"
-msgstr "No projeto `producer`, localize o ficheiro `src/main/java/org/acme/amqp/producer/QuotesResource.java` gerado e actualize o seu conteúdo:"
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:166
-#, no-wrap
-msgid "package org.acme.amqp.producer;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:168
-#, no-wrap
-msgid "import java.util.UUID;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:174
-#, no-wrap
-msgid ""
-"import jakarta.ws.rs.GET;\n"
-"import jakarta.ws.rs.POST;\n"
-"import jakarta.ws.rs.Path;\n"
-"import jakarta.ws.rs.Produces;\n"
-"import jakarta.ws.rs.core.MediaType;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:178
-#, no-wrap
-msgid ""
-"import org.acme.amqp.model.Quote;\n"
-"import org.eclipse.microprofile.reactive.messaging.Channel;\n"
-"import org.eclipse.microprofile.reactive.messaging.Emitter;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:180
-#, no-wrap
-msgid "import io.smallrye.mutiny.Multi;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:183
-#, no-wrap
-msgid ""
-"@Path(\"/quotes\")\n"
-"public class QuotesResource {\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:185
-#, no-wrap
-msgid "    @Channel(\"quote-requests\") Emitter<String> quoteRequestEmitter; // <1>\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:198
-#, no-wrap
-msgid ""
-"    /**\n"
-"     * Endpoint to generate a new quote request id and send it to \"quote-requests\" AMQP queue using the emitter.\n"
-"     */\n"
-"    @POST\n"
-"    @Path(\"/request\")\n"
-"    @Produces(MediaType.TEXT_PLAIN)\n"
-"    public String createRequest() {\n"
-"        UUID uuid = UUID.randomUUID();\n"
-"        quoteRequestEmitter.send(uuid.toString()); // <2>\n"
-"        return uuid.toString();\n"
-"    }\n"
-"}\n"
+#: _guides/amqp.adoc
+msgid "Inside the `producer` project locate the generated  `src/main/java/org/acme/amqp/producer/QuotesResource.java` file, and update the content to be:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:200
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "Inject a Reactive Messaging `Emitter` to send messages to the `quote-requests` channel."
 msgstr "Injecte um serviço de mensagens reactivas `Emitter` para enviar mensagens para o canal `quote-requests`."
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:201
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "On a post request, generate a random UUID and send it to the AMQP queue using the emitter."
 msgstr "Em uma solicitação de postagem, gere um UUID aleatório e envie-o para a fila AMQP usando o emissor."
 
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:205
-#, fuzzy
-msgid "The `quote-requests` channel is going to be managed as a AMQP queue, as that's the only connector on the classpath.  If not indicated otherwise, like in this example, Quarkus uses the channel name as AMQP queue name.  So, in this example, the application sends messages to the `quote-requests` queue."
-msgstr "O canal `quote-requests` vai ser gerido como uma fila AMQP, uma vez que é o único conetor no classpath. Se não for indicado de outra forma, como neste exemplo, o Quarkus usa o nome do canal como nome da fila AMQP. Portanto, neste exemplo, a aplicação envia mensagens para a fila `quote-requests`."
+#: _guides/amqp.adoc
+msgid ""
+"The `quote-requests` channel is going to be managed as a AMQP queue, as that's the only connector on the classpath.\n"
+"If not indicated otherwise, like in this example, Quarkus uses the channel name as AMQP queue name.\n"
+"So, in this example, the application sends messages to the `quote-requests` queue."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:207
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "When you have multiple connectors, you would need to indicate which connector you want to use in the application configuration."
 msgstr "Quando existem vários conectores, é necessário indicar qual o conetor que pretende utilizar na configuração da aplicação."
 
 #. type: Title ==
-#: upstream/_guides/amqp.adoc:208
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "Processing quote requests"
 msgstr "Processamento de pedidos de orçamento"
 
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:212
-#, fuzzy
-msgid "Now let's consume the quote request and give out a price.  Inside the `processor` project, locate the `src/main/java/org/acme/amqp/processor/QuoteProcessor.java` file and add the following:"
-msgstr "Agora vamos consumir o pedido de orçamento e dar um preço. Dentro do projeto `processor`, localize o arquivo `src/main/java/org/acme/amqp/processor/QuoteProcessor.java` e adicione o seguinte:"
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:216
-#, no-wrap
-msgid "package org.acme.amqp.processor;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:218
-#, no-wrap
-msgid "import java.util.Random;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:220
-#, no-wrap
-msgid "import jakarta.enterprise.context.ApplicationScoped;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:224
-#, no-wrap
+#: _guides/amqp.adoc
 msgid ""
-"import org.acme.amqp.model.Quote;\n"
-"import org.eclipse.microprofile.reactive.messaging.Incoming;\n"
-"import org.eclipse.microprofile.reactive.messaging.Outgoing;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:226
-#, no-wrap
-msgid "import io.smallrye.reactive.messaging.annotations.Blocking;\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:233
-#, no-wrap
-msgid ""
-"/**\n"
-" * A bean consuming data from the \"request\" AMQP queue and giving out a random quote.\n"
-" * The result is pushed to the \"quotes\" AMQP queue.\n"
-" */\n"
-"@ApplicationScoped\n"
-"public class QuoteProcessor {\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:235
-#, no-wrap
-msgid "    private Random random = new Random();\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:245
-#, no-wrap
-msgid ""
-"    @Incoming(\"requests\")       // <1>\n"
-"    @Outgoing(\"quotes\")         // <2>\n"
-"    @Blocking                   // <3>\n"
-"    public Quote process(String quoteRequest) throws InterruptedException {\n"
-"        // simulate some hard-working task\n"
-"        Thread.sleep(200);\n"
-"        return new Quote(quoteRequest, random.nextInt(100));\n"
-"    }\n"
-"}\n"
+"Now let's consume the quote request and give out a price.\n"
+"Inside the `processor` project, locate the `src/main/java/org/acme/amqp/processor/QuoteProcessor.java` file and add the following:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:247
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "Indicates that the method consumes the items from the `requests` channel"
 msgstr "Indica que o método consome os itens do canal `requests`"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:248
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "Indicates that the objects returned by the method are sent to the `quotes` channel"
 msgstr "Indica que os objectos devolvidos pelo método são enviados para o canal `quotes`"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:249
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "Indicates that the processing is _blocking_ and cannot be run on the caller thread."
 msgstr "Indica que o processamento está a _bloquear_ e não pode ser executado na thread do chamador."
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:251
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "The `process` method is called for every AMQP message from the `quote-requests` queue, and will send a `Quote` object to the `quotes` queue."
 msgstr "O método `process` é chamado para cada mensagem AMQP da fila `quote-requests` e enviará um objeto `Quote` para a fila `quotes`."
 
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:254
-#, fuzzy
-msgid "Because we want to consume messages from the `quotes-requests` queue into the `requests` channel, we need to configure this association.  Open the `src/main/resources/application.properties` file and add:"
-msgstr "Como queremos consumir mensagens da fila `quotes-requests` para o canal `requests`, precisamos de configurar esta associação. Abra o arquivo `src/main/resources/application.properties` e adicione:"
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:258
-#, no-wrap
-msgid "mp.messaging.incoming.requests.address=quote-requests\n"
+#: _guides/amqp.adoc
+msgid ""
+"Because we want to consume messages from the `quotes-requests` queue into the `requests` channel, we need to configure this association.\n"
+"Open the `src/main/resources/application.properties` file and add:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:261
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "The configuration keys are structured as follows:"
 msgstr "As teclas de configuração estão estruturadas da seguinte forma:"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:263
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "`mp.messaging.[outgoing|incoming].{channel-name}.property=value`"
 msgstr "`mp.messaging.[outgoing|incoming].{channel-name}.property=value`"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:265
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "In our case, we want to configure the `address` attribute to indicate the name of the queue."
 msgstr "No nosso caso, pretendemos configurar o atributo `address` para indicar o nome da fila."
 
 #. type: Title ==
-#: upstream/_guides/amqp.adoc:266
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "Receiving quotes"
 msgstr "Receber cotações"
 
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:270
-#, fuzzy
-msgid "Back to our `producer` project.  Let's modify the `QuotesResource` to consume quotes, bind it to an HTTP endpoint to send events to clients:"
-msgstr "De volta ao nosso projeto `producer`. Vamos modificar o `QuotesResource` para consumir cotações, associá-lo a um ponto de extremidade HTTP para enviar eventos aos clientes:"
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:275
-#, no-wrap
+#: _guides/amqp.adoc
 msgid ""
-"import io.smallrye.mutiny.Multi;\n"
-"//...\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:277
-#, no-wrap
-msgid "@Channel(\"quotes\") Multi<Quote> quotes;     // <1>\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:286
-#, no-wrap
-msgid ""
-"/**\n"
-" * Endpoint retrieving the \"quotes\" queue and sending the items to a server sent event.\n"
-" */\n"
-"@GET\n"
-"@Produces(MediaType.SERVER_SENT_EVENTS) // <2>\n"
-"public Multi<Quote> stream() {\n"
-"    return quotes; // <3>\n"
-"}\n"
+"Back to our `producer` project.\n"
+"Let's modify the `QuotesResource` to consume quotes, bind it to an HTTP endpoint to send events to clients:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:288
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "Injects the `quotes` channel using the `@Channel` qualifier"
 msgstr "Injecta o canal `quotes` utilizando o qualificador `@Channel`"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:289
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "Indicates that the content is sent using `Server Sent Events`"
 msgstr "Indica que o conteúdo é enviado utilizando `Server Sent Events`"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:290
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "Returns the stream (_Reactive Stream_)"
 msgstr "Devolve o fluxo _(Reactive Stream_)"
 
 #. type: Title ==
-#: upstream/_guides/amqp.adoc:291
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "The HTML page"
 msgstr "A página HTML"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:294
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "Final touch, the HTML page reading the converted prices using SSE."
 msgstr "Toque final, a página HTML que lê os preços convertidos utilizando SSE."
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:296
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "Create inside the `producer` project `src/main/resources/META-INF/resources/quotes.html` file, with the following content:"
 msgstr "Criar no projeto `producer` o ficheiro `src/main/resources/META-INF/resources/quotes.html`, com o seguinte conteúdo:"
 
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:300
-#, no-wrap
-msgid "<!DOCTYPE html> <html lang=\"en\"> <head> <meta charset=\"UTF-8\"> <title>Quotes</title>\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:336
-#, no-wrap
+#: _guides/amqp.adoc
 msgid ""
-"    <link rel=\"stylesheet\" type=\"text/css\"\n"
-"          href=\"https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly.min.css\">\n"
-"    <link rel=\"stylesheet\" type=\"text/css\"\n"
-"          href=\"https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly-additions.min.css\">\n"
-"</head>\n"
-"<body>\n"
-"<div class=\"container\">\n"
-"    <div class=\"card\">\n"
-"        <div class=\"card-body\">\n"
-"            <h2 class=\"card-title\">Quotes</h2>\n"
-"            <button class=\"btn btn-info\" id=\"request-quote\">Request Quote</button>\n"
-"            <div class=\"quotes\"></div>\n"
-"        </div>\n"
-"    </div>\n"
-"</div>\n"
-"</body>\n"
-"<script src=\"https://code.jquery.com/jquery-3.6.0.min.js\"></script>\n"
-"<script>\n"
-"    $(\"#request-quote\").click((event) => {\n"
-"        fetch(\"/quotes/request\", {method: \"POST\"})\n"
-"        .then(res => res.text())\n"
-"        .then(qid => {\n"
-"            var row = $(`<h4 class='col-md-12' id='${qid}'>Quote # <i>${qid}</i> | <strong>Pending</strong></h4>`);\n"
-"            $(\".quotes\").append(row);\n"
-"        });\n"
-"    });\n"
-"    var source = new EventSource(\"/quotes\");\n"
-"    source.onmessage = (event) => {\n"
-"      var json = JSON.parse(event.data);\n"
-"      $(`#${json.id}`).html(function(index, html) {\n"
-"        return html.replace(\"Pending\", `\\$\\xA0${json.price}`);\n"
-"      });\n"
-"    };\n"
-"</script>\n"
-"</html>\n"
+"Nothing spectacular here.\n"
+"On each received quote, it updates the page."
 msgstr ""
-
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:340
-#, fuzzy
-msgid "Nothing spectacular here.  On each received quote, it updates the page."
-msgstr "Nada de espetacular aqui. Em cada citação recebida, a página é actualizada."
 
 #. type: Title ==
-#: upstream/_guides/amqp.adoc:341
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "Get it running"
 msgstr "Pôr a funcionar"
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:344
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "You just need to run both applications using:"
 msgstr "Só precisa de executar ambas as aplicações utilizando:"
 
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:348
-#, no-wrap
-msgid "> mvn -f amqp-quickstart-producer quarkus:dev\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:351
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "And, in a separate terminal:"
 msgstr "E, num terminal separado:"
 
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:355
-#, no-wrap
-msgid "> mvn -f amqp-quickstart-processor quarkus:dev\n"
+#: _guides/amqp.adoc
+msgid ""
+"Quarkus starts a AMQP broker automatically, configures the application and shares the broker instance between different applications.\n"
+"See xref:amqp-dev-services.adoc[Dev Services for AMQP] for more details."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:359
-#, fuzzy
-msgid "Quarkus starts a AMQP broker automatically, configures the application and shares the broker instance between different applications.  See xref:amqp-dev-services.adoc[Dev Services for AMQP] for more details."
-msgstr "O Quarkus inicia um broker AMQP automaticamente, configura a aplicação e partilha a instância do broker entre diferentes aplicações. Consulte  link:amqp-dev-services.html[Serviços de desenvolvimento para AMQP] para obter mais detalhes."
-
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:362
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "Open `http://localhost:8080/quotes.html` in your browser and request some quotes by clicking the button."
 msgstr "Abrir `&lt;a href=\"http://localhost:8080/quotes.html\" class=\"bare\"&gt;http://localhost:8080/quotes.html&lt;/a&gt;` no seu browser e peça alguns orçamentos clicando no botão."
 
 #. type: Title ==
-#: upstream/_guides/amqp.adoc:363
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "Running in JVM or Native mode"
 msgstr "Execução em modo JVM ou nativo"
 
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:367
-#, fuzzy
-msgid "When not running in dev or test mode, you will need to start your AMQP broker.  You can follow the instructions from the https://activemq.apache.org/components/artemis/documentation/latest/using-server.html[Apache ActiveMQ Artemis website] or create a `docker-compose.yaml` file with the following content:"
-msgstr "Quando não estiver a correr em modo de desenvolvimento ou teste, terá de iniciar o seu corretor AMQP. Pode seguir as instruções do sítio Web do  link:https://activemq.apache.org/components/artemis/documentation/latest/using-server.html[Apache ActiveMQ Artemis] ou criar um ficheiro `docker-compose.yaml` com o seguinte conteúdo:"
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:371
-#, no-wrap
-msgid "version: '2'\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:373
-#, no-wrap
-msgid "services:\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:385
-#, no-wrap
+#: _guides/amqp.adoc
 msgid ""
-"  artemis:\n"
-"    image: quay.io/artemiscloud/activemq-artemis-broker:0.1.2\n"
-"    ports:\n"
-"      - \"8161:8161\"\n"
-"      - \"61616:61616\"\n"
-"      - \"5672:5672\"\n"
-"    environment:\n"
-"      AMQ_USER: quarkus\n"
-"      AMQ_PASSWORD: quarkus\n"
-"    networks:\n"
-"      - amqp-quickstart-network\n"
+"When not running in dev or test mode, you will need to start your AMQP broker.\n"
+"You can follow the instructions from the https://activemq.apache.org/components/artemis/documentation/latest/using-server.html[Apache ActiveMQ Artemis website] or create a `docker-compose.yaml` file with the following content:"
 msgstr ""
 
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:398
-#, no-wrap
+#: _guides/amqp.adoc
 msgid ""
-"  producer:\n"
-"    image: quarkus-quickstarts/amqp-quickstart-producer:1.0-${QUARKUS_MODE:-jvm}\n"
-"    build:\n"
-"      context: amqp-quickstart-producer\n"
-"      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}\n"
-"    environment:\n"
-"      AMQP_HOST: artemis\n"
-"      AMQP_PORT: 5672\n"
-"    ports:\n"
-"      - \"8080:8080\"\n"
-"    networks:\n"
-"      - amqp-quickstart-network\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:409
-#, no-wrap
-msgid ""
-"  processor:\n"
-"    image: quarkus-quickstarts/amqp-quickstart-processor:1.0-${QUARKUS_MODE:-jvm}\n"
-"    build:\n"
-"      context: amqp-quickstart-processor\n"
-"      dockerfile: src/main/docker/Dockerfile.${QUARKUS_MODE:-jvm}\n"
-"    environment:\n"
-"      AMQP_HOST: artemis\n"
-"      AMQP_PORT: 5672\n"
-"    networks:\n"
-"      - amqp-quickstart-network\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:413
-#, no-wrap
-msgid ""
-"networks:\n"
-"  amqp-quickstart-network:\n"
-"    name: amqp-quickstart\n"
+"Note how the AMQP broker location is configured.\n"
+"The `amqp.host` and `amqp.port` (`AMQP_HOST` and `AMQP_PORT` environment variables) properties configure location."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:417
-#, fuzzy
-msgid "Note how the AMQP broker location is configured.  The `amqp.host` and `amqp.port` (`AMQP_HOST` and `AMQP_PORT` environment variables) properties configure location."
-msgstr "Observe como a localização do corretor AMQP é configurada. As propriedades `amqp.host` e `amqp.port` (variáveis de ambiente `AMQP_HOST` e `AMQP_PORT` ) configuram a localização."
-
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:420
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "First, make sure you stopped the applications, and build both applications in JVM mode with:"
 msgstr "Primeiro, certifique-se de que parou as aplicações e construa ambas as aplicações no modo JVM com:"
 
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:425
-#, no-wrap
+#: _guides/amqp.adoc
 msgid ""
-"> mvn -f amqp-quickstart-producer clean package\n"
-"> mvn -f amqp-quickstart-processor clean package\n"
+"Once packaged, run `docker compose up --build`.\n"
+"The UI is exposed on http://localhost:8080/quotes.html"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:429
-#, fuzzy
-msgid "Once packaged, run `docker compose up --build`.  The UI is exposed on http://localhost:8080/quotes.html"
-msgstr "Depois de empacotado, execute `docker compose up --build`. A IU é exposta em  http://localhost:8080/quotes.html"
-
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:431
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "To run your applications as native, first we need to build the native executables:"
 msgstr "Para executar as suas aplicações como nativas, primeiro precisamos de construir os executáveis nativos:"
 
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:436
-#, no-wrap
+#: _guides/amqp.adoc
 msgid ""
-"> mvn -f amqp-quickstart-producer package -Dnative  -Dquarkus.native.container-build=true\n"
-"> mvn -f amqp-quickstart-processor package -Dnative -Dquarkus.native.container-build=true\n"
+"The `-Dquarkus.native.container-build=true` instructs Quarkus to build Linux 64bits native executables, who can run inside containers.\n"
+"Then, run the system using:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/amqp.adoc:440
-#, fuzzy
-msgid "The `-Dquarkus.native.container-build=true` instructs Quarkus to build Linux 64bits native executables, who can run inside containers.  Then, run the system using:"
-msgstr "O `-Dquarkus.native.container-build=true` instrui o Quarkus a construir executáveis nativos Linux 64bits, que podem ser executados dentro de contentores. Em seguida, execute o sistema usando:"
-
-#. type: delimited block -
-#: upstream/_guides/amqp.adoc:445
-#, no-wrap
-msgid ""
-"> export QUARKUS_MODE=native\n"
-"> docker compose up --build\n"
-msgstr ""
-
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:448
+#: _guides/amqp.adoc
 #, fuzzy
 msgid "As before, the UI is exposed on http://localhost:8080/quotes.html"
 msgstr "Tal como anteriormente, a IU está exposta em  http://localhost:8080/quotes.html"
 
 #. type: Title ==
-#: upstream/_guides/amqp.adoc:449
+#: _guides/amqp.adoc
 #, fuzzy, no-wrap
 msgid "Going further"
 msgstr "Ir mais longe"
 
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:453
-#, fuzzy
-msgid "This guide has shown how you can interact with AMQP 1.0 using Quarkus.  It utilizes https://smallrye.io/smallrye-reactive-messaging[SmallRye Reactive Messaging] to build data streaming applications."
-msgstr "Este guia mostrou como interagir com o AMQP 1.0 usando o Quarkus. Ele utiliza o  link:https://smallrye.io/smallrye-reactive-messaging[SmallRye Reactive Messaging] para criar aplicações de fluxo de dados."
+#: _guides/amqp.adoc
+msgid ""
+"This guide has shown how you can interact with AMQP 1.0 using Quarkus.\n"
+"It utilizes https://smallrye.io/smallrye-reactive-messaging[SmallRye Reactive Messaging] to build data streaming applications."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/amqp.adoc:456
-#, fuzzy
-msgid "If you did the Kafka quickstart, you have realized that it's the same code.  The only difference is the connector configuration and the JSON mapping."
-msgstr "Se fez o quickstart do Kafka, apercebeu-se de que se trata do mesmo código. A única diferença é a configuração do conetor e o mapeamento JSON."
+#: _guides/amqp.adoc
+msgid ""
+"If you did the Kafka quickstart, you have realized that it's the same code.\n"
+"The only difference is the connector configuration and the JSON mapping."
+msgstr ""

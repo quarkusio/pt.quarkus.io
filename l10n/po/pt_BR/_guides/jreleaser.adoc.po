@@ -11,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,1045 +20,424 @@ msgstr ""
 #. and pull requests should be submitted there:
 #. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
 #. type: Title =
-#: upstream/_guides/jreleaser.adoc:6
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "Packaging And Releasing With JReleaser"
 msgstr "Embalagem e lançamento com JReleaser"
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:16
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "This guide covers packaging and releasing CLI applications using the link:https://jreleaser.org[JReleaser] tool."
 msgstr "Este guia aborda o empacotamento e o lançamento de aplicações CLI utilizando a ferramenta  link:https://jreleaser.org[JReleaser]."
 
 #. type: Title ==
-#: upstream/_guides/jreleaser.adoc:17
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "Prerequisites"
 msgstr "Pré-requisitos"
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:21
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "a GitHub account and a GitHub Personal Access token"
 msgstr "uma conta GitHub e um token de acesso pessoal GitHub"
 
 #. type: Title ==
-#: upstream/_guides/jreleaser.adoc:22
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "Bootstrapping the project"
 msgstr "Arranque do projeto"
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:26
-#, fuzzy
-msgid "First, we need a project that defines a CLI application. We recommend using the xref:picocli.adoc[PicoCLI] extension.  This can be done using the following command:"
-msgstr "Em primeiro lugar, precisamos de um projeto que defina uma aplicação CLI. Recomendamos a utilização da extensão  link:picocli.html[PicoCLI]. Isso pode ser feito usando o seguinte comando:"
+#: _guides/jreleaser.adoc
+msgid ""
+"First, we need a project that defines a CLI application. We recommend using the xref:picocli.adoc[PicoCLI] extension.\n"
+"This can be done using the following command:"
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:32
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "This command initializes the file structure and the minimum set of required files in the project:"
 msgstr "Este comando inicializa a estrutura de ficheiros e o conjunto mínimo de ficheiros necessários no projeto:"
 
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:52
-#, no-wrap
-msgid ""
-".\n"
-"├── README.md\n"
-"├── mvnw\n"
-"├── mvnw.cmd\n"
-"├── pom.xml\n"
-"└── src\n"
-"    └── main\n"
-"        ├── docker\n"
-"        │   ├── Dockerfile.jvm\n"
-"        │   ├── Dockerfile.legacy-jar\n"
-"        │   └── Dockerfile.native\n"
-"        ├── java\n"
-"        │   └── org\n"
-"        │       └── acme\n"
-"        │           └── GreetingCommand.java\n"
-"        └── resources\n"
-"            └── application.properties\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:55
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "It will also configure the picocli extension in the `pom.xml`:"
 msgstr "Também irá configurar a extensão picocli no `pom.xml`:"
 
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:62
-#, no-wrap
-msgid ""
-"    <dependency>\n"
-"      <groupId>io.quarkus</groupId>\n"
-"      <artifactId>quarkus-picocli</artifactId>\n"
-"    </dependency>\n"
-msgstr ""
-
 #. type: Title ==
-#: upstream/_guides/jreleaser.adoc:64
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "Preparing the project for GitHub releases"
 msgstr "Preparar o projeto para lançamentos de GitHub"
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:69
-#, fuzzy
-msgid "The project must be hosted at a GitHub repository before we continue. This task can be completed by logging into your GitHub account, creating a new repository, and adding the newly created sources to said repository. Choose the `main` branch as default to take advantage of conventions and thus configure less in your `pom.xml`."
-msgstr "O projeto deve ser hospedado em um repositório do GitHub antes de continuarmos. Essa tarefa pode ser concluída fazendo login na sua conta do GitHub, criando um novo repositório e adicionando os códigos-fonte recém-criados a esse repositório. Escolha o ramo `main` como padrão para tirar proveito das convenções e, assim, configurar o less no seu `pom.xml`."
+#: _guides/jreleaser.adoc
+msgid ""
+"The project must be hosted at a GitHub repository before we continue. This task can be completed by logging into your\n"
+"GitHub account, creating a new repository, and adding the newly created sources to said repository. Choose the `main`\n"
+"branch as default to take advantage of conventions and thus configure less in your `pom.xml`."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:77
-#, fuzzy
-msgid "You also need a GitHub Personal Access token to be able to post a release to the repository you just created. Follow the official documentation for link:https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token[creating a personal access token].  Store the newly created token at a safe place for future reference. Next, you have the choice of configuring the token as an environment variable named `JRELEASER_GITHUB_TOKEN` so that the tool can read it. Alternatively you may store the token at a secure location of your choosing, using a `.yml`, `.toml`, `.json`, or `.properties` file. The default location is `~/.jreleaser/config[format]`. For example, using the `.yml` format this file could look like:"
-msgstr "Também é necessário um token de acesso pessoal do GitHub para poder publicar uma versão no repositório que acabou de criar. Siga a documentação oficial para  link:https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token[criar um token de acesso pessoal]. Armazene o token recém-criado em um local seguro para referência futura. Em seguida, você tem a opção de configurar o token como uma variável de ambiente chamada `JRELEASER_GITHUB_TOKEN` para que a ferramenta possa lê-la. Como alternativa, você pode armazenar o token em um local seguro de sua escolha, usando um arquivo `.yml`, `.toml`, `.json` ou `.properties`. A localização predefinida é `~/.jreleaser/config[format]`. Por exemplo, utilizando o formato `.yml`, este ficheiro pode ter o seguinte aspeto:"
+#: _guides/jreleaser.adoc
+msgid ""
+"You also need a GitHub Personal Access token to be able to post a release to the repository you just created. Follow\n"
+"the official documentation for\n"
+"link:https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token[creating a personal access token].\n"
+"Store the newly created token at a safe place for future reference. Next, you have the choice of configuring the token\n"
+"as an environment variable named `JRELEASER_GITHUB_TOKEN` so that the tool can read it. Alternatively you may store\n"
+"the token at a secure location of your choosing, using a `.yml`, `.toml`, `.json`, or `.properties` file. The default\n"
+"location is `~/.jreleaser/config[format]`. For example, using the `.yml` format this file could look like:"
+msgstr ""
 
 #. type: Block title
-#: upstream/_guides/jreleaser.adoc:79
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "~/.jreleaser/config.yml"
 msgstr "~/.jreleaser/config.yml"
 
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:82
-#, no-wrap
-msgid "JRELEASER_GITHUB_TOKEN: <github-token-value>\n"
+#: _guides/jreleaser.adoc
+msgid ""
+"Alright. Add all sources and create a first commit. You can choose your own conventions for commit messages however you\n"
+"can get more bang for your buck when using JReleaser if you follow the\n"
+"link:https://www.conventionalcommits.org/en/v1.0.0/[Conventional Commits] specification. Make your first commit with the\n"
+"following message \"build: Add initial sources\"."
 msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:88
-#, fuzzy
-msgid "Alright. Add all sources and create a first commit. You can choose your own conventions for commit messages however you can get more bang for your buck when using JReleaser if you follow the link:https://www.conventionalcommits.org/en/v1.0.0/[Conventional Commits] specification. Make your first commit with the following message \"build: Add initial sources\"."
-msgstr "Tudo certo. Adicione todos os fontes e crie um primeiro commit. Pode escolher as suas próprias convenções para as mensagens de commit, no entanto, pode obter mais retorno do seu investimento ao utilizar o JReleaser se seguir a especificação  link:https://www.conventionalcommits.org/en/v1.0.0/[Conventional Commits]. Faça o seu primeiro commit com a seguinte mensagem \"build: Adicionar fontes iniciais\"."
-
 #. type: Title ==
-#: upstream/_guides/jreleaser.adoc:89
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "Packaging as a Native Image distribution"
 msgstr "Embalagem como uma distribuição de imagem nativa"
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:94
-#, fuzzy
-msgid "Quarkus already knows how to create a native executable using GraalVM Native Image. The default setup will create a single executable file following a naming convention. However, the JReleaser tool expects a distribution that is, a conventional file structure packaged as a Zip or Tar file. The file structure must follow this layout:"
-msgstr "O Quarkus já sabe como criar um executável nativo usando o GraalVM Native Image. A configuração padrão criará um único ficheiro executável seguindo uma convenção de nomes. No entanto, a ferramenta JReleaser espera uma distribuição, ou seja, uma estrutura de ficheiros convencional empacotada como um ficheiro Zip ou Tar. A estrutura do ficheiro deve seguir este esquema:"
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:102
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-".\n"
-"├── LICENSE\n"
-"├── README\n"
-"└── bin\n"
-"    └── executable\n"
+"Quarkus already knows how to create a native executable using GraalVM Native Image. The default setup will create a\n"
+"single executable file following a naming convention. However, the JReleaser tool expects a distribution that is, a\n"
+"conventional file structure packaged as a Zip or Tar file. The file structure must follow this layout:"
 msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:106
-#, fuzzy
-msgid "This structure lets you add all kinds of supporting files required by the executable, such as configuration files, shell completion scripts, man pages, license, readme, and more."
-msgstr "Esta estrutura permite-lhe adicionar todos os tipos de ficheiros de suporte necessários ao executável, tais como ficheiros de configuração, scripts de conclusão de shell, páginas man, licença, readme, e mais."
+#: _guides/jreleaser.adoc
+msgid ""
+"This structure lets you add all kinds of supporting files required by the executable, such as configuration files,\n"
+"shell completion scripts, man pages, license, readme, and more."
+msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/jreleaser.adoc:107
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "Creating the distribution"
 msgstr "Criar a distribuição"
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:112
-#, fuzzy
-msgid "We can leverage the link:http://maven.apache.org/plugins/maven-assembly-plugin/[maven-assembly-plugin] to create such a distribution. We'll also make use of the link:https://github.com/trustin/os-maven-plugin[os-maven-plugin] to properly identify the platform on which this executable can run, adding said platform to the distribution's filename."
-msgstr "Podemos aproveitar o  link:http://maven.apache.org/plugins/maven-assembly-plugin/[plugin maven-assembly] para criar tal distribuição. Também utilizaremos o  link:https://github.com/trustin/os-maven-plugin[plugin os-maven] para identificar corretamente a plataforma na qual este executável pode ser executado, adicionando essa plataforma ao nome do ficheiro da distribuição."
-
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:115
-#, fuzzy
-msgid "First, let's add the os-maven-plugin to the `pom.xml`. This plugin works as a Maven extension and as such must be added to the `<build>` section of the file:"
-msgstr "Primeiro, vamos adicionar o plugin os-maven-plugin ao ficheiro `pom.xml`. Este plugin funciona como uma extensão Maven e, como tal, deve ser adicionado à secção `&amp;lt;build&amp;gt;` do ficheiro:"
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:127
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"  <build>\n"
-"    <extensions>\n"
-"      <extension>\n"
-"        <groupId>kr.motd.maven</groupId>\n"
-"        <artifactId>os-maven-plugin</artifactId>\n"
-"        <version>1.7.1</version>\n"
-"      </extension>\n"
-"    </extensions>\n"
-"    <!-- ... -->\n"
+"We can leverage the link:http://maven.apache.org/plugins/maven-assembly-plugin/[maven-assembly-plugin] to create such\n"
+"a distribution. We'll also make use of the link:https://github.com/trustin/os-maven-plugin[os-maven-plugin] to properly\n"
+"identify the platform on which this executable can run, adding said platform to the distribution's filename."
 msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:133
-#, fuzzy
-msgid "Next, native executables on Linux and macOS platforms typically do not have a file extension but Windows executables do, we need to take care of this when renaming the generated executable. We can also place the generated distributions into their own directory to avoid cluttering the `target` directory. Thus, let's add a couple of properties to the existing `<properties>` section in the `pom.xml`:"
-msgstr "Em seguida, os executáveis nativos nas plataformas Linux e macOS normalmente não têm uma extensão de ficheiro, mas os executáveis do Windows têm, pelo que temos de ter isto em atenção quando renomeamos o executável gerado. Também podemos colocar as distribuições geradas no seu próprio diretório para evitar sobrecarregar o diretório `target`. Assim, vamos adicionar um par de propriedades à secção `&amp;lt;properties&amp;gt;` existente no diretório `pom.xml`:"
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:138
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"<executable-suffix/>\n"
-"<distribution.directory>${project.build.directory}/distributions</distribution.directory>\n"
+"First, let's add the os-maven-plugin to the `pom.xml`. This plugin works as a Maven extension and as such must be added\n"
+"to the `<build>` section of the file:"
 msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:145
-#, fuzzy
-msgid "Now we configure the maven-assembly-plugin to create a Zip and a Tar file containing the executable and any supporting files it may need to perform its job. Take special note on the name of the distribution, this is where we make use of the platform properties detected by the os-maven-plugin. This plugin is configured in its own profile with the `single` goal bound to the `package` phase. It's done this way to avoid rebuilding the distribution every single time the build is invoked, as we only needed when we're ready for a release."
-msgstr "Agora configuramos o maven-assembly-plugin para criar um ficheiro Zip e um ficheiro Tar contendo o executável e quaisquer ficheiros de suporte que possam ser necessários para realizar o seu trabalho. Tome especial atenção ao nome da distribuição, pois é aqui que utilizamos as propriedades da plataforma detectadas pelo os-maven-plugin. Este plugin é configurado no seu próprio perfil com o objetivo `single` ligado à fase `package`. É feito desta forma para evitar reconstruir a distribuição cada vez que a compilação é invocada, pois só precisamos dela quando estivermos prontos para um lançamento."
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:190
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"    <profile>\n"
-"      <id>dist</id>\n"
-"      <build>\n"
-"        <plugins>\n"
-"          <plugin>\n"
-"            <groupId>org.apache.maven.plugins</groupId>\n"
-"            <artifactId>maven-assembly-plugin</artifactId>\n"
-"            <version>3.3.0</version>\n"
-"            <configuration>\n"
-"              <attach>false</attach>\n"
-"              <appendAssemblyId>false</appendAssemblyId>\n"
-"              <finalName>${project.artifactId}-${project.version}-${os.detected.classifier}</finalName>\n"
-"              <outputDirectory>${distribution.directory}</outputDirectory>\n"
-"              <workDirectory>${project.build.directory}/assembly/work</workDirectory>\n"
-"              <descriptors>\n"
-"                <descriptor>src/main/assembly/assembly.xml</descriptor>\n"
-"              </descriptors>\n"
-"            </configuration>\n"
-"            <executions>\n"
-"              <execution>\n"
-"                <id>make-distribution</id>\n"
-"                <phase>package</phase>\n"
-"                <goals>\n"
-"                  <goal>single</goal>\n"
-"                </goals>\n"
-"              </execution>\n"
-"            </executions>\n"
-"          </plugin>\n"
-"        </plugins>\n"
-"      </build>\n"
-"    </profile>\n"
-"    <profile>\n"
-"      <id>dist-windows</id>\n"
-"      <activation>\n"
-"        <os>\n"
-"          <family>windows</family>\n"
-"        </os>\n"
-"      </activation>\n"
-"      <properties>\n"
-"        <executable-suffix>.exe</executable-suffix>\n"
-"      </properties>\n"
-"    </profile>\n"
+"Next, native executables on Linux and macOS platforms typically do not have a file extension but Windows executables do,\n"
+"we need to take care of this when renaming the generated executable. We can also place the generated distributions into\n"
+"their own directory to avoid cluttering the `target` directory. Thus, let's add a couple of properties to the existing\n"
+"`<properties>` section in the `pom.xml`:"
 msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:196
-#, fuzzy
-msgid "Note that two profiles are configured. The `dist` profile configures the assembly plugin, and it's configured in such a way that it must be activated explicitly by passing `-Pdist` as a command flag. On the other hand the `dist-windows` profile becomes active automatically when the build is run on a Windows platform. This second profile takes care of setting the value for the `executable-suffix` property which is required by the assembly descriptor, as shown next:"
-msgstr "Note que estão configurados dois perfis. O perfil `dist` configura o plug-in de montagem, e está configurado de tal forma que tem de ser ativado explicitamente passando `-Pdist` como uma bandeira de comando. Por outro lado, o perfil `dist-windows` torna-se ativo automaticamente quando a compilação é executada numa plataforma Windows. Esse segundo perfil se encarrega de definir o valor da propriedade `executable-suffix`, que é exigida pelo descritor de montagem, como mostrado a seguir:"
+#: _guides/jreleaser.adoc
+msgid ""
+"Now we configure the maven-assembly-plugin to create a Zip and a Tar file containing the executable and any supporting files\n"
+"it may need to perform its job. Take special note on the name of the distribution, this is where we make use of the platform\n"
+"properties detected by the os-maven-plugin. This plugin is configured in its own profile with the `single` goal bound to\n"
+"the `package` phase. It's done this way to avoid rebuilding the distribution every single time the build is invoked, as we\n"
+"only needed when we're ready for a release."
+msgstr ""
+
+#: _guides/jreleaser.adoc
+msgid ""
+"Note that two profiles are configured. The `dist` profile configures the assembly plugin, and it's configured in such a way that\n"
+"it must be activated explicitly by passing `-Pdist` as a command flag. On the other hand the `dist-windows` profile becomes\n"
+"active automatically when the build is run on a Windows platform. This second profile takes care of setting the value for the\n"
+"`executable-suffix` property which is required by the assembly descriptor, as shown next:"
+msgstr ""
 
 #. type: Block title
-#: upstream/_guides/jreleaser.adoc:198
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "src/main/assembly/assembly.xml"
 msgstr "src/main/assembly/assembly.xml"
 
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:218
-#, no-wrap
-msgid ""
-"<assembly\n"
-"        xmlns=\"pass:[http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0]\"\n"
-"        xmlns:xsi=\"pass:[http://www.w3.org/2001/XMLSchema-instance]\"\n"
-"        xsi:schemaLocation=\"pass:[http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0] pass:[http://maven.apache.org/xsd/assembly-1.1.0.xsd]\">\n"
-"    <id>dist</id>\n"
-"    <formats>\n"
-"        <format>tar.gz</format>\n"
-"        <format>zip</format>\n"
-"        <format>dir</format>\n"
-"    </formats>\n"
-"    <files>\n"
-"        <file>\n"
-"            <source>${project.build.directory}/${project.artifactId}-${project.version}-runner${executable-suffix}</source>\n"
-"            <outputDirectory>./bin</outputDirectory>\n"
-"            <destName>${project.artifactId}${executable-suffix}</destName>\n"
-"        </file>\n"
-"    </files>\n"
-"</assembly>\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:221
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "These are the files created by the assembly plugin when invoking `./mvnw -Pdist package` on macOS:"
 msgstr "Estes são os ficheiros criados pelo plug-in de montagem ao invocar `./mvnw -Pdist package` no macOS:"
 
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:232
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"$ tree target/distributions/\n"
-"target/distributions/\n"
-"├── app-1.0.0-SNAPSHOT-osx-x86_64\n"
-"│   └── app-1.0.0-SNAPSHOT-osx-x86_64\n"
-"│       └── bin\n"
-"│           └── app\n"
-"├── app-1.0.0-SNAPSHOT-osx-x86_64.tar.gz\n"
-"└── app-1.0.0-SNAPSHOT-osx-x86_64.zip\n"
+"Feel free to update the assembly descriptor to include additional files such as LICENSE, readme, or anything else needed by\n"
+"the consumers of the executable. Make another commit right here with \"build: Configure distribution assembly\"."
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:236
-#, fuzzy
-msgid "Feel free to update the assembly descriptor to include additional files such as LICENSE, readme, or anything else needed by the consumers of the executable. Make another commit right here with \"build: Configure distribution assembly\"."
-msgstr "Sinta-se livre para atualizar o descritor do assembly para incluir arquivos adicionais como LICENSE, readme, ou qualquer outra coisa necessária para os consumidores do executável. Faça outro commit aqui mesmo com \"build: Configurar o assembly de distribuição\"."
-
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:238
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "We're ready to go to the next phase: configuring the release."
 msgstr "Estamos prontos para passar à fase seguinte: configurar a versão."
 
 #. type: Title ==
-#: upstream/_guides/jreleaser.adoc:239
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "Adding JReleaser"
 msgstr "Adicionar o JReleaser"
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:244
-#, fuzzy
-msgid "The JReleaser tool can be invoked in many ways: as a CLI tool, as a Docker image, or as a Maven plugin. The last option is very convenient given that we are already working with Maven. Let's add yet another profile that contains the release configuration as once again we don't require this behavior to be active all the time only when we're ready to post a release:"
-msgstr "A ferramenta JReleaser pode ser invocada de várias maneiras: como uma ferramenta CLI, como uma imagem Docker ou como um plug-in Maven. A última opção é muito conveniente, uma vez que já estamos a trabalhar com o Maven. Vamos adicionar mais um perfil que contém a configuração de lançamento, pois, mais uma vez, não precisamos que esse comportamento esteja ativo o tempo todo, apenas quando estivermos prontos para publicar um lançamento:"
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:259
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"    <profile>\n"
-"      <id>release</id>\n"
-"      <build>\n"
-"        <plugins>\n"
-"          <plugin>\n"
-"            <groupId>org.jreleaser</groupId>\n"
-"            <artifactId>jreleaser-maven-plugin</artifactId>\n"
-"            <version>{jreleaser-version}</version>\n"
-"          </plugin>\n"
-"        </plugins>\n"
-"      </build>\n"
-"    </profile>\n"
+"The JReleaser tool can be invoked in many ways: as a CLI tool, as a Docker image, or as a Maven plugin. The last option is very\n"
+"convenient given that we are already working with Maven. Let's add yet another profile that contains the release configuration\n"
+"as once again we don't require this behavior to be active all the time only when we're ready to post a release:"
 msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:265
-#, fuzzy
-msgid "There are a few goals we can invoke at this point, we can for example ask JReleaser to print out its current configuration by invoking the `./mvnw -Prelease jreleaser:config` command. The tool will output everything that it knows about the project. We can also generate the changelog by invoking `./mvnw -Prelease jreleaser:changelog`. A file containing the changelog will be placed at `target/jreleaser/release/CHANGELOG.md` which at this point should look like this:"
-msgstr "Existem alguns objectivos que podemos invocar neste ponto, podemos por exemplo pedir ao JReleaser para imprimir a sua configuração atual invocando o comando `./mvnw -Prelease jreleaser:config`. A ferramenta irá mostrar tudo o que sabe sobre o projeto. Também podemos gerar o registo de alterações invocando `./mvnw -Prelease jreleaser:changelog`. Um ficheiro contendo o changelog será colocado em `target/jreleaser/release/CHANGELOG.md` que, nesta altura, deverá ter o seguinte aspeto:"
+#: _guides/jreleaser.adoc
+msgid ""
+"There are a few goals we can invoke at this point, we can for example ask JReleaser to print out its current configuration by\n"
+"invoking the `./mvnw -Prelease jreleaser:config` command. The tool will output everything that it knows about the project. We\n"
+"can also generate the changelog by invoking `./mvnw -Prelease jreleaser:changelog`. A file containing the changelog will be\n"
+"placed at `target/jreleaser/release/CHANGELOG.md` which at this point should look like this:"
+msgstr ""
 
 #. type: Block title
-#: upstream/_guides/jreleaser.adoc:267 upstream/_guides/jreleaser.adoc:298
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "target/jreleaser/release/CHANGELOG.md"
 msgstr "target/jreleaser/release/CHANGELOG.md"
 
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:270 upstream/_guides/jreleaser.adoc:301
-#, no-wrap
-msgid "## Changelog\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:273
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"8ef3307 build: Configure distribution assembly\n"
-"5215200 build: Add initial sources\n"
+"Not very exciting, but we can change this by instructing JReleaser to format the changelog according to our own conventions. You\n"
+"can manually specify patterns to categorize commits however if you chose to follow Conventional Commits we can instruct JReleaser\n"
+"to do the same. Add the following to the JReleaser plugin configuration section:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:278
-#, fuzzy
-msgid "Not very exciting, but we can change this by instructing JReleaser to format the changelog according to our own conventions. You can manually specify patterns to categorize commits however if you chose to follow Conventional Commits we can instruct JReleaser to do the same. Add the following to the JReleaser plugin configuration section:"
-msgstr "Não é muito excitante, mas podemos mudar isso instruindo o JReleaser a formatar o changelog de acordo com nossas próprias convenções. É possível especificar manualmente padrões para categorizar os commits, no entanto, se optar por seguir os Commits Convencionais, podemos instruir o JReleaser a fazer o mesmo. Adicione o seguinte à secção de configuração do plugin JReleaser:"
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:293
-#, no-wrap
-msgid ""
-"            <configuration>\n"
-"              <jreleaser>\n"
-"                <release>\n"
-"                  <github>\n"
-"                    <changelog>\n"
-"                      <formatted>ALWAYS</formatted>\n"
-"                      <preset>conventional-commits</preset>\n"
-"                    </changelog>\n"
-"                  </github>\n"
-"                </release>\n"
-"              </jreleaser>\n"
-"            </configuration>\n"
-msgstr ""
-
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:296
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "Run the previous Maven command once again and inspect the generated changelog, it should now look like this:"
 msgstr "Execute o comando Maven anterior mais uma vez e inspeccione o registo de alterações gerado, que deve agora ter o seguinte aspeto:"
 
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:305
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"## 🛠  Build\n"
-"- 8ef3307 Configure distribution assembly (Andres Almiray)\n"
-"- 5215200 Add initial sources (Andres Almiray)\n"
+"There are more formatting options you may apply but for now these will suffice. Let's make yet another commit right now, with\n"
+"\"build: Configure JReleaser plugin\" as a commit message. If you want you can generate the changelog once again and see this\n"
+"latest commit added to the file."
 msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:310
-#, no-wrap
-msgid ""
-"## Contributors\n"
-"We'd like to thank the following people for their contributions:\n"
-"Andres Almiray\n"
-msgstr ""
-
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:315
-#, fuzzy
-msgid "There are more formatting options you may apply but for now these will suffice. Let's make yet another commit right now, with \"build: Configure JReleaser plugin\" as a commit message. If you want you can generate the changelog once again and see this latest commit added to the file."
-msgstr "Existem mais opções de formatação que pode aplicar, mas para já estas são suficientes. Vamos fazer mais um commit agora mesmo, com \"build: Configurar o plugin JReleaser\" como mensagem de commit. Se quiser, pode gerar o changelog mais uma vez e ver este último commit adicionado ao ficheiro."
 
 #. type: Title ==
-#: upstream/_guides/jreleaser.adoc:316
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "Adding distributions to the release"
 msgstr "Adicionar distribuições à versão"
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:324
-#, fuzzy
-msgid "We've reached the point where we can configure the binary distributions. If you run the `./mvnw -Prelease jreleaser:config` command you'll notice there's no mention of any distribution files that we configured in previous steps. This is because the tool has no implicit knowledge of them, we must tell JReleaser which files we'd like to release. This decouples creation of distributions from release assets as you might like to add or remove files at your leisure. For this particular case we'll configure Zip files for both macOS and Windows, and a Tar file for Linux. These files must be added to the JReleaser plugin configuration section, like so:"
-msgstr "Chegámos ao ponto em que podemos configurar as distribuições binárias. Se executar o comando `./mvnw -Prelease jreleaser:config` notará que não há menção de quaisquer ficheiros de distribuição que configurámos nos passos anteriores. Isto acontece porque a ferramenta não tem conhecimento implícito deles, temos de dizer ao JReleaser quais os ficheiros que queremos lançar. Isto desacopla a criação de distribuições dos activos de lançamento, uma vez que pode querer adicionar ou remover ficheiros à sua vontade. Para este caso em particular, vamos configurar ficheiros Zip para macOS e Windows, e um ficheiro Tar para Linux. Estes ficheiros devem ser adicionados à secção de configuração do plugin JReleaser, desta forma:"
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:358
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"            <configuration>\n"
-"              <jreleaser>\n"
-"                <release>\n"
-"                  <github>\n"
-"                    <changelog>\n"
-"                      <formatted>ALWAYS</formatted>\n"
-"                      <preset>conventional-commits</preset>\n"
-"                    </changelog>\n"
-"                  </github>\n"
-"                </release>\n"
-"                <distributions>\n"
-"                  <app>\n"
-"                    <type>BINARY</type>\n"
-"                    <artifacts>\n"
-"                      <artifact>\n"
-"                        <path>${distribution.directory}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz</path>\n"
-"                        <platform>linux-x86_64</platform>\n"
-"                      </artifact>\n"
-"                      <artifact>\n"
-"                        <path>${distribution.directory}/{{distributionName}}-{{projectVersion}}-windows-x86_64.zip</path>\n"
-"                        <platform>windows-x86_64</platform>\n"
-"                      </artifact>\n"
-"                      <artifact>\n"
-"                        <path>${distribution.directory}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip</path>\n"
-"                        <platform>osx-x86_64</platform>\n"
-"                      </artifact>\n"
-"                    </artifacts>\n"
-"                  </app>\n"
-"                </distributions>\n"
-"              </jreleaser>\n"
-"            </configuration>\n"
+"We've reached the point where we can configure the binary distributions. If you run the `./mvnw -Prelease jreleaser:config`\n"
+"command you'll notice there's no mention of any distribution files that we configured in previous steps. This is because\n"
+"the tool has no implicit knowledge of them, we must tell JReleaser which files we'd like to release. This decouples creation\n"
+"of distributions from release assets as you might like to add or remove files at your leisure. For this particular case we'll\n"
+"configure Zip files for both macOS and Windows, and a Tar file for Linux. These files must be added to the JReleaser plugin\n"
+"configuration section, like so:"
 msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:366
-#, fuzzy
-msgid "We can appreciate a distribution named `app` (same as the project's artifactId for convenience) with 3 configured artifacts.  Note the use of Maven properties and Mustache templates to define the paths. You may use explicit values if you want or rely on properties to parameterize the configuration. Maven properties resolve eagerly during build validation while Mustache templates resolve lazily during the execution of the JReleaser plugin goals. Each artifact must define a `platform` property that uniquely identifies them. If we run the `./mvnw -Prelease jreleaser:config` we'll quickly get an error as now that there's a configured distribution the plugin expects more metadata to be provided by the project:"
-msgstr "Podemos apreciar uma distribuição chamada `app` (o mesmo que o artifactId do projeto por conveniência) com 3 artefatos configurados. Observe o uso de propriedades Maven e modelos Mustache para definir os caminhos. Você pode usar valores explícitos se quiser ou confiar nas propriedades para parametrizar a configuração. As propriedades Maven são resolvidas avidamente durante a validação da compilação, enquanto os modelos Mustache são resolvidos preguiçosamente durante a execução dos objetivos do plug-in JReleaser. Cada artefacto deve definir uma propriedade `platform` que o identifique de forma única. Se executarmos o `./mvnw -Prelease jreleaser:config`, obteremos rapidamente um erro, pois agora que há uma distribuição configurada, o plug-in espera que mais metadados sejam fornecidos pelo projeto:"
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:376
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"[ERROR] == JReleaser ==\n"
-"[ERROR] project.copyright must not be blank\n"
-"[ERROR] project.description must not be blank\n"
-"[ERROR] project.website must not be blank\n"
-"[ERROR] project.docsUrl must not be blank\n"
-"[ERROR] project.license must not be blank\n"
-"[ERROR] project.authors must not be blank\n"
+"We can appreciate a distribution named `app` (same as the project's artifactId for convenience) with 3 configured artifacts.\n"
+"Note the use of Maven properties and Mustache templates to define the paths. You may use explicit values if you want or rely\n"
+"on properties to parameterize the configuration. Maven properties resolve eagerly during build validation while Mustache\n"
+"templates resolve lazily during the execution of the JReleaser plugin goals. Each artifact must define a `platform`\n"
+"property that uniquely identifies them. If we run the `./mvnw -Prelease jreleaser:config` we'll quickly get an error as now\n"
+"that there's a configured distribution the plugin expects more metadata to be provided by the project:"
 msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:380
-#, fuzzy
-msgid "This metadata can be provided in two ways: either as part of the JReleaser plugin's configuration or using standard POM elements. If you choose the former option then the plugin's configuration may look like this:"
-msgstr "Esses metadados podem ser fornecidos de duas maneiras: como parte da configuração do plugin JReleaser ou usando elementos POM padrão. Se escolher a primeira opção, a configuração do plugin pode ter o seguinte aspeto:"
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:396
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"            <configuration>\n"
-"              <jreleaser>\n"
-"                <project>\n"
-"                 <description>app - Sample Quarkus CLI application</description>\n"
-"                 <links>\n"
-"                   <homepage>https://github.com/aalmiray/app</homepage>\n"
-"                   <documentation>https://github.com/aalmiray/app</documentation>\n"
-"                 </links>\n"
-"                 <license>APACHE-2.0</license>\n"
-"                 <authors>Andres Almiray</authors>\n"
-"                 <copyright>2021 Kordamp</copyright>\n"
-"                </project>\n"
-"                <!-- ... -->\n"
+"This metadata can be provided in two ways: either as part of the JReleaser plugin's configuration or using standard\n"
+"POM elements. If you choose the former option then the plugin's configuration may look like this:"
 msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:400
-#, fuzzy
-msgid "If you choose to use standard POM elements then your `pom.xml` must contain these entries at the very least, of course adapting values to your own:"
-msgstr "Se optar por utilizar elementos POM padrão, o seu `pom.xml` deve conter, no mínimo, estas entradas, adaptando, naturalmente, os valores aos seus:"
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:420
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"  <name>app</name>\n"
-"  <description>app -- Sample Quarkus CLI application</description>\n"
-"  <inceptionYear>2021</inceptionYear>\n"
-"  <url>pass:[https://github.com/aalmiray/app]</url>\n"
-"  <developers>\n"
-"    <developer>\n"
-"      <id>aalmiray</id>\n"
-"      <name>Andres Almiray</name>\n"
-"    </developer>\n"
-"  </developers>\n"
-"  <licenses>\n"
-"    <license>\n"
-"      <name>Apache-2.0</name>\n"
-"      <url>pass:[http://www.apache.org/licenses/LICENSE-2.0.txt]</url>\n"
-"      <distribution>repo</distribution>\n"
-"    </license>\n"
-"  </licenses>\n"
+"If you choose to use standard POM elements then your `pom.xml` must contain these entries at the very least, of course\n"
+"adapting values to your own:"
 msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:429
-#, fuzzy
-msgid "Yet, we're not still out of the woods as invoking the `./mvnw -Prelease jreleaser:config` once more will still result in another error, this time the failure relates to missing artifacts. This is because we did not assemble all required artifacts, yet the plugin expects them to be readily available. Here you have the choice to build the required artifacts on other nodes then copy them to their expected locations -- a task that can be performed running a GitHub Actions workflow on multiple nodes. Or you can instruct JReleaser to ignore some artifacts and select only those that match your current platform. Previously we showed how the distribution would look like when created on macOS, assuming we're still on that platform we have the correct artifact."
-msgstr "No entanto, ainda não estamos fora de perigo, pois invocar o `./mvnw -Prelease jreleaser:config` mais uma vez ainda resultará em outro erro, desta vez a falha está relacionada com artefactos em falta. Isso ocorre porque não montamos todos os artefatos necessários, mas o plug-in espera que eles estejam prontamente disponíveis. Aqui tem a opção de construir os artefactos necessários noutros nós e depois copiá-los para as suas localizações esperadas - uma tarefa que pode ser realizada executando um fluxo de trabalho GitHub Actions em vários nós. Ou pode dar instruções ao JReleaser para ignorar alguns artefactos e selecionar apenas aqueles que correspondem à sua plataforma atual. Anteriormente, mostramos como a distribuição ficaria quando criada no macOS, assumindo que ainda estamos nessa plataforma e temos o artefato correto."
+#: _guides/jreleaser.adoc
+msgid ""
+"Yet, we're not still out of the woods as invoking the `./mvnw -Prelease jreleaser:config` once more will still result in\n"
+"another error, this time the failure relates to missing artifacts. This is because we did not assemble all required\n"
+"artifacts, yet the plugin expects them to be readily available. Here you have the choice to build the required artifacts\n"
+"on other nodes then copy them to their expected locations -- a task that can be performed running a GitHub Actions\n"
+"workflow on multiple nodes. Or you can instruct JReleaser to ignore some artifacts and select only those that match your\n"
+"current platform. Previously we showed how the distribution would look like when created on macOS, assuming we're still on\n"
+"that platform we have the correct artifact."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:434
-#, fuzzy
-msgid "We can instruct JReleaser to select only artifacts that match macOS at this point by invoking the `jreleaser:config` goal with an additional flag: `./mvnw -Prelease jreleaser:config -Djreleaser.select.current.platform`. This time the command will succeed and print out the model. Note that only the path for the macOS artifact has been fully resolved, leaving the other 2 paths untouched."
-msgstr "Podemos instruir o JReleaser para selecionar apenas artefactos que correspondam ao macOS neste momento, invocando o objetivo `jreleaser:config` com um sinalizador adicional: `./mvnw -Prelease jreleaser:config -Djreleaser.select.current.platform`. Desta vez, o comando será bem sucedido e imprimirá o modelo. Note que apenas o caminho para o artefacto macOS foi totalmente resolvido, deixando os outros 2 caminhos intocados."
+#: _guides/jreleaser.adoc
+msgid ""
+"We can instruct JReleaser to select only artifacts that match macOS at this point by invoking the `jreleaser:config` goal\n"
+"with an additional flag: `./mvnw -Prelease jreleaser:config -Djreleaser.select.current.platform`. This time the command\n"
+"will succeed and print out the model. Note that only the path for the macOS artifact has been fully resolved, leaving the\n"
+"other 2 paths untouched."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:439
-#, fuzzy
-msgid "Let's make one more commit here with \"build: Configure distribution artifacts\" as message. We can create a release right now, by invoking a different goal: `./mvnw -Prelease jreleaser:release -Djreleaser.select.current.platform`. This will create a Git release at the chosen repository, which includes tagging the repository, uploading the changelog, all distribution artifacts and their checksum as release assets."
-msgstr "Vamos fazer mais um commit aqui com \"build: Configurar artefactos de distribuição\" como mensagem. Podemos criar uma release agora mesmo, invocando um objetivo diferente: `./mvnw -Prelease jreleaser:release -Djreleaser.select.current.platform`. Isto irá criar uma release Git no repositório escolhido, o que inclui marcar o repositório, carregar o changelog, todos os artefactos de distribuição e o seu checksum como assets da release."
+#: _guides/jreleaser.adoc
+msgid ""
+"Let's make one more commit here with \"build: Configure distribution artifacts\" as message. We can create a release right\n"
+"now, by invoking a different goal: `./mvnw -Prelease jreleaser:release -Djreleaser.select.current.platform`. This will\n"
+"create a Git release at the chosen repository, which includes tagging the repository, uploading the changelog, all\n"
+"distribution artifacts and their checksum as release assets."
+msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:442
-#, fuzzy
-msgid "But before we do that let's add one additional feature, let's create a Homebrew formula that will make it easy for macOS users to consume the binary distribution, shall we?"
-msgstr "Mas antes de o fazermos, vamos acrescentar uma funcionalidade adicional, vamos criar uma fórmula Homebrew que facilitará aos utilizadores do macOS o consumo da distribuição binária, está bem?"
+#: _guides/jreleaser.adoc
+msgid ""
+"But before we do that let's add one additional feature, let's create a Homebrew formula that will make it easy for macOS\n"
+"users to consume the binary distribution, shall we?"
+msgstr ""
 
 #. type: Title ==
-#: upstream/_guides/jreleaser.adoc:443
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "Configuring Homebrew as a packager"
 msgstr "Configurando o Homebrew como um empacotador"
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:448
-#, fuzzy
-msgid "link:https://brew.sh/[Homebrew] is a popular choice among macOS users to install and manage binaries. Homebrew packages are at their core a Ruby file (known as a formula) that's executed on the target environment to install or upgrade a particular binary. JReleaser can create formulae from binary distributions such as the one we already have configured."
-msgstr "link:https://brew.sh/[O Homebrew] é uma escolha popular entre os utilizadores do macOS para instalar e gerir binários. Os pacotes Homebrew são, na sua essência, um ficheiro Ruby (conhecido como uma fórmula) que é executado no ambiente de destino para instalar ou atualizar um determinado binário. O JReleaser pode criar fórmulas a partir de distribuições de binários como a que já temos configurada."
+#: _guides/jreleaser.adoc
+msgid ""
+"link:https://brew.sh/[Homebrew] is a popular choice among macOS users to install and manage binaries. Homebrew packages\n"
+"are at their core a Ruby file (known as a formula) that's executed on the target environment to install or upgrade a\n"
+"particular binary. JReleaser can create formulae from binary distributions such as the one we already have configured."
+msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:450
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "For this to work we simply have to enable Homebrew in the JReleaser plugin configuration like so:"
 msgstr "Para que isto funcione, temos simplesmente de ativar o Homebrew na configuração do plugin JReleaser da seguinte forma:"
 
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:475
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"                <distributions>\n"
-"                  <app>\n"
-"                    <type>BINARY</type>\n"
-"                    <brew>\n"
-"                      <active>ALWAYS</active>\n"
-"                    </brew>\n"
-"                    <artifacts>\n"
-"                      <artifact>\n"
-"                        <path>${distribution.directory}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz</path>\n"
-"                        <platform>linux-x86_64</platform>\n"
-"                      </artifact>\n"
-"                      <artifact>\n"
-"                        <path>${distribution.directory}/{{distributionName}}-{{projectVersion}}-windows-x86_64.zip</path>\n"
-"                        <platform>windows-x86_64</platform>\n"
-"                      </artifact>\n"
-"                      <artifact>\n"
-"                        <path>${distribution.directory}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip</path>\n"
-"                        <platform>osx-x86_64</platform>\n"
-"                      </artifact>\n"
-"                    </artifacts>\n"
-"                  </app>\n"
-"                </distributions>\n"
+"One last thing: it's a good practice to publish Homebrew formulae for non-snapshot releases thus change the project's version\n"
+"from `1.0.0-SNAPSHOT` to say `1.0.0.Alpha1` or go directly with `1.0.0` as you feel like doing. One last commit, and we're done:\n"
+"say `feat: Add Homebrew packager configuration` as commit message. Alright, we're finally ready, let's post a release!"
 msgstr ""
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:480
-#, fuzzy
-msgid "One last thing: it's a good practice to publish Homebrew formulae for non-snapshot releases thus change the project's version from `1.0.0-SNAPSHOT` to say `1.0.0.Alpha1` or go directly with `1.0.0` as you feel like doing. One last commit, and we're done: say `feat: Add Homebrew packager configuration` as commit message. Alright, we're finally ready, let's post a release!"
-msgstr "Uma última coisa: é uma boa prática publicar fórmulas Homebrew para lançamentos que não sejam snapshots, portanto, mude a versão do projeto de `1.0.0-SNAPSHOT` para `1.0.0.Alpha1` ou vá diretamente para `1.0.0`, como lhe apetecer. Um último commit, e estamos prontos: diga `feat: Add Homebrew packager configuration` como mensagem de commit. Muito bem, estamos finalmente prontos, vamos publicar um lançamento!"
-
 #. type: Title ==
-#: upstream/_guides/jreleaser.adoc:481
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "Creating a release"
 msgstr "Criar uma libertação"
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:488
-#, fuzzy
-msgid "It's been quite the whirlwind tour of adding configuration to the `pom.xml` but that's just for getting the project ready for its first release; subsequent release require less tampering with configuration. We can create a git release and the Homebrew formula with the `jreleaser:full-release` goal but if you still have some doubts on how things may play out then you can invoke the goal in dry-run mode that is, let JReleaser perform all local operations as needed without affecting remote resources such as Git repositories. This is how it would look like:"
-msgstr "Tem sido um grande turbilhão adicionar configurações ao `pom.xml`, mas isso é apenas para preparar o projeto para o seu primeiro lançamento; os lançamentos subsequentes requerem menos manipulação de configurações. Podemos criar uma versão git e a fórmula Homebrew com o objetivo `jreleaser:full-release`, mas se você ainda tem algumas dúvidas sobre como as coisas podem funcionar, então você pode invocar o objetivo no modo dry-run, ou seja, deixar o JReleaser executar todas as operações locais conforme necessário, sem afetar recursos remotos, como repositórios Git. É assim que ficaria:"
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:494
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"# because we changed the project's version\n"
-"./mvnw -Dnative,dist package\n"
-"./mvnw -Prelease jreleaser:full-release -Djreleaser.select.current.platform -Djreleaser.dry.run=true\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:540
-#, no-wrap
-msgid ""
-"[INFO] --- jreleaser-maven-plugin:{jreleaser-version}:full-release (default-cli) @ app ---\n"
-"[INFO] JReleaser {jreleaser-version}\n"
-"[INFO]   - basedir set to /tmp/app\n"
-"[INFO]   - outputdir set to /tmp/app/target/jreleaser\n"
-"[WARNING] Platform selection is in effect\n"
-"[WARNING] Artifacts will be filtered by platform matching: [osx-x86_64]\n"
-"[INFO] git-root-search set to false\n"
-"[INFO] Loading variables from /Users/aalmiray/.jreleaser/config.toml\n"
-"[INFO] Validating configuration\n"
-"[INFO] Strict mode set to false\n"
-"[INFO] Project version set to 1.0.0.Alpha1\n"
-"[INFO] Release is not snapshot\n"
-"[INFO] Timestamp is 2023-04-27T15:06:34.289907+02:00\n"
-"[INFO] HEAD is at 73603ac\n"
-"[INFO] Platform is osx-x86_64\n"
-"[INFO] dry-run set to true\n"
-"[INFO] Generating changelog\n"
-"[INFO] Storing changelog: target/jreleaser/release/CHANGELOG.md\n"
-"[INFO] Cataloging artifacts\n"
-"[INFO]   [sbom] Cataloging is not enabled. Skipping\n"
-"[INFO] Calculating checksums for distributions and files\n"
-"[INFO]   [checksum] target/distributions/app-1.0.0.Alpha1-osx-x86_64.zip.sha256\n"
-"[INFO] Signing distributions and files\n"
-"[INFO]   [sign] Signing is not enabled. Skipping\n"
-"[INFO] Deploying Maven artifacts\n"
-"[INFO]   [maven] Deploying is not enabled. Skipping\n"
-"[INFO] Uploading distributions and files\n"
-"[INFO]   [upload] Uploading is not enabled. Skipping\n"
-"[INFO] Releasing to https://github.com/aalmiray/app@main\n"
-"[INFO]  - uploading app-1.0.0.Alpha1-osx-x86_64.zip\n"
-"[INFO]  - uploading checksums_sha256.txt\n"
-"[INFO] Preparing distributions\n"
-"[INFO]   - Preparing app distribution\n"
-"[INFO]     [brew] preparing app distribution\n"
-"[INFO] Packaging distributions\n"
-"[INFO]   - Packaging app distribution\n"
-"[INFO]     [brew] packaging app distribution\n"
-"[INFO] Publishing distributions\n"
-"[INFO]   - Publishing app distribution\n"
-"[INFO]     [brew] publishing app distribution\n"
-"[INFO]     [brew] setting up repository aalmiray/homebrew-tap\n"
-"[INFO] Announcing release\n"
-"[INFO]   [announce] Announcing is not enabled. Skipping\n"
-"[INFO] Writing output properties to target/jreleaser/output.properties\n"
-"[INFO] JReleaser succeeded after 0.620 s\n"
+"It's been quite the whirlwind tour of adding configuration to the `pom.xml` but that's just for getting the project ready for\n"
+"its first release; subsequent release require less tampering with configuration. We can create a git release and the\n"
+"Homebrew formula with the `jreleaser:full-release` goal but if you still have some doubts on how things may play out then\n"
+"you can invoke the goal in dry-run mode that is, let JReleaser perform all local operations as needed without affecting\n"
+"remote resources such as Git repositories. This is how it would look like:"
 msgstr ""
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:544
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "JReleaser will perform the following tasks for us:"
 msgstr "O JReleaser executa as seguintes tarefas por nós:"
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:546
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "Generate a changelog based on all commits from the last tag (if any) to the latest commit."
 msgstr "Gera um changelog baseado em todos os commits desde a última tag (se houver) até o último commit."
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:547
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "Calculate SHA256 (default) checksums for all input files."
 msgstr "Calcular somas de verificação SHA256 (predefinição) para todos os ficheiros de entrada."
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:548
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "Sign all files with GPG. In our case we did not configure this step thus it's skipped."
 msgstr "Assinar todos os ficheiros com GPG. No nosso caso, não configurámos este passo, pelo que é ignorado."
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:549
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "Upload assets to JFrog Artifactory or AWS S3. We also skip this step as it's not configured."
 msgstr "Carregue os ativos no JFrog Artifactory ou no AWS S3. Também ignoramos esta etapa, pois ela não está configurada."
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:550
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "Create a Git release at the chosen repository, tagging it."
 msgstr "Criar uma versão Git no repositório escolhido, marcando-a."
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:551
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "Upload all assets, including checksums."
 msgstr "Carregue todos os activos, incluindo as somas de verificação."
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:552
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "Create a Homebrew formula, publishing to pass:[https://github.com/aalmiray/homebrew-tap]."
 msgstr "Criar uma fórmula Homebrew, publicando em https://github.com/aalmiray/homebrew-tap."
 
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:556
-#, fuzzy
-msgid "Of course no remote repository was affected as we can appreciate the `-Djreleaser.dry.run=true` property was in effect. If you're so inclined inspect the contents of `target/jreleaser/package/app/brew/Formula/app.rb` which defines the Homebrew formula to be published. It should look something like this:"
-msgstr "É claro que nenhum repositório remoto foi afetado, uma vez que podemos apreciar que a propriedade `-Djreleaser.dry.run=true` estava em vigor. Se estiver disposto a inspecionar o conteúdo de `target/jreleaser/package/app/brew/Formula/app.rb` que define a fórmula Homebrew a ser publicada. Deve ser algo parecido com isto:"
+#: _guides/jreleaser.adoc
+msgid ""
+"Of course no remote repository was affected as we can appreciate the `-Djreleaser.dry.run=true` property was in effect. If you're\n"
+"so inclined inspect the contents of `target/jreleaser/package/app/brew/Formula/app.rb` which defines the Homebrew formula\n"
+"to be published. It should look something like this:"
+msgstr ""
 
 #. type: Block title
-#: upstream/_guides/jreleaser.adoc:558
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "app.rb"
 msgstr "app.rb"
 
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:568
-#, no-wrap
+#: _guides/jreleaser.adoc
 msgid ""
-"# Generated with JReleaser {jreleaser-version} at 2023-04-27T15:06:34.289907+02:00\n"
-"class App < Formula\n"
-"  desc \"app -- Sample Quarkus CLI application\"\n"
-"  homepage \"pass:[https://github.com/aalmiray/app]\"\n"
-"  url \"pass:[https://github.com/aalmiray/app/releases/download/v1.0.0.Alpha1/app-1.0.0.Alpha1-osx-x86_64.zip]\"\n"
-"  version \"1.0.0.Alpha1\"\n"
-"  sha256 \"85c9918b23e3ac4ef64d5dd02714e241231d3f1358afdba09d3fd0b9a889e131\"\n"
-"  license \"Apache-2.0\"\n"
+"When ready, create a release for real this time by simply removing the `-Djreleaser.dry.run` flag from the command line, then\n"
+"browse to your repository and look at the freshly created release."
 msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:574
-#, no-wrap
-msgid ""
-"  def install\n"
-"    libexec.install Dir[\"*\"]\n"
-"    bin.install_symlink \"#{libexec}/bin/app\" => \"app\"\n"
-"  end\n"
-msgstr ""
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:580
-#, no-wrap
-msgid ""
-"  test do\n"
-"    output = shell_output(\"#{bin}/app --version\")\n"
-"    assert_match \"1.0.0.Alpha1\", output\n"
-"  end\n"
-"end\n"
-msgstr ""
-
-#. type: Plain text
-#: upstream/_guides/jreleaser.adoc:584
-#, fuzzy
-msgid "When ready, create a release for real this time by simply removing the `-Djreleaser.dry.run` flag from the command line, then browse to your repository and look at the freshly created release."
-msgstr "Quando estiver pronto, crie uma release de verdade desta vez simplesmente removendo a flag `-Djreleaser.dry.run` da linha de comando, então navegue até seu repositório e veja a release recém criada."
 
 #. type: Title ==
-#: upstream/_guides/jreleaser.adoc:585
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "Further reading"
 msgstr "Ler mais"
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:588
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "link:https://jreleaser.org/guide/latest/index.html[JReleaser] documentation."
 msgstr "Documentação  link:https://jreleaser.org/guide/latest/index.html[do JReleaser]."
 
 #. type: Title ==
-#: upstream/_guides/jreleaser.adoc:589
+#: _guides/jreleaser.adoc
 #, fuzzy, no-wrap
 msgid "Reference"
 msgstr "Referência"
 
 #. type: Plain text
-#: upstream/_guides/jreleaser.adoc:592
+#: _guides/jreleaser.adoc
 #, fuzzy
 msgid "As a reference, these are the full contents of the `pom.xml`:"
 msgstr "Como referência, estes são os conteúdos completos do sítio `pom.xml`:"
-
-#. type: delimited block -
-#: upstream/_guides/jreleaser.adoc:813
-#, no-wrap
-msgid ""
-"<?xml version=\"1.0\"?>\n"
-"<project xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd\" xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"
-"    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n"
-"  <modelVersion>4.0.0</modelVersion>\n"
-"  <groupId>org.acme</groupId>\n"
-"  <artifactId>app</artifactId>\n"
-"  <version>1.0.0.Alpha1</version>\n"
-"  <name>app</name>\n"
-"  <description>app -- Sample Quarkus CLI application</description>\n"
-"  <inceptionYear>2021</inceptionYear>\n"
-"  <url>https://github.com/aalmiray/app</url>\n"
-"  <developers>\n"
-"    <developer>\n"
-"      <id>aalmiray</id>\n"
-"      <name>Andres Almiray</name>\n"
-"    </developer>\n"
-"  </developers>\n"
-"  <licenses>\n"
-"    <license>\n"
-"      <name>Apache-2.0</name>\n"
-"      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>\n"
-"      <distribution>repo</distribution>\n"
-"    </license>\n"
-"  </licenses>\n"
-"  <properties>\n"
-"    <executable-suffix/>\n"
-"    <distribution.directory>${project.build.directory}/distributions</distribution.directory>\n"
-"    <compiler-plugin.version>3.11.0</compiler-plugin.version>\n"
-"    <maven.compiler.parameters>true</maven.compiler.parameters>\n"
-"    <maven.compiler.source>11</maven.compiler.source>\n"
-"    <maven.compiler.target>11</maven.compiler.target>\n"
-"    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\n"
-"    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>\n"
-"    <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>\n"
-"    <quarkus.platform.group-id>{quarkus-platform-groupid}</quarkus.platform.group-id>\n"
-"    <quarkus.platform.version>{quarkus-version}</quarkus.platform.version>\n"
-"    <surefire-plugin.version>3.0.0</surefire-plugin.version>\n"
-"  </properties>\n"
-"  <dependencyManagement>\n"
-"    <dependencies>\n"
-"      <dependency>\n"
-"        <groupId>${quarkus.platform.group-id}</groupId>\n"
-"        <artifactId>${quarkus.platform.artifact-id}</artifactId>\n"
-"        <version>${quarkus.platform.version}</version>\n"
-"        <type>pom</type>\n"
-"        <scope>import</scope>\n"
-"      </dependency>\n"
-"    </dependencies>\n"
-"  </dependencyManagement>\n"
-"  <dependencies>\n"
-"    <dependency>\n"
-"      <groupId>io.quarkus</groupId>\n"
-"      <artifactId>quarkus-picocli</artifactId>\n"
-"    </dependency>\n"
-"    <dependency>\n"
-"      <groupId>io.quarkus</groupId>\n"
-"      <artifactId>quarkus-arc</artifactId>\n"
-"    </dependency>\n"
-"    <dependency>\n"
-"      <groupId>io.quarkus</groupId>\n"
-"      <artifactId>quarkus-junit5</artifactId>\n"
-"      <scope>test</scope>\n"
-"    </dependency>\n"
-"  </dependencies>\n"
-"  <build>\n"
-"    <extensions>\n"
-"      <extension>\n"
-"        <groupId>kr.motd.maven</groupId>\n"
-"        <artifactId>os-maven-plugin</artifactId>\n"
-"        <version>1.7.1</version>\n"
-"      </extension>\n"
-"    </extensions>\n"
-"    <plugins>\n"
-"      <plugin>\n"
-"        <groupId>${quarkus.platform.group-id}</groupId>\n"
-"        <artifactId>quarkus-maven-plugin</artifactId>\n"
-"        <version>${quarkus.platform.version}</version>\n"
-"        <extensions>true</extensions>\n"
-"        <executions>\n"
-"          <execution>\n"
-"            <goals>\n"
-"              <goal>build</goal>\n"
-"              <goal>generate-code</goal>\n"
-"              <goal>generate-code-tests</goal>\n"
-"            </goals>\n"
-"          </execution>\n"
-"        </executions>\n"
-"      </plugin>\n"
-"      <plugin>\n"
-"        <artifactId>maven-compiler-plugin</artifactId>\n"
-"        <version>${compiler-plugin.version}</version>\n"
-"        <configuration>\n"
-"          <parameters>${maven.compiler.parameters}</parameters>\n"
-"        </configuration>\n"
-"      </plugin>\n"
-"      <plugin>\n"
-"        <artifactId>maven-surefire-plugin</artifactId>\n"
-"        <version>${surefire-plugin.version}</version>\n"
-"        <configuration>\n"
-"          <systemPropertyVariables>\n"
-"            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>\n"
-"            <maven.home>${maven.home}</maven.home>\n"
-"          </systemPropertyVariables>\n"
-"        </configuration>\n"
-"      </plugin>\n"
-"    </plugins>\n"
-"  </build>\n"
-"  <profiles>\n"
-"    <profile>\n"
-"      <id>native</id>\n"
-"      <activation>\n"
-"        <property>\n"
-"          <name>native</name>\n"
-"        </property>\n"
-"      </activation>\n"
-"      <properties>\n"
-"        <skipITs>false</skipITs>\n"
-"        <quarkus.package.type>native</quarkus.package.type>\n"
-"      </properties>\n"
-"    </profile>\n"
-"    <profile>\n"
-"      <id>dist</id>\n"
-"      <build>\n"
-"        <plugins>\n"
-"          <plugin>\n"
-"            <groupId>org.apache.maven.plugins</groupId>\n"
-"            <artifactId>maven-assembly-plugin</artifactId>\n"
-"            <version>3.3.0</version>\n"
-"            <configuration>\n"
-"              <attach>false</attach>\n"
-"              <appendAssemblyId>false</appendAssemblyId>\n"
-"              <finalName>${project.artifactId}-${project.version}-${os.detected.classifier}</finalName>\n"
-"              <outputDirectory>${distribution.directory}</outputDirectory>\n"
-"              <workDirectory>${project.build.directory}/assembly/work</workDirectory>\n"
-"              <descriptors>\n"
-"                <descriptor>src/main/assembly/assembly.xml</descriptor>\n"
-"              </descriptors>\n"
-"            </configuration>\n"
-"            <executions>\n"
-"              <execution>\n"
-"                <id>make-distribution</id>\n"
-"                <phase>package</phase>\n"
-"                <goals>\n"
-"                  <goal>single</goal>\n"
-"                </goals>\n"
-"              </execution>\n"
-"            </executions>\n"
-"          </plugin>\n"
-"        </plugins>\n"
-"      </build>\n"
-"    </profile>\n"
-"    <profile>\n"
-"      <id>dist-windows</id>\n"
-"      <activation>\n"
-"        <os>\n"
-"          <family>windows</family>\n"
-"        </os>\n"
-"      </activation>\n"
-"      <properties>\n"
-"        <executable-suffix>.exe</executable-suffix>\n"
-"      </properties>\n"
-"    </profile>\n"
-"    <profile>\n"
-"      <id>release</id>\n"
-"      <build>\n"
-"        <plugins>\n"
-"          <plugin>\n"
-"            <groupId>org.jreleaser</groupId>\n"
-"            <artifactId>jreleaser-maven-plugin</artifactId>\n"
-"            <version>{jreleaser-version}</version>\n"
-"            <configuration>\n"
-"              <jreleaser>\n"
-"                <!--project>\n"
-"                 <description>app - Sample Quarkus CLI application</description>\n"
-"                 <website>https://github.com/aalmiray/app</website>\n"
-"                 <docsUrl>https://github.com/aalmiray/app</docsUrl>\n"
-"                 <license>APACHE-2.0</license>\n"
-"                 <authors>Andres Almiray</authors>\n"
-"                 <copyright>2021 Kordamp</copyright>\n"
-"                </project-->\n"
-"                <release>\n"
-"                  <github>\n"
-"                    <changelog>\n"
-"                      <formatted>ALWAYS</formatted>\n"
-"                      <preset>conventional-commits</preset>\n"
-"                    </changelog>\n"
-"                  </github>\n"
-"                </release>\n"
-"                <distributions>\n"
-"                  <app>\n"
-"                    <type>BINARY</type>\n"
-"                    <brew>\n"
-"                      <active>ALWAYS</active>\n"
-"                    </brew>\n"
-"                    <artifacts>\n"
-"                      <artifact>\n"
-"                        <path>${distribution.directory}/{{distributionName}}-{{projectVersion}}-linux-x86_64.tar.gz</path>\n"
-"                        <platform>linux-x86_64</platform>\n"
-"                      </artifact>\n"
-"                      <artifact>\n"
-"                        <path>${distribution.directory}/{{distributionName}}-{{projectVersion}}-windows-x86_64.zip</path>\n"
-"                        <platform>windows-x86_64</platform>\n"
-"                      </artifact>\n"
-"                      <artifact>\n"
-"                        <path>${distribution.directory}/{{distributionName}}-{{projectVersion}}-osx-x86_64.zip</path>\n"
-"                        <platform>osx-x86_64</platform>\n"
-"                      </artifact>\n"
-"                    </artifacts>\n"
-"                  </app>\n"
-"                </distributions>\n"
-"              </jreleaser>\n"
-"            </configuration>\n"
-"          </plugin>\n"
-"        </plugins>\n"
-"      </build>\n"
-"    </profile>\n"
-"  </profiles>\n"
-"</project>\n"
-msgstr ""

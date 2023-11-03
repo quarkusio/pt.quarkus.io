@@ -11,354 +11,255 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#. type: YAML Front Matter: author
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:1
-#, fuzzy, no-wrap
-msgid "cescoffier"
-msgstr "cescoffier"
-
-#. type: YAML Front Matter: date
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:1
-#, fuzzy, no-wrap
-msgid "2020-09-02"
-msgstr "2020-09-02"
-
-#. type: YAML Front Matter: layout
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:1
-#, fuzzy, no-wrap
-msgid "post"
-msgstr "posto"
-
-#. type: YAML Front Matter: synopsis
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:1
-#, fuzzy, no-wrap
-msgid "How to compose asynchronous actions with Mutiny"
-msgstr "Como compor acções assíncronas com o Mutiny"
-
-#. type: YAML Front Matter: tags
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:1
-#, fuzzy, no-wrap
-msgid "reactive mutiny redis"
-msgstr "reactive mutiny redis"
-
 #. type: YAML Front Matter: title
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:1
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy, no-wrap
 msgid "Using Redis with Mutiny - Composing asynchronous actions"
 msgstr "Usando Redis com Mutiny - Compondo ações assíncronas"
 
+#. type: YAML Front Matter: synopsis
+#: _posts/2020-09-02-mutiny-redis.adoc
+#, fuzzy, no-wrap
+msgid "How to compose asynchronous actions with Mutiny"
+msgstr "Como compor acções assíncronas com o Mutiny"
+
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:11
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "I got an interesting question from a user about Redis and Mutiny. While the problem was not specifically about Redis and could be applied to many other APIs, I found the context amusing."
 msgstr "Recebi uma pergunta interessante de um utilizador sobre o Redis e o Mutiny. Embora o problema não fosse especificamente sobre o Redis e pudesse ser aplicado a muitas outras APIs, achei o contexto divertido."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:13
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "Enrico, the user, wanted to do something like this:"
 msgstr "Enrico, o utilizador, queria fazer algo deste género:"
 
-#. type: delimited block -
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:20
-#, no-wrap
-msgid ""
-"1. get all keys from Redis\n"
-"2. for each key -> retrieve the associated object\n"
-"3. add this object to a JsonArray \n"
-"4. produce the JsonArray with all the objects\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:23
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "Enrico is using the Mutiny variant of the Vert.x Redis Client."
 msgstr "O Enrico está a utilizar a variante Mutiny do Cliente Redis Vert.x."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:25
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "This client offers a few methods to help us with our problem:"
 msgstr "Este cliente oferece alguns métodos para nos ajudar a resolver o nosso problema:"
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:27
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "the `RedisClient.keys(pattern)` method returning `Uni<JsonArray>`. This array contains the list of keys matching a pattern passed to the `keys` method. To simplify this post, let's use: `keys(\"*\")` returning all the keys."
 msgstr "o método `RedisClient.keys(pattern)` que retorna `Uni&amp;lt;JsonArray&amp;gt;`. Esse array contém a lista de chaves que correspondem a um padrão passado para o método `keys`. Para simplificar este post, vamos usar: `keys(\"*\")` retornando todas as chaves."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:28
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "the `RedisClient.hgetall(key)` method returning a `Uni<JsonObject>`. This method retrieves the object associated with the passed key."
 msgstr "o método `RedisClient.hgetall(key)` que devolve um `Uni&amp;lt;JsonObject&amp;gt;`. Este método recupera o objeto associado à chave passada."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:30
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "Both methods are asynchronous (they return `Uni`), and we need to call the second one for each retrieved key. In other words, we need to iterate over the set of keys, and for each key to invoke an asynchronous action. Finally, we want to collect the result of these asynchronous actions into a `JsonArray`."
 msgstr "Ambos os métodos são assíncronos (devolvem `Uni`), e precisamos de chamar o segundo para cada chave recuperada. Por outras palavras, temos de iterar sobre o conjunto de chaves e, para cada chave, invocar uma ação assíncrona. Finalmente, queremos recolher o resultado destas acções assíncronas num `JsonArray`."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:32
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "Let's start with the beginning; we need the Redis Client instance:"
 msgstr "Vamos começar pelo princípio; precisamos da instância do Cliente Redis:"
 
-#. type: delimited block -
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:38
-#, no-wrap
-msgid ""
-"RedisClient redis = RedisClient.create(vertx, new JsonObject()\n"
-"     .put(\"port\", 6379)\n"
-"     .put(\"host\", \"localhost\"));\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:41
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "Note that in Quarkus, you should use the Redis extension directly, which exposes a similar API. Enrico wanted to use the Vert.x Redis Client directly."
 msgstr "Note que no Quarkus, deve utilizar diretamente a extensão Redis, que expõe uma API semelhante. O Enrico queria utilizar diretamente o Cliente Redis Vert.x."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:43
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "Now that we have our client, let's retrieve the list of keys:"
 msgstr "Agora que temos o nosso cliente, vamos recuperar a lista de chaves:"
 
-#. type: delimited block -
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:47
-#, no-wrap
-msgid "Uni<JsonArray> keys = redis.keys(\"*\")\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:50
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "That produces the `JsonArray`, but we want a stream of keys.  Again, it's an asynchronous method. The returned `Uni` receives the array when it's available. Once received (`onItem`), we can create a stream out of this array:"
 msgstr "Isso produz o `JsonArray`, mas nós queremos um fluxo de chaves. Novamente, é um método assíncrono. O `Uni` retornado recebe o array quando ele estiver disponível. Uma vez recebido ( `onItem`), podemos criar um fluxo a partir deste array:"
 
-#. type: delimited block -
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:56
-#, no-wrap
-msgid ""
-"Multi<String> keys = redis.keys(\"*\")\n"
-"     .onItem().transformToMulti(array -> Multi.createFrom().iterable(array))\n"
-"     .onItem().castTo(String.class);\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:59
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "This snippet:"
 msgstr "Este excerto:"
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:61
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "retrieves the `JsonArray` containing the keys"
 msgstr "recupera o sítio `JsonArray` que contém as chaves"
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:62
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "creates a `Multi` streaming these keys, it's a `Multi<Object>` as a `JsonArray` is extending `Iterable<Object>`"
 msgstr "cria um `Multi` transmitindo estas chaves, é um `Multi&amp;lt;Object&amp;gt;` como um `JsonArray` está a estender `Iterable&amp;lt;Object&amp;gt;`"
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:63
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "maps the items from this `Multi` to `String`"
 msgstr "mapeia os itens deste `Multi` para `String`"
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:65
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "At this point, we have a stream of (String) keys. So, we are done with step 1."
 msgstr "Nesta altura, temos um fluxo de chaves (String). Portanto, terminámos o passo 1."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:67
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "Now, step 2: for each key, we want to retrieve the associated object."
 msgstr "Agora, passo 2: para cada chave, queremos recuperar o objeto associado."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:69
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "So let's use the `hgetall` method:"
 msgstr "Por isso, vamos utilizar o método `hgetall`:"
 
-#. type: delimited block -
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:74
-#, no-wrap
-msgid ""
-"Multi<JsonObject> objects = keys\n"
-"  .onItem().transformToUniAndMerge(key -> redis.hgetall(key));\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:77
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "This snippet requires a bit of an explanation."
 msgstr "Este excerto requer uma pequena explicação."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:79
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "For each item of the stream `keys`, we call `hgetall`, which produces a `Uni<JsonObject>`."
 msgstr "Para cada item do fluxo `keys`, chamamos `hgetall`, que produz um `Uni&amp;lt;JsonObject&amp;gt;`."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:81
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "So, we want to transform our key into a Uni (*transformToUni*)."
 msgstr "Assim, queremos transformar a nossa chave numa Uni *(transformToUni*)."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:83
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "When you have a stream of items and need to invoke an asynchronous action for each item, you must choose how you will merge the results. Mutiny provides two strategies:"
 msgstr "Quando se tem um fluxo de itens e é necessário invocar uma ação assíncrona para cada item, é necessário escolher a forma como os resultados serão fundidos. O Mutiny oferece duas estratégias:"
 
-#. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:85
-#, fuzzy, no-wrap
-msgid "*merge -* as soon as the item produced by the `Uni` is received we send it downstream\n"
-msgstr "*fusão -* assim que o artigo produzido pelo `Uni` é recebido, enviamo-lo a jusante"
+#: _posts/2020-09-02-mutiny-redis.adoc
+msgid "*merge -* as soon as the item produced by the `Uni` is received we send it downstream"
+msgstr ""
+
+#: _posts/2020-09-02-mutiny-redis.adoc
+msgid "*concatenate* - we preserve the order of the input stream to be sure that the items are sent downstream in the same order"
+msgstr ""
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:86
-#, fuzzy, no-wrap
-msgid "*concatenate* - we preserve the order of the input stream to be sure that the items are sent downstream in the same order\n"
-msgstr "*concatenar* - preservamos a ordem do fluxo de entrada para garantir que os itens são enviados a jusante na mesma ordem"
-
-#. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:88
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "Let's illustrate this. Imagine we have the keys `1`, `2`, `3` and to the stream `{1, 2, 3}`. Also, let's consider that in our Redis database, the key `1` is associated to `A`, `2` to `B` and `3` to `C`."
 msgstr "Vamos ilustrar isto. Imagine que temos as chaves `1`, `2`, `3` e o fluxo `{1, 2, 3}`. Além disso, consideremos que, na nossa base de dados Redis, a chave `1` está associada a `A`, `2` a `B` e `3` a `C`."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:90
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "If you use the *merge* strategy, we are retrieving the associated objects in an undetermined order. We can end up with `{A, C, B}` or `{B, A, C}`. It depends on many factors, such as the latency, scheduling, load and so on. However, it also means we can retrieve all the associated objects concurrently and produce the resulting stream without taking care of the order."
 msgstr "Se utilizar a estratégia de *fusão*, estamos a recuperar os objectos associados por uma ordem indeterminada. Podemos acabar com `{A, C, B}` ou `{B, A, C}`. Depende de muitos factores, como a latência, o agendamento, a carga, etc. No entanto, isso também significa que podemos recuperar todos os objectos associados em simultâneo e produzir o fluxo resultante sem ter em conta a ordem."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:92
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "If you use the *concatenate* strategy, it preserves the order from the input stream. So, it will always produce `{A, B, C}`. While it may be desirable, it may reduce the ability to retrieve the object concurrently, as Mutiny has to *wait* for all the retrieval of all the previous objects. For example, if Mutiny receives `C` first, it needs to wait for `A` and `B` before sending `C` downstream."
 msgstr "Se utilizar a estratégia de *concatenação*, esta preserva a ordem do fluxo de entrada. Portanto, ela sempre produzirá `{A, B, C}`. Embora isso possa ser desejável, pode reduzir a capacidade de recuperar o objeto simultaneamente, pois o Mutiny precisa *esperar* pela recuperação de todos os objetos anteriores. Por exemplo, se o Mutiny receber `C` primeiro, ele precisa esperar por `A` e `B` antes de enviar `C` para baixo."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:94
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "In our context, let's not preserve the order and use the *merge* strategy. So we use `transformToUniAndMerge`."
 msgstr "No nosso contexto, não vamos preservar a ordem e vamos utilizar a estratégia de *fusão*. Assim, utilizamos `transformToUniAndMerge`."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:96
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "If you run the code multiple times, you might see order changes in the resulting array."
 msgstr "Se executar o código várias vezes, poderá ver alterações de ordem na matriz resultante."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:98
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "Ok, step 2 done. Let's focus on the final steps: accumulate the objects into a `JsonArray`, and produce a `Uni<JsonArray>`, containing all the objects. Mutiny provides methods to gather items from a stream into lists, maps, sets, but there is no built-in `JsonArray` support. Fortunately, Mutiny offers a method that you can use to collect items in any structure:"
 msgstr "Ok, passo 2 feito. Vamos focar nos passos finais: acumular os objetos em um `JsonArray`, e produzir um `Uni&amp;lt;JsonArray&amp;gt;`, contendo todos os objetos. O Mutiny fornece métodos para reunir itens de um fluxo em listas, mapas, conjuntos, mas não há suporte embutido para `JsonArray`. Felizmente, o Mutiny oferece um método que pode ser usado para coletar itens em qualquer estrutura:"
 
-#. type: delimited block -
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:103
-#, no-wrap
-msgid ""
-"Uni<JsonArray> result = objects\n"
-"   .collectItems().in(() -> new JsonArray(), (arr, obj) -> arr.add(obj));\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:106
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "`collectItems().in` allows accumulating the items in your own structure. It takes two parameters: a supplier of the structure, called only once, and a bi-consumer taking the structure and the item to add, called for each item."
 msgstr "`collectItems().in` permite acumular os itens na sua própria estrutura. É preciso dois parâmetros: um fornecedor da estrutura, chamado apenas uma vez, e um bi-consumidor que recebe a estrutura e o item a adicionar, chamado para cada item."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:108
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "Here we go, we have everything to solve Enrico's question."
 msgstr "Aqui está, temos tudo para resolver a questão do Enrico."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:110
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "The *all in one* code is the following:"
 msgstr "O código *completo* é o seguinte:"
 
-#. type: delimited block -
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:122
-#, no-wrap
-msgid ""
-"Uni<JsonArray> result = \n"
-"  // Step 1 - retrieve the keys\n"
-"  redis.keys(\"*\") \n"
-"    .onItem().transformToMulti(keys -> Multi.createFrom().iterable(keys))\n"
-"    .onItem().castTo(String.class)\n"
-"  // Step 2 - retrieve the associated object for each key\n"
-"    .onItem().transformToUniAndMerge(key -> redis.hgetall(key))\n"
-"  // Step 3 and 4 - accumulate the retrieved object in a JsonArray\n"
-"    .collectItems().in(() -> new JsonArray(), (arr, obj) -> arr.add(obj));\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:125
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "In this snippet, there are a few interesting patterns:"
 msgstr "Neste excerto, existem alguns padrões interessantes:"
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:127
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "When you have a collection, and you want to iterate on it with Mutiny, transform it into a `Multi`"
 msgstr "Quando tiveres uma coleção e quiseres iterá-la com o Mutiny, transforma-a numa `Multi`"
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:128
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "When you execute asynchronous action for each item of a stream, think about *merge* vs. *concatenate.* Use the one that makes sense for you."
 msgstr "Quando executar uma ação assíncrona para cada item de um fluxo, pense em *fundir* ou *concatenar.* Utilize a que fizer mais sentido para si."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:129
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "To accumulate items into a structure, use `collectItems`, it offers many methods to produce your structure of choice."
 msgstr "Para acumular objectos numa estrutura, utilize `collectItems`, que oferece muitos métodos para produzir a estrutura da sua escolha."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:131
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "If you want to see this code in action, check this https://gist.github.com/cescoffier/e8c8a18897f9e5ca15f1378876a1bd93[gist]. You even can run it directly with JBang:"
 msgstr "Se quiser ver este código em ação, consulte este  link:https://gist.github.com/cescoffier/e8c8a18897f9e5ca15f1378876a1bd93[gist]. Você pode até mesmo executá-lo diretamente com o JBang:"
 
-#. type: delimited block -
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:135
-#, no-wrap
-msgid "jbang https://gist.github.com/cescoffier/e8c8a18897f9e5ca15f1378876a1bd93\n"
-msgstr ""
-
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:138
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "You can replace *merge* with *concatenate* to see the difference."
 msgstr "Pode substituir *merge* por *concatenate* para ver a diferença."
 
 #. type: Plain text
-#: upstream/_posts/2020-09-02-mutiny-redis.adoc:139
+#: _posts/2020-09-02-mutiny-redis.adoc
 #, fuzzy
 msgid "Enjoy!"
 msgstr "Desfrutar!"
