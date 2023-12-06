@@ -337,14 +337,23 @@ msgid "when it executes a blocking operation inside a native method or a foreign
 msgstr "quando executa uma operação bloqueante dentro de um método nativo ou de uma função externa"
 
 #: _guides/virtual-threads.adoc
-#, fuzzy
 msgid ""
 "It can be reasonably easy to avoid these situations in your code, but verifying every dependency you use is hard.\n"
-"Typically, while experimenting with virtual threads, we realized that old versions of the link:{pgsql-driver}[postgresql-JDBC driver]\n"
-"results in frequent pinning.\n"
+"Typically, while experimenting with virtual threads, we realized that versions older than 42.6.0 of the link:{pgsql-driver}[postgresql-JDBC driver] result in frequent pinning.\n"
 "Most JDBC drivers still pin the carrier thread.\n"
-"Even worse, lots of widespread libraries are pinning and would require code changes."
-msgstr "Pode ser razoavelmente fácil evitar essas situações em seu código, mas verificar cada dependência que o senhor usa é difícil. Normalmente, ao fazer experiências com threads virtuais, percebemos que as versões antigas do link:{pgsql-driver}[driver postgresql-JDBC] resultam em fixação frequente. A maioria dos drivers JDBC ainda fixa o thread portador. Pior ainda, muitas bibliotecas comuns estão fixando e exigiriam alterações no código."
+"Even worse, many libraries require code changes."
+msgstr ""
+
+#: _guides/virtual-threads.adoc
+msgid "For more information, see link:https://quarkus.io/blog/virtual-thread-1/[When Quarkus meets Virtual Threads]"
+msgstr ""
+
+#: _guides/virtual-threads.adoc
+msgid ""
+"This information about pinning cases applies to PostgreSQL JDBC driver 42.5.4 and earlier.\n"
+"For PostgreSQL JDBC driver 42.6.0 and later, virtually all synchronized methods have been replaced by reentrant locks.\n"
+"For more information, see the link:https://jdbc.postgresql.org/changelogs/2023-03-17-42.6.0-release/[Notable Changes] for PostgreSQL JDBC driver 42.6.0."
+msgstr ""
 
 #. type: Title ====
 #: _guides/virtual-threads.adoc
@@ -641,21 +650,15 @@ msgid ""
 "If would not fail the tests, but at least dump start traces if the code pins the carrier thread:"
 msgstr "Recomendamos usar a seguinte configuração ao executar testes em aplicativos que usam threads virtuais. Os testes não seriam reprovados, mas, pelo menos, os traços de inicialização seriam despejados se o código pinasse o thread de suporte:"
 
-#. type: Plain text
-#: _guides/virtual-threads.adoc
-msgid "The `--enable-preview` flag is not necessary with Java 21."
-msgstr "O parâmetro `--enable-preview` não é necessário a partir do Java 21."
-
 #. type: Title ==
 #: _guides/virtual-threads.adoc
 #, no-wrap
 msgid "Run application using virtual threads"
 msgstr "Executar a aplicação utilizando threads virtuais"
 
-#. type: Plain text
 #: _guides/virtual-threads.adoc
-msgid "Prior to Java 21, virtual threads are still an experimental feature, you need to start your application with the `--enable-preview` flag:"
-msgstr "Antes de Java 21, as threads virtuais ainda são uma funcionalidade experimental, portanto é necessário iniciar a aplicação com o parâmetro `--enable-preview`:"
+msgid "Prior to Java 21, virtual threads were still an experimental feature, you need to start your application with the `--enable-preview` flag."
+msgstr ""
 
 #. type: Title ==
 #: _guides/virtual-threads.adoc
@@ -680,20 +683,14 @@ msgstr "Nesta seção, usamos o JIB para criar o contêiner. Consulte o xref:./c
 msgid "To containerize your Quarkus application that use `@RunOnVirtualThread`, add the following properties in your `application.properties`:"
 msgstr "Para conteinerizar a sua aplicação Quarkus que utiliza `@RunOnVirtualThread`, adicione as seguintes propriedades ao seu `application.properties`:"
 
-#. type: Plain text
 #: _guides/virtual-threads.adoc
-msgid "Make sure you use a base image supporting virtual threads. Here we use an image providing Java 20."
-msgstr "Certifique-se de que você utiliza uma imagem base que suporta threads virtuais. Aqui usamos uma imagem que fornece Java 20."
+msgid "Make sure you use a base image supporting virtual threads. Here we use an image providing Java 21. Quarkus picks an image providing Java 21+ automatically if you do not set one."
+msgstr ""
 
 #. type: Plain text
 #: _guides/virtual-threads.adoc
 msgid "Select the target architecture. You can select more than one to build multi-archs images."
 msgstr "Selecione a arquitetura de destino. Você pode selecionar mais do que uma para criar imagens multiarquitetura."
-
-#. type: Plain text
-#: _guides/virtual-threads.adoc
-msgid "Don't forget to use the `--enable-preview` flag if you are not using Java 21+."
-msgstr "Não se esqueça de utilizar o parâmetro `--enable-preview` se não estiver utilizando Java 21+."
 
 #: _guides/virtual-threads.adoc
 #, fuzzy
@@ -823,6 +820,20 @@ msgid ""
 "Quarkus managed virtual threads are named and prefixed with `quarkus-virtual-thread-`.\n"
 "You can customize this prefix, or disable the naming altogether configuring an empty value:"
 msgstr "Os threads virtuais são criados sem um nome de thread por padrão, o que não é prático para identificar a execução para fins de depuração e registro. Os threads virtuais gerenciados pelo Quarkus são nomeados e prefixados com `quarkus-virtual-thread-` . É possível personalizar esse prefixo ou desativar a nomeação configurando um valor vazio:"
+
+#: _guides/virtual-threads.adoc
+msgid "Inject the virtual thread executor"
+msgstr ""
+
+#: _guides/virtual-threads.adoc
+msgid ""
+"In order to run tasks on virtual threads Quarkus manages an internal `ThreadPerTaskExecutor`.\n"
+"In rare instances where you'd need to access this executor directly you can inject it using the `@VirtualThreads` CDI qualifier:"
+msgstr ""
+
+#: _guides/virtual-threads.adoc
+msgid "Injecting the Virtual Thread ExecutorService is experimental and may change in future versions."
+msgstr ""
 
 #. type: Title ==
 #: _guides/virtual-threads.adoc
