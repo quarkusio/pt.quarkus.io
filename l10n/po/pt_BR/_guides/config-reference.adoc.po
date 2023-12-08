@@ -210,28 +210,32 @@ msgid ""
 msgstr "Uma propriedade indexada `foo.bar[0]` ou `foo.bar[0].baz` , substitua cada caractere que não seja alfanumérico ou `_` por `_` : `FOO_BAR_0_` ou `FOO_BAR_0__BAZ`"
 
 #: _guides/config-reference.adoc
-#, fuzzy
 msgid ""
-"In some situations, looking up the exact property name is impossible. For instance, when looking\n"
-"up a configuration that is part of a `Map`, and the property name contains a dynamic segment (the `Map` key). In this\n"
-"case, Quarkus relies upon each source’s list of property names. These must be converted back to their most likely\n"
-"dotted format for Environment Variables."
-msgstr "Em algumas situações, é impossível procurar o nome exato da propriedade. Por exemplo, ao procurar uma configuração que faz parte de um `Map` , e o nome da propriedade contém um segmento dinâmico (a chave `Map` ). Nesse caso, o Quarkus se baseia na lista de nomes de propriedades de cada fonte. Eles devem ser convertidos de volta ao formato pontilhado mais provável para Variáveis de Ambiente."
+"In some situations, looking up the exact property name is impossible. This is the case for configuration names that\n"
+"contain user defined path segments."
+msgstr ""
 
 #: _guides/config-reference.adoc
-#, fuzzy
 msgid ""
-"By default, the underscore `_` of an Environment Variable name always maps to a dot `.`. If the property name contains\n"
-"a dash or some other special character, that property name can be specified in another Config Source, with the expected\n"
-"dotted format. It will provide additional information to perform a two-way conversion and match the property names."
-msgstr "Por padrão, o sublinhado `_` de um nome de variável de ambiente sempre mapeia para um ponto `.` . Se o nome da propriedade contiver um traço ou algum outro caractere especial, esse nome de propriedade poderá ser especificado em outra fonte de configuração, com o formato pontilhado esperado. Isso fornecerá informações adicionais para realizar uma conversão bidirecional e corresponder aos nomes das propriedades."
+"Applying the conversion rules for Environment Variables names, `quarkus.datasource.\"datasource-name\".jdbc.url` becomes\n"
+"`QUARKUS_DATASOURCE\\__DATASOURCE_NAME__JDBC_URL`. The configuration will work as expected if both properties are\n"
+"available in the Config system."
+msgstr ""
 
 #: _guides/config-reference.adoc
-#, fuzzy
 msgid ""
-"To correctly lookup `Map` properties where `FOO_BAR_BAZ` is the property name and `BAR_BAZ` is the key, add\n"
-"`foo.bar-baz` in a source with an ordinal lower than the EnvConfigSource (`300`)."
-msgstr "Para pesquisar corretamente as propriedades `Map` em que `FOO_BAR_BAZ` é o nome da propriedade e `BAR_BAZ` é a chave, adicione `foo.bar-baz` em uma fonte com um ordinal inferior ao EnvConfigSource ( `300` )."
+"If only `QUARKUS_DATASOURCE\\__DATASOURCE_NAME__JDBC_URL` is present, the Config system needs to reconvert the\n"
+"configuration name to its most likely dotted format. This works fine for fixed configuration segments, but not for\n"
+"names that contain dynamic segments. In this case, Quarkus is unable to determine if `DATASOURCE_NAME` should be\n"
+"converted to `datasource.name` or `datasource-name` (or any other special character separator)."
+msgstr ""
+
+#: _guides/config-reference.adoc
+msgid ""
+"For this reason, such properties always require their dotted version name in another source (the value can be left\n"
+"empty) to disambiguate the Environment Variable name. It will provide additional information to perform a two-way\n"
+"conversion and match the property names together."
+msgstr ""
 
 #. type: Title ===
 #: _guides/config-reference.adoc
@@ -244,11 +248,9 @@ msgstr "`.env` ficheiro no diretório de trabalho atual"
 msgid ".env"
 msgstr ".env"
 
-#. type: Plain text
 #: _guides/config-reference.adoc
-#, fuzzy
-msgid "The name `QUARKUS_DATASOURCE_PASSWORD` the same conversion rules used for xref:environment-variables[Environment variables]."
-msgstr "O nome `QUARKUS_DATASOURCE_PASSWORD` segue as mesmas regras de conversão utilizadas para as  link:#environment-variables[variáveis de ambiente]."
+msgid "The name `QUARKUS_DATASOURCE_PASSWORD` follows the same conversion rules used for xref:environment-variables[Environment variables]."
+msgstr ""
 
 #: _guides/config-reference.adoc
 #, fuzzy
@@ -1270,6 +1272,39 @@ msgid ""
 "options exposed by a `org.eclipse.microprofile.config.Config` instance. Which means this report may include some build configuration options that will not be used by the Quarkus application build process but also may be missing some\n"
 "build configuration options since MicroProfile Config specification allows configuration sources not to expose all the property names they provide to users."
 msgstr "Diferentemente das opções de configuração de compilação registradas durante a meta `quarkus:build` , as opções de configuração salvas por `quarkus:track-config-changes` com `dumpCurrentWhenRecordedUnavailable` ativado incluirão todas as opções de configuração de compilação expostas por uma instância `org.eclipse.microprofile.config.Config` . Isso significa que esse relatório pode incluir algumas opções de configuração de compilação que não serão usadas pelo processo de compilação do aplicativo Quarkus, mas também pode estar faltando algumas opções de configuração de compilação, pois a especificação MicroProfile Config permite que as fontes de configuração não exponham todos os nomes de propriedade que fornecem aos usuários."
+
+#: _guides/config-reference.adoc
+msgid "Config property values injected during static initialization phase"
+msgstr ""
+
+#: _guides/config-reference.adoc
+msgid ""
+"Quarkus collects the config property values injected in CDI beans during xref:writing-extensions.adoc#bootstrap-three-phases[static initialization phase].\n"
+"The collected values are then compared with their runtime initialization counterparts and if a mismatch is detected the application startup fails.\n"
+"How can it happen?\n"
+"For example, let's have a CDI bean `org.acme.MyBean`.\n"
+"`MyBean` injects a `@ConfigProperty` of name `foo` and is initialized during the native build.\n"
+"The config property does not exist during the native build and so the default value `bar` is used.\n"
+"But later, when the application is started the property is defined with a system property: `-Dfoo=baz`.\n"
+"This would lead to inconsistent state and unexpected behavior.\n"
+"Therefore, Quarkus would fail in this situation by default."
+msgstr ""
+
+#: _guides/config-reference.adoc
+msgid "The config property is injected when the bean is created and the value is fixed."
+msgstr ""
+
+#: _guides/config-reference.adoc
+msgid "In this particular case, the observer `@Initialized(ApplicationScoped.class)` caused the initialization of the bean. However, there are other possibilities. For example, some extensions initialize components during static initialization phase."
+msgstr ""
+
+#: _guides/config-reference.adoc
+msgid "You can annotate an injected field/parameter with `@io.quarkus.runtime.annotations.StaticInitSafe` to mark the injected configuration object as safe to be initialized during the static initialization phase."
+msgstr ""
+
+#: _guides/config-reference.adoc
+msgid "Instructs Quarkus not to fail if a mismatch is detected."
+msgstr ""
 
 #. type: Title ==
 #: _guides/config-reference.adoc
