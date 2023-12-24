@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Sync
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         # Checkout target revision from git repository
@@ -48,6 +48,14 @@ jobs:
       - name: Push changes
         # Commit and Push the translation stats .csv file
         run: vendor/quarkus-l10n-utils/bin/push-changes "Update translation stats"
+
+      - name: Apply fuzzy tmx
+        # Apply fuzzy tmx to .po files to fill fuzzy translation candidates
+        run: vendor/quarkus-l10n-utils/bin/translate-po-files-with-tmx
+
+      - name: Push changes
+        # Commit and Push the .po files updated by fuzzy tmx
+        run: vendor/quarkus-l10n-utils/bin/push-changes "Apply fuzzy translation memory"
 
       - name: Apply tmx
         # Apply tmx file to .po files to fill known translations
