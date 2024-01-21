@@ -1565,19 +1565,72 @@ msgid "Using a Mock HTTP Server for tests"
 msgstr "Uso de um servidor HTTP simulado para testes"
 
 #: _versions/main/guides/rest-client-reactive.adoc
-#, fuzzy
 msgid ""
-"In some cases you may want to mock the remote endpoint - the HTTP server - instead of mocking the client itself.\n"
-"This may be especially useful for native tests, or for programmatically created clients."
-msgstr "Em alguns casos, o senhor pode querer simular o endpoint remoto - o servidor HTTP - em vez de simular o próprio cliente. Isso pode ser especialmente útil para testes nativos ou para clientes criados programaticamente."
+"Setting up a mock HTTP server, against which tests are run, is a common testing pattern.\n"
+"Examples of such servers are link:https://wiremock.org/[Wiremock] and link:https://docs.hoverfly.io/projects/hoverfly-java/en/latest/index.html[Hoverfly].\n"
+"In this section we'll demonstrate how Wiremock can be leveraged for testing the `ExtensionsService` which was developed above."
+msgstr ""
 
 #: _versions/main/guides/rest-client-reactive.adoc
-#, fuzzy
+msgid "First, Wiremock needs to be added as a test dependency. For a Maven project that would happen like so:"
+msgstr ""
+
+#: _versions/main/guides/rest-client-reactive.adoc
+msgid "Use a proper Wiremock version. All available versions can be found link:https://search.maven.org/artifact/org.wiremock/wiremock[here]."
+msgstr ""
+
+#: _versions/main/guides/rest-client-reactive.adoc
 msgid ""
-"You can easily mock an HTTP Server with Wiremock.\n"
-"The xref:rest-client.adoc#using-a-mock-http-server-for-tests[Wiremock section of the Quarkus - Using the REST Client]\n"
-"describes how to set it up in detail."
-msgstr "O senhor pode facilmente simular um servidor HTTP com o Wiremock. A xref:rest-client.adoc#using-a-mock-http-server-for-tests[seção Wiremock do Quarkus - Usando o cliente REST] descreve detalhadamente como configurá-lo."
+"In Quarkus tests when some service needs to be started before the Quarkus tests are ran, we utilize the `@io.quarkus.test.common.QuarkusTestResource`\n"
+"annotation to specify a `io.quarkus.test.common.QuarkusTestResourceLifecycleManager` which can start the service and supply configuration\n"
+"values that Quarkus will use."
+msgstr ""
+
+#: _versions/main/guides/rest-client-reactive.adoc
+msgid "For more details about `@QuarkusTestResource` refer to  xref:getting-started-testing.adoc#quarkus-test-resource[this part of the documentation]."
+msgstr ""
+
+#: _versions/main/guides/rest-client-reactive.adoc
+msgid "Let's create an implementation of `QuarkusTestResourceLifecycleManager` called `WiremockExtensions` like so:"
+msgstr ""
+
+#: _versions/main/guides/rest-client-reactive.adoc
+msgid "Statically importing the methods in the Wiremock package makes it easier to read the test."
+msgstr ""
+
+#: _versions/main/guides/rest-client-reactive.adoc
+msgid "The `start` method is invoked by Quarkus before any test is run and returns a `Map` of configuration properties that apply during the test execution."
+msgstr ""
+
+#: _versions/main/guides/rest-client-reactive.adoc
+msgid "Launch Wiremock."
+msgstr ""
+
+#: _versions/main/guides/rest-client-reactive.adoc
+msgid "Configure Wiremock to stub the calls to `/extensions?id=io.quarkus:quarkus-rest-client-reactive` by returning a specific canned response."
+msgstr ""
+
+#: _versions/main/guides/rest-client-reactive.adoc
+msgid "All HTTP calls that have not been stubbed are handled by calling the real service. This is done for demonstration purposes, as it is not something that would usually happen in a real test."
+msgstr ""
+
+#: _versions/main/guides/rest-client-reactive.adoc
+msgid ""
+"As the `start` method returns configuration that applies for tests, we set the rest-client property that controls the base URL which is used by the implementation\n"
+"of `ExtensionsService` to the base URL where Wiremock is listening for incoming requests."
+msgstr ""
+
+#: _versions/main/guides/rest-client-reactive.adoc
+msgid "When all tests have finished, shutdown Wiremock."
+msgstr ""
+
+#: _versions/main/guides/rest-client-reactive.adoc
+msgid "The `ExtensionsResourceTest` test class needs to be annotated like so:"
+msgstr ""
+
+#: _versions/main/guides/rest-client-reactive.adoc
+msgid "`@QuarkusTestResource` applies to all tests, not just `ExtensionsResourceTest`."
+msgstr ""
 
 #. type: Title ==
 #: _versions/main/guides/rest-client-reactive.adoc
