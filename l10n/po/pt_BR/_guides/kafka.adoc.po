@@ -716,12 +716,24 @@ msgid "*Multiple consumer threads inside a consumer group*"
 msgstr "*Vários threads de consumidores em um grupo de consumidores*"
 
 #: _guides/kafka.adoc
-#, fuzzy
 msgid ""
-"For a given application instance, the number of consumers inside the consumer group can be configured using `mp.messaging.incoming.$channel.partitions` property.\n"
+"For a given application instance, the number of consumers inside the consumer group can be configured using `mp.messaging.incoming.$channel.concurrency` property.\n"
 "The partitions of the subscribed topic will be divided among the consumer threads.\n"
-"Note that if the `partitions` value exceed the number of partitions of the topic, some consumer threads won't be assigned any partitions."
-msgstr "Para uma determinada instância de aplicativo, o número de consumidores dentro do grupo de consumidores pode ser configurado usando a propriedade `mp.messaging.incoming.$channel.partitions` . As partições do tópico inscrito serão divididas entre os threads de consumidores. Observe que se o valor de `partitions` exceder o número de partições do tópico, alguns threads de consumidores não receberão nenhuma partição."
+"Note that if the `concurrency` value exceed the number of partitions of the topic, some consumer threads won't be assigned any partitions."
+msgstr ""
+
+#. type: Block title
+#: _guides/kafka.adoc
+#, fuzzy, no-wrap
+msgid "Deprecation"
+msgstr "Depreciação"
+
+#: _guides/kafka.adoc
+msgid ""
+"The https://smallrye.io/smallrye-reactive-messaging/latest/concepts/incoming-concurrency/[concurrency attribute]\n"
+"provides a connector agnostic way for non-blocking concurrent channels and replaces the Kafka connector specific `partitions` attribute.\n"
+"The `partitions` attribute is therefore deprecated and will be removed in future releases."
+msgstr ""
 
 #: _guides/kafka.adoc
 #, fuzzy
@@ -896,6 +908,59 @@ msgstr "Pode utilizar esse UUID gerado como o grupo de consumidores da seguinte 
 #, fuzzy
 msgid "If the `group.id` attribute is not set, it defaults the `quarkus.application.name` configuration property."
 msgstr "Se o atributo `group.id` não estiver definido, a propriedade de configuração `quarkus.application.name` é utilizada por defeito."
+
+#: _guides/kafka.adoc
+msgid "Manual topic-partition assignment"
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid ""
+"The `assign-seek` channel attribute allows manually assigning topic-partitions to a Kafka incoming channel,\n"
+"and optionally seek to a specified offset in the partition to start consuming records.\n"
+"If `assign-seek` is used, the consumer will not be dynamically subscribed to topics,\n"
+"but instead will statically assign the described partitions.\n"
+"In manual topic-partition rebalancing doesn't happen and therefore rebalance listeners are never called."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "The attribute takes a list of triplets separated by commas: `<topic>:<partition>:<offset>`."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "For example, the configuration"
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "assigns the consumer to:"
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "Partition 0 of topic 'topic1', setting the initial position at offset 10."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "Partition 1 of topic 'topic2', setting the initial position at offset 20."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "The topic, partition, and offset in each triplet can have the following variations:"
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "If the topic is omitted, the configured topic will be used."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "If the offset is omitted, partitions are assigned to the consumer but won't be sought to offset."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "If offset is 0, it seeks to the beginning of the topic-partition."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "If offset is -1, it seeks to the end of the topic-partition."
+msgstr ""
 
 #. type: Title ===
 #: _guides/kafka.adoc
@@ -1226,12 +1291,6 @@ msgid ""
 "It will only return from the method when the event is acked or nacked by the receiver."
 msgstr "Também é possível bloquear o envio do evento para o emissor com o método `sendAndAwait` . Ele só retornará do método quando o evento for aceito ou bloqueado pelo receptor."
 
-#. type: Block title
-#: _guides/kafka.adoc
-#, fuzzy, no-wrap
-msgid "Deprecation"
-msgstr "Depreciação"
-
 #. type: delimited block =
 #: _guides/kafka.adoc
 #, fuzzy
@@ -1261,12 +1320,6 @@ msgstr "`org.eclipse.microprofile.reactive.messaging.OnOverflow`"
 #, fuzzy
 msgid "The new `Emitter.send` method returns a `CompletionStage` completed when the produced message is acknowledged."
 msgstr "O novo método `Emitter.send` devolve um `CompletionStage` concluído quando a mensagem produzida é confirmada."
-
-#. type: Block title
-#: _guides/kafka.adoc
-#, fuzzy, no-wrap
-msgid "Depreciation"
-msgstr "Depreciação"
 
 #. type: delimited block =
 #: _guides/kafka.adoc
@@ -1567,6 +1620,39 @@ msgstr "Consumidores conscientes das transacções"
 #, fuzzy
 msgid "If you'd like to consume records only written and committed inside a Kafka transaction you need to configure the `isolation.level` property on the incoming channel as such:"
 msgstr "Se pretender consumir apenas registos escritos e confirmados no âmbito de uma transação Kafka, terá de configurar a propriedade `isolation.level` no canal de entrada como tal:"
+
+#: _guides/kafka.adoc
+msgid "Kafka Request-Reply"
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid ""
+"The Kafka Request-Reply pattern allows to publish a request record to a Kafka topic and then await for a reply record that responds to the initial request.\n"
+"The Kafka connector provides the `KafkaRequestReply` custom emitter that implements the requestor (or the client) of the request-reply pattern for Kafka outbound channels:"
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "It can be injected as a regular emitter `@Channel`:"
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid ""
+"The request method publishes the record to the configured target topic of the outgoing channel,\n"
+"and polls a reply topic (by default, the target topic with `-replies` suffix) for a reply record.\n"
+"When the reply is received the returned `Uni` is completed with the record value.\n"
+"The request send operation generates a **correlation id** and sets a header (by default `REPLY_CORRELATION_ID`),\n"
+"which it expects to be sent back in the reply record."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "The replier can be implemented using a Reactive Messaging processor (see xref:processing-messages[Processing Messages])."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid ""
+"For more information on Kafka Request Reply feature and advanced configuration options,\n"
+"see the https://smallrye.io/smallrye-reactive-messaging/latest/kafka/request-reply/[Smallrye Reactive Messaging Documentation]."
+msgstr ""
 
 #. type: Title ==
 #: _guides/kafka.adoc
@@ -1900,6 +1986,14 @@ msgstr "Serialização Avro"
 msgid "This is described in a dedicated guide: xref:kafka-schema-registry-avro.adoc[Using Apache Kafka with Schema Registry and Avro]."
 msgstr "Isso é descrito em um guia dedicado:  link:kafka-schema-registry-avro.html[Utilização do Apache Kafka com o Schema Registry e o Avro]."
 
+#: _guides/kafka.adoc
+msgid "JSON Schema Serialization"
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "This is described in a dedicated guide: xref:kafka-schema-registry-json-schema.adoc[Using Apache Kafka with Schema Registry and JSON Schema]."
+msgstr ""
+
 #. type: Title ==
 #: _guides/kafka.adoc
 #, fuzzy, no-wrap
@@ -2149,6 +2243,12 @@ msgstr "O Generation não oferece suporte a coleções como `List<Fruit>` . Cons
 msgid "Using Schema Registry"
 msgstr "Utilização do registo de esquemas"
 
+#: _guides/kafka.adoc
+msgid ""
+"This is described in a dedicated guide for Avro: xref:kafka-schema-registry-avro.adoc[Using Apache Kafka with Schema Registry and Avro].\n"
+"And a different one for JSON Schema: xref:kafka-schema-registry-json-schema.adoc[Using Apache Kafka with Schema Registry and JSON Schema]."
+msgstr ""
+
 #. type: Title ==
 #: _guides/kafka.adoc
 #, fuzzy, no-wrap
@@ -2242,6 +2342,38 @@ msgid ""
 "Note that to achieve this, an _admin connection_ is required.\n"
 "You can adjust the timeout for topic verification calls to the broker using the `health-topic-verification-timeout` configuration."
 msgstr "Observe que, para isso, é necessária uma _conexão de administrador_ . O senhor pode ajustar o tempo limite das chamadas de verificação de tópico para o agente usando a configuração `health-topic-verification-timeout` ."
+
+#: _guides/kafka.adoc
+msgid "Observability"
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid ""
+"If the xref:opentelemetry.adoc[OpenTelemetry extension] is present,\n"
+"then the Kafka connector channels work out-of-the-box with the OpenTelemetry Tracing.\n"
+"Messages written to Kafka topics propagate the current tracing span.\n"
+"On incoming channels, if a consumed Kafka record contains tracing information the message processing inherits the message span as parent."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "Tracing can be disabled explicitly per channel:"
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid ""
+"If the xref:telemetry-micrometer.adoc[Micrometer extension] is present,\n"
+"then Kafka producer and consumer clients metrics are exposed as Micrometer meters."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid ""
+"Per channel metrics are also exposed as Micrometer meters.\n"
+"The number of messages produced or received per channel, acknowledgments and duration of processing are exposed."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "The messaging meters can be disabled:"
+msgstr ""
 
 #. type: Title ==
 #: _guides/kafka.adoc
@@ -2459,6 +2591,32 @@ msgid ""
 "With in-memory channels we were able to test application code processing messages without starting a Kafka broker.\n"
 "Note that different in-memory channels are independent, and switching channel connector to in-memory does not simulate message delivery between channels configured to the same Kafka topic."
 msgstr "Com os canais na memória, pudemos testar o código do aplicativo processando mensagens sem iniciar um corretor Kafka. Observe que os diferentes canais na memória são independentes, e a mudança do conector do canal para a memória não simula a entrega de mensagens entre canais configurados para o mesmo tópico do Kafka."
+
+#: _guides/kafka.adoc
+msgid "Context propagation with InMemoryConnector"
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "By default, in-memory channels dispatch messages on the caller thread, which would be the main thread in unit tests."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid ""
+"The `quarkus-test-vertx` dependency provides the `@io.quarkus.test.vertx.RunOnVertxContext` annotation,\n"
+"which when used on a test method, executes the test on a Vert.x context."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "However, most of the other connectors handle context propagation dispatching messages on separate duplicated Vert.x contexts."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid ""
+"If your tests are dependent on context propagation,\n"
+"you can configure the in-memory connector channels with the `run-on-vertx-context` attribute to dispatch events,\n"
+"including messages and acknowledgements, on a Vert.x context.\n"
+"Alternatively you can switch this behaviour using the `InMemorySource#runOnVertxContext` method."
+msgstr ""
 
 #. type: Title ===
 #: _guides/kafka.adoc

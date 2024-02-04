@@ -22,47 +22,40 @@ msgstr ""
 msgid "Proactive authentication"
 msgstr "Autenticação proactiva"
 
-#. type: Plain text
 #: _guides/security-proactive-authentication.adoc
-#, fuzzy
-msgid "Proactive authentication is enabled in Quarkus by default. This means that if an incoming request has a credential then that request will always be authenticated, even if the target page does not require authentication."
-msgstr "A autenticação proactiva está activada no Quarkus por predefinição. Isto significa que, se um pedido de entrada tiver uma credencial, esse pedido será sempre autenticado, mesmo que a página de destino não exija autenticação."
-
-#. type: Plain text
-#: _guides/security-proactive-authentication.adoc
-#, fuzzy
-msgid "Requests with an invalid credential will always be rejected, even when the page is public."
-msgstr "Os pedidos com uma credencial inválida serão sempre rejeitados, mesmo quando a página é pública."
-
-#. type: Plain text
-#: _guides/security-proactive-authentication.adoc
-#, fuzzy
-msgid "If you only want to authenticate when the target page requires authentication, you can change the default behavior."
-msgstr "Se pretender autenticar apenas quando a página de destino requer autenticação, pode alterar o comportamento predefinido."
-
-#. type: Plain text
-#: _guides/security-proactive-authentication.adoc
-#, fuzzy
-msgid "To disable proactive authentication in Quarkus, set the following attribute in the `application.properties` configuration file:"
-msgstr "Para desativar a autenticação proactiva no Quarkus, defina o seguinte atributo no ficheiro de configuração `application.properties`:"
-
-#: _guides/security-proactive-authentication.adoc
-#, fuzzy
 msgid ""
-"If you disable proactive authentication, the authentication process runs only when an identity is requested.\n"
+"Learn how to manage proactive authentication in Quarkus, including customizing settings and handling exceptions.\n"
+"Gain practical insights and strategies for various application scenarios."
+msgstr ""
+
+#: _guides/security-proactive-authentication.adoc
+msgid ""
+"Proactive authentication is enabled in Quarkus by default.\n"
+"It ensures that all incoming requests with credentials are authenticated, even if the target page does not require authentication.\n"
+"As a result, requests with invalid credentials are rejected, even if the target page is public."
+msgstr ""
+
+#: _guides/security-proactive-authentication.adoc
+msgid ""
+"You can turn off this default behavior if you want to authenticate only when the target page requires it.\n"
+"To turn off proactive authentication so that authentication occurs only when the target page requires it, modify the `application.properties` configuration file as follows:"
+msgstr ""
+
+#: _guides/security-proactive-authentication.adoc
+msgid ""
+"If you turn off proactive authentication, the authentication process runs only when an identity is requested.\n"
 "An identity can be requested because of security rules that require the user to authenticate or because programmatic access to the current identity is required."
-msgstr "Se o senhor desativar a autenticação proativa, o processo de autenticação será executado somente quando uma identidade for solicitada. Uma identidade pode ser solicitada devido a regras de segurança que exigem que o usuário se autentique ou porque é necessário o acesso programático à identidade atual."
+msgstr ""
 
 #: _guides/security-proactive-authentication.adoc
-#, fuzzy
 msgid ""
-"If proactive authentication is in use, accessing `SecurityIdentity` is a blocking operation.\n"
-"This is because authentication might have yet to happen and accessing `SecurityIdentity` might require calls to external systems, such as databases, that might block the operation.\n"
+"If proactive authentication is used, accessing `SecurityIdentity` is a blocking operation.\n"
+"This is because authentication might have yet to happen, and accessing `SecurityIdentity` might require calls to external systems, such as databases, that might block the operation.\n"
 "For blocking applications, this is not an issue.\n"
-"However, if you have disabled authentication in a reactive application, this will fail because you cannot do blocking operations on the I/O thread.\n"
+"However, if you have disabled authentication in a reactive application, this fails because you cannot do blocking operations on the I/O thread.\n"
 "To work around this, you need to `@Inject` an instance of `io.quarkus.security.identity.CurrentIdentityAssociation` and call the `Uni<SecurityIdentity> getDeferredIdentity();` method.\n"
-"Then, you can subscribe to the resulting `Uni` and will be notified when authentication is complete and the identity is available."
-msgstr "Se a autenticação proativa estiver em uso, o acesso a `SecurityIdentity` é uma operação de bloqueio. Isso ocorre porque a autenticação pode ainda não ter ocorrido e o acesso a `SecurityIdentity` pode exigir chamadas para sistemas externos, como bancos de dados, que podem bloquear a operação. Para aplicativos de bloqueio, isso não é um problema. No entanto, se o senhor tiver desativado a autenticação em um aplicativo reativo, ele falhará porque não é possível fazer operações de bloqueio no thread de E/S. Para contornar isso, o senhor precisa `@Inject` uma instância de `io.quarkus.security.identity.CurrentIdentityAssociation` e chamar o método `Uni<SecurityIdentity> getDeferredIdentity();` . Em seguida, o senhor pode assinar o `Uni` resultante e será notificado quando a autenticação for concluída e a identidade estiver disponível."
+"Then, you can subscribe to the resulting `Uni` to be notified when authentication is complete and the identity is available."
+msgstr ""
 
 #: _guides/security-proactive-authentication.adoc
 #, fuzzy
@@ -72,16 +65,16 @@ msgid ""
 msgstr "O senhor ainda pode acessar `SecurityIdentity` de forma síncrona com `public SecurityIdentity getIdentity()` no xref:resteasy-reactive.adoc[RESTEasy Reactive] a partir de pontos de extremidade anotados com `@RolesAllowed` , `@Authenticated` , ou com as respectivas verificações de autorização de configuração, pois a autenticação já ocorreu. O mesmo também é válido para xref:reactive-routes.adoc[rotas reativas] se a resposta de uma rota for síncrona."
 
 #: _guides/security-proactive-authentication.adoc
-#, fuzzy
-msgid "xref:security-authorize-web-endpoints-reference.adoc#standard-security-annotations[Standard security annotations] on CDI beans are not supported on an I/O thread if a non-void secured method returns a value synchronously and proactive authentication is disabled because they need to access `SecurityIdentity`."
-msgstr "xref:security-authorize-web-endpoints-reference.adoc#standard-security-annotations[As anotações de segurança padrão] em beans CDI não são suportadas em uma thread de E/S se um método seguro não-vazio retornar um valor de forma síncrona e a autenticação proativa estiver desativada porque eles precisam acessar `SecurityIdentity` ."
+msgid ""
+"When proactive authentication is disabled, xref:security-authorize-web-endpoints-reference.adoc#standard-security-annotations[standard security annotations] used on CDI beans do not function on an I/O thread if a secured method that is not void synchronously returns a value.\n"
+"This limitation arises from the necessity for these methods to access `SecurityIdentity`."
+msgstr ""
 
 #: _guides/security-proactive-authentication.adoc
-#, fuzzy
 msgid ""
-"In the following example, `HelloResource` and `HelloService` are defined.\n"
-"Any GET request to `/hello` will run on the I/O thread and throw a `BlockingOperationNotAllowedException` exception."
-msgstr "No exemplo a seguir, `HelloResource` e `HelloService` estão definidos. Qualquer solicitação GET para `/hello` será executada no thread de E/S e lançará uma exceção `BlockingOperationNotAllowedException` ."
+"The following example defines `HelloResource` and `HelloService`.\n"
+"Any GET request to `/hello` runs on the I/O thread and throws a `BlockingOperationNotAllowedException` exception."
+msgstr ""
 
 #. type: Plain text
 #: _guides/security-proactive-authentication.adoc
@@ -102,11 +95,10 @@ msgid "Change the `sayHello` method return type by using a reactive or asynchron
 msgstr "Alterar o tipo de retorno do método `sayHello` utilizando um tipo de dados reativo ou assíncrono."
 
 #: _guides/security-proactive-authentication.adoc
-#, fuzzy
 msgid ""
-"Move `@RolesAllowed` annotation to the endpoint.\n"
+"Move the `@RolesAllowed` annotation to the endpoint.\n"
 "This could be one of the safest ways because accessing `SecurityIdentity` from endpoint methods is never the blocking operation."
-msgstr "Mova a anotação `@RolesAllowed` para o endpoint. Essa pode ser uma das formas mais seguras, pois o acesso a `SecurityIdentity` a partir de métodos de endpoint nunca é uma operação de bloqueio."
+msgstr ""
 
 #. type: Title ==
 #: _guides/security-proactive-authentication.adoc
@@ -114,22 +106,21 @@ msgstr "Mova a anotação `@RolesAllowed` para o endpoint. Essa pode ser uma das
 msgid "Customize authentication exception responses"
 msgstr "Personalizar respostas de exceção de autenticação"
 
-#. type: Plain text
 #: _guides/security-proactive-authentication.adoc
-#, fuzzy
-msgid "You can use Jakarta REST `ExceptionMapper` to capture Quarkus Security authentication exceptions such as `io.quarkus.security.AuthenticationFailedException`, for example:"
-msgstr "Pode utilizar o Jakarta REST `ExceptionMapper` para capturar excepções de autenticação da Segurança Quarkus, como `io.quarkus.security.AuthenticationFailedException`, por exemplo:"
+msgid ""
+"You can use Jakarta REST `ExceptionMapper` to capture Quarkus Security authentication exceptions such as `io.quarkus.security.AuthenticationFailedException`.\n"
+"For example:"
+msgstr ""
 
 #: _guides/security-proactive-authentication.adoc
-#, fuzzy
 msgid ""
-"Some HTTP authentication mechanisms need to handle authentication exceptions themselves to create a correct authentication challenge.\n"
-"For example, `io.quarkus.oidc.runtime.CodeAuthenticationMechanism`, which manages OpenID Connect (OIDC) authorization code flow authentication, needs to build a correct redirect URL, cookies, and so on.\n"
-"For that reason, avoid using custom exception mappers to customize authentication exceptions thrown by such mechanisms.\n"
+"Some HTTP authentication mechanisms must handle authentication exceptions themselves to create a correct authentication challenge.\n"
+"For example, `io.quarkus.oidc.runtime.CodeAuthenticationMechanism`, which manages OpenID Connect (OIDC) authorization code flow authentication, must build a correct redirect URL and set a state cookie.\n"
+"Therefore, avoid using custom exception mappers to customize authentication exceptions thrown by such mechanisms.\n"
 "Instead, a safer approach is to ensure that proactive authentication is enabled and to use Vert.x HTTP route failure handlers.\n"
 "This is because events come to the handler with the correct response status and headers.\n"
-"You then only need to customize the response, as shown in the following example:"
-msgstr "Alguns mecanismos de autenticação HTTP precisam lidar com exceções de autenticação para criar um desafio de autenticação correto. Por exemplo, o `io.quarkus.oidc.runtime.CodeAuthenticationMechanism` , que gerencia a autenticação de fluxo de código de autorização do OpenID Connect (OIDC), precisa criar um URL de redirecionamento correto, cookies e assim por diante. Por esse motivo, evite usar mapeadores de exceção personalizados para personalizar as exceções de autenticação lançadas por esses mecanismos. Em vez disso, uma abordagem mais segura é garantir que a autenticação proativa esteja ativada e usar manipuladores de falha de rota HTTP Vert.x. Isso ocorre porque os eventos chegam ao manipulador com o status e os cabeçalhos de resposta corretos. Assim, o senhor só precisa personalizar a resposta, conforme mostrado no exemplo a seguir:"
+"Then, you must only customize the response; for example:"
+msgstr ""
 
 #. type: Title ==
 #: _guides/security-proactive-authentication.adoc
