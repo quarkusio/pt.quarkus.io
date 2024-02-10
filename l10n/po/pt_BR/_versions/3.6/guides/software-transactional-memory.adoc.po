@@ -7,10 +7,12 @@ msgstr ""
 "X-Generator: jekyll-l10n\n"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid "Using Software Transactional Memory in Quarkus"
-msgstr ""
+msgstr "Uso da memória transacional de software no Quarkus"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Software Transactional Memory (STM) has been around in research environments since the late\n"
 "1990's and has relatively recently started to appear in products and various programming\n"
@@ -21,28 +23,32 @@ msgid ""
 "or at least made optional. This is not the situation with JTA, where state changes are made durable\n"
 "to a relational database which supports https://pubs.opengroup.org/onlinepubs/009680699/toc.pdf[the X/Open XA\n"
 "standard]."
-msgstr ""
+msgstr "A memória transacional de software (STM) existe em ambientes de pesquisa desde o final dos anos 90 e, há relativamente pouco tempo, começou a aparecer em produtos e em várias linguagens de programação. Não entraremos em todos os detalhes da STM, mas o leitor interessado pode consultar link:https://groups.csail.mit.edu/tds/papers/Shavit/ShavitTouitou-podc95.pdf[este documento] . No entanto, basta dizer que o STM oferece uma abordagem para o desenvolvimento de aplicativos transacionais em um ambiente altamente simultâneo com algumas das mesmas características das transações ACID, que o senhor provavelmente já utilizou por meio do JTA. Porém, é importante ressaltar que a propriedade Durability é relaxada (removida) nas implementações do STM ou, pelo menos, torna-se opcional. Essa não é a situação com o JTA, em que as alterações de estado são feitas de forma durável em um banco de dados relacional compatível com link:https://pubs.opengroup.org/onlinepubs/009680699/toc.pdf[o padrão X/Open XA] ."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Note that the STM implementation provided by Quarkus is based on the https://narayana.io/docs/project/index.html#d0e16066[Narayana STM] implementation. This document isn't meant to be a replacement for that project's documentation, so you may want\n"
 "to look at it for more detail. However, we will try to focus more on how you can combine some key capabilities\n"
 "into Quarkus when developing Kubernetes native applications and microservices."
-msgstr ""
+msgstr "Observe que a implementação do STM fornecida pelo Quarkus é baseada na implementação do link:https://narayana.io/docs/project/index.html#d0e16066[Narayana STM] . Este documento não pretende substituir a documentação desse projeto, portanto, talvez o senhor queira consultá-la para obter mais detalhes. No entanto, tentaremos nos concentrar mais em como o senhor pode combinar alguns recursos importantes no Quarkus ao desenvolver aplicativos e microsserviços nativos do Kubernetes."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid "Why use STM with Quarkus?"
-msgstr ""
+msgstr "Por que usar o STM com o Quarkus?"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Now you may still be asking yourself \"Why STM instead of JTA?\" or \"What are the benefits\n"
 "to STM that I don't get from JTA?\" Let's try to answer those or similar questions, with\n"
 "a particular focus on why we think they're great for Quarkus, microservices and Kubernetes\n"
 "native applications. So in no specific order ..."
-msgstr ""
+msgstr "Talvez o senhor ainda esteja se perguntando: \"Por que STM em vez de JTA?\" ou \"Quais são os benefícios do STM que não obtenho com o JTA?\" Vamos tentar responder a essas perguntas ou a outras semelhantes, com foco especial no motivo pelo qual achamos que eles são ótimos para aplicativos nativos do Quarkus, microsserviços e Kubernetes. Portanto, sem nenhuma ordem específica ..."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "The goal of STM is to simplify object reads and writes from multiple threads/protect\n"
 "state from concurrent updates. The Quarkus STM implementation will safely manage any conflicts between\n"
@@ -52,9 +58,10 @@ msgid ""
 "has completed its updates (committed or aborted the transaction); then there's the optimistic\n"
 "approach which allows all the threads to proceed and checks for conflicts at commit time, where\n"
 "one or more of the threads may be forced to abort if there have been conflicting updates."
-msgstr ""
+msgstr "O objetivo do STM é simplificar as leituras e gravações de objetos de vários threads/proteger o estado de atualizações simultâneas. A implementação do Quarkus STM gerenciará com segurança todos os conflitos entre esses threads usando qualquer modelo de isolamento escolhido para proteger essa instância de estado específica (objeto, no caso do Quarkus). No Quarkus STM, há duas implementações de isolamento: pessimista (o padrão), que faz com que os threads conflitantes sejam bloqueados até que o original tenha concluído suas atualizações (confirmado ou abortado a transação); depois, há a abordagem otimista, que permite que todos os threads prossigam e verifica se há conflitos no momento do commit, em que um ou mais threads podem ser forçados a abortar se houver atualizações conflitantes."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "STM objects have state, but it doesn't need to be persistent (durable). In fact the\n"
 "default behaviour is for objects managed within transactional memory to be volatile, such that\n"
@@ -69,9 +76,10 @@ msgid ""
 "and isolation in the presence of concurrent threads/users (common in distributed microservices architectures).\n"
 "Furthermore, not all stateful applications need to be durable - even when JTA transactions are used, it tends to be the\n"
 "exception and not the rule. And as you'll see later, because applications can optionally start and control transactions, it's possible to build microservices which can undo state changes and try alternative paths."
-msgstr ""
+msgstr "Os objetos STM têm estado, mas ele não precisa ser persistente (durável). Na verdade, o comportamento padrão é que os objetos gerenciados na memória transacional sejam voláteis, de modo que, se o serviço ou microsserviço no qual eles estão sendo usados falhar ou for gerado em outro lugar, por exemplo, por um agendador, todo o estado na memória será perdido e os objetos começarão do zero. Mas certamente o senhor obtém isso e muito mais com o JTA (e um armazenamento de dados transacional adequado) e não precisa se preocupar em reiniciar o aplicativo? Não é bem assim. Há uma compensação aqui: estamos eliminando o estado persistente e a sobrecarga de leitura e gravação (e sincronização) no armazenamento de dados durante cada transação. Isso torna as atualizações do estado (volátil) muito rápidas, mas o senhor ainda obtém os benefícios das atualizações atômicas em vários objetos STM (por exemplo, objetos que sua equipe escreveu e, em seguida, chama objetos herdados de outra equipe e exige que eles façam atualizações do tipo tudo ou nada), bem como a consistência e o isolamento na presença de threads/usuários simultâneos (comuns em arquiteturas de microsserviços distribuídos). Além disso, nem todos os aplicativos com estado precisam ser duráveis - mesmo quando as transações JTA são usadas, elas tendem a ser a exceção e não a regra. E, como o senhor verá mais adiante, como os aplicativos podem iniciar e controlar transações opcionalmente, é possível criar microsserviços que podem desfazer alterações de estado e tentar caminhos alternativos."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Another benefit of STM is composability and modularity. You can write concurrent Quarkus objects/services that\n"
 "can be easily composed with any other services built using STM, without exposing the details of how the objects/services\n"
@@ -79,52 +87,58 @@ msgid ""
 "written weeks, months or years earlier, and have A, C and I properties can be hugely beneficial. Furthermore, some\n"
 "STM implementations, including the one Quarkus uses, support nested transactions and these allow changes made within\n"
 "the context of a nested (sub) transaction to later be rolled back by the parent transaction."
-msgstr ""
+msgstr "Outro benefício do STM é a capacidade de composição e a modularidade. O senhor pode escrever objetos/serviços simultâneos do Quarkus que podem ser facilmente compostos com quaisquer outros serviços criados usando o STM, sem expor os detalhes de como os objetos/serviços são implementados. Como discutimos anteriormente, essa capacidade de compor objetos que o senhor escreveu com aqueles que outras equipes podem ter escrito semanas, meses ou anos antes e que têm propriedades A, C e I pode ser extremamente benéfica. Além disso, algumas implementações de STM, inclusive a que o Quarkus usa, suportam transações aninhadas e permitem que as alterações feitas no contexto de uma transação aninhada (sub) sejam posteriormente revertidas pela transação principal."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Although the default for STM object state is volatile, it is possible to configure the STM implementation\n"
 "such that an object's state is durable. Although it's possible to configure Narayana such that different\n"
 "backend datastores can be used, including relational databases, the default is the local operating system\n"
 "file system, which means you don't need to configure anything else with Quarkus such as a database."
-msgstr ""
+msgstr "Embora o padrão para o estado do objeto STM seja volátil, é possível configurar a implementação do STM de forma que o estado de um objeto seja durável. Embora seja possível configurar o Narayana de forma que diferentes datastores de backend possam ser usados, inclusive bancos de dados relacionais, o padrão é o sistema de arquivos do sistema operacional local, o que significa que o senhor não precisa configurar nada mais com o Quarkus, como um banco de dados."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Many STM implementations allow \"plain old language objects\" to be made STM-aware with little or no changes to\n"
 "the application code. You can build, test and deploy applications without wanting them to be STM-aware and\n"
 "then later add those capabilities if they become necessary and without much development overhead at all."
-msgstr ""
+msgstr "Muitas implementações de STM permitem que \"objetos de linguagem simples e antigos\" sejam compatíveis com STM com pouca ou nenhuma alteração no código do aplicativo. O senhor pode criar, testar e implantar aplicativos sem querer que eles sejam compatíveis com o STM e, posteriormente, adicionar esses recursos, se necessário, sem muita sobrecarga de desenvolvimento."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid "Building STM applications"
-msgstr ""
+msgstr "Criação de aplicativos STM"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "There is also a fully worked example in the quickstarts which you may access by cloning the\n"
 "Git repository: `git clone {quickstarts-clone-url}`, or by downloading an {quickstarts-archive-url}[archive].\n"
 "Look for the `software-transactional-memory-quickstart` example. This will help to understand how you\n"
 "can build STM-aware applications with Quarkus. However, before we do so there are a few basic concepts\n"
 "which we need to cover."
-msgstr ""
+msgstr "Há também um exemplo totalmente funcional nos inícios rápidos que o senhor pode acessar clonando o repositório Git: `git clone {quickstarts-clone-url}` ou fazendo o download de um {quickstarts-archive-url}[archive]. Procure o exemplo `software-transactional-memory-quickstart` . Isso ajudará a entender como o senhor pode criar aplicativos com reconhecimento de STM com o Quarkus. Entretanto, antes de fazermos isso, precisamos abordar alguns conceitos básicos."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Note, as you will see, STM in Quarkus relies on a number of annotations to define behaviours. The lack\n"
 "of these annotations causes sensible defaults to be assumed, but it is important for the developer to\n"
 "understand what these may be. Please refer to the https://narayana.io/docs/project/index.html#d0e16066[Narayana STM manual]\n"
 "and the https://narayana.io//docs/project/index.html#d0e16133[STM annotations guide] for more details on\n"
 "all the annotations Narayana STM provides."
-msgstr ""
+msgstr "Observe que, como o senhor verá, o STM no Quarkus depende de várias anotações para definir comportamentos. A falta dessas anotações faz com que sejam assumidos padrões sensatos, mas é importante que o desenvolvedor entenda quais são esses padrões. Consulte o link:https://narayana.io/docs/project/index.html#d0e16066[manual do Narayana STM] e o link:https://narayana.io//docs/project/index.html#d0e16133[guia de anotações do STM] para obter mais detalhes sobre todas as anotações fornecidas pelo Narayana STM."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
 msgid "Setting it up"
 msgstr "Configuração"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid "To use the extension include it as a dependency in your build file:"
-msgstr ""
+msgstr "Para usar a extensão, inclua-a como uma dependência em seu arquivo de compilação:"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
 msgid "pom.xml"
@@ -135,10 +149,12 @@ msgid "build.gradle"
 msgstr "build.gradle"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid "Defining STM-aware classes"
-msgstr ""
+msgstr "Definição de classes com reconhecimento de STM"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "In order for the STM subsystem to have knowledge about which classes are to be managed within the context\n"
 "of transactional memory it is necessary to provide a minimal level of instrumentation. This occurs by\n"
@@ -146,99 +162,113 @@ msgid ""
 "must be instances of classes which inherit from interfaces that themselves have been annotated to identify them\n"
 "as STM-aware. Any other objects (and their classes) which do not follow this rule will not be managed by the\n"
 "STM subsystem and hence any of their state changes will not be rolled back, for example."
-msgstr ""
+msgstr "Para que o subsistema STM tenha conhecimento sobre quais classes devem ser gerenciadas no contexto da memória transacional, é necessário fornecer um nível mínimo de instrumentação. Isso ocorre por meio da categorização das classes STM-aware e STM-unaware por meio de um limite de interface; especificamente, todos os objetos STM-aware devem ser instâncias de classes que herdam de interfaces que foram anotadas para identificá-las como STM-aware. Quaisquer outros objetos (e suas classes) que não sigam essa regra não serão gerenciados pelo subsistema STM e, portanto, nenhuma de suas alterações de estado será revertida, por exemplo."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "The specific annotation that STM-aware application interfaces must use is `org.jboss.stm.annotations.Transactional`.\n"
 "For example:"
-msgstr ""
+msgstr "A anotação específica que as interfaces de aplicativos com reconhecimento de STM devem usar é `org.jboss.stm.annotations.Transactional` . Por exemplo:"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Classes which implement this interface are able to use additional annotations from Narayana to tell the STM\n"
 "subsystem about things such as whether a method will modify the state of the object, or what state variables\n"
 "within the class should be managed transactionally, e.g., some instance variables may not need to be rolled back\n"
 "if a transaction aborts. As mentioned earlier, if those annotations are not present then defaults are chosen to\n"
 "guarantee safety, such as assuming all methods will modify state."
-msgstr ""
+msgstr "As classes que implementam essa interface podem usar anotações adicionais do Narayana para informar ao subsistema STM sobre coisas como se um método modificará o estado do objeto ou quais variáveis de estado dentro da classe devem ser gerenciadas transacionalmente, por exemplo, algumas variáveis de instância podem não precisar ser revertidas se uma transação for cancelada. Conforme mencionado anteriormente, se essas anotações não estiverem presentes, os padrões serão escolhidos para garantir a segurança, como, por exemplo, presumir que todos os métodos modificarão o estado."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "For example, by using the `@ReadLock` annotation on the `getNumberOfBookings` method, we are able to tell the\n"
 "STM subsystem that no state modifications will occur in this object when it is used in the transactional\n"
 "memory. Also, the `@NotState` annotation tells the system to ignore `timesCalled` when transactions commit or\n"
 "abort, so this value only changes due to application code."
-msgstr ""
+msgstr "Por exemplo, ao usar a anotação `@ReadLock` no método `getNumberOfBookings` , podemos informar ao subsistema STM que nenhuma modificação de estado ocorrerá nesse objeto quando ele for usado na memória transacional. Além disso, a anotação `@NotState` diz ao sistema para ignorar `timesCalled` quando as transações forem confirmadas ou abortadas, de modo que esse valor só será alterado devido ao código do aplicativo."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Please refer to the Narayana guide for details of how to exert finer grained control over the transactional\n"
 "behaviour of objects that implement interfaces marked with the `@Transactional` annotation."
-msgstr ""
+msgstr "Consulte o guia Narayana para obter detalhes sobre como exercer um controle mais refinado sobre o comportamento transacional de objetos que implementam interfaces marcadas com a anotação `@Transactional` ."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid "Creating STM objects"
-msgstr ""
+msgstr "Criação de objetos STM"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "The STM subsystem needs to be told about which objects it should be managing. The Quarkus (aka Narayana) STM implementation\n"
 "does this by providing containers of transactional memory within which these object instances reside. Until an object\n"
 "is placed within one of these STM containers it cannot be managed within transactions and any state changes will\n"
 "not possess the A, C, I (or even D) properties."
-msgstr ""
+msgstr "O subsistema STM precisa ser informado sobre quais objetos ele deve gerenciar. A implementação do STM do Quarkus (também conhecido como Narayana) faz isso fornecendo contêineres de memória transacional nos quais essas instâncias de objeto residem. Até que um objeto seja colocado em um desses contêineres do STM, ele não poderá ser gerenciado em transações e qualquer alteração de estado não terá as propriedades A, C, I (ou mesmo D)."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Note, the term \"container\" was defined within the STM implementation years before Linux containers came along. It may\n"
 "be confusing to use especially in a Kubernetes native environment such as Quarkus, but hopefully\n"
 "the reader can do the mental mapping."
-msgstr ""
+msgstr "Observe que o termo \"contêiner\" foi definido na implementação do STM anos antes do surgimento dos contêineres do Linux. Pode ser confuso usá-lo, especialmente em um ambiente nativo do Kubernetes, como o Quarkus, mas esperamos que o leitor consiga fazer o mapeamento mental."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "The default STM container (`org.jboss.stm.Container`) provides support for volatile objects that can only be shared between\n"
 "threads in the same microservice/JVM instance. When an STM-aware object is placed into the container it returns a handle\n"
 "through which that object should then be used in the future. It is important to use this handle as continuing to access\n"
 "the object through the original reference will not allow the STM subsystem to track access and manage state and\n"
 "concurrency control."
-msgstr ""
+msgstr "O contêiner STM padrão ( `org.jboss.stm.Container` ) oferece suporte a objetos voláteis que só podem ser compartilhados entre threads na mesma instância de microsserviço/JVM. Quando um objeto com reconhecimento de STM é colocado no contêiner, ele retorna um identificador por meio do qual esse objeto deve ser usado no futuro. É importante usar esse identificador, pois continuar acessando o objeto por meio da referência original não permitirá que o subsistema STM rastreie o acesso e gerencie o estado e o controle de simultaneidade."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "You need to tell each Container about the type of objects for which it will be responsible. In this example\n"
 "it will be instances that implement the FlightService interface."
-msgstr ""
+msgstr "O senhor precisa informar a cada contêiner o tipo de objeto pelo qual ele será responsável. Neste exemplo, serão instâncias que implementam a interface FlightService."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Then you create an instance that implements `FlightService`. You should not use it directly at this stage because\n"
 "access to it is not being managed by the STM subsystem."
-msgstr ""
+msgstr "Em seguida, o senhor cria uma instância que implementa `FlightService` . O senhor não deve usá-la diretamente neste estágio porque o acesso a ela não está sendo gerenciado pelo subsistema STM."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "To obtain a managed instance, pass the original object to the STM `container` which then returns a reference\n"
 "through which you will be able to perform transactional operations. This reference can be used safely from multiple threads."
-msgstr ""
+msgstr "Para obter uma instância gerenciada, passe o objeto original para o STM `container` que, em seguida, retorna uma referência por meio da qual o senhor poderá realizar operações transacionais. Essa referência pode ser usada com segurança em vários threads."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid "Defining transaction boundaries"
-msgstr ""
+msgstr "Definição dos limites da transação"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Once an object is placed within an STM container the application developer can manage the scope of transactions\n"
 "within which it is used. There are some annotations which can be applied to the STM-aware class to have the\n"
 "container automatically create a transaction whenever a specific method is invoked."
-msgstr ""
+msgstr "Quando um objeto é colocado em um contêiner STM, o desenvolvedor do aplicativo pode gerenciar o escopo das transações nas quais ele é usado. Há algumas anotações que podem ser aplicadas à classe compatível com STM para que o contêiner crie automaticamente uma transação sempre que um método específico for chamado."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
 msgid "Declarative approach"
 msgstr "Abordagem declarativa"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "If the `@NestedTopLevel` or `@Nested` annotation is placed on a method signature then the STM container will\n"
 "start a new transaction when that method is invoked and attempt to commit it when the method returns. If there is\n"
@@ -247,57 +277,67 @@ msgid ""
 "transaction does not behave as a parent, i.e., the nested top-level transaction will commit or abort independently; the\n"
 "latter annotation will create a transaction with is properly nested within the calling transaction, i.e., that\n"
 "transaction acts as the parent of this newly created transaction."
-msgstr ""
+msgstr "Se a anotação `@NestedTopLevel` ou `@Nested` for colocada em uma assinatura de método, o contêiner STM iniciará uma nova transação quando esse método for chamado e tentará confirmá-la quando o método retornar. Se já houver uma transação associada ao thread de chamada, cada uma dessas anotações terá um comportamento ligeiramente diferente: a primeira anotação sempre criará uma nova transação de nível superior dentro da qual o método será executado, de modo que a transação anexa não se comportará como pai, ou seja, a transação de nível superior aninhada será confirmada ou abortada independentemente; a última anotação criará uma transação devidamente aninhada dentro da transação de chamada, ou seja, essa transação atuará como pai dessa transação recém-criada."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid "Programmatic approach"
-msgstr ""
+msgstr "Abordagem programática"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid "The application can programmatically start a transaction before accessing the methods of STM objects:"
-msgstr ""
+msgstr "O aplicativo pode iniciar uma transação de forma programática antes de acessar os métodos dos objetos STM:"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "An object for manually controlling transaction boundaries (AtomicAction and many other useful\n"
 "classes are included in the extension).\n"
 "Refer https://narayana.io//docs/api/com/arjuna/ats/arjuna/AtomicAction.html[to the javadoc] for more detail."
-msgstr ""
+msgstr "Um objeto para controlar manualmente os limites da transação (AtomicAction e muitas outras classes úteis estão incluídas na extensão). Consulte link:https://narayana.io//docs/api/com/arjuna/ats/arjuna/AtomicAction.html[o javadoc] para obter mais detalhes."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid "Programmatically begin a transaction."
-msgstr ""
+msgstr "Iniciar uma transação de forma programática."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Notice that object updates can be composed which means that updates to multiple objects can be committed together as a single action.\n"
 "[Note that it is also possible to begin nested transactions so that you can perform speculative work which may then be abandoned\n"
 "without abandoning other work performed by the outer transaction]."
-msgstr ""
+msgstr "Observe que as atualizações de objetos podem ser compostas, o que significa que as atualizações de vários objetos podem ser confirmadas juntas como uma única ação. [Observe que também é possível iniciar transações aninhadas para que o senhor possa realizar um trabalho especulativo que pode ser abandonado sem abandonar outro trabalho realizado pela transação externa]."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid "Since the transaction has not yet been committed the changes made by the flight and taxi services are not visible outside the transaction."
-msgstr ""
+msgstr "Como a transação ainda não foi confirmada, as alterações feitas pelos serviços de voo e táxi não são visíveis fora da transação."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Since the commit was successful the changes made by the flight and taxi services are now visible to other threads.\n"
 "Note that other transactions that relied on the old state may or may not now incur conflicts when they commit (the STM library\n"
 "provides a number of features for managing conflicting behaviour and these are covered in the Narayana STM manual)."
-msgstr ""
+msgstr "Como o commit foi bem-sucedido, as alterações feitas pelos serviços de voo e táxi agora estão visíveis para outros threads. Observe que outras transações que dependiam do estado antigo podem ou não gerar conflitos quando forem confirmadas (a biblioteca STM oferece vários recursos para gerenciar comportamentos conflitantes, que são abordados no manual do Narayana STM)."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid "Programmatically decide to abort the transaction which means that the changes made by the flight and taxi services are discarded."
-msgstr ""
+msgstr "Decidir programaticamente abortar a transação, o que significa que as alterações feitas pelos serviços de voo e táxi são descartadas."
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid "Distributed transactions"
-msgstr ""
+msgstr "Transações distribuídas"
 
 #: _versions/3.6/guides/software-transactional-memory.adoc
+#, fuzzy
 msgid ""
 "Sharing a transaction between multiple services is possible but is currently\n"
 "an advanced use case only and the Narayana documentation should be consulted\n"
 "if this behaviour is required. In particular, STM does not yet support the features\n"
 "described in the xref:context-propagation.adoc[Context Propagation guide]."
-msgstr ""
+msgstr "O compartilhamento de uma transação entre vários serviços é possível, mas atualmente é apenas um caso de uso avançado, e a documentação do Narayana deve ser consultada se esse comportamento for necessário. Em particular, o STM ainda não é compatível com os recursos descritos no xref:context-propagation.adoc[guia Context Propagation (Propagação de contexto] )."
