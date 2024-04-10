@@ -486,28 +486,25 @@ msgid ""
 "Although `alice` exists in both tenants, the application treats them as distinct users in separate realms."
 msgstr "Em ambos os casos, a página de destino mostra o nome e o e-mail do usuário se ele for autenticado com êxito. Embora o `alice` exista em ambos os locatários, o aplicativo os trata como usuários distintos em reinos separados."
 
-#. type: Title ==
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy, no-wrap
-msgid "Static tenant configuration resolution"
-msgstr "Resolução da configuração estática do locatário"
+#, fuzzy
+msgid "Tenant resolution order"
+msgstr "Ordem de resolução de inquilinos"
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
 msgid ""
-"When you set multiple tenant configurations in the `application.properties` file, you only need to specify how the tenant identifier gets resolved.\n"
-"To configure the resolution of the tenant identifier, use one of the following options:"
-msgstr "Quando o senhor define várias configurações de locatário no arquivo `application.properties` , só precisa especificar como o identificador de locatário é resolvido. Para configurar a resolução do identificador de locatário, use uma das seguintes opções:"
+"OIDC tenants are resolved in the following order:\n"
+"* `io.quarkus.oidc.Tenant` annotation is checked first if the proactive authentication is disabled.\n"
+"* Dynamic tenant resolution using a custom `TenantConfigResolver`.\n"
+"* Static tenant resolution using one of these options: custom `TenantResolver`, configured tenant paths, and defaulting to the last request path segment as a tenant id.\n"
+"* Default OIDC tenant is selected if a tenant id has not been resolved after the preceeding steps."
+msgstr "Os locatários do OIDC são resolvidos na seguinte ordem: * A anotação `io.quarkus.oidc.Tenant` é verificada primeiro se a autenticação proativa estiver desativada. * Resolução dinâmica de locatários usando um `TenantConfigResolver` personalizado. * Resolução estática de locatário usando uma destas opções: `TenantResolver` personalizado, caminhos de locatário configurados e padrão para o último segmento de caminho de solicitação como um ID de locatário. * O locatário padrão do OIDC é selecionado se um ID de locatário não tiver sido resolvido após as etapas anteriores."
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
-msgid "<<tenant-resolver>>"
-msgstr "<<tenant-resolver>>"
-
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy
-msgid "<<default-tenant-resolver>>"
-msgstr "<<default-tenant-resolver>>"
+msgid "See the following sections for more information:"
+msgstr "Consulte as seções a seguir para obter mais informações:"
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
@@ -516,78 +513,13 @@ msgstr "<<annotations-tenant-resolver>>"
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
-msgid ""
-"These tenant resolution options are tried in the order they are listed until the tenant id gets resolved.\n"
-"If the tenant id remains unresolved (`null`), the default (unnamed) tenant configuration is selected."
-msgstr "Essas opções de resolução de locatário são tentadas na ordem em que estão listadas até que o ID do locatário seja resolvido. Se o ID do locatário permanecer sem resolução ( `null` ), a configuração padrão (sem nome) do locatário será selecionada."
-
-#. type: Title ===
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy, no-wrap
-msgid "Resolve with `TenantResolver`"
-msgstr "Resolver com `TenantResolver`"
-
-#. type: Plain text
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy
-msgid "The following `application.properties` example shows how you can resolve the tenant identifier of two tenants named `a` and `b` by using the `TenantResolver` method:"
-msgstr "O exemplo `application.properties` a seguir mostra como o senhor pode resolver o identificador de locatário de dois locatários chamados `a` e `b` usando o método `TenantResolver` :"
+msgid "<<tenant-config-resolver>>"
+msgstr "<<tenant-config-resolver>>"
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
-msgid "You can return the tenant id of either `a` or `b` from `quarkus.oidc.TenantResolver`:"
-msgstr "O senhor pode retornar o ID do locatário de `a` ou `b` de `quarkus.oidc.TenantResolver` :"
-
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy
-msgid "In this example, the value of the last request path segment is a tenant id, but if required, you can implement a more complex tenant identifier resolution logic."
-msgstr "Neste exemplo, o valor do último segmento do caminho de solicitação é um ID de locatário, mas, se necessário, o senhor pode implementar uma lógica de resolução de identificador de locatário mais complexa."
-
-#. type: Title ===
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy, no-wrap
-msgid "Default resolution"
-msgstr "Resolução padrão"
-
-#. type: Plain text
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy
-msgid "The default resolution for a tenant identifier is convention based, whereby the authentication request must include the tenant identifier in the last segment of the request path."
-msgstr "A resolução padrão para um identificador de locatário é baseada em convenções, por meio das quais a solicitação de autenticação deve incluir o identificador de locatário no último segmento do caminho da solicitação."
-
-#. type: Plain text
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy
-msgid "The following `application.properties` example shows how you can configure two tenants named `google` and `github`:"
-msgstr "O exemplo `application.properties` a seguir mostra como o senhor pode configurar dois locatários chamados `google` e `github` :"
-
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy
-msgid ""
-"In the provided example, both tenants configure OIDC `web-app` applications to use an authorization code flow to authenticate users and require session cookies to be generated after authentication.\n"
-"After Google or GitHub authenticates the current user, the user gets returned to the `/signed-in` area for authenticated users, such as a secured resource path on the JAX-RS endpoint."
-msgstr "No exemplo fornecido, ambos os locatários configuram os aplicativos OIDC `web-app` para usar um fluxo de código de autorização para autenticar os usuários e exigem que os cookies de sessão sejam gerados após a autenticação. Depois que o Google ou o GitHub autentica o usuário atual, ele retorna à área `/signed-in` para usuários autenticados, como um caminho de recurso seguro no endpoint JAX-RS."
-
-#. type: Plain text
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy
-msgid "Finally, to complete the default tenant resolution, set the following configuration property:"
-msgstr "Por fim, para concluir a resolução padrão do locatário, defina a seguinte propriedade de configuração:"
-
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy
-msgid ""
-"If the endpoint is running on `http://localhost:8080`, you can also provide UI options for users to log in to either `http://localhost:8080/google` or `http://localhost:8080/github`, without having to add specific `/google` or `/github` JAX-RS resource paths.\n"
-"Tenant identifiers are also recorded in the session cookie names after the authentication is completed.\n"
-"Therefore, authenticated users can access the secured application area without requiring either the `google` or `github` path values to be included in the secured URL."
-msgstr "Se o endpoint estiver sendo executado em `http://localhost:8080` o senhor também pode fornecer opções de interface do usuário para que os usuários façam login em `http://localhost:8080/google` ou `http://localhost:8080/github` sem precisar adicionar caminhos de recursos JAX-RS específicos em `/google` ou `/github` . Os identificadores de locatário também são registrados nos nomes dos cookies de sessão após a conclusão da autenticação. Portanto, os usuários autenticados podem acessar a área segura do aplicativo sem precisar que os valores de caminho `google` ou `github` sejam incluídos no URL seguro."
-
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy
-msgid ""
-"Default resolution can also work for Bearer token authentication.\n"
-"Still, it might be less practical because a tenant identifier must always be set as the last path segment value."
-msgstr "A resolução padrão também pode funcionar para a autenticação do token Bearer. Ainda assim, pode ser menos prático porque um identificador de locatário deve sempre ser definido como o último valor de segmento de caminho."
+msgid "<<static-tenant-resolution>>"
+msgstr "<<static-tenant-resolution>>"
 
 #. type: Title ===
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
@@ -664,6 +596,188 @@ msgstr "O `OidcTenantConfig` retornado por esse método é o mesmo usado para an
 msgid "If the dynamic tenant resolver returns `null`, a <<static-tenant-resolution>> is attempted next."
 msgstr "Se o resolvedor de locatários dinâmicos retornar `null` , será tentado um <<static-tenant-resolution>> em seguida."
 
+#. type: Title ==
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy, no-wrap
+msgid "Static tenant configuration resolution"
+msgstr "Resolução da configuração estática do locatário"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid ""
+"When you set multiple tenant configurations in the `application.properties` file, you only need to specify how the tenant identifier gets resolved.\n"
+"To configure the resolution of the tenant identifier, use one of the following options:"
+msgstr "Quando o senhor define várias configurações de locatário no arquivo `application.properties` , só precisa especificar como o identificador de locatário é resolvido. Para configurar a resolução do identificador de locatário, use uma das seguintes opções:"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "<<tenant-resolver>>"
+msgstr "<<tenant-resolver>>"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "<<configure-tenant-paths>>"
+msgstr "<<configure-tenant-paths>>"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "<<default-tenant-resolver>>"
+msgstr "<<default-tenant-resolver>>"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "<<issuer-based-tenant-resolver>>"
+msgstr "<<issuer-based-tenant-resolver>>"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid ""
+"These tenant resolution options are tried in the order they are listed until the tenant id gets resolved.\n"
+"If the tenant id remains unresolved (`null`), the default (unnamed) tenant configuration is selected."
+msgstr "Essas opções de resolução de locatário são tentadas na ordem em que estão listadas até que o ID do locatário seja resolvido. Se o ID do locatário permanecer sem resolução ( `null` ), a configuração padrão (sem nome) do locatário será selecionada."
+
+#. type: Title ===
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy, no-wrap
+msgid "Resolve with `TenantResolver`"
+msgstr "Resolver com `TenantResolver`"
+
+#. type: Plain text
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "The following `application.properties` example shows how you can resolve the tenant identifier of two tenants named `a` and `b` by using the `TenantResolver` method:"
+msgstr "O exemplo `application.properties` a seguir mostra como o senhor pode resolver o identificador de locatário de dois locatários chamados `a` e `b` usando o método `TenantResolver` :"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "You can return the tenant id of either `a` or `b` from `quarkus.oidc.TenantResolver`:"
+msgstr "O senhor pode retornar o ID do locatário de `a` ou `b` de `quarkus.oidc.TenantResolver` :"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "In this example, the value of the last request path segment is a tenant id, but if required, you can implement a more complex tenant identifier resolution logic."
+msgstr "Neste exemplo, o valor do último segmento do caminho de solicitação é um ID de locatário, mas, se necessário, o senhor pode implementar uma lógica de resolução de identificador de locatário mais complexa."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Configure tenant paths"
+msgstr "Configurar caminhos de locatário"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid ""
+"You can use the `quarkus.oidc.tenant-paths` configuration property for resolving the tenant identifier as an alternative to using `io.quarkus.oidc.TenantResolver`.\n"
+"Here is how you can select the `hr` tenant for the `sayHello` endpoint of the `HelloResource` resource used in the previous example:"
+msgstr "O senhor pode usar a propriedade de configuração `quarkus.oidc.tenant-paths` para resolver o identificador de locatário como uma alternativa ao uso de `io.quarkus.oidc.TenantResolver` . Veja como o senhor pode selecionar o locatário `hr` para o endpoint `sayHello` do recurso `HelloResource` usado no exemplo anterior:"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Same path-matching rules apply as for the `quarkus.http.auth.permission.authenticated.paths=/api/hello` configuration property from the previous example."
+msgstr "Aplicam-se as mesmas regras de correspondência de caminhos da propriedade de configuração `quarkus.http.auth.permission.authenticated.paths=/api/hello` do exemplo anterior."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "The wildcard placed at the end of the path represents any number of path segments. However the path is less specific than the `/api/hello`, therefore the `hr` tenant will be used to secure the `sayHello` endpoint."
+msgstr "O curinga colocado no final do caminho representa qualquer número de segmentos de caminho. No entanto, o caminho é menos específico do que o `/api/hello` , portanto, o locatário `hr` será usado para proteger o ponto de extremidade `sayHello` ."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "The wildcard in the `/*/hello` represents exactly one path segment. Nevertheless, the wildcard is less specific than the `api`, therefore the `hr` tenant will be used."
+msgstr "O curinga em `/*/hello` representa exatamente um segmento de caminho. No entanto, o curinga é menos específico que o `api` , portanto, o locatário `hr` será usado."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Path-matching mechanism works exactly same as in the xref:security-authorize-web-endpoints-reference.adoc#authorization-using-configuration[Authorization using configuration]."
+msgstr "O mecanismo de correspondência de caminhos funciona exatamente da mesma forma que na xref:security-authorize-web-endpoints-reference.adoc#authorization-using-configuration[configuração de uso de autorização] ."
+
+#. type: Title ===
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy, no-wrap
+msgid "Default resolution"
+msgstr "Resolução padrão"
+
+#. type: Plain text
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "The default resolution for a tenant identifier is convention based, whereby the authentication request must include the tenant identifier in the last segment of the request path."
+msgstr "A resolução padrão para um identificador de locatário é baseada em convenções, por meio das quais a solicitação de autenticação deve incluir o identificador de locatário no último segmento do caminho da solicitação."
+
+#. type: Plain text
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "The following `application.properties` example shows how you can configure two tenants named `google` and `github`:"
+msgstr "O exemplo `application.properties` a seguir mostra como o senhor pode configurar dois locatários chamados `google` e `github` :"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid ""
+"In the provided example, both tenants configure OIDC `web-app` applications to use an authorization code flow to authenticate users and require session cookies to be generated after authentication.\n"
+"After Google or GitHub authenticates the current user, the user gets returned to the `/signed-in` area for authenticated users, such as a secured resource path on the JAX-RS endpoint."
+msgstr "No exemplo fornecido, ambos os locatários configuram os aplicativos OIDC `web-app` para usar um fluxo de código de autorização para autenticar os usuários e exigem que os cookies de sessão sejam gerados após a autenticação. Depois que o Google ou o GitHub autentica o usuário atual, ele retorna à área `/signed-in` para usuários autenticados, como um caminho de recurso seguro no endpoint JAX-RS."
+
+#. type: Plain text
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Finally, to complete the default tenant resolution, set the following configuration property:"
+msgstr "Por fim, para concluir a resolução padrão do locatário, defina a seguinte propriedade de configuração:"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid ""
+"If the endpoint is running on `http://localhost:8080`, you can also provide UI options for users to log in to either `http://localhost:8080/google` or `http://localhost:8080/github`, without having to add specific `/google` or `/github` JAX-RS resource paths.\n"
+"Tenant identifiers are also recorded in the session cookie names after the authentication is completed.\n"
+"Therefore, authenticated users can access the secured application area without requiring either the `google` or `github` path values to be included in the secured URL."
+msgstr "Se o endpoint estiver sendo executado em `http://localhost:8080` o senhor também pode fornecer opções de interface do usuário para que os usuários façam login em `http://localhost:8080/google` ou `http://localhost:8080/github` sem precisar adicionar caminhos de recursos JAX-RS específicos em `/google` ou `/github` . Os identificadores de locatário também são registrados nos nomes dos cookies de sessão após a conclusão da autenticação. Portanto, os usuários autenticados podem acessar a área segura do aplicativo sem precisar que os valores de caminho `google` ou `github` sejam incluídos no URL seguro."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid ""
+"Default resolution can also work for Bearer token authentication.\n"
+"Still, it might be less practical because a tenant identifier must always be set as the last path segment value."
+msgstr "A resolução padrão também pode funcionar para a autenticação do token Bearer. Ainda assim, pode ser menos prático porque um identificador de locatário deve sempre ser definido como o último valor de segmento de caminho."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Resolve tenants with a token issuer claim"
+msgstr "Resolver inquilinos com uma reivindicação de emissor de token"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid ""
+"OIDC tenants which support Bearer token authentication can be resolved using the access token's issuer.\n"
+"The following conditions must be met for the issuer-based resolution to work:"
+msgstr "Os locatários do OIDC que oferecem suporte à autenticação de token de portador podem ser resolvidos usando o emissor do token de acesso. As seguintes condições devem ser atendidas para que a resolução baseada no emissor funcione:"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "The access token must be in the JWT format and contain an issuer (`iss`) token claim."
+msgstr "O token de acesso deve estar no formato JWT e conter uma reivindicação de token do emissor ( `iss` )."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Only OIDC tenants with the application type `service` or `hybrid` are considered. These tenants must have a token issuer discovered or configured."
+msgstr "Somente os locatários do OIDC com o tipo de aplicativo `service` ou `hybrid` são considerados. Esses locatários devem ter um emissor de token descoberto ou configurado."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "The issuer-based resolution is enabled with the `quarkus.oidc.resolve-tenants-with-issuer` property. For example:"
+msgstr "A resolução baseada no emissor é ativada com a propriedade `quarkus.oidc.resolve-tenants-with-issuer` . Por exemplo:"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Tenants `tenant-a` and `tenant-b` are resolved using a JWT access token's issuer `iss` claim value."
+msgstr "Os locatários `tenant-a` e `tenant-b` são resolvidos usando um valor de reivindicação do emissor do token de acesso JWT `iss` ."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Tenant `tenant-a` discovers the `issuer` from the OIDC provider's well-known configuration endpoint."
+msgstr "O locatário `tenant-a` descobre o `issuer` a partir do endpoint de configuração conhecido do provedor de OIDC."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Tenant `tenant-b` configures the `issuer` because its OIDC provider does not support the discovery."
+msgstr "O locatário `tenant-b` configura o `issuer` porque seu provedor de OIDC não oferece suporte à descoberta."
+
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
 msgid "Tenant resolution for OIDC web-app applications"
@@ -671,73 +785,109 @@ msgstr "Resolução de inquilinos para aplicativos web do OIDC"
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
-msgid "The simplest option for resolving the OIDC `web-app` application configuration is to follow the steps described in the <<default-tenant-resolver>> section."
-msgstr "A opção mais simples para resolver a configuração do aplicativo OIDC `web-app` é seguir as etapas descritas na seção <<default-tenant-resolver>> ."
+msgid "Tenant resolution for the OIDC `web-app` applications must be done at least 3 times during an authorization code flow, when the OIDC tenant-specific configuration affects how each of the following steps is run."
+msgstr "A resolução do locatário para os aplicativos do OIDC `web-app` deve ser feita pelo menos três vezes durante um fluxo de código de autorização, quando a configuração específica do locatário do OIDC afeta a forma como cada uma das etapas a seguir é executada."
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
-msgid "Try one of the options below if the default resolution strategy does not work for your application setup."
-msgstr "Tente uma das opções abaixo se a estratégia de resolução padrão não funcionar para a configuração de seu aplicativo."
+msgid "Step 1: Unauthenticated user accesses an endpoint and is redirected to OIDC provider"
+msgstr "Etapa 1: o usuário não autenticado acessa um endpoint e é redirecionado para o provedor de OIDC"
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
-msgid "Several options are available for selecting the tenant configuration that should be used to secure the current HTTP request for both `service` and `web-app` OIDC applications, such as:"
-msgstr "Há várias opções disponíveis para selecionar a configuração do locatário que deve ser usada para proteger a solicitação HTTP atual para os aplicativos `service` e `web-app` OIDC, como, por exemplo"
+msgid "When an unauthenticated user accesses a secured path, the user is redirected to the OIDC provider to authenticate and the tenant configuration is used to build the redirect URI."
+msgstr "Quando um usuário não autenticado acessa um caminho seguro, o usuário é redirecionado para o provedor OIDC para se autenticar e a configuração do locatário é usada para criar o URI de redirecionamento."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "All the static and dynamic tenant resolution options listed in the <<static-tenant-resolution>> and <<tenant-config-resolver>> sections can be used to resolve a tenant."
+msgstr "Todas as opções de resolução de locatários estáticos e dinâmicos listadas nas seções <<static-tenant-resolution>> e <<tenant-config-resolver>> podem ser usadas para resolver um locatário."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Step 2: The user is redirected back to the endpoint"
+msgstr "Etapa 2: o usuário é redirecionado de volta ao endpoint"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "After the provider authentication, the user is redirected back to the Quarkus endpoint and the tenant configuration is used to complete the authorization code flow."
+msgstr "Após a autenticação do provedor, o usuário é redirecionado de volta ao endpoint do Quarkus e a configuração do locatário é usada para concluir o fluxo do código de autorização."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "All the static and dynamic tenant resolution options listed in the <<static-tenant-resolution>> and <<tenant-config-resolver>> sections can be used to resolve a tenant. Before the tenant resolution begins, the authorization code flow `state cookie` is used to set the already resolved tenant configuration id as a RoutingContext `tenant-id` attribute: both custom dynamic `TenantConfigResolver` and static `TenantResolver` tenant resolvers can check it."
+msgstr "Todas as opções de resolução de locatário estáticas e dinâmicas listadas nas seções <<static-tenant-resolution>> e <<tenant-config-resolver>> podem ser usadas para resolver um locatário. Antes do início da resolução do locatário, o fluxo do código de autorização `state cookie` é usado para definir o ID de configuração do locatário já resolvido como um atributo RoutingContext `tenant-id` : os resolvedores de locatários dinâmicos personalizados `TenantConfigResolver` e estáticos `TenantResolver` podem verificá-lo."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Step 3: Authenticated user accesses the secured path using the session cookie: the tenant configuration determines how the session cookie is verified and refreshed. Before the tenant resolution begins, the authorization code flow `session cookie` is used to set the already resolved tenant configuration id as a RoutingContext `tenant-id` attribute: both custom dynamic `TenantConfigResolver` and static `TenantResolver` tenant resolvers can check it."
+msgstr "Etapa 3: O usuário autenticado acessa o caminho seguro usando o cookie da sessão: a configuração do locatário determina como o cookie da sessão é verificado e atualizado. Antes do início da resolução do locatário, o fluxo do código de autorização `session cookie` é usado para definir o ID de configuração do locatário já resolvido como um atributo RoutingContext `tenant-id` : tanto os resolvedores de locatários dinâmicos personalizados `TenantConfigResolver` quanto os estáticos `TenantResolver` podem verificá-lo."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "For example, here is how a custom `TenantConfigResolver` can avoid creating the already resolved tenant configuration, that may otherwise require blocking reads from the database or other remote sources:"
+msgstr "Por exemplo, veja como um `TenantConfigResolver` personalizado pode evitar a criação da configuração de locatário já resolvida, que pode exigir o bloqueio de leituras do banco de dados ou de outras fontes remotas:"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Let Quarkus use the already resolved tenant configuration if it has been resolved earlier."
+msgstr "Permitir que o Quarkus use a configuração de locatário já resolvida se ela tiver sido resolvida anteriormente."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Check the request path to create tenant configurations."
+msgstr "Verifique o caminho da solicitação para criar configurações de locatário."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "The default configuration may look like this:"
+msgstr "A configuração padrão pode ter a seguinte aparência:"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "The preceeding example assumes that the `tenant-a`, `tenant-b` and default tenants are all used to protect the same endpoint paths. In other words, after the user has authenticated with the `tenant-a` configuration, this user will not be able to choose to authenticate with the `tenant-b` or default configuration before this user logs out and has a session cookie cleared or expired."
+msgstr "O exemplo anterior pressupõe que os locatários `tenant-a` , `tenant-b` e default sejam todos usados para proteger os mesmos caminhos de endpoint. Em outras palavras, depois que o usuário tiver se autenticado com a configuração `tenant-a` , ele não poderá optar por se autenticar com a configuração `tenant-b` ou padrão antes que o usuário faça logout e tenha um cookie de sessão apagado ou expirado."
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
 msgid ""
-"Check the URL paths.\n"
-"For example, a `tenant-service` configuration must be used for the `/service` paths, while a `tenant-manage` configuration must be used for the `/management` paths."
-msgstr "Verifique os caminhos de URL. Por exemplo, uma configuração `tenant-service` deve ser usada para os caminhos `/service` , enquanto uma configuração `tenant-manage` deve ser usada para os caminhos `/management` ."
+"The situtaion where multiple OIDC `web-app` tenants protect the tenant-specific paths is less typical and also requires an extra care.\n"
+"When multiple OIDC `web-app` tenants such as `tenant-a`, `tenant-b` and default tenants are used to control access to the tenant specific paths, the users authenticated with one OIDC provider must not be able to access the paths requiring an authentication with another provider, otherwise the results can be unpredictable, most likely causing unexpected authentication failures.\n"
+"For example, if the `tenant-a` authentication requires a Keycloak authentication and the `tenant-b` authentication requires an Auth0 authentication, then, if the `tenant-a` authenticated user attempts to access a path secured by the `tenant-b` configuration, then the session cookie will not be verified, since the Auth0 public verification keys can not be used to verify the tokens signed by Keycloak.\n"
+"An easy, recommended way to avoid multiple `web-app` tenants conflicting with each other is to set the tenant specific session path as shown in the following example:"
+msgstr "A situação em que vários locatários do OIDC `web-app` protegem os caminhos específicos do locatário é menos típica e também requer um cuidado extra. Quando vários locatários do OIDC `web-app` , como `tenant-a` , `tenant-b` e locatários padrão, são usados para controlar o acesso aos caminhos específicos do locatário, os usuários autenticados com um provedor do OIDC não devem poder acessar os caminhos que exigem uma autenticação com outro provedor, caso contrário, os resultados podem ser imprevisíveis, provavelmente causando falhas de autenticação inesperadas. Por exemplo, se a autenticação `tenant-a` exigir uma autenticação Keycloak e a autenticação `tenant-b` exigir uma autenticação Auth0, se o usuário autenticado `tenant-a` tentar acessar um caminho protegido pela configuração `tenant-b` , o cookie de sessão não será verificado, pois as chaves de verificação pública Auth0 não podem ser usadas para verificar os tokens assinados pelo Keycloak. Uma maneira fácil e recomendada de evitar que vários locatários do `web-app` entrem em conflito entre si é definir o caminho de sessão específico do locatário, conforme mostrado no exemplo a seguir:"
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "Set the tenant-specific cookie paths which makes sure the session cookie is only visible to the tenant which created it."
+msgstr "Defina os caminhos de cookie específicos do locatário, o que garante que o cookie de sessão seja visível apenas para o locatário que o criou."
+
+#: _versions/main/guides/security-openid-connect-multitenancy.adoc
+#, fuzzy
+msgid "The default tenant configuration should be adjusted like this:"
+msgstr "A configuração padrão do locatário deve ser ajustada da seguinte forma:"
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
 msgid ""
-"Check the HTTP headers.\n"
-"For example, with a URL path always being `/service`, a header such as `Realm: service` or `Realm: management` can help to select between the `tenant-service` and `tenant-manage` configurations."
-msgstr "Verifique os cabeçalhos HTTP. Por exemplo, com um caminho de URL sempre sendo `/service` , um cabeçalho como `Realm: service` ou `Realm: management` pode ajudar a selecionar entre as configurações `tenant-service` e `tenant-manage` ."
+"Having the same session cookie path when multiple OIDC `web-app` tenants protect the tenant-specific paths is not recommended and should be avoided\n"
+"as it requires even more care from the custom resolvers, for example:"
+msgstr "Ter o mesmo caminho de cookie de sessão quando vários locatários do OIDC `web-app` protegem os caminhos específicos do locatário não é recomendado e deve ser evitado, pois exige ainda mais cuidado dos resolvedores personalizados, por exemplo:"
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
-msgid ""
-"Check the URL query parameters.\n"
-"It can work similarly to the way the headers are used to select the tenant configuration."
-msgstr "Verifique os parâmetros de consulta do URL. Ele pode funcionar de forma semelhante à maneira como os cabeçalhos são usados para selecionar a configuração do locatário."
-
-#. type: Plain text
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy
-msgid "All these options can be easily implemented with the custom `TenantResolver` and `TenantConfigResolver` implementations for the OIDC `service` applications."
-msgstr "Todas essas opções podem ser facilmente implementadas com as implementações personalizadas `TenantResolver` e `TenantConfigResolver` para os aplicativos OIDC `service` ."
+msgid "Let Quarkus use the already resolved tenant configuration if the already resolved tenant is expected for the current path."
+msgstr "Permita que o Quarkus use a configuração de locatário já resolvida se o locatário já resolvido for esperado para o caminho atual."
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
-msgid "However, due to an HTTP redirect required to complete the code authentication flow for the OIDC `web-app` applications, a custom HTTP cookie might be needed to select the same tenant configuration before and after this redirect request because:"
-msgstr "No entanto, devido a um redirecionamento HTTP necessário para concluir o fluxo de autenticação de código para os aplicativos OIDC `web-app` , pode ser necessário um cookie HTTP personalizado para selecionar a mesma configuração de locatário antes e depois dessa solicitação de redirecionamento:"
+msgid "Remove the `tenant-id` attribute if the already resolved tenant configuration is not expected for the current path."
+msgstr "Remova o atributo `tenant-id` se a configuração do locatário já resolvida não for esperada para o caminho atual."
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy
-msgid ""
-"The URL path might not be the same after the redirect request if a single redirect URL has been registered in the OIDC provider.\n"
-"The original request path can be restored after the tenant configuration has been resolved."
-msgstr "O caminho do URL pode não ser o mesmo após a solicitação de redirecionamento se um único URL de redirecionamento tiver sido registrado no provedor OIDC. O caminho original da solicitação pode ser restaurado depois que a configuração do locatário tiver sido resolvida."
-
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy
-msgid "The HTTP headers used during the original request are unavailable after the redirect."
-msgstr "Os cabeçalhos HTTP usados durante a solicitação original ficam indisponíveis após o redirecionamento."
-
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy
-msgid "The custom URL query parameters are restored after the redirect but only after the tenant configuration is resolved."
-msgstr "Os parâmetros de consulta de URL personalizados são restaurados após o redirecionamento, mas somente depois que a configuração do locatário é resolvida."
-
-#. type: Plain text
-#: _versions/main/guides/security-openid-connect-multitenancy.adoc
-#, fuzzy
-msgid "One option to ensure the information for resolving the tenant configurations for `web-app` applications is available before and after the redirect is to use a cookie, for example:"
-msgstr "Uma opção para garantir que as informações para resolver as configurações de locatário dos aplicativos `web-app` estejam disponíveis antes e depois do redirecionamento é usar um cookie, por exemplo:"
+msgid "Use the default tenant for all other paths. It is equivalent to removing the `tenant-id` attribute."
+msgstr "Use o locatário padrão para todos os outros caminhos. Isso é equivalente a remover o atributo `tenant-id` ."
 
 #: _versions/main/guides/security-openid-connect-multitenancy.adoc
 #, fuzzy

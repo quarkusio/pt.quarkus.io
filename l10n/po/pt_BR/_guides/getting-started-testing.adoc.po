@@ -1425,9 +1425,21 @@ msgstr "Podemos aproveitar a API do Mockito em um método de teste para configur
 #: _guides/getting-started-testing.adoc
 #, fuzzy
 msgid ""
-"If you need the full control over the `QuarkusComponentTestExtension` configuration then you can use the `@RegisterExtension` annotation and configure the extension programatically.\n"
-"The test above could be rewritten like:"
-msgstr "Se precisar de controle total sobre a configuração do `QuarkusComponentTestExtension` , o senhor poderá usar a anotação `@RegisterExtension` e configurar a extensão programaticamente. O teste acima poderia ser reescrito da seguinte forma:"
+"`QuarkusComponentTestExtension` also resolves parameters of test methods and injects matching beans.\n"
+"So the code snippet above can be rewritten as:"
+msgstr "`QuarkusComponentTestExtension` também resolve os parâmetros dos métodos de teste e injeta os beans correspondentes. Portanto, o trecho de código acima pode ser reescrito como:"
+
+#: _guides/getting-started-testing.adoc
+#, fuzzy
+msgid "Parameters annotated with `@io.quarkus.test.component.SkipInject` are never resolved by this extension."
+msgstr "Os parâmetros anotados com `@io.quarkus.test.component.SkipInject` nunca são resolvidos por essa extensão."
+
+#: _guides/getting-started-testing.adoc
+#, fuzzy
+msgid ""
+"Furthermore, if you need the full control over the `QuarkusComponentTestExtension` configuration then you can use the `@RegisterExtension` annotation and configure the extension programatically.\n"
+"The original test could be rewritten like:"
+msgstr "Além disso, se o senhor precisar de controle total sobre a configuração do `QuarkusComponentTestExtension` , poderá usar a anotação `@RegisterExtension` e configurar a extensão programaticamente. O teste original poderia ser reescrito da seguinte forma:"
 
 #. type: Plain text
 #: _guides/getting-started-testing.adoc
@@ -1452,6 +1464,24 @@ msgid ""
 "Finally, the CDI request context is activated and terminated per each test method."
 msgstr "Então, o que exatamente o `QuarkusComponentTest` faz? Ele inicia o contêiner CDI e registra um xref:config-reference.adoc[objeto de configuração] dedicado. Se o ciclo de vida da instância de teste for `Lifecycle#PER_METHOD` (padrão), o contêiner será iniciado durante a fase de teste `before each` e interrompido durante a fase de teste `after each` . Entretanto, se o ciclo de vida da instância de teste for `Lifecycle#PER_CLASS` , o contêiner será iniciado durante a fase de teste `before all` e interrompido durante a fase de teste `after all` . Os campos anotados com `@Inject` e `@InjectMock` são injetados depois que uma instância de teste é criada. Por fim, o contexto de solicitação de CDI é ativado e encerrado por cada método de teste."
 
+#: _guides/getting-started-testing.adoc
+msgid "Injection"
+msgstr "Injeção"
+
+#: _guides/getting-started-testing.adoc
+#, fuzzy
+msgid ""
+"Test class fields annotated with `@jakarta.inject.Inject` and `@io.quarkus.test.InjectMock` are injected after a test instance is created.\n"
+"Dependent beans injected into these fields are correctly destroyed before a test instance is destroyed.\n"
+"Parameters of a test method for which a matching bean exists are resolved unless annotated with `@io.quarkus.test.component.SkipInject`.\n"
+"Dependent beans injected into the test method arguments are correctly destroyed after the test method completes."
+msgstr "Os campos da classe de teste anotados com `@jakarta.inject.Inject` e `@io.quarkus.test.InjectMock` são injetados depois que uma instância de teste é criada. Os beans dependentes injetados nesses campos são destruídos corretamente antes que uma instância de teste seja destruída. Os parâmetros de um método de teste para o qual existe um bean correspondente são resolvidos, a menos que sejam anotados com `@io.quarkus.test.component.SkipInject` . Os beans dependentes injetados nos argumentos do método de teste são destruídos corretamente depois que o método de teste é concluído."
+
+#: _guides/getting-started-testing.adoc
+#, fuzzy
+msgid "Arguments of a `@ParameterizedTest` method that are provided by an `ArgumentsProvider`, for example with `@org.junit.jupiter.params.provider.ValueArgumentsProvider`, must be annotated with `@SkipInject`."
+msgstr "Os argumentos de um método `@ParameterizedTest` que são fornecidos por um `ArgumentsProvider` , por exemplo, com `@org.junit.jupiter.params.provider.ValueArgumentsProvider` , devem ser anotados com `@SkipInject` ."
+
 #. type: Title ===
 #: _guides/getting-started-testing.adoc
 #, fuzzy, no-wrap
@@ -1465,8 +1495,8 @@ msgid ""
 "Instead, a synthetic bean is registered automatically for each combination of required type and qualifiers of an injection point that resolves to an unsatisfied dependency.\n"
 "The bean has the `@Singleton` scope so it's shared across all injection points with the same required type and qualifiers.\n"
 "The injected reference is an _unconfigured_ Mockito mock.\n"
-"You can inject the mock in your test and leverage the Mockito API to configure the behavior."
-msgstr "Diferentemente dos ambientes CDI comuns, o teste não falha se um componente injetar uma dependência insatisfeita. Em vez disso, um bean sintético é registrado automaticamente para cada combinação de tipo exigido e qualificadores de um ponto de injeção que resolve para uma dependência insatisfeita. O bean tem o escopo `@Singleton` , portanto, é compartilhado em todos os pontos de injeção com o mesmo tipo exigido e os mesmos qualificadores. A referência injetada é um mock do Mockito _não configurado_ . O senhor pode injetar a simulação em seu teste e aproveitar a API do Mockito para configurar o comportamento."
+"You can inject the mock in your test using the `io.quarkus.test.InjectMock` annotation and leverage the Mockito API to configure the behavior."
+msgstr "Diferentemente dos ambientes CDI comuns, o teste não falha se um componente injetar uma dependência insatisfeita. Em vez disso, um bean sintético é registrado automaticamente para cada combinação de tipo exigido e qualificadores de um ponto de injeção que resolve para uma dependência insatisfeita. O bean tem o escopo `@Singleton` , portanto, é compartilhado em todos os pontos de injeção com o mesmo tipo exigido e os mesmos qualificadores. A referência injetada é um mock do Mockito _não configurado_ . O senhor pode injetar o mock em seu teste usando a anotação `io.quarkus.test.InjectMock` e aproveitar a API do Mockito para configurar o comportamento."
 
 #. type: Title ===
 #: _guides/getting-started-testing.adoc
