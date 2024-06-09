@@ -1,0 +1,1509 @@
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2023-09-21 08:11+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. This guide is maintained in the main Quarkus repository
+#. and pull requests should be submitted there:
+#. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
+#. type: Title =
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Reactive Messaging AMQP 1.0 Connector Reference Documentation"
+msgstr "Documentação de referência do conector AMQP 1.0 do Reactive Messaging"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"This guide is the companion from the xref:amqp.adoc[Getting Started with AMQP 1.0].\n"
+"It explains in more details the configuration and usage of the AMQP connector for reactive messaging."
+msgstr "Este guia é um complemento do guia xref:amqp.adoc[Getting Started with AMQP 1.0] . Ele explica em mais detalhes a configuração e o uso do conector AMQP para mensagens reativas."
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"This documentation does not cover all the details of the connector.\n"
+"Refer to the https://smallrye.io/smallrye-reactive-messaging[SmallRye Reactive Messaging website] for further details."
+msgstr "Esta documentação não abrange todos os detalhes do conector. Para obter mais detalhes, consulte o link:https://smallrye.io/smallrye-reactive-messaging[site do SmallRye Reactive Messaging] ."
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"The AMQP connector allows Quarkus applications to send and receive messages using the AMQP 1.0 protocol.\n"
+"More details about the protocol can be found in https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.html[the AMQP 1.0 specification].\n"
+"It's important to note that AMQP 1.0 and AMQP 0.9.1 (implemented by RabbitMQ) are incompatible.\n"
+"Check <<using-rabbitmq,Using RabbitMQ>> to get more details."
+msgstr "O conector AMQP permite que os aplicativos Quarkus enviem e recebam mensagens usando o protocolo AMQP 1.0. Mais detalhes sobre o protocolo podem ser encontrados na link:https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.html[especificação AMQP 1.0] . É importante observar que o AMQP 1.0 e o AMQP 0.9.1 (implementado pelo RabbitMQ) são incompatíveis. Consulte xref:using-rabbitmq[Usando o RabbitMQ] para obter mais detalhes."
+
+#. type: Title ==
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "AMQP connector extension"
+msgstr "Extensão do conector AMQP"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "To use the connector, you need to add the `quarkus-smallrye-reactive-messaging-amqp` extension."
+msgstr "Para usar o conector, o senhor precisa adicionar a extensão `quarkus-smallrye-reactive-messaging-amqp` ."
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "You can add the extension to your project using:"
+msgstr "O senhor pode adicionar a extensão ao seu projeto usando:"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "Or just add the following dependency to your project:"
+msgstr "Ou simplesmente adicione a seguinte dependência ao seu projeto:"
+
+#. type: Block title
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid "pom.xml"
+msgstr "pom.xml"
+
+#. type: Block title
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid "build.gradle"
+msgstr "build.gradle"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "Once added to your project, you can map _channels_ to AMQP addresses by configuring the `connector` attribute:"
+msgstr "Uma vez adicionado ao seu projeto, o senhor pode mapear _canais_ para endereços AMQP configurando o atributo `connector` :"
+
+#. type: Block title
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid "Connector auto-attachment"
+msgstr "Fixação automática do conector"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+msgid ""
+"If you have a single connector on your classpath, you can omit the `connector` attribute configuration.\n"
+"Quarkus automatically associates _orphan_ channels to the (unique) connector found on the classpath.\n"
+"_Orphans_ channels are outgoing channels without a downstream consumer or incoming channels without an upstream producer."
+msgstr "Se você tiver um único conector no classpath, poderá omitir a configuração do atributo `connector`. O Quarkus associa automaticamente os canais _órfãos_ ao conector (único) encontrado no classpath. Os canais _órfãos_ são canais de saída sem um consumidor downstream ou canais de entrada sem um produtor ascendente."
+
+#. type: delimited block =
+#: _versions/2.13/guides/amqp-reference.adoc
+msgid "This auto-attachment can be disabled using:"
+msgstr "Esta ligação automática pode ser desativada utilizando:"
+
+#. type: Title ==
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Configuring the AMQP Broker access"
+msgstr "Configuração do acesso ao agente AMQP"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"The AMQP connector connects to AMQP 1.0 brokers such as Apache ActiveMQ or Artemis.\n"
+"To configure the location and credentials of the broker, add the following properties in the `application.properties`:"
+msgstr "O conector AMQP conecta-se a corretores AMQP 1.0, como o Apache ActiveMQ ou o Artemis. Para configurar o local e as credenciais do agente, adicione as seguintes propriedades no site `application.properties` :"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "Configures the broker/router host name. You can do it per channel (using the `host` attribute) or globally using `amqp-host`"
+msgstr "Configura o nome do host do broker/roteador. O senhor pode fazer isso por canal (usando o atributo `host` ) ou globalmente usando `amqp-host`"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "Configures the broker/router port. You can do it per channel (using the `port` attribute) or globally using `amqp-port`. The default is `5672`."
+msgstr "Configura a porta do broker/roteador. O senhor pode fazer isso por canal (usando o atributo `port` ) ou globalmente usando `amqp-port` . O padrão é `5672` ."
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "Configures the broker/router username if required. You can do it per channel (using the `username` attribute) or globally using `amqp-username`."
+msgstr "Configura o nome de usuário do broker/roteador, se necessário. O senhor pode fazer isso por canal (usando o atributo `username` ) ou globalmente usando `amqp-username` ."
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "Configures the broker/router password if required. You can do it per channel (using the `password` attribute) or globally using `amqp-password`."
+msgstr "Configura a senha do broker/roteador, se necessário. O senhor pode fazer isso por canal (usando o atributo `password` ) ou globalmente usando `amqp-password` ."
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "Instructs the prices channel to be managed by the AMQP connector"
+msgstr "Instrui o canal de preços a ser gerenciado pelo conector AMQP"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "In dev mode and when running tests, xref:amqp-dev-services.adoc[Dev Services for AMQP] automatically starts an AMQP broker."
+msgstr "No modo de desenvolvimento e ao executar testes, xref:amqp-dev-services.adoc[os serviços de desenvolvimento para AMQP] iniciam automaticamente um corretor AMQP."
+
+#. type: Title ==
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Receiving AMQP messages"
+msgstr "Recebimento de mensagens AMQP"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"Let's imagine your application receives `Message<Double>`.\n"
+"You can consume the payload directly:"
+msgstr "Vamos imaginar que seu aplicativo receba `Message<Double>` . O senhor pode consumir o payload diretamente:"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "Or, you can retrieve the Message<Double>:"
+msgstr "Ou, o senhor pode recuperar a Message<Double>:"
+
+#. type: Title ===
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Inbound Metadata"
+msgstr "Metadados de entrada"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "Messages coming from AMQP contain an instance of `IncomingAmqpMetadata` in the metadata."
+msgstr "As mensagens provenientes do AMQP contêm uma instância de `IncomingAmqpMetadata` nos metadados."
+
+#. type: Title ===
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Deserialization"
+msgstr "Desserialização"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"The connector converts incoming AMQP Messages into Reactive Messaging `Message<T>` instances.\n"
+"`T` depends on the _body_ of the received AMQP Message."
+msgstr "O conector converte as mensagens AMQP recebidas em instâncias do Reactive Messaging `Message<T>` . `T` depende do _corpo_ da mensagem AMQP recebida."
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "The https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html[AMQP Type System] defines the supported types."
+msgstr "O link:https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html[AMQP Type System] define os tipos compatíveis."
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "AMQP Body Type"
+msgstr "Tipo de corpo AMQP"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`<T>`"
+msgstr "`<T>`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "AMQP Value containing a https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#section-primitive-type-definitions[AMQP Primitive Type]"
+msgstr "Valor AMQP contendo um link:https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#section-primitive-type-definitions[tipo primitivo AMQP]"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "the corresponding Java type"
+msgstr "o tipo Java correspondente"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "AMQP Value using the `Binary` type"
+msgstr "Valor AMQP usando o tipo `Binary` "
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid "`byte[]`"
+msgstr "`byte[]`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "AMQP Sequence"
+msgstr "Sequência AMQP"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`List`"
+msgstr "`List`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "AMQP Data (with binary content) and the `content-type` is set to `application/json`"
+msgstr "AMQP Data (com conteúdo binário) e o endereço `content-type` está definido como `application/json`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "https://vertx.io/docs/apidocs/io/vertx/core/json/JsonObject.html[`JsonObject`]"
+msgstr "link:https://vertx.io/docs/apidocs/io/vertx/core/json/JsonObject.html[JsonObject]"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "AMQP Data with a different `content-type`"
+msgstr "Dados AMQP com um `content-type`"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"If you send objects with this AMQP connector (outbound connector), it gets encoded as JSON and sent as binary.\n"
+"The `content-type` is set to `application/json`.\n"
+"So, you can rebuild the object as follows:"
+msgstr "Se o senhor enviar objetos com esse conector AMQP (conector de saída), ele será codificado como JSON e enviado como binário. O `content-type` é definido como `application/json` . Assim, o senhor pode reconstruir o objeto da seguinte forma:"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "The `Price` instances are automatically encoded to JSON by the connector"
+msgstr "As instâncias de `Price` são codificadas automaticamente para JSON pelo conector"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "You can receive it using a `JsonObject`"
+msgstr "O senhor pode recebê-lo usando um `JsonObject`"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "Then, you can reconstruct the instance using the `mapTo` method"
+msgstr "Em seguida, o senhor pode reconstruir a instância usando o método `mapTo` "
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "The `mapTo` method uses the Quarkus Jackson mapper. Check xref:rest-json.adoc#json[this guide] to learn more about the mapper configuration."
+msgstr "O método `mapTo` usa o mapeador Quarkus Jackson. Consulte xref:rest-json.adoc#json[este guia] para saber mais sobre a configuração do mapeador."
+
+#. type: Title ===
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Acknowledgement"
+msgstr "Reconhecimento"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "When a Reactive Messaging Message associated with an AMQP Message is acknowledged, it informs the broker that the message has been https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-accepted[accepted]."
+msgstr "Quando uma mensagem de mensagens reativas associada a uma mensagem AMQP é reconhecida, ela informa ao corretor que a mensagem foi link:https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-accepted[aceita] ."
+
+#. type: Title ===
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Failure Management"
+msgstr "Gerenciamento de falhas"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"If a message produced from an AMQP message is _nacked_, a failure strategy is applied.\n"
+"The AMQP connector supports six strategies:"
+msgstr "Se uma mensagem produzida a partir de uma mensagem AMQP _não_ for enviada, será aplicada uma estratégia de falha. O conector AMQP é compatível com seis estratégias:"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"`fail` - fail the application; no more AMQP messages will be processed (default).\n"
+"The AMQP message is marked as rejected."
+msgstr "`fail` - falha o aplicativo; nenhuma outra mensagem AMQP será processada (padrão). A mensagem AMQP é marcada como rejeitada."
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"`accept` - this strategy marks the AMQP message as _accepted_. The processing continues ignoring the failure.\n"
+"Refer to the https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-accepted[accepted delivery state documentation]."
+msgstr "`accept` - essa estratégia marca a mensagem AMQP como _aceita_ . O processamento continua ignorando a falha. Consulte a link:https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-accepted[documentação sobre o estado de entrega aceito] ."
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"`release` - this strategy marks the AMQP message as _released_. The processing continues with the next message. The broker can redeliver the message.\n"
+"Refer to the https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-released[released delivery state documentation]."
+msgstr "`release` - essa estratégia marca a mensagem AMQP como _liberada_ . O processamento continua com a próxima mensagem. O corretor pode reenviar a mensagem. Consulte a link:https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-released[documentação sobre o estado de entrega liberado] ."
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"`reject` - this strategy marks the AMQP message as rejected. The processing continues with the next message.\n"
+"Refer to the https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-rejected[rejected delivery state documentation]."
+msgstr "`reject` - essa estratégia marca a mensagem AMQP como rejeitada. O processamento continua com a próxima mensagem. Consulte a link:https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-rejected[documentação do estado de entrega rejeitada] ."
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"`modified-failed` - this strategy marks the AMQP\n"
+"message as _modified_ and indicates that it failed (with the `delivery-failed` attribute). The processing continues with the next message, but the broker may attempt to redeliver the message.\n"
+"Refer to the https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-modified[modified delivery state documentation]"
+msgstr "`modified-failed` - Essa estratégia marca a mensagem AMQP como _modificada_ e indica que ela falhou (com o atributo `delivery-failed` ). O processamento continua com a próxima mensagem, mas o agente pode tentar reenviar a mensagem. Consulte a link:https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-modified[documentação sobre o estado de entrega modificado]"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"`modified-failed-undeliverable-here` - this strategy marks the AMQP message as _modified_ and indicates that it failed (with the `delivery-failed` attribute). It also indicates that the application cannot process the message, meaning that the broker will not attempt to redeliver the message to this node. The processing continues with the next message.\n"
+"Refer to the https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-modified[modified delivery state documentation]"
+msgstr "`modified-failed-undeliverable-here` - Essa estratégia marca a mensagem AMQP como _modificada_ e indica que ela falhou (com o atributo `delivery-failed` ). Ela também indica que o aplicativo não pode processar a mensagem, o que significa que o agente não tentará reenviar a mensagem para esse nó. O processamento continua com a próxima mensagem. Consulte a link:https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-modified[documentação sobre o estado de entrega modificado]"
+
+#. type: Title ==
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Sending AMQP messages"
+msgstr "Envio de mensagens AMQP"
+
+#. type: Title ===
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid "Serialization"
+msgstr "Serialização"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"When sending a `Message<T>`, the connector converts the message into an AMQP Message.\n"
+"The payload is converted to the AMQP Message _body_."
+msgstr "Ao enviar um `Message<T>` , o conector converte a mensagem em uma mensagem AMQP. A carga útil é convertida no _corpo_ da mensagem AMQP."
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`T`"
+msgstr "`T`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "AMQP Message Body"
+msgstr "Corpo da mensagem AMQP"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "primitive types or `String`"
+msgstr "tipos primitivos ou `String`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "AMQP Value with the payload"
+msgstr "Valor AMQP com a carga útil"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`Instant` or `UUID`"
+msgstr "`Instant` ou `UUID`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "AMQP Value using the corresponding AMQP Type"
+msgstr "Valor AMQP usando o tipo AMQP correspondente"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "https://vertx.io/docs/apidocs/io/vertx/core/json/JsonObject.html[`JsonObject`] or https://vertx.io/docs/apidocs/io/vertx/core/json/JsonArray.html[`JsonArray`]"
+msgstr "link:https://vertx.io/docs/apidocs/io/vertx/core/json/JsonObject.html[JsonObject] ou link:https://vertx.io/docs/apidocs/io/vertx/core/json/JsonArray.html[JsonArray]"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "AMQP Data using a binary content. The `content-type` is set to `application/json`"
+msgstr "Dados AMQP usando um conteúdo binário. O endereço `content-type` é definido como `application/json`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`io.vertx.mutiny.core.buffer.Buffer`"
+msgstr "`io.vertx.mutiny.core.buffer.Buffer`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "AMQP Data using a binary content. No `content-type` set"
+msgstr "Dados AMQP usando um conteúdo binário. Nenhum conjunto `content-type` "
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Any other class"
+msgstr "Qualquer outra classe"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "The payload is converted to JSON (using a Json Mapper). The result is wrapped into AMQP Data using a **binary** content. The `content-type` is set to `application/json`"
+msgstr "A carga útil é convertida em JSON (usando um mapeador Json). O resultado é agrupado em dados AMQP usando um conteúdo *binário* . O `content-type` é definido como `application/json`"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "If the message payload cannot be serialized to JSON, the message is _nacked_."
+msgstr "Se o payload da mensagem não puder ser serializado em JSON, a mensagem será _nacked_ ."
+
+#. type: Title ===
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Outbound Metadata"
+msgstr "Metadados de saída"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"When sending `Messages`, you can add an instance of `OutgoingAmqpMetadata` to influence how the message is going to be sent to AMQP.\n"
+"For example, you can configure the subjects, properties:"
+msgstr "Ao enviar `Messages` , o senhor pode adicionar uma instância de `OutgoingAmqpMetadata` para influenciar a forma como a mensagem será enviada ao AMQP. Por exemplo, o senhor pode configurar os assuntos, as propriedades:"
+
+#. type: Title ===
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Dynamic address names"
+msgstr "Nomes de endereços dinâmicos"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"Sometimes it is desirable to select the destination of a message dynamically.\n"
+"In this case, you should not configure the address inside your application configuration file, but instead, use the outbound metadata to set the address."
+msgstr "Às vezes, é desejável selecionar o destino de uma mensagem dinamicamente. Nesse caso, o senhor não deve configurar o endereço no arquivo de configuração do aplicativo, mas, em vez disso, usar os metadados de saída para definir o endereço."
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "For example, you can send to a dynamic address based on the incoming message:"
+msgstr "Por exemplo, o senhor pode enviar para um endereço dinâmico com base na mensagem recebida:"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "To be able to set the address per message, the connector is using an _anonymous sender_."
+msgstr "Para poder definir o endereço por mensagem, o conector está usando um _remetente anônimo_ ."
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"By default, the Reactive Messaging `Message` is acknowledged when the broker acknowledged the message.\n"
+"When using routers, this acknowledgement may not be enabled.\n"
+"In this case, configure the `auto-acknowledgement` attribute to acknowledge the message as soon as it has been sent to the router."
+msgstr "Por padrão, o Reactive Messaging `Message` é reconhecido quando o corretor reconhece a mensagem. Ao usar roteadores, essa confirmação pode não estar ativada. Nesse caso, configure o atributo `auto-acknowledgement` para confirmar a mensagem assim que ela for enviada ao roteador."
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "If an AMQP message is rejected/released/modified by the broker (or cannot be sent successfully), the message is nacked."
+msgstr "Se uma mensagem AMQP for rejeitada/liberada/modificada pelo intermediário (ou não puder ser enviada com êxito), a mensagem será nacked."
+
+#. type: Title ===
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Back Pressure and Credits"
+msgstr "Contrapressão e créditos"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"The back-pressure is handled by AMQP _credits_.\n"
+"The outbound connector only requests the amount of allowed credits.\n"
+"When the amount of credits reaches 0, it waits (in a non-blocking fashion) until the broker grants more credits to the AMQP sender."
+msgstr "A contrapressão é tratada pelos _créditos_ AMQP. O conector de saída solicita apenas a quantidade de créditos permitidos. Quando a quantidade de créditos chega a 0, ele aguarda (de forma não bloqueante) até que o corretor conceda mais créditos ao remetente do AMQP."
+
+#. type: Title ==
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Configuring the AMQP address"
+msgstr "Configuração do endereço AMQP"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "You can configure the AMQP address using the `address` attribute:"
+msgstr "O senhor pode configurar o endereço AMQP usando o atributo `address` :"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "If the `address` attribute is not set, the connector uses the channel name."
+msgstr "Se o atributo `address` não estiver definido, o conector usará o nome do canal."
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"To use an existing queue, you need to configure the `address`, `container-id` and, optionally, the `link-name` attributes.\n"
+"For example, if you have an Apache Artemis broker configured with:"
+msgstr "Para usar uma fila existente, o senhor precisa configurar os atributos `address` , `container-id` e, opcionalmente, `link-name` . Por exemplo, se o senhor tiver um corretor Apache Artemis configurado com:"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "You need the following configuration:"
+msgstr "O senhor precisa da seguinte configuração:"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "You may need to configure the `link-name` attribute, if the queue name is not the channel name:"
+msgstr "Talvez o senhor precise configurar o atributo `link-name` se o nome da fila não for o nome do canal:"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "To use a `MULTICAST` queue, you need to provide the _FQQN_ (fully-qualified queue name) instead of just the name of the queue:"
+msgstr "Para usar uma fila `MULTICAST` , o senhor precisa fornecer o _FQQN_ (nome da fila totalmente qualificado) em vez de apenas o nome da fila:"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "More details about the AMQP Address model can be found in the https://activemq.apache.org/components/artemis/documentation/2.0.0/address-model.html[Artemis documentation]."
+msgstr "Mais detalhes sobre o modelo de endereço AMQP podem ser encontrados na link:https://activemq.apache.org/components/artemis/documentation/2.0.0/address-model.html[documentação do Artemis] ."
+
+#. type: Title ===
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Execution model and Blocking processing"
+msgstr "Modelo de execução e processamento de bloqueio"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+msgid ""
+"Reactive Messaging invokes your method on an I/O thread.\n"
+"See the xref:quarkus-reactive-architecture.adoc[Quarkus Reactive Architecture documentation] for further details on this topic.\n"
+"But, you often need to combine Reactive Messaging with blocking processing such as database interactions.\n"
+"For this, you need to use the `@Blocking` annotation indicating that the processing is _blocking_ and should not be run on the caller thread."
+msgstr "A Mensageria Reativa invoca seu método em um thread de E/S. Consulte a xref:quarkus-reactive-architecture.adoc[documentação da Arquitetura Reativa do Quarkus] para obter mais detalhes sobre esse tópico. Mas, muitas vezes, você precisa combinar o envio de mensagens reativas com processamento blocante, como interações de banco de dados. Para isso, você precisa usar a anotação `@Blocking` indicando que o processamento está _bloqueando_ e não deve ser executado no thread do chamador."
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+msgid "For example, The following code illustrates how you can store incoming payloads to a database using Hibernate with Panache:"
+msgstr "Por exemplo, o código a seguir ilustra como é possível armazenar conteúdos recebidos em uma base de dados usando o Hibernate com Panache:"
+
+#. type: delimited block =
+#: _versions/2.13/guides/amqp-reference.adoc
+msgid "There are 2 `@Blocking` annotations:"
+msgstr "Existem 2 anotações de `@Blocking`:"
+
+#. type: delimited block =
+#: _versions/2.13/guides/amqp-reference.adoc
+msgid "`io.smallrye.reactive.messaging.annotations.Blocking`"
+msgstr "`io.smallrye.reactive.messaging.annotations.Blocking`"
+
+#. type: delimited block =
+#: _versions/2.13/guides/amqp-reference.adoc
+msgid "`io.smallrye.common.annotation.Blocking`"
+msgstr "`io.smallrye.common.annotation.Blocking`"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+msgid ""
+"They have the same effect.\n"
+"Thus, you can use both.\n"
+"The first one provides more fine-grained tuning such as the worker pool to use and whether it preserves the order.\n"
+"The second one, used also with other reactive features of Quarkus, uses the default worker pool and preserves the order."
+msgstr "Eles têm o mesmo efeito. Portanto, você pode usar os dois. O primeiro fornece um ajuste mais refinado, como o pool de trabalho a ser usado e se ele preserva a ordem. O segundo, usado também com outros recursos reativos do Quarkus, usa o pool de trabalho padrão e preserva a ordem."
+
+#. type: Block title
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid "@Transactional"
+msgstr "@Transactional"
+
+#. type: delimited block =
+#: _versions/2.13/guides/amqp-reference.adoc
+msgid "If your method is annotated with `@Transactional`, it will be considered _blocking_ automatically, even if the method is not annotated with `@Blocking`."
+msgstr "Se o seu método estiver anotado com `@Transactional`, será considerado _blocante_ automaticamente, mesmo que o método não esteja anotado com `@Blocking`."
+
+#. type: Title ==
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Customizing the underlying AMQP client"
+msgstr "Personalização do cliente AMQP subjacente"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"The connector uses the Vert.x AMQP client underneath.\n"
+"More details about this client can be found in the https://vertx.io/docs/vertx-amqp-client/java/[Vert.x website]."
+msgstr "O conector usa o cliente Vert.x AMQP subjacente. Mais detalhes sobre esse cliente podem ser encontrados no link:https://vertx.io/docs/vertx-amqp-client/java/[site da Vert.x] ."
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "You can customize the underlying client configuration by producing an instance of `AmqpClientOptions` as follows:"
+msgstr "O senhor pode personalizar a configuração do cliente subjacente produzindo uma instância de `AmqpClientOptions` da seguinte forma:"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"This instance is retrieved and used to configure the client used by the connector.\n"
+"You need to indicate the name of the client using the `client-options-name` attribute:"
+msgstr "Essa instância é recuperada e usada para configurar o cliente usado pelo conector. O senhor precisa indicar o nome do cliente usando o atributo `client-options-name` :"
+
+#. type: Title ==
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Health reporting"
+msgstr "Relatórios de saúde"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"If you use the AMQP connector with the `quarkus-smallrye-health` extension, it contributes to the readiness and liveness probes.\n"
+"The AMQP connector reports the readiness and liveness of each channel managed by the connector.\n"
+"At the moment, the AMQP connector uses the same logic for the readiness and liveness checks."
+msgstr "Se o senhor usar o conector AMQP com a extensão `quarkus-smallrye-health` , ele contribuirá para as sondas de prontidão e vivacidade. O conector AMQP informa a disponibilidade e a vivacidade de cada canal gerenciado pelo conector. No momento, o conector AMQP usa a mesma lógica para as verificações de prontidão e atividade."
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"To disable health reporting, set the `health-enabled` attribute for the channel to false.\n"
+"On the inbound side (receiving messages from AMQP), the check verifies that the receiver is attached to the broker.\n"
+"On the outbound side (sending records to AMQP), the check verifies that the sender is attached to the broker."
+msgstr "Para desativar o relatório de integridade, defina o atributo `health-enabled` do canal como false. No lado de entrada (recebimento de mensagens do AMQP), a verificação verifica se o receptor está conectado ao agente. No lado de saída (envio de registros para o AMQP), a verificação verifica se o remetente está conectado ao agente."
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"Note that a message processing failures nacks the message, which is then handled by the `failure-strategy`.\n"
+"It is the responsibility of the `failure-strategy` to report the failure and influence the outcome of the checks.\n"
+"The `fail` failure strategy reports the failure, and so the check will report the fault."
+msgstr "Observe que uma falha no processamento de mensagens anula a mensagem, que é então tratada pelo `failure-strategy` . É responsabilidade do `failure-strategy` informar a falha e influenciar o resultado das verificações. A estratégia de falha do `fail` informa a falha e, portanto, a verificação informará a falha."
+
+#. type: Title ==
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Using RabbitMQ"
+msgstr "Usando o RabbitMQ"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"This connector is for AMQP 1.0. RabbitMQ implements AMQP 0.9.1.\n"
+"RabbitMQ does not provide AMQP 1.0 by default, but there is a plugin for it.\n"
+"To use RabbitMQ with this connector, enable and configure the AMQP 1.0 plugin."
+msgstr "Esse conector é para AMQP 1.0. O RabbitMQ implementa o AMQP 0.9.1. O RabbitMQ não fornece o AMQP 1.0 por padrão, mas há um plug-in para ele. Para usar o RabbitMQ com esse conector, habilite e configure o plug-in AMQP 1.0."
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"Despite the existence of the plugin, a few AMQP 1.0 features won’t work with RabbitMQ.\n"
+"Thus, we recommend the following configurations."
+msgstr "Apesar da existência do plug-in, alguns recursos do AMQP 1.0 não funcionarão com o RabbitMQ. Portanto, recomendamos as seguintes configurações."
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "To receive messages from RabbitMQ:"
+msgstr "Para receber mensagens do RabbitMQ:"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "Set durable to false"
+msgstr "Definir durável como falso"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "To send messages to RabbitMQ:"
+msgstr "Para enviar mensagens para o RabbitMQ:"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "set the destination address (anonymous sender are not supported)"
+msgstr "definir o endereço de destino (não há suporte para remetentes anônimos)"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "set `use-anonymous-sender` to false"
+msgstr "Definir `use-anonymous-sender` como false"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "As a consequence, it’s not possible to change the destination dynamically (using message metadata) when using RabbitMQ."
+msgstr "Como consequência, não é possível alterar o destino dinamicamente (usando metadados de mensagens) ao usar o RabbitMQ."
+
+#. type: Title ==
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Receiving Cloud Events"
+msgstr "Recebimento de eventos na nuvem"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"The AMQP connector supports https://cloudevents.io/[Cloud Events].\n"
+"When the connector detects a _structured_ or _binary_ Cloud Events, it adds a  `IncomingCloudEventMetadata<T>` into the metadata of the `Message`.\n"
+"`IncomingCloudEventMetadata` contains accessors to the mandatory and optional Cloud Event attributes."
+msgstr "O conector AMQP é compatível com link:https://cloudevents.io/[eventos de nuvem] . Quando o conector detecta um evento de nuvem _estruturado_ ou _binário_ , ele adiciona um `IncomingCloudEventMetadata<T>` aos metadados do `Message` . `IncomingCloudEventMetadata` contém acessores para os atributos obrigatórios e opcionais do evento de nuvem."
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "If the connector cannot extract the Cloud Event metadata, it sends the Message without the metadata."
+msgstr "Se o conector não puder extrair os metadados do Cloud Event, ele enviará a mensagem sem os metadados."
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "For more information on receiving Cloud Events, see https://smallrye.io/smallrye-reactive-messaging/smallrye-reactive-messaging/3.12/amqp/amqp.html#_receiving_cloud_events[Receiving Cloud Events] in SmallRye Reactive Messaging documentation."
+msgstr "Para obter mais informações sobre o recebimento de eventos na nuvem, consulte link:https://smallrye.io/smallrye-reactive-messaging/smallrye-reactive-messaging/3.12/amqp/amqp.html#_receiving_cloud_events[Receber eventos] na nuvem na documentação do SmallRye Reactive Messaging."
+
+#. type: Title ===
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Sending Cloud Events"
+msgstr "Envio de eventos de nuvem"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid ""
+"The AMQP connector supports https://cloudevents.io/[Cloud Events].\n"
+"The connector sends the outbound record as Cloud Events if:"
+msgstr "O conector AMQP é compatível com o link:https://cloudevents.io/[Cloud Events] . O conector envia o registro de saída como Cloud Events se:"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "the message metadata contains an `io.smallrye.reactive.messaging.ce.OutgoingCloudEventMetadata` instance,"
+msgstr "os metadados da mensagem contêm uma instância de `io.smallrye.reactive.messaging.ce.OutgoingCloudEventMetadata` ,"
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "the channel configuration defines the `cloud-events-type` and `cloud-events-source` attributes."
+msgstr "A configuração do canal define os atributos `cloud-events-type` e `cloud-events-source` ."
+
+#. type: Plain text
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy
+msgid "For more information on sending Cloud Events, see https://smallrye.io/smallrye-reactive-messaging/smallrye-reactive-messaging/3.12/amqp/amqp.html#_sending_cloud_events[Sending Cloud Events] in SmallRye Reactive Messaging documentation."
+msgstr "Para obter mais informações sobre o envio de eventos na nuvem, consulte link:https://smallrye.io/smallrye-reactive-messaging/smallrye-reactive-messaging/3.12/amqp/amqp.html#_sending_cloud_events[Envio de eventos] na nuvem na documentação do SmallRye Reactive Messaging."
+
+#. type: Title ==
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "AMQP Connector Configuration Reference"
+msgstr "Referência de configuração do conector AMQP"
+
+#. type: Title ===
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Quarkus specific configuration"
+msgstr "Configuração específica do Quarkus"
+
+#: _versions/2.13/guides/amqp-reference.adoc
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-0\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de Configuração Fixa no Momento da Compilação - Todas as outras propriedades de configuração podem ser sobrepostas em tempo de execução. <input type=\"search\" id=\"config-search-0\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#. type: Title ===
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Incoming channel configuration"
+msgstr "Configuração do canal de entrada"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid "Attribute (_alias_)"
+msgstr "Atributo (_alias_)"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid "Description"
+msgstr "Descrição"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid "Mandatory"
+msgstr "Obrigatório"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid "Default"
+msgstr "Padrão"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*address*#"
+msgstr "*endereço*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The AMQP address. If not set, the channel name is used\n"
+"\n"
+"Type: _string_"
+msgstr "O endereço AMQP. Se não for definido, será usado o nome do canal"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid "false"
+msgstr "falso"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*auto-acknowledgement*#"
+msgstr "*reconhecimento automático*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"Whether the received AMQP messages must be acknowledged when received\n"
+"\n"
+"Type: _boolean_"
+msgstr "Se as mensagens AMQP recebidas devem ser confirmadas quando recebidas"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`false`"
+msgstr "`false`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*broadcast*#"
+msgstr "*transmissão*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"Whether the received AMQP messages must be dispatched to multiple _subscribers_\n"
+"\n"
+"Type: _boolean_"
+msgstr "Se as mensagens AMQP recebidas devem ser despachadas para vários _assinantes_"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*client-options-name*#\n"
+"\n"
+"[.no-hyphens]#_(amqp-client-options-name)_#"
+msgstr "*nome-das-opções-do-cliente*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The name of the AMQP Client Option bean used to customize the AMQP client configuration\n"
+"\n"
+"Type: _string_"
+msgstr "O nome do bean AMQP Client Option usado para personalizar a configuração do cliente AMQP"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*cloud-events*#"
+msgstr "*eventos na nuvem*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid ""
+"Enables (default) or disables the Cloud Event support. If enabled on an _incoming_ channel, the connector analyzes the incoming records and try to create Cloud Event metadata. If enabled on an _outgoing_, the connector sends the outgoing messages as Cloud Event if the message includes Cloud Event Metadata.\n"
+"\n"
+"Type: _boolean_"
+msgstr ""
+"Habilita (padrão) ou desabilita o suporte a Cloud Event. Se habilitado em um canal _incoming_, o conector analisará os registros de entrada e tentará criar metadados do Cloud Event. Se habilitado em um _outgoing_, o conector enviará as mensagens de saída como Cloud Event se a mensagem incluir Metadados de Evento de Nuvem.\n"
+"\n"
+"Tipo: _boolean_"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`true`"
+msgstr "`true`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*connect-timeout*#\n"
+"\n"
+"[.no-hyphens]#_(amqp-connect-timeout)_#"
+msgstr "*Tempo limite de conexão*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The connection timeout in milliseconds\n"
+"\n"
+"Type: _int_"
+msgstr "O tempo limite da conexão em milissegundos"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`1000`"
+msgstr "`1000`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*container-id*#"
+msgstr "*ID do contêiner*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The AMQP container id\n"
+"\n"
+"Type: _string_"
+msgstr "O ID do contêiner AMQP"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*durable*#"
+msgstr "*durável*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"Whether AMQP subscription is durable\n"
+"\n"
+"Type: _boolean_"
+msgstr "Se a assinatura AMQP é durável"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*failure-strategy*#"
+msgstr "*estratégia de fracasso*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"Specify the failure strategy to apply when a message produced from an AMQP message is nacked. Accepted values are `fail` (default), `accept`, `release`, `reject`, `modified-failed`, `modified-failed-undeliverable-here`\n"
+"\n"
+"Type: _string_"
+msgstr "Especifique a estratégia de falha a ser aplicada quando uma mensagem produzida a partir de uma mensagem AMQP for bloqueada. Os valores aceitos são `fail` (padrão), `accept` , `release` , `reject` , `modified-failed` , `modified-failed-undeliverable-here`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`fail`"
+msgstr "`fail`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*health-timeout*#"
+msgstr "*tempo limite de saúde*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The max number of seconds to wait to determine if the connection with the broker is still established for the readiness check. After that threshold, the check is considered as failed.\n"
+"\n"
+"Type: _int_"
+msgstr "O número máximo de segundos a esperar para determinar se a conexão com o corretor ainda está estabelecida para a verificação de prontidão. Após esse limite, a verificação é considerada falha."
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`3`"
+msgstr "`3`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*host*#\n"
+"\n"
+"[.no-hyphens]#_(amqp-host)_#"
+msgstr "*hospedeiro*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The broker hostname\n"
+"\n"
+"Type: _string_"
+msgstr "O nome do host do broker"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`localhost`"
+msgstr "`localhost`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*link-name*#"
+msgstr "*nome do link*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The name of the link. If not set, the channel name is used.\n"
+"\n"
+"Type: _string_"
+msgstr "O nome do link. Se não for definido, será usado o nome do canal."
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*password*#\n"
+"\n"
+"[.no-hyphens]#_(amqp-password)_#"
+msgstr "*senha*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The password used to authenticate to the broker\n"
+"\n"
+"Type: _string_"
+msgstr "A senha usada para autenticar o corretor"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*port*#\n"
+"\n"
+"[.no-hyphens]#_(amqp-port)_#"
+msgstr "*porto*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The broker port\n"
+"\n"
+"Type: _int_"
+msgstr "A porta do corretor"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`5672`"
+msgstr "`5672`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*reconnect-attempts*#\n"
+"\n"
+"[.no-hyphens]#_(amqp-reconnect-attempts)_#"
+msgstr "*reconnect-attempts*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The number of reconnection attempts\n"
+"\n"
+"Type: _int_"
+msgstr "O número de tentativas de reconexão"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`100`"
+msgstr "`100`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*reconnect-interval*#\n"
+"\n"
+"[.no-hyphens]#_(amqp-reconnect-interval)_#"
+msgstr "*intervalo de reconexão*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The interval in second between two reconnection attempts\n"
+"\n"
+"Type: _int_"
+msgstr "O intervalo em segundos entre duas tentativas de reconexão"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`10`"
+msgstr "`10`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*sni-server-name*#\n"
+"\n"
+"[.no-hyphens]#_(amqp-sni-server-name)_#"
+msgstr "*nome do servidor sni*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"If set, explicitly override the hostname to use for the TLS SNI server name\n"
+"\n"
+"Type: _string_"
+msgstr "Se definido, substitui explicitamente o nome do host a ser usado para o nome do servidor TLS SNI"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*tracing-enabled*#"
+msgstr "*habilitado para rastreamento*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid ""
+"Whether tracing is enabled (default) or disabled\n"
+"\n"
+"Type: _boolean_"
+msgstr ""
+"Se o rastreamento está habilitado (padrão) ou desabilitado\n"
+"\n"
+"Tipo: _boolean_"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*use-ssl*#\n"
+"\n"
+"[.no-hyphens]#_(amqp-use-ssl)_#"
+msgstr "*use-ssl*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"Whether the AMQP connection uses SSL/TLS\n"
+"\n"
+"Type: _boolean_"
+msgstr "Se a conexão AMQP usa SSL/TLS"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*username*#\n"
+"\n"
+"[.no-hyphens]#_(amqp-username)_#"
+msgstr "*nome de usuário*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The username used to authenticate to the broker\n"
+"\n"
+"Type: _string_"
+msgstr "O nome de usuário usado para autenticar o corretor"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*virtual-host*#\n"
+"\n"
+"[.no-hyphens]#_(amqp-virtual-host)_#"
+msgstr "*host virtual*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"If set, configure the hostname value used for the connection AMQP Open frame and TLS SNI server name (if TLS is in use)\n"
+"\n"
+"Type: _string_"
+msgstr "Se definido, configure o valor do nome do host usado para a conexão AMQP Open frame e o nome do servidor TLS SNI (se TLS estiver em uso)"
+
+#. type: Title ===
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "Outgoing channel configuration"
+msgstr "Configuração do canal de saída"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*cloud-events-data-content-type*#\n"
+"\n"
+"[.no-hyphens]#_(cloud-events-default-data-content-type)_#"
+msgstr "*cloud-events-data-content-type*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid ""
+"Configure the default `datacontenttype` attribute of the outgoing Cloud Event. Requires `cloud-events` to be set to `true`. This value is used if the message does not configure the `datacontenttype` attribute itself\n"
+"\n"
+"Type: _string_"
+msgstr ""
+"Configura o atributo 'datacontenttype' padrão do evento de nuvem de saída. Requer que 'cloud-events' seja definido como 'true'. Esse valor será usado se a mensagem não configurar o próprio atributo 'datacontenttype'\n"
+"\n"
+"Tipo: _string_"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*cloud-events-data-schema*#\n"
+"\n"
+"[.no-hyphens]#_(cloud-events-default-data-schema)_#"
+msgstr "*esquema de dados de eventos na nuvem*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid ""
+"Configure the default `dataschema` attribute of the outgoing Cloud Event. Requires `cloud-events` to be set to `true`. This value is used if the message does not configure the `dataschema` attribute itself\n"
+"\n"
+"Type: _string_"
+msgstr ""
+"Configura o atributo 'dataschema' padrão do evento de nuvem de saída. Requer que 'cloud-events' seja definido como 'true'. Esse valor será usado se a mensagem não configurar o próprio atributo 'dataschema'\n"
+"\n"
+"Tipo: _string_"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*cloud-events-insert-timestamp*#\n"
+"\n"
+"[.no-hyphens]#_(cloud-events-default-timestamp)_#"
+msgstr "*cloud-events-insert-timestamp*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid ""
+"Whether the connector should insert automatically the `time` attribute into the outgoing Cloud Event. Requires `cloud-events` to be set to `true`. This value is used if the message does not configure the `time` attribute itself\n"
+"\n"
+"Type: _boolean_"
+msgstr ""
+"Se o conector deve inserir automaticamente o atributo 'time' no evento de nuvem de saída. Requer que 'cloud-events' seja definido como 'true'. Esse valor será usado se a mensagem não configurar o próprio atributo 'time'\n"
+"\n"
+"Tipo: _boolean_"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*cloud-events-mode*#"
+msgstr "*modo de eventos na nuvem*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid ""
+"The Cloud Event mode (`structured` or `binary` (default)). Indicates how are written the cloud events in the outgoing record\n"
+"\n"
+"Type: _string_"
+msgstr ""
+"O modo Cloud Event ('estruturado' ou 'binário' (padrão)). Indica como são gravados os eventos de nuvem no registro de saída\n"
+"\n"
+"Tipo: _string_"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`binary`"
+msgstr "`binary`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*cloud-events-source*#\n"
+"\n"
+"[.no-hyphens]#_(cloud-events-default-source)_#"
+msgstr "*fonte de eventos na nuvem*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid ""
+"Configure the default `source` attribute of the outgoing Cloud Event. Requires `cloud-events` to be set to `true`. This value is used if the message does not configure the `source` attribute itself\n"
+"\n"
+"Type: _string_"
+msgstr ""
+"Configure o atributo 'source' padrão do evento de nuvem de saída. Requer que 'cloud-events' seja definido como 'true'. Esse valor será usado se a mensagem não configurar o próprio atributo 'source'\n"
+"\n"
+"Tipo: _string_"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*cloud-events-subject*#\n"
+"\n"
+"[.no-hyphens]#_(cloud-events-default-subject)_#"
+msgstr "*assunto de eventos na nuvem*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid ""
+"Configure the default `subject` attribute of the outgoing Cloud Event. Requires `cloud-events` to be set to `true`. This value is used if the message does not configure the `subject` attribute itself\n"
+"\n"
+"Type: _string_"
+msgstr ""
+"Configure o atributo 'subject' padrão do evento de nuvem de saída. Requer que 'cloud-events' seja definido como 'true'. Esse valor será usado se a mensagem não configurar o próprio atributo 'subject'\n"
+"\n"
+"Tipo: _string_"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"[.no-hyphens]#*cloud-events-type*#\n"
+"\n"
+"[.no-hyphens]#_(cloud-events-default-type)_#"
+msgstr "*tipo de eventos na nuvem*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid ""
+"Configure the default `type` attribute of the outgoing Cloud Event. Requires `cloud-events` to be set to `true`. This value is used if the message does not configure the `type` attribute itself\n"
+"\n"
+"Type: _string_"
+msgstr ""
+"Configure o atributo 'type' padrão do evento de nuvem de saída. Requer que 'cloud-events' seja definido como 'true'. Esse valor será usado se a mensagem não configurar o próprio atributo 'type'\n"
+"\n"
+"Tipo: _string_"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*credit-retrieval-period*#"
+msgstr "*período de recuperação de crédito*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The period (in milliseconds) between two attempts to retrieve the credits granted by the broker. This time is used when the sender run out of credits.\n"
+"\n"
+"Type: _int_"
+msgstr "O período (em milissegundos) entre duas tentativas de recuperar os créditos concedidos pelo corretor. Esse tempo é usado quando o remetente fica sem créditos."
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`2000`"
+msgstr "`2000`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"Whether sent AMQP messages are marked durable\n"
+"\n"
+"Type: _boolean_"
+msgstr "Se as mensagens AMQP enviadas são marcadas como duráveis"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*merge*#"
+msgstr "*mesclar*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, no-wrap
+msgid ""
+"Whether the connector should allow multiple upstreams\n"
+"\n"
+"Type: _boolean_"
+msgstr ""
+"Se o conector deve permitir vários upstreams\n"
+"\n"
+"Tipo: _boolean_"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*ttl*#"
+msgstr "*ttl*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"The time-to-live of the sent AMQP messages. 0 to disable the TTL\n"
+"\n"
+"Type: _long_"
+msgstr "O tempo de vida das mensagens AMQP enviadas. 0 para desativar o TTL"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "`0`"
+msgstr "`0`"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid "[.no-hyphens]#*use-anonymous-sender*#"
+msgstr "*use-anonymous-sender*"
+
+#. type: Table
+#: _versions/2.13/guides/amqp-reference.adoc
+#, fuzzy, no-wrap
+msgid ""
+"Whether the connector should use an anonymous sender. Default value is `true` if the broker supports it, `false` otherwise. If not supported, it is not possible to dynamically change the destination address.\n"
+"\n"
+"Type: _boolean_"
+msgstr "Se o conector deve usar um remetente anônimo. O valor padrão é `true` se o corretor oferecer suporte a isso, e `false` caso contrário. Se não for compatível, não será possível alterar dinamicamente o endereço de destino."

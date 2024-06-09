@@ -1,0 +1,128 @@
+name: build
+
+on:
+  push:
+    branches:
+      - 'main'
+  schedule:
+    # everyday 9AM (UTC)
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - 'sync-upstream'
+    branches:
+      - 'main'
+    types:
+      - completed
+
+jobs:
+  update:
+    name: Update files
+    # Update job evaluates changes introduced in current revision and create cascading changes (commits) if necessary
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        # Checkout target revision from git repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # all history (required for getting last modified time of files)
+      - name: Cache bundle directory
+        # Cache ruby bundle directory to speed up build
+        uses: actions/cache@v3
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+      - name: Setup build env
+        # Setup build environment(install runtime, library, etc.)
+        run: |
+          bin/setup-build-env-on-ubuntu
+
+      - name: Update fuzzy tmx
+        # Update fuzzy tmx file from .po files
+        # Translation memory is a kind of dictionary consisted by pairs of a original text and a translated text.
+        # fuzzy.tmx will be used in sync workflow to fill a machine translated text candidates to the updated .po files.
+        run: vendor/quarkus-l10n-utils/bin/update-fuzzy-tmx
+
+      - name: Push changes
+        # Commit and Push the fuzzy tmx file generated
+        run: vendor/quarkus-l10n-utils/bin/push-changes "Update fuzzy tmx"
+
+      - name: Update tmx
+        # Update tmx file from .po files
+        # Translation memory is a kind of dictionary consisted by pairs of a original text and a translated text.
+        # It will be used in sync workflow to fill a translated text to the updated .po files.
+        run: vendor/quarkus-l10n-utils/bin/update-tmx
+
+      - name: Push changes
+        # Commit and Push the tmx file generated
+        run: vendor/quarkus-l10n-utils/bin/push-changes "Update tmx"
+
+      - name: Update translation stats
+        # Update the translation stats .csv file, which is used as an simplified dashboard ( <L10N_HOME>/l10n/stats/translation.csv )
+        run: vendor/quarkus-l10n-utils/bin/update-translation-stats
+
+      - name: Push changes
+        # Commit and Push the translation stats .csv file
+        run: vendor/quarkus-l10n-utils/bin/push-changes "Update translation stats"
+
+      - name: Update override stats
+        # Some files cannot be translated by po4a utility.
+        # In that case, the files are copied to `l10n/override/<locale>/` directory and translated manually.
+        # This step updates the override stats .csv file, which depicts override files are up-to-date or not
+        run: |
+          vendor/quarkus-l10n-utils/bin/update-override-stats
+
+      - name: Create issue if override files updated
+        # Create a new issue if override files are updated to notify users the override files needs update
+        run: |
+          .github/steps/create-issue-if-override-files-updated
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push changes
+        # Commit and Push the override stats .csv file
+        run: vendor/quarkus-l10n-utils/bin/push-changes "Update override stats"
+
+  deploy:
+    name: Deploy localized site to GitHub pages
+    # Deploy a localized site to the GitHub pages
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        # Checkout target revision from git repository
+        uses: actions/checkout@v2
+      - name: Cache bundle directory
+        # Cache ruby bundle directory to speed up build
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+      - name: Setup build env
+        # Setup build environment(install runtime, library, etc.)
+        run: |
+          bin/setup-build-env-on-ubuntu
+
+      - name: Build
+        # Build site
+        run: vendor/quarkus-l10n-utils/bin/build
+
+      - name: Deploy to GitHub Pages
+        # Deploy the site to GitHub Pages by committing and pushing the site
+        run: |
+          export GIT_USER_NAME=`jq ".git.user.name" config/l10n-utils.json -r`
+          export GIT_USER_EMAIL=`jq ".git.user.email" config/l10n-utils.json -r`
+          
+          echo "pt.quarkus.io" > docs/CNAME
+          git add -f docs
+
+          set +e
+          git diff --cached --exit-code --quiet
+
+          if [[ $? -eq 1 ]] ; then
+            set -e
+            git checkout -b docs
+            git -c user.name="$GIT_USER_NAME" -c user.email="$GIT_USER_EMAIL" commit -m "Update GitHub Pages"
+            git push -f origin docs
+          fi
+          set -e

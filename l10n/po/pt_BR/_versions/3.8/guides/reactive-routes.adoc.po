@@ -1,0 +1,905 @@
+msgid ""
+msgstr ""
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: jekyll-l10n\n"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+msgid "Using Reactive Routes"
+msgstr "Usando rotas reativas"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"Reactive routes propose an alternative approach to implement HTTP endpoints where you declare and chain _routes_.\n"
+"This approach became very popular in the JavaScript world, with frameworks like Express.Js or Hapi.\n"
+"Quarkus also offers the possibility to use reactive routes.\n"
+"You can implement REST API with routes only or combine them with Jakarta REST resources and servlets."
+msgstr "As rotas reativas propõem uma abordagem alternativa para implementar pontos de extremidade HTTP em que o usuário declara e encadeia _rotas_ . Essa abordagem tornou-se muito popular no mundo do JavaScript, com estruturas como Express.Js ou Hapi. O Quarkus também oferece a possibilidade de usar rotas reativas. O senhor pode implementar a API REST somente com rotas ou combiná-las com recursos e servlets Jakarta REST."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The code presented in this guide is available in this {quickstarts-base-url}[GitHub repository] under the link:{quickstarts-tree-url}/reactive-routes-quickstart[`reactive-routes-quickstart` directory]"
+msgstr "O código apresentado neste guia está disponível neste {quickstarts-base-url}[repositório do GitHub] no link:{quickstarts-tree-url}/reactive-routes-quickstart[diretórioreactive-routes-quickstart]"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"Reactive Routes were initially introduced to provide a reactive execution model for HTTP APIs on top of the xref:quarkus-reactive-architecture.adoc[Quarkus Reactive Architecture].\n"
+"With the introduction of xref:resteasy-reactive.adoc[RESTEasy Reactive], you can now implement reactive HTTP APIs and still use Jakarta REST annotations.\n"
+"Reactive Routes are still supported, especially if you want a more _route-based_ approach, and something closer to the underlying reactive engine."
+msgstr "As rotas reativas foram inicialmente introduzidas para fornecer um modelo de execução reativa para APIs HTTP sobre a xref:quarkus-reactive-architecture.adoc[arquitetura reativa do Quarkus] . Com a introdução do xref:resteasy-reactive.adoc[RESTEasy Reactive] , agora o senhor pode implementar APIs HTTP reativas e ainda usar as anotações Jakarta REST. As rotas reativas ainda são compatíveis, especialmente se o senhor quiser uma abordagem mais _baseada em rotas_ e algo mais próximo do mecanismo reativo subjacente."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Quarkus HTTP"
+msgstr "Quarkus HTTP"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"Before going further, let's have a look at the HTTP layer of Quarkus.\n"
+"Quarkus HTTP support is based on a non-blocking and reactive engine (Eclipse Vert.x and Netty).\n"
+"All the HTTP requests your application receive are handled by _event loops_ (I/O Thread) and then are routed towards the code that manages the request.\n"
+"Depending on the destination, it can invoke the code managing the request on a worker thread (Servlet, Jax-RS) or use the IO Thread (reactive route).\n"
+"Note that because of this, a reactive route must be non-blocking or explicitly declare its blocking nature (which would result by being called on a worker thread)."
+msgstr "Antes de prosseguir, vamos dar uma olhada na camada HTTP do Quarkus. O suporte HTTP do Quarkus é baseado em um mecanismo reativo e sem bloqueio (Eclipse Vert.x e Netty). Todas as solicitações HTTP que o aplicativo recebe são tratadas por _loops de eventos_ (I/O Thread) e, em seguida, são encaminhadas para o código que gerencia a solicitação. Dependendo do destino, ele pode invocar o código que gerencia a solicitação em um thread de trabalho (Servlet, Jax-RS) ou usar o IO Thread (rota reativa). Observe que, por causa disso, uma rota reativa deve ser não bloqueante ou declarar explicitamente sua natureza bloqueante (o que resultaria em ser chamada em um thread de trabalho)."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "image:http-architecture.png[alt=Quarkus HTTP Architecture]"
+msgstr "image:http-architecture.png[alt=\"Quarkus HTTP Architecture\"]"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+msgid "See the xref:quarkus-reactive-architecture.adoc[Quarkus Reactive Architecture documentation] for further details on this topic."
+msgstr "Consulte a xref:quarkus-reactive-architecture.adoc[documentação da Arquitetura Reativa do Quarkus] para obter mais informações sobre este tópico."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Declaring reactive routes"
+msgstr "Declaração de rotas reativas"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"The first way to use reactive routes is to use the `@Route` annotation.\n"
+"To have access to this annotation, you need to add the `quarkus-reactive-routes` extension by running this command:"
+msgstr "A primeira maneira de usar rotas reativas é usar a anotação `@Route` . Para ter acesso a essa anotação, o senhor precisa adicionar a extensão `quarkus-reactive-routes` executando este comando:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+msgid "This will add the following to your build file:"
+msgstr "Isto irá adicionar o seguinte trecho no seu arquivo de build:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+msgid "pom.xml"
+msgstr "pom.xml"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+msgid "build.gradle"
+msgstr "build.gradle"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Then in a _bean_, you can use the `@Route` annotation as follows:"
+msgstr "Então, em um _bean_ , o senhor pode usar a anotação `@Route` da seguinte forma:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "If there is a reactive route found on a class with no scope annotation then `@jakarta.inject.Singleton` is added automatically."
+msgstr "Se houver uma rota reativa encontrada em uma classe sem anotação de escopo, o site `@jakarta.inject.Singleton` será adicionado automaticamente."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `@Route` annotation indicates that the method is a reactive route. Again, by default, the code contained in the method must not block."
+msgstr "A anotação `@Route` indica que o método é uma rota reativa. Novamente, por padrão, o código contido no método não deve bloquear."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The method gets a https://vertx.io/docs/apidocs/io/vertx/ext/web/RoutingContext.html[`RoutingContext`] as a parameter. From the `RoutingContext` you can retrieve the HTTP request (using `request()`) and write the response using `response().end(...)`."
+msgstr "O método recebe um link:https://vertx.io/docs/apidocs/io/vertx/ext/web/RoutingContext.html[RoutingContext] como parâmetro. No site `RoutingContext` , o senhor pode recuperar a solicitação HTTP (usando `request()` ) e escrever a resposta usando `response().end(…​)` ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "If the annotated method does not return `void` the arguments are optional."
+msgstr "Se o método anotado não retornar `void` , os argumentos serão opcionais."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`RoutingExchange` is a convenient wrapper of `RoutingContext` which provides some useful methods."
+msgstr "`RoutingExchange` é um invólucro conveniente do site `RoutingContext` que oferece alguns métodos úteis."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `RoutingExchange` is used to retrieve the request query parameter `name`."
+msgstr "O endereço `RoutingExchange` é usado para recuperar o parâmetro de consulta da solicitação `name` ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The path defines a parameter `name` which can be injected inside the method parameters using the annotation `@Param`."
+msgstr "O caminho define um parâmetro `name` que pode ser injetado dentro dos parâmetros do método usando a anotação `@Param` ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "More details about using the `RoutingContext` is available in the https://vertx.io/docs/vertx-web/java/[Vert.x Web documentation]."
+msgstr "Mais detalhes sobre o uso do site `RoutingContext` estão disponíveis na link:https://vertx.io/docs/vertx-web/java/[documentação do Vert.x Web] ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `@Route` annotation allows you to configure:"
+msgstr "A anotação `@Route` permite que o senhor configure:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `path` - for routing by path, using the https://vertx.io/docs/vertx-web/java/#_capturing_path_parameters[Vert.x Web format]"
+msgstr "O site `path` - para roteamento por caminho, usando o link:https://vertx.io/docs/vertx-web/java/#_capturing_path_parameters[formato da Web Vert.x]"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `regex` - for routing with regular expressions, see https://vertx.io/docs/vertx-web/java/#_routing_with_regular_expressions[for more details]"
+msgstr "O site `regex` - para roteamento com expressões regulares, consulte link:https://vertx.io/docs/vertx-web/java/#_routing_with_regular_expressions[para obter mais detalhes]"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `methods` - the HTTP verbs triggering the route such as `GET`, `POST`..."
+msgstr "O `methods` - os verbos HTTP que acionam a rota, como `GET` , `POST` ..."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `type` - it can be _normal_ (non-blocking), _blocking_ (method dispatched on a worker thread), or _failure_ to indicate that this route is called on failures"
+msgstr "O endereço `type` - pode ser _normal_ (sem bloqueio), _bloqueador_ (método despachado em um thread de trabalho) ou _falha_ para indicar que essa rota é chamada em caso de falhas"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"The `order` - the order of the route when several routes are involved in handling the incoming request.\n"
+"Must be positive for regular user routes."
+msgstr "O `order` - a ordem da rota quando várias rotas estão envolvidas no tratamento da solicitação recebida. Deve ser positivo para rotas de usuários regulares."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The produced and consumed mime types using `produces`, and `consumes`"
+msgstr "Os tipos de mime produzidos e consumidos usando `produces` , e `consumes`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "For instance, you can declare a blocking route as follows:"
+msgstr "Por exemplo, o senhor pode declarar uma rota de bloqueio da seguinte forma:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Alternatively, you can use `@io.smallrye.common.annotation.Blocking` and omit the `type = Route.HandlerType.BLOCKING`:"
+msgstr "Como alternativa, o senhor pode usar `@io.smallrye.common.annotation.Blocking` e omitir `type = Route.HandlerType.BLOCKING` :"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "When `@Blocking` is used, the `type` attribute of the `@Route` is ignored."
+msgstr "Quando o site `@Blocking` é usado, o atributo `type` do site `@Route` é ignorado."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `@Route` annotation is repeatable and so you can declare several routes for a single method:"
+msgstr "A anotação `@Route` é repetível e, portanto, o senhor pode declarar várias rotas para um único método:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Each route can use different paths, methods..."
+msgstr "Cada rota pode usar diferentes caminhos, métodos..."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "If no content-type header is set, then we will try to use the most acceptable content type by matching the accept header with the value of the `Route` produces attribute as defined by `io.vertx.ext.web.RoutingContext.getAcceptableContentType()`."
+msgstr "Se nenhum cabeçalho content-type for definido, tentaremos usar o tipo de conteúdo mais aceitável fazendo a correspondência entre o cabeçalho accept e o valor do atributo `Route` produces, conforme definido por `io.vertx.ext.web.RoutingContext.getAcceptableContentType()` ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "If the `accept` header matches `text/html`, we set the content type automatically to `text/html`."
+msgstr "Se o cabeçalho `accept` corresponder a `text/html` , definiremos o tipo de conteúdo automaticamente para `text/html` ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Executing route on a virtual thread"
+msgstr "Execução da rota em um thread virtual"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"You can annotate a route method with `@io.smallrye.common.annotation.RunOnVirtualThread` in order to execute it on a virtual thread.\n"
+"However, keep in mind that not everything can run safely on virtual threads.\n"
+"You should read the xref:virtual-threads.adoc#run-code-on-virtual-threads-using-runonvirtualthread[Virtual thread support reference] carefully and get acquainted with all the details."
+msgstr "O senhor pode anotar um método de rota com `@io.smallrye.common.annotation.RunOnVirtualThread` para executá-lo em um thread virtual. Entretanto, lembre-se de que nem tudo pode ser executado com segurança em threads virtuais. O senhor deve ler cuidadosamente a xref:virtual-threads.adoc#run-code-on-virtual-threads-using-runonvirtualthread[referência de suporte a thread virtual] e se familiarizar com todos os detalhes."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Handling conflicting routes"
+msgstr "Manuseio de rotas conflitantes"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"You may end up with multiple routes matching a given path.\n"
+"In the following example, both route matches `/accounts/me`:"
+msgstr "O senhor pode acabar com várias rotas correspondentes a um determinado caminho. No exemplo a seguir, ambas as rotas correspondem a `/accounts/me` :"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"As a consequence, the result is not the expected one as the first route is called with the path parameter `id` set to `me`.\n"
+"To avoid the conflict, use the `order` attribute:"
+msgstr "Como consequência, o resultado não é o esperado, pois a primeira rota é chamada com o parâmetro de caminho `id` definido como `me` . Para evitar o conflito, use o atributo `order` :"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"By giving a lower order to the second route, it gets evaluated first.\n"
+"If the request path matches, it is invoked, otherwise the other routes are evaluated."
+msgstr "Ao atribuir uma ordem inferior à segunda rota, ela é avaliada primeiro. Se o caminho da solicitação corresponder, ela será invocada; caso contrário, as outras rotas serão avaliadas."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`@RouteBase`"
+msgstr "`@RouteBase`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "This annotation can be used to configure some defaults for reactive routes declared on a class."
+msgstr "Essa anotação pode ser usada para configurar alguns padrões para rotas reativas declaradas em uma classe."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `path` value is used as a prefix for any route method declared on the class where `Route#path()` is used."
+msgstr "O valor `path` é usado como um prefixo para qualquer método de rota declarado na classe em que `Route#path()` é usado."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The value of `produces()` is used for content-based routing for all routes where `Route#produces()` is empty."
+msgstr "O valor de `produces()` é usado para roteamento baseado em conteúdo para todas as rotas em que `Route#produces()` está vazio."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Reactive Route Methods"
+msgstr "Métodos de rota reativos"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"A route method must be a non-private non-static method of a CDI bean.\n"
+"If the annotated method returns `void` then it has to accept at least one argument - see the supported types below.\n"
+"If the annotated method does not return `void` then the arguments are optional."
+msgstr "Um método de rota deve ser um método não privado e não estático de um bean CDI. Se o método anotado retornar `void` , ele deverá aceitar pelo menos um argumento - consulte os tipos compatíveis abaixo. Se o método anotado não retornar `void` , os argumentos serão opcionais."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"Methods that return `void` must __end__ the response or the HTTP request to this route will never end.\n"
+"Some methods of `RoutingExchange` do it for you, others not and you must call the `end()` method of the response by yourself, please refer to its JavaDoc for more information."
+msgstr "Os métodos que retornam `void` devem _encerrar_ a resposta ou a solicitação HTTP para essa rota nunca terminará. Alguns métodos de `RoutingExchange` fazem isso para o usuário, outros não, e o usuário deve chamar o método `end()` da resposta por conta própria. Consulte o JavaDoc para obter mais informações."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "A route method can accept arguments of the following types:"
+msgstr "Um método de rota pode aceitar argumentos dos seguintes tipos:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`io.vertx.ext.web.RoutingContext`"
+msgstr "`io.vertx.ext.web.RoutingContext`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`io.quarkus.vertx.web.RoutingExchange`"
+msgstr "`io.quarkus.vertx.web.RoutingExchange`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`io.vertx.core.http.HttpServerRequest`"
+msgstr "`io.vertx.core.http.HttpServerRequest`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`io.vertx.core.http.HttpServerResponse`"
+msgstr "`io.vertx.core.http.HttpServerResponse`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`io.vertx.mutiny.core.http.HttpServerRequest`"
+msgstr "`io.vertx.mutiny.core.http.HttpServerRequest`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`io.vertx.mutiny.core.http.HttpServerResponse`"
+msgstr "`io.vertx.mutiny.core.http.HttpServerResponse`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Furthermore, it is possible to inject the `HttpServerRequest` parameters into method parameters annotated with `@io.quarkus.vertx.web.Param` using the following types:"
+msgstr "Além disso, é possível injetar os parâmetros `HttpServerRequest` nos parâmetros do método anotados com `@io.quarkus.vertx.web.Param` usando os seguintes tipos:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Parameter Type"
+msgstr "Tipo de parâmetro"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Obtained via"
+msgstr "Obtido via"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+msgid "`java.lang.String`"
+msgstr "`java.lang.String`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`routingContext.request().getParam()`"
+msgstr "`routingContext.request().getParam()`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`java.util.Optional<String>`"
+msgstr "`java.util.Optional<String>`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`java.util.List<String>`"
+msgstr "`java.util.List<String>`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`routingContext.request().params().getAll()`"
+msgstr "`routingContext.request().params().getAll()`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Request Parameter Example"
+msgstr "Exemplo de parâmetro de solicitação"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `HttpServerRequest` headers can be injected into method parameters annotated with `@io.quarkus.vertx.web.Header` using the following types:"
+msgstr "Os cabeçalhos `HttpServerRequest` podem ser injetados nos parâmetros do método anotados com `@io.quarkus.vertx.web.Header` usando os seguintes tipos:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`routingContext.request().getHeader()`"
+msgstr "`routingContext.request().getHeader()`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`routingContext.request().headers().getAll()`"
+msgstr "`routingContext.request().headers().getAll()`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Request Header Example"
+msgstr "Exemplo de cabeçalho de solicitação"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The request body can be injected into a method parameter annotated with `@io.quarkus.vertx.web.Body` using the following types:"
+msgstr "O corpo da solicitação pode ser injetado em um parâmetro de método anotado com `@io.quarkus.vertx.web.Body` usando os seguintes tipos:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`routingContext.getBodyAsString()`"
+msgstr "`routingContext.getBodyAsString()`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+msgid "`io.vertx.core.buffer.Buffer`"
+msgstr "`io.vertx.core.buffer.Buffer`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`routingContext.getBody()`"
+msgstr "`routingContext.getBody()`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+msgid "`io.vertx.core.json.JsonObject`"
+msgstr "`io.vertx.core.json.JsonObject`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`routingContext.getBodyAsJson()`"
+msgstr "`routingContext.getBodyAsJson()`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+msgid "`io.vertx.core.json.JsonArray`"
+msgstr "`io.vertx.core.json.JsonArray`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`routingContext.getBodyAsJsonArray()`"
+msgstr "`routingContext.getBodyAsJsonArray()`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "any other type"
+msgstr "qualquer outro tipo"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "`routingContext.getBodyAsJson().mapTo(MyPojo.class)`"
+msgstr "`routingContext.getBodyAsJson().mapTo(MyPojo.class)`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Request Body Example"
+msgstr "Exemplo de corpo de solicitação"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"A failure handler can declare a single method parameter whose type extends `Throwable`.\n"
+"The type of the parameter is used to match the result of `RoutingContext#failure()`."
+msgstr "Um manipulador de falhas pode declarar um único parâmetro de método cujo tipo se estende a `Throwable` . O tipo do parâmetro é usado para corresponder ao resultado de `RoutingContext#failure()` ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Failure Handler Example"
+msgstr "Exemplo de manipulador de falhas"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Returning Unis"
+msgstr "Unidades que retornam"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "In a reactive route, you can return a `Uni` directly:"
+msgstr "Em uma rota reativa, o senhor pode retornar um `Uni` diretamente:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Returning `Unis` is convenient when using a reactive client:"
+msgstr "Retornar `Unis` é conveniente quando se usa um cliente reativo:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The item produced by the returned `Uni` can be:"
+msgstr "O item produzido pelo `Uni` retornado pode ser:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "A string - written into the HTTP response directly."
+msgstr "Uma string - gravada diretamente na resposta HTTP."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "A `io.vertx.core.buffer.Buffer` - written into the HTTP response directly."
+msgstr "Um `io.vertx.core.buffer.Buffer` - escrito diretamente na resposta HTTP."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"An object - written into the HTTP response after having been encoded into JSON.\n"
+"The `content-type` header is set to `application/json` if not already set."
+msgstr "Um objeto - gravado na resposta HTTP após ter sido codificado em JSON. O cabeçalho `content-type` é definido como `application/json` se ainda não estiver definido."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "If the returned `Uni` produces a failure (or is `null`), an HTTP 500 response is written."
+msgstr "Se o `Uni` retornado produzir uma falha (ou for `null` ), será gravada uma resposta HTTP 500."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Returning a `Uni<Void>` produces a 204 response (no content)."
+msgstr "Retornar um `Uni<Void>` produz uma resposta 204 (sem conteúdo)."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Returning results"
+msgstr "Retorno de resultados"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "You can also return a result directly:"
+msgstr "O senhor também pode retornar um resultado diretamente:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"Be aware, the processing must be **non-blocking** as reactive routes are invoked on the IO Thread.\n"
+"Otherwise, set the `type` attribute of the `@Route` annotation to `Route.HandlerType.BLOCKING`, or use the `@io.smallrye.common.annotation.Blocking` annotation."
+msgstr "O senhor deve estar ciente de que o processamento deve ser *sem bloqueio* , pois as rotas reativas são invocadas no thread de IO. Caso contrário, defina o atributo `type` da anotação `@Route` como `Route.HandlerType.BLOCKING` ou use a anotação `@io.smallrye.common.annotation.Blocking` ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The method can return:"
+msgstr "O método pode retornar:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Returning Multis"
+msgstr "Multis que retornam"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"A reactive route can return a `Multi`.\n"
+"The items are written one by one, in the response.\n"
+"The response `Transfer-Encoding` header is set to `chunked`."
+msgstr "Uma rota reativa pode retornar um `Multi` . Os itens são gravados um a um na resposta. O cabeçalho `Transfer-Encoding` da resposta é definido como `chunked` ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Produces `helloworld!`"
+msgstr "Produz `helloworld!`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "A `Multi<String>` - the items are written one by one (one per _chunk_) in the response."
+msgstr "A `Multi<String>` - os itens são escritos um a um (um por _bloco_ ) na resposta."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "A `Multi<Buffer>` - the buffers are written one by one (one per _chunk_) without any processing."
+msgstr "A `Multi<Buffer>` - os buffers são gravados um a um (um por _bloco_ ) sem nenhum processamento."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "A `Multi<Object>` - the items are encoded to JSON written one by one in the response."
+msgstr "A `Multi<Object>` - os itens são codificados em JSON e escritos um a um na resposta."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The previous snippet produces:"
+msgstr "O snippet anterior produz:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Streaming JSON Array items"
+msgstr "Streaming de itens de matriz JSON"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"You can return a `Multi` to produce a JSON Array, where every item is an item from this array.\n"
+"The response is written item by item to the client.\n"
+"To do that set the `produces` attribute to `\"application/json\"` (or `ReactiveRoutes.APPLICATION_JSON`)."
+msgstr "O senhor pode retornar um `Multi` para produzir uma matriz JSON, em que cada item é um item dessa matriz. A resposta é gravada item por item para o cliente. Para fazer isso, defina o atributo `produces` como `\"application/json\"` (ou `ReactiveRoutes.APPLICATION_JSON` )."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"The `produces` attribute is an array.\n"
+"When you pass a single value you can omit the \"{\" and \"}\".\n"
+"Note that `\"application/json\"` must be the first value in the array."
+msgstr "O atributo `produces` é uma matriz. Quando o senhor passa um único valor, pode omitir o \"{\" e o \"}\". Observe que `\"application/json\"` deve ser o primeiro valor da matriz."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"Only `Multi<String>`, `Multi<Object>` and `Multi<Void>` can be written into the JSON Array.\n"
+"Using a `Multi<Void>` produces an empty array.\n"
+"You cannot use `Multi<Buffer>`.\n"
+"If you need to use `Buffer`, transform the content into a JSON or String representation first."
+msgstr "Somente `Multi<String>` , `Multi<Object>` e `Multi<Void>` podem ser gravados na matriz JSON. O uso de `Multi<Void>` produz uma matriz vazia. O senhor não pode usar `Multi<Buffer>` . Se o senhor precisar usar `Buffer` , primeiro transforme o conteúdo em uma representação JSON ou String."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Deprecation of `asJsonArray`"
+msgstr "Depreciação de `asJsonArray`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `ReactiveRoutes.asJsonArray` has been deprecated as it is not compatible with the security layer of Quarkus."
+msgstr "O endereço `ReactiveRoutes.asJsonArray` foi descontinuado por não ser compatível com a camada de segurança do Quarkus."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Event Stream and Server-Sent Event support"
+msgstr "Suporte a fluxo de eventos e eventos enviados pelo servidor"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"You can return a `Multi` to produce an event source (stream of server sent events).\n"
+"To enable this feature, set the `produces` attribute to `\"text/event-stream\"` (or `ReactiveRoutes.EVENT_STREAM`), such as in:"
+msgstr "O senhor pode retornar um `Multi` para produzir uma fonte de eventos (fluxo de eventos enviados pelo servidor). Para ativar esse recurso, defina o atributo `produces` como `\"text/event-stream\"` (ou `ReactiveRoutes.EVENT_STREAM` ), como em:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "This method would produce:"
+msgstr "Esse método produziria:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"The `produces` attribute is an array.\n"
+"When you pass a single value you can omit the \"{\" and \"}\".\n"
+"Note that `\"text/event-stream\"` must be the first value in the array."
+msgstr "O atributo `produces` é uma matriz. Quando o senhor passa um único valor, pode omitir o \"{\" e o \"}\". Observe que `\"text/event-stream\"` deve ser o primeiro valor da matriz."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "You can also implement the `io.quarkus.vertx.web.ReactiveRoutes.ServerSentEvent` interface to customize the `event` and `id` section of the server sent event:"
+msgstr "O senhor também pode implementar a interface `io.quarkus.vertx.web.ReactiveRoutes.ServerSentEvent` para personalizar as seções `event` e `id` do evento enviado pelo servidor:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Using a `Multi<PersonEvent>` would produce:"
+msgstr "O uso do site `Multi<PersonEvent>` produziria:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Deprecation of `asEventStream`"
+msgstr "Depreciação de `asEventStream`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `ReactiveRoutes.asEventStream` has been deprecated as it is not compatible with the security layer of Quarkus."
+msgstr "O endereço `ReactiveRoutes.asEventStream` foi descontinuado por não ser compatível com a camada de segurança do Quarkus."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Json Stream in NDJSON format"
+msgstr "Json Stream no formato NDJSON"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"You can return a `Multi` to produce a newline delimited stream of JSON values.\n"
+"To enable this feature, set the `produces` attribute of the `@Route` annotation to `\"application/x-ndjson\"` (or `ReactiveRoutes.ND_JSON`):"
+msgstr "O senhor pode retornar um `Multi` para produzir um fluxo delimitado por nova linha de valores JSON. Para ativar esse recurso, defina o atributo `produces` da anotação `@Route` como `\"application/x-ndjson\"` (ou `ReactiveRoutes.ND_JSON` ):"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"The `produces` attribute is an array. When you pass a single value you can omit the \"{\" and \"}\".\n"
+"Note that `\"application/x-ndjson\"` must be the first value in the array."
+msgstr "O atributo `produces` é uma matriz. Quando o senhor passa um único valor, pode omitir o \"{\" e o \"}\". Observe que `\"application/x-ndjson\"` deve ser o primeiro valor da matriz."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "You can also provide strings instead of objects, in that case the strings will be wrapped in quotes to become valid JSON values:"
+msgstr "O senhor também pode fornecer strings em vez de objetos; nesse caso, as strings serão colocadas entre aspas para se tornarem valores JSON válidos:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Deprecation of `asJsonStream`"
+msgstr "Depreciação de `asJsonStream`"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `ReactiveRoutes.asJsonStream` has been deprecated as it is not compatible with the security layer of Quarkus."
+msgstr "O endereço `ReactiveRoutes.asJsonStream` foi descontinuado por não ser compatível com a camada de segurança do Quarkus."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Using Bean Validation"
+msgstr "Usando a validação de bean"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"You can combine reactive routes and Bean Validation.\n"
+"First, don't forget to add the `quarkus-hibernate-validator` extension to your project.\n"
+"Then, you can add constraints to your route parameter (annotated with `@Param` or `@Body`):"
+msgstr "O senhor pode combinar rotas reativas e Bean Validation. Primeiro, não se esqueça de adicionar a extensão `quarkus-hibernate-validator` ao seu projeto. Em seguida, o senhor pode adicionar restrições ao parâmetro da rota (anotado com `@Param` ou `@Body` ):"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"If the parameters do not pass the tests, it returns an HTTP 400 response.\n"
+"If the request accepts JSON payload, the response follows the https://opensource.zalando.com/problem/constraint-violation/[Problem] format."
+msgstr "Se os parâmetros não passarem nos testes, ele retorna uma resposta HTTP 400. Se a solicitação aceitar carga útil JSON, a resposta seguirá o formato link:https://opensource.zalando.com/problem/constraint-violation/[Problema] ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "When returning an object or a `Uni`, you can also use the `@Valid` annotation:"
+msgstr "Ao retornar um objeto ou um `Uni` , o senhor também pode usar a anotação `@Valid` :"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"If the item produced by the route does not pass the validation, it returns an HTTP 500 response.\n"
+"If the request accepts JSON payload, the response follows the https://opensource.zalando.com/problem/constraint-violation/[Problem] format."
+msgstr "Se o item produzido pela rota não for aprovado na validação, ele retornará uma resposta HTTP 500. Se a solicitação aceitar carga útil JSON, a resposta seguirá o formato link:https://opensource.zalando.com/problem/constraint-violation/[Problema] ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"Note that only `@Valid` is supported on the return type.\n"
+"The returned class can use any constraint.\n"
+"In the case of `Uni`, it checks the item produced asynchronously."
+msgstr "Observe que apenas `@Valid` é compatível com o tipo de retorno. A classe retornada pode usar qualquer restrição. No caso do `Uni` , ele verifica o item produzido de forma assíncrona."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Using the Vert.x Web Router"
+msgstr "Usando o roteador web Vert.x"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"You can also register your route directly on the _HTTP routing layer_ by registering routes directly on the `Router` object.\n"
+"To retrieve the `Router` instance at startup:"
+msgstr "O senhor também pode registrar sua rota diretamente na _camada de roteamento HTTP_ , registrando rotas diretamente no objeto `Router` . Para recuperar a instância `Router` na inicialização:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Check the https://vertx.io/docs/vertx-web/java/#_basic_vert_x_web_concepts[Vert.x Web documentation] to know more about the route registration, options, and available handlers."
+msgstr "Consulte a link:https://vertx.io/docs/vertx-web/java/#_basic_vert_x_web_concepts[documentação do Vert.x Web] para saber mais sobre o registro de rotas, as opções e os manipuladores disponíveis."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"`Router` access is provided by the `quarkus-vertx-http` extension.\n"
+"If you use `quarkus-resteasy-reactive` or `quarkus-reactive-routes`, the extension will be added automatically."
+msgstr "`Router` O acesso é fornecido pela extensão `quarkus-vertx-http` . Se o senhor usar `quarkus-resteasy-reactive` ou `quarkus-reactive-routes` , a extensão será adicionada automaticamente."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "You can also receive the Mutiny variant of the Router (`io.vertx.mutiny.ext.web.Router`):"
+msgstr "O senhor também pode receber a variante Mutiny do roteador ( `io.vertx.mutiny.ext.web.Router` ):"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Intercepting HTTP requests"
+msgstr "Interceptação de solicitações HTTP"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"You can also register filters that would intercept incoming HTTP requests.\n"
+"Note that these filters are also applied for servlets, Jakarta REST resources, and reactive routes."
+msgstr "O senhor também pode registrar filtros que interceptariam solicitações HTTP de entrada. Observe que esses filtros também são aplicados a servlets, recursos Jakarta REST e rotas reativas."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "For example, the following code snippet registers a filter adding an HTTP header:"
+msgstr "Por exemplo, o trecho de código a seguir registra um filtro que adiciona um cabeçalho HTTP:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The `RouteFilter#value()` defines the priority used to sort the filters - filters with higher priority are called first."
+msgstr "O endereço `RouteFilter#value()` define a prioridade usada para classificar os filtros - os filtros com prioridade mais alta são chamados primeiro."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The filter is likely required to call the `next()` method to continue the chain."
+msgstr "É provável que o filtro precise chamar o método `next()` para continuar a cadeia."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "HTTP Compression"
+msgstr "Compressão HTTP"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"The body of an HTTP response is not compressed by default.\n"
+"You can enable the HTTP compression support by means of `quarkus.http.enable-compression=true`."
+msgstr "O corpo de uma resposta HTTP não é compactado por padrão. O senhor pode ativar o suporte à compactação HTTP por meio de `quarkus.http.enable-compression=true` ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "If compression support is enabled then the response body is compressed if:"
+msgstr "Se o suporte à compactação estiver ativado, o corpo da resposta será compactado se:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "the route method is annotated with `@io.quarkus.vertx.http.Compressed`, or"
+msgstr "o método de rota é anotado com `@io.quarkus.vertx.http.Compressed` , ou"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "the `Content-Type` header is set and the value is a compressed media type as configured via `quarkus.http.compress-media-types`."
+msgstr "O cabeçalho `Content-Type` é definido e o valor é um tipo de mídia compactada, conforme configurado em `quarkus.http.compress-media-types` ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "The response body is never compressed if:"
+msgstr "O corpo da resposta nunca é compactado se:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "the route method is annotated with `@io.quarkus.vertx.http.Uncompressed`, or"
+msgstr "o método de rota é anotado com `@io.quarkus.vertx.http.Uncompressed` , ou"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "the `Content-Type` header is not set."
+msgstr "o cabeçalho `Content-Type` não está definido."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "By default, the following list of media types is compressed: `text/html`, `text/plain`, `text/xml`, `text/css`, `text/javascript` and `application/javascript`."
+msgstr "Por padrão, a seguinte lista de tipos de mídia é compactada: `text/html` , `text/plain` , `text/xml` , `text/css` , `text/javascript` e `application/javascript` ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "If the client does not support HTTP compression then the response body is not compressed."
+msgstr "Se o cliente não for compatível com a compactação HTTP, o corpo da resposta não será compactado."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Adding OpenAPI and Swagger UI"
+msgstr "Adição de OpenAPI e Swagger UI"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "You can add support for link:https://www.openapis.org/[OpenAPI] and link:https://swagger.io/tools/swagger-ui/[Swagger UI] by using the `quarkus-smallrye-openapi` extension."
+msgstr "O senhor pode adicionar suporte para link:https://www.openapis.org/[OpenAPI] e link:https://swagger.io/tools/swagger-ui/[Swagger UI] usando a extensão `quarkus-smallrye-openapi` ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Add the extension by running this command:"
+msgstr "Adicione a extensão executando este comando:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "This is enough to generate a basic OpenAPI schema document from your Vert.x Routes:"
+msgstr "Isso é suficiente para gerar um documento de esquema OpenAPI básico a partir de suas rotas Vert.x:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "You will see the generated OpenAPI schema document:"
+msgstr "O senhor verá o documento de esquema OpenAPI gerado:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Also see xref:openapi-swaggerui.adoc[the OpenAPI Guide]."
+msgstr "Consulte também xref:openapi-swaggerui.adoc[o Guia da OpenAPI] ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Adding MicroProfile OpenAPI Annotations"
+msgstr "Adição de anotações MicroProfile OpenAPI"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"You can use link:https://github.com/eclipse/microprofile-open-api[MicroProfile OpenAPI] to better document your schema,\n"
+"for instance, adding header info, or specifying the return type on `void` methods might be useful:"
+msgstr "O senhor pode usar o link:https://github.com/eclipse/microprofile-open-api[MicroProfile OpenAPI] para documentar melhor seu esquema, por exemplo, adicionando informações de cabeçalho ou especificando o tipo de retorno nos métodos `void` :"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Header information about your API."
+msgstr "Informações de cabeçalho sobre sua API."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Defining the response."
+msgstr "Definição da resposta."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "This will generate this OpenAPI schema:"
+msgstr "Isso gerará esse esquema OpenAPI:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Using Swagger UI"
+msgstr "Usando a interface de usuário do Swagger"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"Swagger UI is included by default when running in `dev` or `test` mode, and can optionally be added to `prod` mode.\n"
+"For more information, see the <<openapi-swaggerui.adoc#dev-mode,Swagger UI>> guide."
+msgstr "A interface do usuário do Swagger é incluída por padrão ao ser executada no modo `dev` ou `test` , e pode ser adicionada opcionalmente ao modo `prod` . Para obter mais informações, consulte o guia xref:openapi-swaggerui.adoc#dev-mode[Swagger UI] ."
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Navigate to link:http://localhost:8080/q/swagger-ui/[localhost:8080/q/swagger-ui/] and observe the Swagger UI screen:"
+msgstr "Navegue até link:http://localhost:8080/q/swagger-ui/[localhost:8080/q/swagger-ui/] e observe a tela da interface do usuário do Swagger:"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "image:reactive-routes-guide-screenshot01.png[alt=Swagger UI]"
+msgstr "image:reactive-routes-guide-screenshot01.png[alt=\"Swagger UI\"]"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid "Conclusion"
+msgstr "Conclusão"
+
+#: _versions/3.8/guides/reactive-routes.adoc
+#, fuzzy
+msgid ""
+"This guide has introduced how you can use reactive routes to define an HTTP endpoint.\n"
+"It also describes the structure of the Quarkus HTTP layer and how to write filters."
+msgstr "Este guia apresentou como o senhor pode usar rotas reativas para definir um endpoint HTTP. Ele também descreve a estrutura da camada HTTP do Quarkus e como escrever filtros."

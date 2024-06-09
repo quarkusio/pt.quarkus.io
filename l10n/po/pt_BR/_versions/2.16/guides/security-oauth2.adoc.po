@@ -1,0 +1,497 @@
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2023-09-21 08:10+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. This guide is maintained in the main Quarkus repository
+#. and pull requests should be submitted there:
+#. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
+#. type: Title =
+#: _versions/2.16/guides/security-oauth2.adoc
+#, no-wrap
+msgid "Using OAuth2 RBAC"
+msgstr "Usando OAuth2 RBAC"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+msgid "This guide explains how your Quarkus application can utilize OAuth2 tokens to provide secured access to the JAX-RS endpoints."
+msgstr "Este guia explica como a sua aplicação Quarkus pode utilizar tokens OAuth2 para fornecer acesso seguro aos pontos de extremidade JAX-RS."
+
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid ""
+"OAuth2 is an authorization framework that enables applications to obtain access to an HTTP resource on behalf of a user.\n"
+"It can be used to implement an application authentication mechanism based on tokens by delegating to an external server (the authentication server) the user authentication and providing a token for the authentication context."
+msgstr "O OAuth2 é uma estrutura de autorização que permite que os aplicativos obtenham acesso a um recurso HTTP em nome de um usuário. Ele pode ser usado para implementar um mecanismo de autenticação de aplicativos com base em tokens, delegando a um servidor externo (o servidor de autenticação) a autenticação do usuário e fornecendo um token para o contexto de autenticação."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "This extension provides a light-weight support for using the opaque Bearer Tokens and validating them by calling an introspection endpoint."
+msgstr "Essa extensão oferece um suporte leve para o uso de tokens de portador opacos e sua validação chamando um endpoint de introspecção."
+
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid ""
+"If the OAuth2 Authentication server provides JWT Bearer Tokens then you should consider using either xref:security-openid-connect.adoc[OpenID Connect] or xref:security-jwt.adoc[SmallRye JWT] extensions instead.\n"
+"OpenID Connect extension has to be used if the Quarkus application needs to authenticate the users using OIDC Authorization Code Flow, please read xref:security-openid-connect-web-authentication.adoc[Using OpenID Connect to Protect Web Applications] guide for more information."
+msgstr "Se o servidor de autenticação OAuth2 fornecer tokens de portador JWT, o senhor deve considerar o uso das extensões xref:security-openid-connect.adoc[OpenID Connect] ou xref:security-jwt.adoc[SmallRye JWT] . A extensão OpenID Connect deve ser usada se o aplicativo Quarkus precisar autenticar os usuários usando o fluxo de código de autorização OIDC. Leia o guia xref:security-openid-connect-web-authentication.adoc[Using OpenID Connect to Protect Web Applications] para obter mais informações."
+
+#. type: Title ==
+#: _versions/2.16/guides/security-oauth2.adoc
+#, no-wrap
+msgid "Solution"
+msgstr "Solução"
+
+#: _versions/2.16/guides/security-oauth2.adoc
+msgid ""
+"We recommend that you follow the instructions in the next sections and create the application step by step.\n"
+"However, you can go right to the completed example."
+msgstr "Recomendamos que siga as instruções nas seções seguintes e crie a aplicação passo a passo. No entanto, você pode ir diretamente para o exemplo completo."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Clone the Git repository: git clone https://github.com/quarkusio/quarkus-quickstarts.git, or download an archive."
+msgstr "Clone o repositório Git: git clone https://github.com/quarkusio/quarkus-quickstarts.git ou faça o download de um arquivo."
+
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid ""
+"The solution is located in the `security-oauth2-quickstart` {quickstarts-tree-url}/security-oauth2-quickstart[directory].\n"
+"It contains a very simple UI to use the JAX-RS resources created here, too."
+msgstr "A solução está localizada em `security-oauth2-quickstart` {quickstarts-tree-url}/security-oauth2-quickstart[directory]. Ela também contém uma interface de usuário muito simples para usar os recursos JAX-RS criados aqui."
+
+#. type: Title ==
+#: _versions/2.16/guides/security-oauth2.adoc
+#, no-wrap
+msgid "Creating the Maven project"
+msgstr "Criar o projeto Maven"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+msgid "First, we need a new project. Create a new project with the following command:"
+msgstr "Primeiro, precisamos de um novo projeto. Crie um novo projeto com o seguinte comando:"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "This command generates a project and imports the `elytron-security-oauth2` extension, which includes the OAuth2 opaque token support."
+msgstr "Esse comando gera um projeto e importa a extensão `elytron-security-oauth2` , que inclui o suporte ao token opaco OAuth2."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "If you don't want to use the Maven plugin, you can just include the dependency in your build file:"
+msgstr "Se não quiser usar o plug-in Maven, o senhor pode simplesmente incluir a dependência no arquivo de compilação:"
+
+#. type: Block title
+#: _versions/2.16/guides/security-oauth2.adoc
+#, no-wrap
+msgid "pom.xml"
+msgstr "pom.xml"
+
+#. type: Block title
+#: _versions/2.16/guides/security-oauth2.adoc
+#, no-wrap
+msgid "build.gradle"
+msgstr "build.gradle"
+
+#. type: Title ===
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy, no-wrap
+msgid "Examine the JAX-RS resource"
+msgstr "Examinar o recurso JAX-RS"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Create the `src/main/java/org/acme/security/oauth2/TokenSecuredResource.java` file with the following content:"
+msgstr "Crie o arquivo `src/main/java/org/acme/security/oauth2/TokenSecuredResource.java` com o seguinte conteúdo:"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "This is a basic REST endpoint that does not have any of the {extension-name} specific features, so let's add some."
+msgstr "Esse é um endpoint REST básico que não tem nenhum dos recursos específicos de {extension-name}, portanto, vamos adicionar alguns."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "We will use the JSR 250 common security annotations, they are described in the xref:security-overview-concept.adoc[Using Security] guide."
+msgstr "Usaremos as anotações de segurança comuns da JSR 250, que estão descritas no guia xref:security-overview-concept.adoc[Using Security] ."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "`@PermitAll` indicates that the given endpoint is accessible by any caller, authenticated or not."
+msgstr "`@PermitAll` indica que o endpoint fornecido pode ser acessado por qualquer chamador, autenticado ou não."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Here we inject the JAX-RS `SecurityContext` to inspect the security state of the call."
+msgstr "Aqui injetamos o JAX-RS `SecurityContext` para inspecionar o estado de segurança da chamada."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Here we obtain the current request user/caller `Principal`. For an unsecured call this will be null, so we build the username by checking `caller` against null."
+msgstr "Aqui obtemos o usuário/caller da solicitação atual `Principal` . Para uma chamada não segura, esse valor será nulo, portanto, criamos o nome de usuário verificando `caller` em relação a null."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "The reply we build up makes use of the caller name, the `isSecure()` and `getAuthenticationScheme()` states of the request `SecurityContext`."
+msgstr "A resposta que criamos usa o nome do chamador, os estados `isSecure()` e `getAuthenticationScheme()` da solicitação `SecurityContext` ."
+
+#. type: Title ===
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy, no-wrap
+msgid "Setting up application.properties"
+msgstr "Configuração do application.properties"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "You need to configure your application with the following minimal properties:"
+msgstr "O senhor precisa configurar seu aplicativo com as seguintes propriedades mínimas:"
+
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid ""
+"You need to specify the introspection URL of your authentication server and the `client-id` / `client-secret` that your application will use to authenticate itself to the authentication server. +\n"
+"The extension will then use this information to validate the token and recover the information associate with it."
+msgstr ""
+"O senhor precisa especificar o URL de introspecção do seu servidor de autenticação e o `client-id` / `client-secret` que o aplicativo usará para se autenticar no servidor de autenticação.\n"
+"\n"
+" A extensão usará essas informações para validar o token e recuperar as informações associadas a ele."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "For all configuration properties, see the <<config-reference,Configuration reference>> section at the end of this guide."
+msgstr "Para conhecer todas as propriedades de configuração, consulte a seção xref:config-reference[Referência de configuração] no final deste guia."
+
+#. type: Title ==
+#: _versions/2.16/guides/security-oauth2.adoc
+#, no-wrap
+msgid "Run the application"
+msgstr "Executar o aplicativo"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Now we are ready to run our application. Use:"
+msgstr "Agora estamos prontos para executar nosso aplicativo. Use:"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Now that the REST endpoint is running, we can access it using a command line tool like curl:"
+msgstr "Agora que o endpoint REST está em execução, podemos acessá-lo usando uma ferramenta de linha de comando como curl:"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "We have not provided any token in our request, so we would not expect that there is any security state seen by the endpoint, and the response is consistent with that:"
+msgstr "Não fornecemos nenhum token em nossa solicitação, portanto, não esperamos que haja nenhum estado de segurança visto pelo endpoint, e a resposta é consistente com isso:"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "username is anonymous"
+msgstr "O nome de usuário é anônimo"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "`isSecure` is false as https is not used"
+msgstr "`isSecure` é falso, pois https não é usado"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "`authScheme` is null"
+msgstr "`authScheme` é nulo"
+
+#. type: Title ===
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy, no-wrap
+msgid "Securing the endpoint"
+msgstr "Protegendo o endpoint"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "So now let's actually secure something. Take a look at the new endpoint method `helloRolesAllowed` in the following:"
+msgstr "Então, agora vamos realmente proteger alguma coisa. Dê uma olhada no novo método de endpoint `helloRolesAllowed` no seguinte:"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "This new endpoint will be located at `/secured/roles-allowed`"
+msgstr "Esse novo endpoint estará localizado em `/secured/roles-allowed`"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "`@RolesAllowed` indicates that the given endpoint is accessible by a caller if they have either an \"Echoer\" or a \"Subscriber\" role assigned."
+msgstr "`@RolesAllowed` indica que o endpoint fornecido pode ser acessado por um chamador se ele tiver uma função \"Echoer\" ou \"Subscriber\" atribuída."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "After you make this addition to your `TokenSecuredResource`, try `curl -v http://127.0.0.1:8080/secured/roles-allowed; echo` to attempt to access the new endpoint. Your output should be:"
+msgstr "Depois de fazer essa adição ao seu site `TokenSecuredResource` , tente `curl -v http://127.0.0.1:8080/secured/roles-allowed ; echo` para tentar acessar o novo endpoint. Seu resultado deve ser:"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Excellent, we have not provided any OAuth2 token in the request, so we should not be able to access the endpoint, and we were not. Instead, we received an HTTP 401 Unauthorized error. We need to obtain and pass in a valid OAuth2 token to access that endpoint. There are two steps to this, 1) configuring our {extension-name} extension with information on how to validate the token, and 2) generating a matching token with the appropriate claims."
+msgstr "Excelente, não fornecemos nenhum token OAuth2 na solicitação, portanto, não deveríamos conseguir acessar o endpoint, e não conseguimos. Em vez disso, recebemos um erro HTTP 401 Unauthorized. Precisamos obter e passar um token OAuth2 válido para acessar esse endpoint. Há duas etapas para isso: 1) configurar nossa extensão {extension-name} com informações sobre como validar o token e 2) gerar um token correspondente com as declarações apropriadas."
+
+#. type: Title ===
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy, no-wrap
+msgid "Generating a token"
+msgstr "Geração de um token"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "You need to obtain the token from a standard OAuth2 authentication server (https://www.keycloak.org/[Keycloak] for example) using the token endpoint."
+msgstr "O senhor precisa obter o token de um servidor de autenticação OAuth2 padrão ( link:https://www.keycloak.org/[Keycloak] , por exemplo) usando o ponto de extremidade do token."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "You can find below a curl example of such call for a `client_credential` flow:"
+msgstr "O senhor pode encontrar abaixo um exemplo de curl dessa chamada para um fluxo `client_credential` :"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "It should respond something like that..."
+msgstr "O senhor deve responder mais ou menos assim..."
+
+#. type: Title ===
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy, no-wrap
+msgid "Finally, make a secured request to /secured/roles-allowed"
+msgstr "Por fim, faça uma solicitação segura para /secured/roles-allowed"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Now let's use this to make a secured request to the `/secured/roles-allowed` endpoint"
+msgstr "Agora vamos usar isso para fazer uma solicitação segura ao endpoint `/secured/roles-allowed` "
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Success! We now have:"
+msgstr "Sucesso! Agora temos:"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "a non-anonymous caller name of client_id"
+msgstr "um nome de chamador não anônimo de client_id"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "an authentication scheme of OAuth2"
+msgstr "um esquema de autenticação do OAuth2"
+
+#. type: Title ==
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy, no-wrap
+msgid "Roles mapping"
+msgstr "Mapeamento de funções"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Roles are mapped from one of the claims of the introspection endpoint response. By default, it's the `scope` claim. Roles are obtained by splitting the claim with a space separator. If the claim is an array, no splitting is done, the roles are obtained from the array."
+msgstr "As funções são mapeadas a partir de uma das declarações da resposta do ponto de extremidade de introspecção. Por padrão, é a declaração `scope` . As funções são obtidas dividindo-se a declaração com um separador de espaço. Se a declaração for uma matriz, nenhuma divisão será feita e as funções serão obtidas da matriz."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "You can customize the name of the claim to use for the roles with the `quarkus.oauth2.role-claim` property."
+msgstr "O senhor pode personalizar o nome da declaração a ser usada para as funções com a propriedade `quarkus.oauth2.role-claim` ."
+
+#. type: Title ==
+#: _versions/2.16/guides/security-oauth2.adoc
+#, no-wrap
+msgid "Package and run the application"
+msgstr "Empacote e execute a aplicação"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+msgid "As usual, the application can be packaged using:"
+msgstr "Como de costume, a aplicação pode ser empacotada utilizando:"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "And executed using `java -jar target/quarkus-app/quarkus-run.jar`:"
+msgstr "E executado usando `java -jar target/quarkus-app/quarkus-run.jar` :"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+msgid "You can also generate the native executable with:"
+msgstr "Também é possível gerar o executável nativo com:"
+
+#. type: Title ==
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy, no-wrap
+msgid "Integration testing"
+msgstr "Teste de integração"
+
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid ""
+"If you don't want to use a real OAuth2 authorization server for your integration tests, you can use the\n"
+"xref:security-properties.adoc[Properties based security] extension for your test, or mock an authorization server using Wiremock."
+msgstr "Se não quiser usar um servidor de autorização OAuth2 real para seus testes de integração, o senhor pode usar a extensão xref:security-properties.adoc[de segurança baseada em propriedades] para seu teste ou simular um servidor de autorização usando o Wiremock."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "First, Wiremock needs to be added as a test dependency. For a Maven project that would happen like so:"
+msgstr "Primeiro, o Wiremock precisa ser adicionado como uma dependência de teste. Para um projeto Maven, isso aconteceria da seguinte forma:"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Use a proper Wiremock version. All available versions can be found link:https://search.maven.org/artifact/com.github.tomakehurst/wiremock-jre8[here]."
+msgstr "Use uma versão adequada do Wiremock. Todas as versões disponíveis podem ser encontradas link:https://search.maven.org/artifact/com.github.tomakehurst/wiremock-jre8[aqui] ."
+
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid ""
+"In Quarkus tests when some service needs to be started before the Quarkus tests are ran, we utilize the `@io.quarkus.test.common.QuarkusTestResource`\n"
+"annotation to specify a `io.quarkus.test.common.QuarkusTestResourceLifecycleManager` which can start the service and supply configuration\n"
+"values that Quarkus will use."
+msgstr "Nos testes do Quarkus, quando algum serviço precisa ser iniciado antes da execução dos testes do Quarkus, utilizamos a anotação `@io.quarkus.test.common.QuarkusTestResource` para especificar um `io.quarkus.test.common.QuarkusTestResourceLifecycleManager` que pode iniciar o serviço e fornecer valores de configuração que o Quarkus usará."
+
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "For more details about `@QuarkusTestResource` refer to  xref:getting-started-testing.adoc#quarkus-test-resource[this part of the documentation]."
+msgstr "Para obter mais detalhes sobre `@QuarkusTestResource` , consulte xref:getting-started-testing.adoc#quarkus-test-resource[esta parte da documentação] ."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Let's create an implementation of `QuarkusTestResourceLifecycleManager` called `MockAuthorizationServerTestResource` like so:"
+msgstr "Vamos criar uma implementação do `QuarkusTestResourceLifecycleManager` chamada `MockAuthorizationServerTestResource` da seguinte forma:"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "The `start` method is invoked by Quarkus before any test is run and returns a `Map` of configuration properties that apply during the test execution."
+msgstr "O método `start` é chamado pelo Quarkus antes de qualquer teste ser executado e retorna um `Map` de propriedades de configuração que se aplicam durante a execução do teste."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Launch Wiremock."
+msgstr "Inicie o Wiremock."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Configure Wiremock to stub the calls to `/introspect` by returning an OAuth2 introspect response. You need to customize this line to return what's needed for your application (at least the scope property as roles are derived from the scope)."
+msgstr "Configure o Wiremock para fazer stub nas chamadas para `/introspect` retornando uma resposta de introspecção do OAuth2. O senhor precisa personalizar essa linha para retornar o que é necessário para o seu aplicativo (pelo menos a propriedade scope, pois as funções são derivadas do scope)."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "As the `start` method returns configuration that applies for tests, we set the `quarkus.oauth2.introspection-url` property that controls the URL of the introspect endpoint used by the OAuth2 extension."
+msgstr "Como o método `start` retorna a configuração que se aplica aos testes, definimos a propriedade `quarkus.oauth2.introspection-url` que controla o URL do endpoint de introspecção usado pela extensão OAuth2."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "When all tests have finished, shutdown Wiremock."
+msgstr "Quando todos os testes tiverem sido concluídos, desligue o Wiremock."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Your test class needs to be annotated like with `@QuarkusTestResource(MockAuthorizationServerTestResource.class)` to use this `QuarkusTestResourceLifecycleManager`."
+msgstr "Sua classe de teste precisa ser anotada como `@QuarkusTestResource(MockAuthorizationServerTestResource.class)` para usar este `QuarkusTestResourceLifecycleManager` ."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Below is an example of a test that uses the `MockAuthorizationServerTestResource`."
+msgstr "Abaixo está um exemplo de um teste que usa o site `MockAuthorizationServerTestResource` ."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Use the previously created `MockAuthorizationServerTestResource` as a Quarkus test resource."
+msgstr "Use o site `MockAuthorizationServerTestResource` criado anteriormente como um recurso de teste do Quarkus."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Define whatever token you want, it will not be validated by the OAuth2 mock authorization server."
+msgstr "Defina o token que o senhor quiser, pois ele não será validado pelo servidor de autorização simulada OAuth2."
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "Use this token inside the `Authorization` header to trigger OAuth2 authentication."
+msgstr "Use esse token dentro do cabeçalho `Authorization` para acionar a autenticação OAuth2."
+
+#. type: delimited block =
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "`@QuarkusTestResource` applies to all tests, not just `TokenSecuredResourceTest`."
+msgstr "`@QuarkusTestResource` aplica-se a todos os testes, não apenas ao `TokenSecuredResourceTest` ."
+
+#. type: Title ==
+#: _versions/2.16/guides/security-oauth2.adoc
+#, no-wrap
+msgid "References"
+msgstr "Referências"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "https://tools.ietf.org/html/rfc6749[OAuth2]"
+msgstr "link:https://tools.ietf.org/html/rfc6749[OAuth2]"
+
+#. type: Plain text
+#: _versions/2.16/guides/security-oauth2.adoc
+#, fuzzy
+msgid "xref:security-overview-concept.adoc[Quarkus Security overview]"
+msgstr "xref:security-overview-concept.adoc[Visão geral do Quarkus Security]"
+
+#. type: Title ==
+#: _versions/2.16/guides/security-oauth2.adoc
+#, no-wrap
+msgid "Configuration Reference"
+msgstr "Referência de configuração"
+
+#: _versions/2.16/guides/security-oauth2.adoc
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-0\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de Configuração Fixa no Momento da Compilação - Todas as outras propriedades de configuração podem ser sobrepostas em tempo de execução. <input type=\"search\" id=\"config-search-0\" placeholder=\"FILTER CONFIGURATION\" disabled>"

@@ -1,0 +1,547 @@
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2023-09-21 08:10+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. This guide is maintained in the main Quarkus repository
+#. and pull requests should be submitted there:
+#. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
+#. type: Title =
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Scheduler Reference Guide"
+msgstr "Guia de Referência do Agendador"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"Modern applications often need to run specific tasks periodically.\n"
+"There are two scheduler extensions in Quarkus.\n"
+"The `quarkus-scheduler` extension brings the API and a lightweight in-memory scheduler implementation.\n"
+"The `quarkus-quartz` extension implements the API from the `quarkus-scheduler` extension and contains a scheduler implementation based on the Quartz library.\n"
+"You will only need `quarkus-quartz` for more advanced scheduling use cases, such as persistent tasks, clustering and programmatic scheduling of jobs."
+msgstr "Os aplicativos modernos geralmente precisam executar tarefas específicas periodicamente. Há duas extensões de agendamento no Quarkus. A extensão `quarkus-scheduler` traz a API e uma implementação leve de agendador na memória. A extensão `quarkus-quartz` implementa a API da extensão `quarkus-scheduler` e contém uma implementação de agendador baseada na biblioteca Quartz. O senhor só precisará do `quarkus-quartz` para casos de uso de agendamento mais avançados, como tarefas persistentes, clustering e agendamento programático de trabalhos."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "If you add the `quarkus-quartz` dependency to your project the lightweight scheduler implementation from the `quarkus-scheduler` extension is automatically disabled."
+msgstr "Se o senhor adicionar a dependência `quarkus-quartz` ao seu projeto, a implementação do agendador leve da extensão `quarkus-scheduler` será automaticamente desativada."
+
+#. type: Title ==
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Scheduled Methods"
+msgstr "Métodos programados"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"A method annotated with `@io.quarkus.scheduler.Scheduled` is automatically scheduled for invocation.\n"
+"A scheduled method must not be abstract or private.\n"
+"It may be either static or non-static.\n"
+"A scheduled method can be annotated with interceptor bindings, such as `@javax.transaction.Transactional` and `@org.eclipse.microprofile.metrics.annotation.Counted`."
+msgstr "Um método anotado com `@io.quarkus.scheduler.Scheduled` é automaticamente agendado para invocação. Um método programado não deve ser abstrato nem privado. Ele pode ser estático ou não estático. Um método agendado pode ser anotado com ligações de interceptador, como `@javax.transaction.Transactional` e `@org.eclipse.microprofile.metrics.annotation.Counted` ."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "If there is a bean class that has no scope and declares at least one non-static method annotated with `@Scheduled` then `@Singleton` is used."
+msgstr "Se houver uma classe de bean que não tenha escopo e declare pelo menos um método não estático anotado com `@Scheduled` , então `@Singleton` será usado."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "Furthermore, the annotated method must return `void` and either declare no parameters or one parameter of type `io.quarkus.scheduler.ScheduledExecution`."
+msgstr "Além disso, o método anotado deve retornar `void` e não declarar nenhum parâmetro ou declarar um parâmetro do tipo `io.quarkus.scheduler.ScheduledExecution` ."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "The annotation is repeatable so a single method could be scheduled multiple times."
+msgstr "A anotação é repetível, de modo que um único método pode ser programado várias vezes."
+
+#. type: delimited block =
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "Subclasses never inherit the metadata of a `@Scheduled` method declared on a superclass. In the following example, the `everySecond()` method is only invoked upon the instance of `Jobs`."
+msgstr "As subclasses nunca herdam os metadados de um método `@Scheduled` declarado em uma superclasse. No exemplo a seguir, o método `everySecond()` só é invocado na instância de `Jobs` ."
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "A CDI event of type `io.quarkus.scheduler.SuccessfulExecution` is fired synchronously and asynchronously when an execution of a scheduled method is successful. A CDI event of type `io.quarkus.scheduler.FailedExecution` is fired synchronously and asynchronously  when an execution of a scheduled method throws an exception."
+msgstr "Um evento CDI do tipo `io.quarkus.scheduler.SuccessfulExecution` é disparado de forma síncrona e assíncrona quando a execução de um método programado é bem-sucedida. Um evento CDI do tipo `io.quarkus.scheduler.FailedExecution` é disparado de forma síncrona e assíncrona quando a execução de um método programado gera uma exceção."
+
+#. type: Title ===
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Triggers"
+msgstr "Gatilhos"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"A trigger is defined either by the `@Scheduled#cron()` or by the `@Scheduled#every()` attribute.\n"
+"If both are specified, the cron expression takes precedence.\n"
+"If none is specified, the build fails with an `IllegalStateException`."
+msgstr "Um acionador é definido pelo atributo `@Scheduled#cron()` ou pelo atributo `@Scheduled#every()` . Se ambos forem especificados, a expressão cron terá precedência. Se nenhum for especificado, a compilação falhará com um `IllegalStateException` ."
+
+#. type: Title ====
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "CRON"
+msgstr "CRON"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"A CRON trigger is defined by a cron-like expression.\n"
+"For example `\"0 15 10 * * ?\"` fires at 10:15am every day."
+msgstr "Um acionador CRON é definido por uma expressão do tipo cron. Por exemplo, `\"0 15 10 * * ?\"` dispara todos os dias às 10:15 da manhã."
+
+#. type: Block title
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "CRON Trigger Example"
+msgstr "Exemplo de CRON Trigger"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"The syntax used in CRON expressions is controlled by the `quarkus.scheduler.cron-type` property.\n"
+"The values can be `cron4j`, `quartz`, `unix` and `spring`.\n"
+"`quartz` is used by default."
+msgstr "A sintaxe usada nas expressões CRON é controlada pela propriedade `quarkus.scheduler.cron-type` . Os valores podem ser `cron4j` , `quartz` , `unix` e `spring` . `quartz` é usado por padrão."
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"The `cron` attribute supports <<config-reference#property-expressions,Property Expressions>> including default values and nested\n"
+"Property Expressions. (Note that \"{property.path}\" style expressions are still supported but don't offer the full functionality of Property Expressions.)"
+msgstr "O atributo `cron` oferece suporte a xref:config-reference.adoc#property-expressions[Property Expressions] , inclusive valores padrão e Property Expressions aninhadas. (Observe que as expressões de estilo \"{property.path}\" ainda são compatíveis, mas não oferecem a funcionalidade completa das Property Expressions)."
+
+#. type: Block title
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "CRON Config Property Example"
+msgstr "Exemplo de propriedade de configuração CRON"
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "If you wish to disable a specific scheduled method, you can set its cron expression to `\"off\"` or `\"disabled\"`."
+msgstr "Se quiser desativar um método agendado específico, o senhor pode definir sua expressão cron como `\"off\"` ou `\"disabled\"` ."
+
+#. type: Block title
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, no-wrap
+msgid "application.properties"
+msgstr "application.properties"
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "Property Expressions allow you to define a default value that is used, if the property is not configured."
+msgstr "As expressões de propriedade permitem que o senhor defina um valor padrão que será usado se a propriedade não estiver configurada."
+
+#. type: Block title
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "CRON Config Property Example with default `0 0 15 ? * MON *`"
+msgstr "Exemplo de propriedade de configuração CRON com padrão `0 0 15 ? * MON *`"
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "If the property `myMethod.cron.expr` is undefined or `null`, the default value (`0 0 15 ? * MON *`) will be used."
+msgstr "Se a propriedade `myMethod.cron.expr` for indefinida ou `null` , o valor padrão ( `0 0 15 ? * MON *` ) será usado."
+
+#. type: Title ====
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Intervals"
+msgstr "Intervalos"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"An interval trigger defines a period between invocations.\n"
+"The period expression is based on the ISO-8601 duration format `PnDTnHnMn.nS` and the value of `@Scheduled#every()` is parsed with `java.time.Duration#parse(CharSequence)`.\n"
+"However, if an expression starts with a digit then the `PT` prefix is added automatically.\n"
+"So for example, `15m` can be used instead of `PT15M` and is parsed as \"15 minutes\"."
+msgstr "Um acionador de intervalo define um período entre as invocações. A expressão de período é baseada no formato de duração ISO-8601 `PnDTnHnMn.nS` e o valor de `@Scheduled#every()` é analisado com `java.time.Duration#parse(CharSequence)` . Entretanto, se uma expressão começar com um dígito, o prefixo `PT` será adicionado automaticamente. Assim, por exemplo, `15m` pode ser usado em vez de `PT15M` e é analisado como \"15 minutos\"."
+
+#. type: Block title
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Interval Trigger Example"
+msgstr "Exemplo de acionamento de intervalo"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"The `every` attribute supports <<config-reference#property-expressions,Property Expressions>> including default values and nested\n"
+"Property Expressions. (Note that `\"{property.path}\"` style expressions are still supported but don't offer the full functionality of Property Expressions.)"
+msgstr "O atributo `every` oferece suporte a xref:config-reference.adoc#property-expressions[Property Expressions] , incluindo valores padrão e Property Expressions aninhadas. (Observe que as expressões de estilo `\"{property.path}\"` ainda são compatíveis, mas não oferecem a funcionalidade completa das Property Expressions)."
+
+#. type: Block title
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Interval Config Property Example"
+msgstr "Exemplo de propriedade de configuração de intervalo"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"Intervals can be disabled by setting their value to `\"off\"` or `\"disabled\"`.\n"
+"So for example a Property Expression with the default value `\"off\"` can be used to disable the trigger if its Config Property has not been set."
+msgstr "Os intervalos podem ser desativados definindo-se seu valor como `\"off\"` ou `\"disabled\"` . Assim, por exemplo, uma Property Expression com o valor padrão `\"off\"` pode ser usada para desativar o acionador se sua Config Property não tiver sido definida."
+
+#. type: Block title
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Interval Config Property Example with a Default Value"
+msgstr "Exemplo de propriedade de configuração de intervalo com um valor padrão"
+
+#. type: Title ===
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Identity"
+msgstr "Identidade"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"By default, a unique identifier is generated for each scheduled method.\n"
+"This identifier is used in log messages, during debugging and as a parameter of some `io.quarkus.scheduler.Scheduler` methods.\n"
+"Therefore, a possibility to specify an explicit identifier may come in handy."
+msgstr "Por padrão, é gerado um identificador exclusivo para cada método agendado. Esse identificador é usado em mensagens de registro, durante a depuração e como parâmetro de alguns métodos do site `io.quarkus.scheduler.Scheduler` . Portanto, a possibilidade de especificar um identificador explícito pode ser útil."
+
+#. type: Block title
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Identity Example"
+msgstr "Exemplo de identidade"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"The `identity` attribute supports <<config-reference#property-expressions,Property Expressions>> including default values and nested\n"
+"Property Expressions. (Note that `\"{property.path}\"` style expressions are still supported but don't offer the full functionality of Property Expressions.)"
+msgstr "O atributo `identity` oferece suporte a xref:config-reference.adoc#property-expressions[Property Expressions] , incluindo valores padrão e Property Expressions aninhadas. (Observe que as expressões de estilo `\"{property.path}\"` ainda são compatíveis, mas não oferecem a funcionalidade completa das Property Expressions)."
+
+#. type: Title ===
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Delayed Execution"
+msgstr "Execução atrasada"
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "`@Scheduled` provides two ways to delay the time a trigger should start firing at."
+msgstr "`@Scheduled` oferece duas maneiras de atrasar o momento em que um acionador deve começar a disparar."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "`@Scheduled#delay()` and `@Scheduled#delayUnit()` form the initial delay together."
+msgstr "`@Scheduled#delay()` e `@Scheduled#delayUnit()` formam juntos o atraso inicial."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "The trigger fires for the first time two hours after the application start."
+msgstr "O acionador dispara pela primeira vez duas horas após o início da aplicação."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "The final value is always rounded to full second."
+msgstr "O valor final é sempre arredondado para o segundo inteiro."
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"`@Scheduled#delayed()` is a text alternative to the properties above.\n"
+"The period expression is based on the ISO-8601 duration format `PnDTnHnMn.nS` and the value is parsed with `java.time.Duration#parse(CharSequence)`.\n"
+"However, if an expression starts with a digit, the `PT` prefix is added automatically.\n"
+"So for example, `15s` can be used instead of `PT15S` and is parsed as \"15 seconds\"."
+msgstr "`@Scheduled#delayed()` é uma alternativa de texto para as propriedades acima. A expressão de período é baseada no formato de duração ISO-8601 `PnDTnHnMn.nS` e o valor é analisado com `java.time.Duration#parse(CharSequence)` . No entanto, se uma expressão começar com um dígito, o prefixo `PT` será adicionado automaticamente. Assim, por exemplo, `15s` pode ser usado em vez de `PT15S` e é analisado como \"15 segundos\"."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "If `@Scheduled#delay()` is set to a value greater than zero the value of `@Scheduled#delayed()` is ignored."
+msgstr "Se `@Scheduled#delay()` for definido como um valor maior que zero, o valor de `@Scheduled#delayed()` será ignorado."
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"The main advantage over `@Scheduled#delay()` is that the value is configurable.\n"
+"The `delay` attribute supports <<config-reference#property-expressions,Property Expressions>> including default values and nested\n"
+"Property Expressions. (Note that `\"{property.path}\"` style expressions are still supported but don't offer the full functionality of Property Expressions.)"
+msgstr "A principal vantagem em relação ao `@Scheduled#delay()` é que o valor é configurável. O atributo `delay` oferece suporte a xref:config-reference.adoc#property-expressions[Property Expressions] , incluindo valores padrão e Property Expressions aninhadas. (Observe que as expressões de estilo `\"{property.path}\"` ainda são compatíveis, mas não oferecem a funcionalidade completa das Property Expressions)."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "The config property `myMethod.delay.expr` is used to set the delay."
+msgstr "A propriedade de configuração `myMethod.delay.expr` é usada para definir o atraso."
+
+#. type: Title ===
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Concurrent Execution"
+msgstr "Execução simultânea"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"By default, a scheduled method can be executed concurrently.\n"
+"Nevertheless, it is possible to specify the strategy to handle concurrent executions via `@Scheduled#concurrentExecution()`."
+msgstr "Por padrão, um método agendado pode ser executado simultaneamente. No entanto, é possível especificar a estratégia para lidar com execuções simultâneas por meio de `@Scheduled#concurrentExecution()` ."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "Concurrent executions are skipped."
+msgstr "As execuções simultâneas são ignoradas."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "A CDI event of type `io.quarkus.scheduler.SkippedExecution` is fired when an execution of a scheduled method is skipped."
+msgstr "Um evento CDI do tipo `io.quarkus.scheduler.SkippedExecution` é disparado quando a execução de um método programado é ignorada."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "Note that only executions within the same application instance are considered. This feature is not intended to work across the cluster."
+msgstr "Observe que somente as execuções dentro da mesma instância do aplicativo são consideradas. Esse recurso não se destina a funcionar em todo o cluster."
+
+#. type: Title ===
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Conditional Execution"
+msgstr "Execução condicional"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"You can define the logic to skip any execution of a scheduled method via `@Scheduled#skipExecutionIf()`.\n"
+"The specified bean class must implement `io.quarkus.scheduler.Scheduled.SkipPredicate` and the execution is skipped if the result of the `test()` method is `true`."
+msgstr "O senhor pode definir a lógica para ignorar qualquer execução de um método agendado por meio de `@Scheduled#skipExecutionIf()` . A classe de bean especificada deve implementar `io.quarkus.scheduler.Scheduled.SkipPredicate` e a execução será ignorada se o resultado do método `test()` for `true` ."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "A bean instance of `MyPredicate.class` is used to evaluate whether an execution should be skipped. There must be exactly one bean that has the specified class in its set of bean types, otherwise the build fails."
+msgstr "Uma instância de bean de `MyPredicate.class` é usada para avaliar se uma execução deve ser ignorada. Deve haver exatamente um bean que tenha a classe especificada em seu conjunto de tipos de bean, caso contrário, a compilação falhará."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "The scope of the bean must be active during execution."
+msgstr "O escopo do bean deve estar ativo durante a execução."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "`Jobs.everySecond()` is skipped until `MyService.isStarted()` returns `true`."
+msgstr "`Jobs.everySecond()` é ignorado até que `MyService.isStarted()` retorne `true` ."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "Note that this is an equivalent of the following code:"
+msgstr "Observe que isso é equivalente ao código a seguir:"
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "The main idea is to keep the logic to skip the execution outside the scheduled business methods so that it can be reused and refactored easily."
+msgstr "A ideia principal é manter a lógica para ignorar a execução fora dos métodos comerciais programados, de modo que ela possa ser reutilizada e refatorada facilmente."
+
+#. type: Title ===
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Non-blocking Methods"
+msgstr "Métodos sem bloqueio"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"By default, a scheduled method is executed on the main executor for blocking tasks.\n"
+"As a result, a technology that is designed to run on a Vert.x event loop (such as Hibernate Reactive) cannot be used inside the method body.\n"
+"For this reason, a scheduled method that returns `java.util.concurrent.CompletionStage<Void>` or `io.smallrye.mutiny.Uni<Void>`, or is annotated with `@io.smallrye.common.annotation.NonBlocking` is executed on the Vert.x event loop instead."
+msgstr "Por padrão, um método agendado é executado no executor principal para tarefas de bloqueio. Como resultado, uma tecnologia projetada para ser executada em um loop de eventos do Vert.x (como o Hibernate Reactive) não pode ser usada dentro do corpo do método. Por esse motivo, um método agendado que retorna `java.util.concurrent.CompletionStage<Void>` ou `io.smallrye.mutiny.Uni<Void>` , ou é anotado com `@io.smallrye.common.annotation.NonBlocking` é executado no loop de eventos do Vert.x."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "The return type `Uni<Void>` instructs the scheduler to execute the method on the Vert.x event loop."
+msgstr "O tipo de retorno `Uni<Void>` instrui o agendador a executar o método no loop de eventos Vert.x."
+
+#. type: Title ==
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Scheduler"
+msgstr "Programador"
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "Quarkus provides a built-in bean of type `io.quarkus.scheduler.Scheduler` that can be injected and used to pause/resume the scheduler and individual scheduled methods identified by a specific `Scheduled#identity()`."
+msgstr "O Quarkus fornece um bean interno do tipo `io.quarkus.scheduler.Scheduler` que pode ser injetado e usado para pausar/retomar o agendador e os métodos agendados individuais identificados por um `Scheduled#identity()` específico."
+
+#. type: Block title
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Scheduler Injection Example"
+msgstr "Exemplo de injeção de agendamento"
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "Pause all triggers."
+msgstr "Pausar todos os acionadores."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "Pause a specific scheduled method by its identity"
+msgstr "Pausar um método agendado específico por sua identidade"
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "Resume a specific scheduled method by its identity"
+msgstr "Retomar um método programado específico por sua identidade"
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "Resume the scheduler."
+msgstr "Retomar o agendador."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "List all jobs in the scheduler."
+msgstr "Listar todos os trabalhos no agendador."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "Get Trigger metadata for a specific scheduled job by its identity."
+msgstr "Obter metadados do Trigger para um trabalho agendado específico por sua identidade."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "You can configure the grace period for isOverdue() with quarkus.scheduler.overdue-grace-period"
+msgstr "O senhor pode configurar o período de carência para isOverdue() com quarkus.scheduler.overdue-grace-period"
+
+#. type: Title ==
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Programmatic Scheduling"
+msgstr "Agendamento programático"
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "If you need to schedule a job programmatically you'll need to add the xref:quartz.adoc[Quartz extension] and use the Quartz API directly."
+msgstr "Se precisar agendar um trabalho de forma programática, o senhor precisará adicionar a xref:quartz.adoc[extensão Quartz] e usar a API do Quartz diretamente."
+
+#. type: Block title
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Programmatic Scheduling with Quartz API"
+msgstr "Agendamento programático com a API do Quartz"
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "By default, the scheduler is not started unless a `@Scheduled` business method is found. You may need to force the start of the scheduler for \"pure\" programmatic scheduling. See also <<quartz.adoc#quartz-configuration-reference,Quartz Configuration Reference>>."
+msgstr "Por padrão, o agendador não é iniciado a menos que um método comercial `@Scheduled` seja encontrado. Talvez o senhor precise forçar o início do agendador para agendamento programático \"puro\". Consulte também a xref:quartz.adoc#quartz-configuration-reference[Referência de configuração do Quartz] ."
+
+#. type: Title ==
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Scheduled Methods and Testing"
+msgstr "Métodos e testes programados"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid ""
+"It is often desirable to disable the scheduler when running the tests.\n"
+"The scheduler can be disabled through the runtime config property `quarkus.scheduler.enabled`.\n"
+"If set to `false` the scheduler is not started even though the application contains scheduled methods.\n"
+"You can even disable the scheduler for particular <<getting-started-testing#testing_different_profiles,Test Profiles>>."
+msgstr "Muitas vezes, é desejável desativar o agendador ao executar os testes. O agendador pode ser desativado por meio da propriedade de configuração de tempo de execução `quarkus.scheduler.enabled` . Se for definida como `false` , o agendador não será iniciado, mesmo que o aplicativo contenha métodos agendados. O senhor pode até mesmo desativar o agendador para determinados xref:getting-started-testing.adoc#testing_different_profiles[perfis de teste] ."
+
+#. type: Title ==
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "Metrics"
+msgstr "Métricas"
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "Some basic metrics are published out of the box if `quarkus.scheduler.metrics.enabled` is set to `true` and a metrics extension is present."
+msgstr "Algumas métricas básicas são publicadas imediatamente se `quarkus.scheduler.metrics.enabled` estiver definido como `true` e houver uma extensão de métricas."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "If the xref:micrometer.adoc[Micrometer extension] is present, then a `@io.micrometer.core.annotation.Timed` interceptor binding is added to all `@Scheduled` methods automatically (unless it's already present) and a `io.micrometer.core.instrument.Timer` with name `scheduled.methods` and a `io.micrometer.core.instrument.LongTaskTimer` with name `scheduled.methods.running` are registered. The fully qualified name of the declaring class and the name of a `@Scheduled` method are used as tags."
+msgstr "Se a xref:micrometer.adoc[extensão Micrometer] estiver presente, um vínculo de interceptador `@io.micrometer.core.annotation.Timed` será adicionado automaticamente a todos os métodos `@Scheduled` (a menos que já esteja presente) e um `io.micrometer.core.instrument.Timer` com o nome `scheduled.methods` e um `io.micrometer.core.instrument.LongTaskTimer` com o nome `scheduled.methods.running` serão registrados. O nome totalmente qualificado da classe declarante e o nome de um método `@Scheduled` são usados como tags."
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "If the xref:smallrye-metrics.adoc[SmallRye Metrics extension] is present, then a `@org.eclipse.microprofile.metrics.annotation.Timed`  interceptor binding is added to all `@Scheduled` methods automatically (unless it's already present) and a `org.eclipse.microprofile.metrics.Timer` is created for each `@Scheduled` method. The name consists of the fully qualified name of the declaring class and the name of a `@Scheduled` method. The timer has a tag `scheduled=true`."
+msgstr "Se a xref:smallrye-metrics.adoc[extensão SmallRye Metrics] estiver presente, um vínculo de interceptor `@org.eclipse.microprofile.metrics.annotation.Timed` será adicionado automaticamente a todos os métodos `@Scheduled` (a menos que já esteja presente) e um `org.eclipse.microprofile.metrics.Timer` será criado para cada método `@Scheduled` . O nome consiste no nome totalmente qualificado da classe declarante e no nome de um método `@Scheduled` . O cronômetro tem uma tag `scheduled=true` ."
+
+#. type: Title ==
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy, no-wrap
+msgid "OpenTelemetry Tracing"
+msgstr "Rastreamento de OpenTelemetry"
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "If `quarkus.scheduler.tracing.enabled` is set to `true` and the xref:opentelemetry.adoc[OpenTelemetry extension] is present then the `@io.opentelemetry.instrumentation.annotations.WithSpan` annotation is added automatically to every `@Scheduled` method. As a result, each execution of this method has a new `io.opentelemetry.api.trace.Span` associated."
+msgstr "Se `quarkus.scheduler.tracing.enabled` estiver definido como `true` e a xref:opentelemetry.adoc[extensão OpenTelemetry] estiver presente, a anotação `@io.opentelemetry.instrumentation.annotations.WithSpan` será adicionada automaticamente a cada método `@Scheduled` . Como resultado, cada execução desse método tem um novo `io.opentelemetry.api.trace.Span` associado."
+
+#. type: Plain text
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, fuzzy
+msgid "<<non-blocking-methods,Non-blocking methods>> are not supported, i.e. a new span is associated with the _actual_ invocation but it's not available within the asynchronous computation."
+msgstr "Não há suporte para xref:non-blocking-methods[métodos sem bloqueio] , ou seja, um novo intervalo está associado à invocação _real_ , mas não está disponível na computação assíncrona."
+
+#. type: Title ==
+#: _versions/2.16/guides/scheduler-reference.adoc
+#, no-wrap
+msgid "Configuration Reference"
+msgstr "Referência de configuração"
+
+#: _versions/2.16/guides/scheduler-reference.adoc
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-0\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de Configuração Fixa no Momento da Compilação - Todas as outras propriedades de configuração podem ser sobrepostas em tempo de execução. <input type=\"search\" id=\"config-search-0\" placeholder=\"FILTER CONFIGURATION\" disabled>"

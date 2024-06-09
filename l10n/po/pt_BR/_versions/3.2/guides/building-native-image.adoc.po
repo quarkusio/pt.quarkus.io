@@ -1,0 +1,1247 @@
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2023-09-21 08:09+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. This guide is maintained in the main Quarkus repository
+#. and pull requests should be submitted there:
+#. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
+#. type: Title =
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Building a Native Executable"
+msgstr "Criando um executável nativo"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "This guide covers:"
+msgstr "Este guia inclui:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Compiling the application to a native executable"
+msgstr "Compilar a aplicação para um executável nativo"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Packaging the native executable in a container"
+msgstr "Empacotar o executável nativo em um container"
+
+#. type: Title ==
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Debugging native executable"
+msgstr "Debugando um executável nativo"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "This guide takes as input the application developed in the xref:getting-started.adoc[Getting Started Guide]."
+msgstr "Este guia utiliza como base a aplicação desenvolvida no  link:getting-started.html[Guia de Iniciação]."
+
+#. type: Title ==
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Prerequisites"
+msgstr "Pré-requisitos"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "A xref:configuring-c-development[working C development environment]"
+msgstr "Um  link:#configuring-c-development[ambiente de desenvolvimento em C]"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "The code of the application developed in the xref:getting-started.adoc[Getting Started Guide]."
+msgstr "O código da aplicação desenvolvida no  link:getting-started.html[Guia de Iniciação]."
+
+#. type: Block title
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Supporting native compilation in C"
+msgstr "Suporte à compilação nativa em C"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "What does having a working C developer environment mean?"
+msgstr "O que significa ter um ambiente de desenvolvimento em C?"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "On Linux, you will need GCC, and the glibc and zlib headers. Examples for common distributions:"
+msgstr "No Linux, é necessário o GCC e os headers glibc e zlib. Exemplos de distribuições comuns:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "XCode provides the required dependencies on macOS:"
+msgstr "O XCode fornece as dependências necessárias no macOS:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "On Windows, you will need to install the https://aka.ms/vs/15/release/vs_buildtools.exe[Visual Studio 2017 Visual C++ Build Tools]"
+msgstr "No Windows, terá de instalar  link:https://aka.ms/vs/15/release/vs_buildtools.exe[Visual Studio 2017 Visual C++ Build Tools]"
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Background"
+msgstr "Background"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Building a native executable requires using a distribution of GraalVM.\n"
+"There are three distributions:\n"
+"Oracle GraalVM Community Edition (CE), Oracle GraalVM Enterprise Edition (EE) and Mandrel.\n"
+"The differences between the Oracle and Mandrel distributions are as follows:"
+msgstr "A criação de um executável nativo requer o uso de uma distribuição do GraalVM. Há três distribuições: Oracle GraalVM Community Edition (CE), Oracle GraalVM Enterprise Edition (EE) e Mandrel. As diferenças entre as distribuições Oracle e Mandrel são as seguintes:"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Mandrel is a downstream distribution of the Oracle GraalVM CE.\n"
+"Mandrel's main goal is to provide a way to build native executables specifically designed to support Quarkus."
+msgstr "O Mandrel é uma distribuição downstream do Oracle GraalVM CE. O principal objetivo do Mandrel é fornecer uma maneira de criar executáveis nativos projetados especificamente para dar suporte ao Quarkus."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Mandrel releases are built from a code base derived from the upstream Oracle GraalVM CE code base,\n"
+"with only minor changes but some significant exclusions that are not necessary for Quarkus native apps.\n"
+"They support the same capabilities to build native executables as Oracle GraalVM CE,\n"
+"with no significant changes to functionality.\n"
+"Notably, they do not include support for polyglot programming.\n"
+"The reason for these exclusions is to provide a better level of support for the majority of Quarkus users.\n"
+"These exclusions also mean Mandrel offers a considerable reduction in its distribution size\n"
+"when compared with Oracle GraalVM CE/EE."
+msgstr "As versões Mandrel são criadas a partir de uma base de código derivada da base de código do Oracle GraalVM CE, com apenas pequenas alterações, mas algumas exclusões significativas que não são necessárias para os aplicativos nativos do Quarkus. Eles suportam os mesmos recursos para criar executáveis nativos que o Oracle GraalVM CE, sem alterações significativas na funcionalidade. Notavelmente, eles não incluem suporte para programação poliglota. O motivo dessas exclusões é oferecer um melhor nível de suporte para a maioria dos usuários do Quarkus. Essas exclusões também significam que o Mandrel oferece uma redução considerável no tamanho de sua distribuição quando comparado ao Oracle GraalVM CE/EE."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Mandrel is built slightly differently to Oracle GraalVM CE, using the standard OpenJDK project.\n"
+"This means that it does not profit from a few small enhancements that Oracle have added to the version of OpenJDK used to build their own GraalVM downloads.\n"
+"These enhancements are omitted because upstream OpenJDK does not manage them, and cannot vouch for.\n"
+"This is particularly important when it comes to conformance and security."
+msgstr "O Mandrel foi desenvolvido de forma ligeiramente diferente do Oracle GraalVM CE, usando o projeto OpenJDK padrão. Isso significa que ele não se beneficia de alguns pequenos aprimoramentos que a Oracle adicionou à versão do OpenJDK usada para criar seus próprios downloads do GraalVM. Esses aprimoramentos são omitidos porque o OpenJDK upstream não os gerencia e não pode garantir eles. Isso é particularmente importante quando se trata de conformidade e segurança."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Mandrel is recommended for building native executables that target Linux containerized environments.\n"
+"This means that Mandrel users are encouraged to use containers to build their native executables.\n"
+"If you are building native executables for macOS,\n"
+"you should consider using Oracle GraalVM instead,\n"
+"because Mandrel does not currently target this platform.\n"
+"Building native executables directly on bare metal Linux or Windows is possible,\n"
+"with details available in the https://github.com/graalvm/mandrel/blob/default/README.md[Mandrel README]\n"
+"and https://github.com/graalvm/mandrel/releases[Mandrel releases]."
+msgstr "O Mandrel é recomendado para a criação de executáveis nativos voltados para ambientes em contêineres do Linux. Isso significa que os usuários do Mandrel são incentivados a usar contêineres para criar seus executáveis nativos. Se estiver criando executáveis nativos para o macOS, considere o uso do Oracle GraalVM, pois o Mandrel não está voltado para essa plataforma no momento. É possível criar executáveis nativos diretamente no Linux ou Windows rodando diretamente no hardware, com detalhes disponíveis no https://github.com/graalvm/mandrel/blob/default/README.md[LEIAME do Mandrel] e nos https://github.com/graalvm/mandrel/releases[lançamentos do Mandrel] ."
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Configuring GraalVM"
+msgstr "Configurando a GraalVM"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"This step is only required for generating native executables targeting non-Linux operating systems.\n"
+"For generating native executables targeting Linux, you can optionally skip this section and xref:container-runtime[use a builder image] instead."
+msgstr "Essa etapa só é necessária para gerar executáveis nativos direcionados a sistemas operacionais que não sejam Linux. Para gerar executáveis nativos voltados para o Linux, opcionalmente, é possível ignorar esta seção e xref:container-runtime[usar uma imagem do construtor] ."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"If you cannot install GraalVM, you can use a multi-stage Docker build to run Maven inside a Docker container that embeds GraalVM.\n"
+"There is an explanation of how to do this at xref:multistage-docker[the end of this guide]."
+msgstr "Se não for possível instalar o GraalVM, você pode usar uma construção Docker de vários estágios para executar o Maven dentro de um contêiner Docker que incorpora o GraalVM. Há uma explicação de como fazer isso no xref:multistage-docker[final deste guia] ."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+#, fuzzy
+msgid "Version {graalvm-version} is required."
+msgstr "É necessária a versão {graalvm-version}."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Install GraalVM if you haven't already. You have a few options for this:"
+msgstr "Instale o GraalVM se ainda não o fez. Existem algumas opções para isso:"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Download the appropriate archive from <https://github.com/graalvm/mandrel/releases> or <https://github.com/graalvm/graalvm-ce-builds/releases>, and unpack it like you would any other JDK."
+msgstr "Download do arquivo apropriado de  https://github.com/graalvm/mandrel/releases  ou  https://github.com/graalvm/graalvm-ce-builds/releases  e descompacte-o como faria com qualquer outro JDK."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+#, fuzzy
+msgid "Use platform-specific install tools like https://sdkman.io/jdks#Oracle[sdkman], https://github.com/graalvm/homebrew-tap[homebrew], or https://github.com/ScoopInstaller/Java[scoop]."
+msgstr "Use ferramentas de instalação específicas da plataforma, como link:https://sdkman.io/jdks#Oracle[sdkman] , link:https://github.com/graalvm/homebrew-tap[homebrew] ou link:https://github.com/ScoopInstaller/Java[scoop] ."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Configure the runtime environment. Set `GRAALVM_HOME` environment variable to the GraalVM installation directory, for example:"
+msgstr "Configurar o runtime environment. Defina a variável de ambiente `GRAALVM_HOME` para o diretório de instalação do GraalVM, por exemplo:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "On macOS (not supported by Mandrel), point the variable to the `Home` sub-directory:"
+msgstr "No macOS (não suportado pelo Mandrel), aponte a variável para o subdiretório `Home`:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "On Windows, you will have to go through the Control Panel to set your environment variables."
+msgstr "No Windows, você terá que ir até o Painel de Controle para definir as suas variáveis de ambiente."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Installing via scoop will do this for you."
+msgstr "A instalação através do scoop irá fazer tudo por você."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "(Optional) Set the `JAVA_HOME` environment variable to the GraalVM installation directory."
+msgstr "(Opcional) Defina a variável de ambiente `JAVA_HOME` para o diretório de instalação do GraalVM."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "(Optional) Add the GraalVM `bin` directory to the path"
+msgstr "(Opcional) Adicione o diretório `bin` GraalVM `bin` no PATH"
+
+#. type: Block title
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Issues using GraalVM with macOS"
+msgstr "Problemas ao usar o GraalVM com o macOS"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "GraalVM binaries are not (yet) notarized for macOS as reported in this https://github.com/oracle/graal/issues/1724[GraalVM issue]. This means that you may see the following error when using `native-image`:"
+msgstr "Os binários do GraalVM não estão (ainda) certificados para macOS, conforme relatado nesta  link:https://github.com/oracle/graal/issues/1724[issue do GraalVM]. Isso significa que pode ocorrer o seguinte erro ao usar `native-image`:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Use the following command to recursively delete the `com.apple.quarantine` extended attribute on the GraalVM install directory as a workaround:"
+msgstr "Use o seguinte comando para excluir recursivamente o atributo estendido `com.apple.quarantine` no diretório de instalação do GraalVM como uma solução alternativa:"
+
+#. type: Title ==
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Solution"
+msgstr "Solução"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "We recommend that you follow the instructions in the next sections and package the application step by step. However, you can go right to the completed example."
+msgstr "Recomendamos que siga as instruções nos passos seguintes e que prepare a aplicação passo a passo. No entanto, pode ir diretamente para o exemplo completo."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Clone the Git repository: `git clone {quickstarts-clone-url}`, or download an {quickstarts-archive-url}[archive]."
+msgstr "Clone o repositório Git: `git clone {quickstarts-clone-url}`, ou baixe um {quickstarts-archive-url}[arquivo]."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "The solution is located in the `getting-started` directory."
+msgstr "A solução está localizada no diretório `getting-started`."
+
+#. type: Title ==
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Producing a native executable"
+msgstr "Desenvolvendo um executável nativo"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "The native executable for our application will contain the application code, required libraries, Java APIs, and a reduced version of a VM. The smaller VM base improves the startup time of the application and produces a minimal disk footprint."
+msgstr "O executável nativo da nossa aplicação conterá o código da aplicação, as bibliotecas necessárias, as APIs Java e uma versão reduzida de uma VM. A base menor da VM melhora o tempo de inicialização da aplicação e cria um espaço menor em disco."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "image:native-executable-process.png[Creating a native executable]"
+msgstr "image:native-executable-process.png[alt=Criando um executável nativo]"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "If you have generated the application from the previous tutorial, you can find in the `pom.xml` the following _profile_:"
+msgstr "Se gerou a aplicação do tutorial anterior, pode encontrar no `pom.xml` o seguinte profile:"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"You can provide custom options for the `native-image` command using the `<quarkus.native.additional-build-args>` property.\n"
+"Multiple options may be separated by a comma."
+msgstr "Você pode fornecer opções personalizadas para o comando `native-image` usando a propriedade `<quarkus.native.additional-build-args>` . Várias opções podem ser separadas por vírgula."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Another possibility is to include the `quarkus.native.additional-build-args` configuration property in your `application.properties`."
+msgstr "Outra possibilidade é incluir a propriedade de configuração `quarkus.native.additional-build-args` no seu `application.properties`."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "You can find more information about how to configure the native image building process in the xref:configuration-reference[Configuring the Native Executable] section below."
+msgstr "Você pode encontrar mais informações sobre como configurar o processo de construção de uma imagem nativa na secção  link:#configuration-reference[Configurando o executável nativo] abaixo."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"We use a profile because, you will see very soon, packaging the native executable takes a _few_ minutes. You could\n"
+"just pass -Dquarkus.package.type=native as a property on the command line, however it is better to use a profile as\n"
+"this allows native image tests to also be run."
+msgstr "Usamos um perfil porque, como você verá em breve, o empacotamento do executável nativo leva _alguns_ minutos. Você poderia simplesmente passar -Dquarkus.package.type=native como uma propriedade na linha de comando, mas é melhor usar um perfil, pois isso permite que os testes de imagem nativa também sejam executados."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Create a native executable using:"
+msgstr "Criar um executável nativo utilizando:"
+
+#. type: Block title
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Issues with packaging on Windows"
+msgstr "Problemas com o empacotamento no Windows"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"The Microsoft Native Tools for Visual Studio must first be initialized before packaging.\n"
+"You can do this by starting the `x64 Native Tools Command Prompt` that was installed with the Visual Studio Build Tools.\n"
+"At the `x64 Native Tools Command Prompt`, you can navigate to your project folder and run `./mvnw package -Dnative`."
+msgstr "As Microsoft Native Tools for Visual Studio devem ser inicializadas antes do empacotamento. Você pode fazer isso iniciando o `x64 Native Tools Command Prompt` que foi instalado com o Visual Studio Build Tools. No `x64 Native Tools Command Prompt` , você pode navegar até a pasta do projeto e executar `./mvnw package -Dnative` ."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Another solution is to write a script to do this for you:"
+msgstr "Outra solução é escrever um script para fazer isso para você:"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"In addition to the regular files, the build also produces `target/getting-started-1.0.0-SNAPSHOT-runner`.\n"
+"You can run it using: `./target/getting-started-1.0.0-SNAPSHOT-runner`."
+msgstr "Além dos arquivos normais, a construção também produz `target/getting-started-1.0.0-SNAPSHOT-runner` . Você pode executá-lo usando: `./target/getting-started-1.0.0-SNAPSHOT-runner` ."
+
+#. type: Block title
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Java preview features"
+msgstr "Java preview features"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Java code that relies on preview features requires special attention.\n"
+"To produce a native executable, this means that the `--enable-preview` flag needs to be passed to the underlying native image invocation.\n"
+"You can do so by prepending the flag with `-J` and passing it as additional native build argument: `-Dquarkus.native.additional-build-args=-J--enable-preview`."
+msgstr "O código Java que depende de recursos preview requer atenção especial. Para produzir um executável nativo, isso significa que o sinalizador `--enable-preview` precisa ser passado para a invocação da imagem nativa subjacente. Você pode fazer isso prefixando o sinalizador com `-J` e passando-o como argumento adicional de construção nativa: `-Dquarkus.native.additional-build-args=-J—​enable-preview` ."
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Build fully static native executables"
+msgstr "Buildando executáveis nativos totalmente estáticos"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Fully static native executables support is experimental."
+msgstr "O suporte a executáveis nativos totalmente estáticos é experimental."
+
+#: _versions/3.2/guides/building-native-image.adoc
+#, fuzzy
+msgid ""
+"On Linux it's possible to package a native executable that doesn't depend on any system shared library.\n"
+"There are link:https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/#prerequisites-and-preparation[some system requirements] to be fulfilled and additional build arguments to be used along with the `native-image` invocation, a minimum is `-Dquarkus.native.additional-build-args=\"--static\",\"--libc=musl\"`."
+msgstr "No Linux, é possível empacotar um executável nativo que não dependa de nenhuma biblioteca compartilhada do sistema. Há link:https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/#prerequisites-and-preparation[alguns requisitos de sistema] a serem atendidos e argumentos de compilação adicionais a serem usados junto com a invocação `native-image` ; o mínimo é `-Dquarkus.native.additional-build-args=\"--static\",\"--libc=musl\"` ."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Compiling fully static binaries is done by statically linking https://musl.libc.org/[musl] instead of `glibc` and should not be used in production without rigorous testing."
+msgstr "A compilação de binários totalmente estáticos é feita através de um link estático com o link:https://musl.libc.org/[musl] em vez de `glibc` e não deve ser usada em produção sem testes rigorosos."
+
+#. type: Title ==
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Testing the native executable"
+msgstr "Testando o executável nativo"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Producing a native executable can lead to a few issues, and so it's also a good idea to run some tests against the application running in the native file. The reasoning is explained in the link:getting-started-testing#quarkus-integration-test[Testing Guide]."
+msgstr "Produzir um executável nativo pode gerar alguns problemas e, por isso, também é uma boa ideia executar alguns testes na aplicação em execução no arquivo nativo. O raciocínio é explicado no link:getting-started-testing#quarkus-integration-test[Guia de testes]."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "To see the `GreetingResourceIT` run against the native executable, use `./mvnw verify -Dnative`:"
+msgstr "Para ver o `GreetingResourceIT` ser executado no executável nativo, utilize `./mvnw verify -Dnative`:"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"By default, Quarkus waits for 60 seconds for the native image to start before automatically failing the native tests. This\n"
+"duration can be changed using the `quarkus.test.wait-time` system property. For example, to increase the duration\n"
+"to 300 seconds, use: `./mvnw verify -Dnative -Dquarkus.test.wait-time=300`."
+msgstr "Por padrão, o Quarkus aguarda 60 segundos para que a imagem nativa seja iniciada antes de reprovar automaticamente os testes nativos. Essa duração pode ser alterada usando a propriedade do sistema `quarkus.test.wait-time` . Por exemplo, para aumentar a duração para 300 segundos, use: `./mvnw verify -Dnative -Dquarkus.test.wait-time=300` ."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"This procedure was formerly accomplished using the `@NativeImageTest` annotation. `@NativeImageTest` was replaced by `@QuarkusIntegrationTest` which provides a superset of the testing\n"
+"capabilities of `@NativeImageTest`. More information about `@QuarkusIntegrationTest` can be found in the xref:getting-started-testing.adoc#quarkus-integration-test[Testing Guide]."
+msgstr "Esse procedimento era realizado anteriormente usando a anotação `@NativeImageTest` . `@NativeImageTest` foi substituído por `@QuarkusIntegrationTest` , que fornece um superconjunto dos recursos de teste de `@NativeImageTest` . Mais informações sobre `@QuarkusIntegrationTest` podem ser encontradas no xref:getting-started-testing.adoc#quarkus-integration-test[Guia de Testes] ."
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Profiles"
+msgstr "Profiles"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "By default, integration tests both *build* and *run* the native executable using the `prod` profile."
+msgstr "Por padrão, os testes de integração *build* e *run* são feitos usando o profile `prod`."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"You can override the profile the executable *runs* with during the test using the `quarkus.test.native-image-profile` property.\n"
+"Either by adding it to `application.properties` or by appending it to the command line:\n"
+"`./mvnw verify -Dnative -Dquarkus.test.native-image-profile=test`.\n"
+"Your `%test.` prefixed properties will be used at the test runtime."
+msgstr "Você pode substituir o perfil com o qual o executável *roda* durante o teste usando a propriedade `quarkus.test.native-image-profile` . Adicione-a a `application.properties` ou acrescente-a à linha de comando: `./mvnw verify -Dnative -Dquarkus.test.native-image-profile=test` . Suas propriedades prefixadas com `%test.` serão usadas no tempo de execução do teste."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"You can override the profile the executable is *built* with and *runs* with using the `quarkus.profile=test` property, e.g.\n"
+"`./mvnw clean verify -Dnative -Dquarkus.profile=test`. This might come handy if there are test specific resources to be processed,\n"
+"such as importing test data into the database."
+msgstr "Você pode substituir o perfil com o qual o executável é *construído* e *rodado* usando a propriedade `quarkus.profile=test` , por exemplo, `./mvnw clean verify -Dnative -Dquarkus.profile=test` . Isso pode ser útil se houver recursos específicos de teste a serem processados, como a importação de dados de teste para o banco de dados."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"With the aforementioned example in your `application.properties`, your Hibernate ORM managed database will be populated with test\n"
+"data both during the JVM mode test run and during the native mode test run. The production\n"
+"executable will contain only the `version.txt` resource, no superfluous test data."
+msgstr "Com o exemplo mencionado acima em seu `application.properties` , o banco de dados gerenciado do Hibernate ORM será preenchido com dados de teste durante a execução do teste no modo JVM e durante a execução do teste no modo nativo. O executável de produção conterá apenas o recurso `version.txt` , sem dados de teste supérfluos."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"The executable built with `-Dquarkus.profile=test` is not suitable for production deployment.\n"
+"It contains your test resources files and settings. Once the testing is done, the executable would have to be built again,\n"
+"using the default, `prod` profile."
+msgstr "O executável criado com `-Dquarkus.profile=test` não é adequado para a implantação em produção. Ele contém os arquivos e as configurações dos recursos de teste. Quando o teste for concluído, o executável deverá ser criado novamente, usando o perfil padrão `prod` ."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Alternatively, if you need to specify specific properties when running tests against the native executable\n"
+"built using the `prod` profile, an option is to put those properties in file `src/test/resources/application-nativeit.yaml`, and refer to it from the `failsafe` plugin configuration using the `QUARKUS_CONFIG_LOCATIONS` environment variable. For instance:"
+msgstr "Como alternativa, se você precisar especificar propriedades específicas ao executar testes no executável nativo criado usando o perfil `prod` , uma opção é colocar essas propriedades no arquivo `src/test/resources/application-nativeit.yaml` e fazer referência a ele na configuração do plug-in `failsafe` usando a variável de ambiente `QUARKUS_CONFIG_LOCATIONS` . Por exemplo:"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Java code that relies on preview features requires special attention.\n"
+"To test a native executable, this means that the `--enable-preview` flag needs to be passed to the Surefire plugin.\n"
+"Adding `<argLine>--enable-preview</argLine>` to its `configuration` section is one way to do so."
+msgstr "O código Java que depende de recursos preview requer atenção especial. Para testar um executável nativo, isso significa que o indicador `--enable-preview` precisa ser passado para o plug-in Surefire. Adicionar `<argLine>--enable-preview</argLine>` à sua seção `configuration` é uma maneira de fazer isso."
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Excluding tests when running as a native executable"
+msgstr "Excluindo testes ao executar como um executável nativo"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"When running tests this way, the only things that actually run natively are your application endpoints, which\n"
+"you can only test via HTTP calls. Your test code does not actually run natively, so if you are testing code\n"
+"that does not call your HTTP endpoints, it's probably not a good idea to run them as part of native tests."
+msgstr "Ao executar testes dessa forma, as únicas coisas que realmente são executadas nativamente são os endpoints da aplicação, que só podem ser testados por meio de chamadas HTTP. Seu código de teste não é realmente executado nativamente, portanto, se você estiver testando um código que não chama seus endpoints HTTP, provavelmente não é uma boa ideia executá-los como parte dos testes nativos."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"If you share your test class between JVM and native executions like we advise above, you can mark certain tests\n"
+"with the `@DisabledOnIntegrationTest` annotation in order to skip them when testing against a native image."
+msgstr "Se você compartilhar sua classe de teste entre a JVM e as execuções nativas, como aconselhamos acima, poderá marcar determinados testes com a anotação `@DisabledOnIntegrationTest` para ignorá-los ao testar uma imagem nativa."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Using `@DisabledOnIntegrationTest` will also disable the test in all integration test instances, including\n"
+"testing the application in JVM mode, in a container image, and native image."
+msgstr "Usar `@DisabledOnIntegrationTest` também desativará o teste em todas as instâncias de teste de integração, incluindo o teste da aplicação no modo JVM, em uma imagem de contêiner e em uma imagem nativa."
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Testing an existing native executable"
+msgstr "Testar um executável nativo existente"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"It is also possible to re-run the tests against a native executable that has already been built. To do this run\n"
+"`./mvnw test-compile failsafe:integration-test -Dnative`. This will discover the existing native image and run the tests against it using failsafe."
+msgstr "Também é possível executar novamente os testes em um executável nativo que já tenha sido criado. Para fazer isso, execute `./mvnw test-compile failsafe:integration-test -Dnative` . Isso descobrirá a imagem nativa existente e executará os testes com base nela usando o failsafe."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"If the process cannot find the native image for some reason, or you want to test a native image that is no longer in the\n"
+"target directory you can specify the executable with the `-Dnative.image.path=` system property."
+msgstr "Se o processo não conseguir encontrar a imagem nativa por algum motivo ou se você quiser testar uma imagem nativa que não esteja mais no diretório de destino, poderá especificar o executável com a propriedade de sistema `-Dnative.image.path=` ."
+
+#. type: Title ==
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Creating a Linux executable without GraalVM installed"
+msgstr "Criando um executável Linux sem o GraalVM instalado"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Before going further, be sure to have a working container runtime (Docker, podman) environment. If you use Docker\n"
+"on Windows you should share your project's drive at Docker Desktop file share settings and restart Docker Desktop."
+msgstr "Antes de prosseguir, certifique-se de ter um ambiente de tempo de execução de contêiner em funcionamento (Docker, podman). Se usar o Docker no Windows, compartilhe a unidade do seu projeto nas configurações de compartilhamento de arquivos do Docker Desktop e reinicie o Docker Desktop."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Quite often one only needs to create a native Linux executable for their Quarkus application (for example in order to run in a containerized environment) and would like to avoid\n"
+"the trouble of installing the proper GraalVM version in order to accomplish this task (for example, in CI environments it's common practice\n"
+"to install as little software as possible)."
+msgstr "Muitas vezes, é necessário apenas criar um executável Linux nativo para o aplicativo Quarkus (por exemplo, para ser executado em um ambiente de contêiner) e evitar o trabalho de instalar a versão adequada do GraalVM para realizar essa tarefa (por exemplo, em ambientes de CI, é prática comum instalar o mínimo de software possível)."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"To this end, Quarkus provides a very convenient way of creating a native Linux executable by leveraging a container runtime such as Docker or podman.\n"
+"The easiest way of accomplishing this task is to execute:"
+msgstr "Para isso, o Quarkus oferece uma maneira muito conveniente de criar um executável nativo do Linux, aproveitando um tempo de execução de contêiner, como o Docker ou o podman. A maneira mais fácil de realizar essa tarefa é executar:"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"By default, Quarkus automatically detects the container runtime.\n"
+"If you want to explicitly select the container runtime, you can do it with:"
+msgstr "Por padrão, o Quarkus detecta automaticamente o tempo de execução do contêiner. Se quiser selecionar explicitamente o tempo de execução do contêiner, você pode fazer isso com:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "For Docker:"
+msgstr "Para o Docker:"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "CLI"
+msgstr "CLI"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Maven"
+msgstr "Maven"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Gradle"
+msgstr "Gradle"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "For podman:"
+msgstr "Para o podman:"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"These are regular Quarkus config properties, so if you always want to build in a container\n"
+"it is recommended you add these to your `application.properties` in order to avoid specifying them every time."
+msgstr "Essas são propriedades regulares de configuração do Quarkus, portanto, se quiser sempre construir em um contêiner, é recomendável adicioná-las ao seu `application.properties` para evitar especificá-las sempre."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "If you see the following invalid path error for your application JAR when trying to create a native executable using a container build, even though your JAR was built successfully, you're most likely using a remote daemon for your container runtime."
+msgstr "Se vir o seguinte erro de caminho inválido para o JAR da sua aplicação ao tentar criar um executável nativo utilizando uma build em contêiner, mesmo o JAR ter sido compilado com sucesso, é muito provável que esteja utilizando um daemon remoto para o tempo de execução do contêiner."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Error: Invalid Path entry getting-started-1.0.0-SNAPSHOT-runner.jar\n"
+"Caused by: java.nio.file.NoSuchFileException: /project/getting-started-1.0.0-SNAPSHOT-runner.jar"
+msgstr ""
+"Error: Invalid Path entry getting-started-1.0.0-SNAPSHOT-runner.jar\n"
+"Caused by: java.nio.file.NoSuchFileException: /project/getting-started-1.0.0-SNAPSHOT-runner.jar"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "In this case, use the parameter `-Dquarkus.native.remote-container-build=true` instead of `-Dquarkus.native.container-build=true`."
+msgstr "Neste caso, utilize o parâmetro `-Dquarkus.native.remote-container-build=true` ao invés de `-Dquarkus.native.container-build=true`."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "The reason for this is that the local build driver invoked through `-Dquarkus.native.container-build=true` uses volume mounts to make the JAR available in the build container, but volume mounts do not work with remote daemons. The remote container build driver copies the necessary files instead of mounting them. Note that even though the remote driver also works with local daemons, the local driver should be preferred in the local case because mounting is usually more performant than copying."
+msgstr "O motivo para isso é que o driver do build local é executado através do `-Dquarkus.native.container-build=true` que utiliza irá montar volumes para tornar o JAR disponível na build do contêiner, mas os volumes montados não funcionam com daemons remotos. O driver que faz a build do contêiner remoto copia apenas os arquivos necessários para montar ele. Observe que, embora o driver remoto também funcione com daemons locais, o driver local deve ser preferido no caso local porque a montagem é geralmente mais eficiente do que a cópia."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+#, fuzzy
+msgid "The builder image used by default supports Java 17 as it is the latest LTS version."
+msgstr "A imagem do construtor usada por padrão oferece suporte ao Java 17, pois é a versão mais recente do LTS."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+#, fuzzy
+msgid "If your application uses Java 18 or later, you need to specify a builder image supporting Java 20:"
+msgstr "Se o seu aplicativo usa Java 18 ou posterior, o senhor precisa especificar uma imagem do construtor compatível com Java 20:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Building with GraalVM instead of Mandrel requires a custom builder image parameter to be passed additionally:"
+msgstr "Fazer o build com o GraalVM ao invés do Mandrel requer que seja passado um parâmetro adicional ao construtor da imagem:"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Please note that the above command points to a floating tag.\n"
+"It is highly recommended to use the floating tag,\n"
+"so that your builder image remains up-to-date and secure.\n"
+"If you absolutely must, you may hard-code to a specific tag\n"
+"(see https://quay.io/repository/quarkus/ubi-quarkus-mandrel-builder-image?tab=tags[here] for available tags),\n"
+"but be aware that you won't get security updates that way and it's unsupported."
+msgstr "Observe que o comando acima aponta para um indicador flutuante. É altamente recomendável usar o indicador flutuante para que a imagem do construtor permaneça atualizada e segura. Se for absolutamente necessário, você pode codificar para um indicador específico (veja https://quay.io/repository/quarkus/ubi-quarkus-mandrel-builder-image?tab=tags[aqui] os indicadores disponíveis), mas esteja ciente de que não receberá atualizações de segurança dessa forma e não há suporte para isso."
+
+#. type: Title ==
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Creating a container"
+msgstr "Criando um contêiner"
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Using the container-image extensions"
+msgstr "Utilizar as extensões dos container-image"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "By far the easiest way to create a container-image from your Quarkus application is to leverage one of the container-image extensions."
+msgstr "A maneira mais fácil de criar uma container-image a partir da sua aplicação Quarkus é utilizar uma das extensões de imagem de contêiner."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "If one of those extensions is present, then creating a container image for the native executable is essentially a matter of executing a single command:"
+msgstr "Se uma dessas extensões estiverem presente, então a criação de uma imagem de contêiner para o executável nativo é executar um único comando:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "`quarkus.native.container-build=true` allows for creating a Linux executable without GraalVM being installed (and is only necessary if you don't have GraalVM installed locally or your local operating system is not Linux)"
+msgstr "`quarkus.native.container-build=true` permite criar um executável Linux sem que o GraalVM esteja instalado (e só é necessário se não tiver o GraalVM instalado localmente ou se o seu sistema operacional local não for Linux)"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "If you're running a remote Docker daemon, you need to replace `quarkus.native.container-build=true` with `quarkus.native.remote-container-build=true`."
+msgstr "Se estiver executando um daemon Docker remoto, você terá que substituir `quarkus.native.container-build=true` por `quarkus.native.remote-container-build=true`."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "See xref:tip-quarkus-native-remote-container-build[Creating a Linux executable without GraalVM installed] for more details."
+msgstr "Veja link:#tip-quarkus-native-remote-container-build[Criando um executável Linux sem o GraalVM instalado] para mais detalhes."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "`quarkus.container-image.build=true` instructs Quarkus to create a container-image using the final application artifact (which is the native executable in this case)"
+msgstr "`quarkus.container-image.build=true` instrui o Quarkus para criar um container-image utilizando o artefato final da aplicação (que, neste caso, é o executável nativo)"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "See the xref:container-image.adoc[Container Image guide] for more details."
+msgstr "Consulte o link:container-image.html[Guia do container-image] para obter mais informações."
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Manually using the micro base image"
+msgstr "Utilizando a micro imagem base manualmente"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"You can run the application in a container using the JAR produced by the Quarkus Maven Plugin.\n"
+"However, in this section we focus on creating a container image using the produced native executable."
+msgstr "É possível executar a aplicação em um contêiner usando o JAR produzido pelo Quarkus Maven Plugin. No entanto, nesta seção, vamos nos concentrar na criação de uma imagem de contêiner usando o executável nativo produzido."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "image:containerization-process.png[Containerization Process]"
+msgstr "image:containerization-process.png[alt=Processo de conteinerização]"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"When using a local GraalVM installation, the native executable targets your local operating system (Linux, macOS, Windows etc).\n"
+"However, as a container may not use the same _executable_ format as the one produced by your operating system,\n"
+"we will instruct the Maven build to produce an executable by leveraging a container runtime (as described in xref:container-runtime[this section]):"
+msgstr "Ao usar uma instalação local do GraalVM, o executável nativo tem como alvo o seu sistema operacional local (Linux, macOS, Windows etc.). No entanto, como um contêiner pode não usar o mesmo formato de _executável_ que o produzido pelo seu sistema operacional, instruiremos a compilação do Maven a produzir um executável aproveitando o tempo de execução de um contêiner (conforme descrito xref:container-runtime[nesta seção] ):"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"The produced executable will be a 64-bit Linux executable, so depending on your operating system it may no longer be runnable.\n"
+"However, it's not an issue as we are going to copy it to a container.\n"
+"The project generation has provided a `Dockerfile.native-micro` in the `src/main/docker` directory with the following content:"
+msgstr "O executável produzido será um executável Linux de 64 bits, portanto, dependendo do seu sistema operacional, ele pode não ser mais executável. No entanto, isso não é um problema, pois vamos copiá-lo para um contêiner. A geração do projeto forneceu um `Dockerfile.native-micro` no diretório `src/main/docker` com o seguinte conteúdo:"
+
+#. type: Block title
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Quarkus Micro Image?"
+msgstr "Quarkus Micro Image?"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"The Quarkus Micro Image is a small container image providing the right set of dependencies to run your native application.\n"
+"It is based on https://catalog.redhat.com/software/containers/ubi8-micro/601a84aadd19c7786c47c8ea?container-tabs=overview[UBI Micro].\n"
+"This base image has been tailored to work perfectly in containers."
+msgstr "O Quarkus Micro Image é uma pequena imagem de contêiner que fornece o conjunto certo de dependências para executar sua aplicação nativa. Ela é baseada no https://catalog.redhat.com/software/containers/ubi8-micro/601a84aadd19c7786c47c8ea?container-tabs=overview[UBI Micro]. Essa imagem base foi adaptada para funcionar perfeitamente em contêineres."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "You can read more about UBI images on:"
+msgstr "Você pode ler mais sobre as imagens UBI em:"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image[Introduction to Universal Base Image]"
+msgstr "link:https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image[Introdução à imagem base universal]"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "https://catalog.redhat.com/software/container-stacks/detail/5ec53f50ef29fd35586d9a56[Red Hat Universal Base Image 8]"
+msgstr "link:https://catalog.redhat.com/software/container-stacks/detail/5ec53f50ef29fd35586d9a56[Imagem Base Universal da Red Hat]"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "UBI images can be used without any limitations."
+msgstr "As imagens UBI podem ser utilizadas sem qualquer limitações."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "xref:quarkus-runtime-base-image.adoc[This page] explains how to extend the `quarkus-micro` image when your application has specific requirements."
+msgstr "link:quarkus-runtime-base-image.html[Esta página] explica como extender a imagem `quarkus-micro` quando a sua aplicação tem requisitos específicos."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Then, if you didn't delete the generated native executable, you can build the docker image with:"
+msgstr "Depois, se não tiver deletado o executável nativo criado, pode construir a imagem docker com:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "And finally, run it with:"
+msgstr "E, finalmente, execute-o com:"
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Manually using the minimal base image"
+msgstr "Utilizando manualmente a imagem base mínima"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "The project generation has also provided a `Dockerfile.native` in the `src/main/docker` directory with the following content:"
+msgstr "A geração do projeto também forneceu um `Dockerfile.native` na pasta `src/main/docker` com o seguinte conteúdo:"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"The UBI minimal image is bigger than the micro one mentioned above.\n"
+"It contains more utilities such as the `microdnf` package manager."
+msgstr "A imagem mínima da UBI é maior do que a micro mencionada acima. Ela contém mais utilitários, como o gerenciador de pacotes `microdnf` ."
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Using a multi-stage Docker build"
+msgstr "Utilizar uma compilação do Docker multi-stage"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"The previous section showed you how to build a native executable using Maven or Gradle, but it requires you to have created the native executable first.\n"
+"In addition, this native executable must be a Linux 64 bits executable."
+msgstr "A seção anterior mostrou como criar um executável nativo usando o Maven ou o Gradle, mas isso exige que o executável nativo tenha sido criado primeiro. Além disso, esse executável nativo deve ser um executável Linux de 64 bits."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"You may want to build the native executable directly in a container without having a final container containing the build tools.\n"
+"That approach is possible with a multi-stage Docker build:"
+msgstr "Talvez você queira criar o executável nativo diretamente em um contêiner sem ter um contêiner final que contenha as ferramentas de criação. Essa abordagem é possível com uma compilação do Docker em vários estágios:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "The first stage builds the native executable using Maven or Gradle"
+msgstr "O primeiro estágio faz o build do executável nativo utilizando o Maven ou o Gradle"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "The second stage is a minimal image copying the produced native executable"
+msgstr "O segundo estágio é uma imagem mínima que copia o executável nativo produzido"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Before building a container image from the Dockerfiles shown below, you need to update the default `.dockerignore` file, as it filters everything except the `target` directory. In order to build inside a container, you need to copy the `src` directory. Thus, edit your `.dockerignore` and remove the `*` line."
+msgstr "Antes de construir uma imagem de contêiner a partir dos Dockerfiles mostrados abaixo, é necessário atualizar o arquivo `.dockerignore`, uma vez que este filtra tudo exceto o diretório `target`. Para fazer o build dentro de um contêiner, é necessário copiar o diretório `src`. Portanto, edite seu `.dockerignore` e remova a linha `*`."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Such a multi-stage build can be achieved as follows:"
+msgstr "Esta construção em vários estágios pode ser realizada da seguinte forma:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Sample Dockerfile for building with Maven:"
+msgstr "Exemplo de Dockerfile para fazer o build com o Maven:"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"This multi-stage Docker build copies the Maven wrapper from the host machine.\n"
+"The Maven wrapper (or the Gradle wrapper) is a convenient way to provide a specific version of Maven/Gradle.\n"
+"It avoids having to create a base image with Maven and Gradle.\n"
+"To provision the Maven Wrapper in your project, use: `mvn -N org.apache.maven.plugins:maven-wrapper-plugin:3.1.1:wrapper`."
+msgstr "Essa compilação do Docker em vários estágios copia o wrapper do Maven do computador hospedeiro. O wrapper do Maven (ou o wrapper do Gradle) é uma maneira conveniente de fornecer uma versão específica do Maven/Gradle. Ele evita a necessidade de criar uma imagem de base com o Maven e o Gradle. Para provisionar o Maven Wrapper em seu projeto, use: `mvn -N org.apache.maven.plugins:maven-wrapper-plugin:3.1.1:wrapper` ."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Save this file in `src/main/docker/Dockerfile.multistage` as it is not included in the getting started quickstart."
+msgstr "Salve esse arquivo em `src/main/docker/Dockerfile.multistage`, uma vez que não está incluído no startup rápido."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Sample Dockerfile for building with Gradle:"
+msgstr "Exemplo de Dockerfile para build com o Gradle:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "If you are using Gradle in your project, you can use this sample Dockerfile.  Save it in `src/main/docker/Dockerfile.multistage`."
+msgstr "Se estiver utilizando o Gradle no seu projeto, pode utilizar este exemplo de Dockerfile. Salve-o em `src/main/docker/Dockerfile.multistage`."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "And, finally, run it with:"
+msgstr "E, finalmente, execute-o com:"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "If you need SSL support in your native executable, you can easily include the necessary libraries in your Docker image."
+msgstr "Se precisar de suporte SSL no seu executável nativo, pode facilmente incluir as bibliotecas necessárias na sua imagem Docker."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Please see xref:native-and-ssl.adoc#working-with-containers[our Using SSL With Native Executables guide] for more information."
+msgstr "Consulte o link:native-and-ssl.html#working-with-containers[nosso guia Usando SSL com executáveis nativos] para obter mais informações."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "To use GraalVM CE instead of Mandrel, update the `FROM` clause to: `FROM quay.io/quarkus/ubi-quarkus-graalvmce-builder-image:{graalvm-flavor} AS build`."
+msgstr "Para usar o GraalVM CE em vez do Mandrel, atualize o trecho `FROM` para: `FROM quay.io/quarkus/ubi-quarkus-graalvmce-builder-image:{graalvm-flavor} AS build`."
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Using a Distroless base image"
+msgstr "Usando uma imagem base sem distribuição"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Distroless image support is experimental."
+msgstr "O suporte de imagens sem distribuição é experimental."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"If you are looking for small container images, the https://github.com/GoogleContainerTools/distroless[distroless] approach reduces the size of the base layer.\n"
+"The idea behind _distroless_ is the usage of a single and minimal base image containing all the requirements, and sometimes even the application itself."
+msgstr "Se estiver procurando por imagens de contêineres pequenas, a abordagem https://github.com/GoogleContainerTools/distroless[sem distribuição] reduz o tamanho da camada base. A ideia por trás do _sem distribuição_ é o uso de uma imagem base única e mínima que contenha todos os requisitos e, às vezes, até a própria aplicação."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Quarkus provides a distroless base image that you can use in your `Dockerfile`.\n"
+"You only need to copy your application, and you are done:"
+msgstr "O Quarkus fornece uma imagem base sem distribuição que você pode usar no seu `Dockerfile` . Você só precisa copiar sua aplicação e pronto:"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Quarkus provides the `quay.io/quarkus/quarkus-distroless-image:2.0` image.\n"
+"It contains the required packages to run a native executable and is only **9Mb**.\n"
+"Just add your application on top of this image, and you will get a tiny container image."
+msgstr "O Quarkus fornece a imagem `quay.io/quarkus/quarkus-distroless-image:2.0` . Ela contém os pacotes necessários para rodar um executável nativo e tem apenas **9 Mb**. Basta adicionar sua aplicação sobre essa imagem e você obterá uma imagem de contêiner minúscula."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Distroless images should not be used in production without rigorous testing."
+msgstr "As imagens sem distribuição não devem ser utilizadas em produção sem um teste rigoroso."
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Build a container image from scratch"
+msgstr "Criar uma imagem scratch"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Scratch image support is experimental."
+msgstr "O suporte de imagens scratch é experimental."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Building fully statically linked binaries enables the usage of a https://hub.docker.com/_/scratch[scratch image] containing solely the resulting native executable."
+msgstr "O build de binários totalmente linkados estaticamente permite a utilização de uma link:https://hub.docker.com/_/scratch[imagem de rascunho] contendo apenas o executável nativo resultante."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Sample multistage Dockerfile for building an image from `scratch`:"
+msgstr "Exemplo de Dockerfile de vários estágios para criar uma imagem a partir de `scratch`:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Scratch images should not be used in production without rigorous testing."
+msgstr "As imagens Scratch não devem ser utilizadas em produção sem um teste rigoroso."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "The versions of musl and zlib may need to be updated to meet the native-image executable requirements (and UPX if you use native image compression)."
+msgstr "As versões de musl e zlib podem precisar serem atualizadas para atender os requisitos do executável de imagem nativa (e UPX se utilizar compressão de imagem nativa)."
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Compress native images"
+msgstr "Compactar imagens nativas"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Quarkus can compress the produced native executable using UPX.\n"
+"More details on xref:./upx.adoc[UPX Compression documentation]."
+msgstr "O Quarkus pode compactar o executável nativo produzido usando UPX. Mais detalhes na xref:./upx.adoc[documentação de Compressão UPX] ."
+
+#. type: Title ===
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Separating Java and native image compilation"
+msgstr "Separando a compilação de imagens nativas e Java"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"In certain circumstances, you may want to build the native image in a separate step.\n"
+"For example, in a CI/CD pipeline, you may want to have one step to generate the source that will be used for the native image generation and another step to use these sources to actually build the native executable.\n"
+"For this use case, you can set the `quarkus.package.type=native-sources`.\n"
+"This will execute the java compilation as if you had started native compilation (`-Dnative`), but stops before triggering the actual call to GraalVM's `native-image`."
+msgstr "Em determinadas circunstâncias, você pode querer criar a imagem nativa em uma etapa separada. Por exemplo, em um pipeline de CI/CD, você pode querer ter uma etapa para gerar o código-fonte que será usado para a geração da imagem nativa e outra etapa para usar esses códigos-fonte para realmente criar o executável nativo. Para esse caso de uso, é possível definir `quarkus.package.type=native-sources` . Isso executará a compilação java como se você tivesse iniciado a compilação nativa ( `-Dnative` ), mas parará antes de acionar a chamada real para `native-image` do GraalVM ."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "After compilation has finished, you find the build artifact in `target/native-sources`:"
+msgstr "Após finalizar a compilação, você encontrará o artefato compilado em `target/native-sources`:"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"From the output above one can see that, in addition to the produced jar file and the associated lib directory, a text file named `native-image.args` was created.\n"
+"This file holds all parameters (including the name of the JAR to compile) to pass along to GraalVM's `native-image` command.\n"
+"A text file named `graalvm.version` was also created and holds the GraalVM version that should be used.\n"
+"If you have GraalVM installed and it matches this version, you can start the native compilation by executing:"
+msgstr "Na saída acima, é possível ver que, além do arquivo jar produzido e do diretório lib associado, foi criado um arquivo de texto chamado `native-image.args` . Esse arquivo contém todos os parâmetros (inclusive o nome do JAR a ser compilado) a serem transmitidos ao comando `native-image` do GraalVM. Um arquivo de texto chamado `graalvm.version` também foi criado e contém a versão do GraalVM que deve ser usada. Se o GraalVM estiver instalado e corresponder a essa versão, você poderá iniciar a compilação nativa executando:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "The process for Gradle is analogous."
+msgstr "O processo para o Gradle é análogo."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Running the build process in a container is also possible:"
+msgstr "Também é possível executar o processo de compilação num contêiner:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "`-Dquarkus.native.container-build=true` will produce an additional text file named `native-builder.image` holding the docker image name to be used to build the native image."
+msgstr "`-Dquarkus.native.container-build=true` produzirá um arquivo de texto adicional chamado `native-builder.image` com o nome da imagem docker a ser utilizada para construir a imagem nativa."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Mount the host's directory `target/native-image` to the container's `/work`. Thus, the generated binary will also be written to this directory."
+msgstr "Monte o diretório raiz `target/native-image` no diretório do contêiner `/work`. Assim, o binário gerado também será escrito neste diretório."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Switch the working directory to `/work`, which we have mounted in <1>."
+msgstr "Mude o diretório de trabalho para `/work`, que foi montado em <1>."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Use the docker image from the file `native-builder.image`."
+msgstr "Utilize a imagem docker do arquivo `native-builder.image`."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Call `native-image` with the content of file `native-image.args` as arguments. We also supply an additional argument to limit the process's maximum memory to 4 Gigabytes (this may vary depending on the project being built and the machine building it)."
+msgstr "Chamar `native-image` com o conteúdo do arquivo `native-image.args` como argumentos. Também fornecemos um argumento adicional para limitar a memória máxima do processo a 4 Gigabytes (isto pode variar dependendo do projeto que está sendo construído e da máquina que está sendo usada)."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"If you are running on a Windows machine, please keep in mind that the binary was created within a Linux docker container.\n"
+"Hence, the binary will not be executable on the host Windows machine."
+msgstr "Se você estiver executando em uma máquina Windows, lembre-se de que o binário foi criado em um contêiner docker do Linux. Portanto, o binário não será executável na máquina Windows do hospedeiro."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "A high level overview of what the various steps of a CI/CD pipeline would look is the following:"
+msgstr "Uma visão geral de alto nível do que seriam as várias etapas de um pipeline CI/CD é a seguinte:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Register the output of the step executing `./mvnw ...` command (i.e. directory `target/native-image`) as a build artifact,"
+msgstr "Registar a saída da etapa que executa o comando `./mvnw …​` (ou seja, o diretório `target/native-image`) como um artefacto de construção,"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Require this artifact in the step executing the `native-image ...` command, and"
+msgstr "Exigir este artefacto no passo que executa o comando `native-image …​`, e"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Register the output of the step executing the `native-image ...` command (i.e. files matching `target/*runner`) as build artifact."
+msgstr "Registar a saída do passo que executa o comando `native-image …​` (ou seja, arquivos que correspondem a `target/*runner`) como artefacto de build."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "The environment executing step `1` only needs Java and Maven (or Gradle) installed, while the environment executing step `3` only needs a GraalVM installation (including the `native-image` feature)."
+msgstr "O ambiente que executa o passo `1` apenas necessita do Java e Maven (ou Gradle) instalados, enquanto o ambiente que executa o passo `3` apenas necessita de uma instalação GraalVM (incluindo a funcionalidade `native-image` )."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Depending on what the final desired output of the CI/CD pipeline is, the generated binary might then be used to create a container image."
+msgstr "Dependendo do resultado final desejado do pipeline CI/CD, o binário gerado pode então ser utilizado para criar uma imagem de contêiner."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Native executables can be debugged using tools such as `gdb`.\n"
+"For this to be possible native executables need to be generated with debug symbols."
+msgstr "Os executáveis nativos podem ser depurados por meio de ferramentas como `gdb` . Para que isso seja possível, os executáveis nativos precisam ser gerados com símbolos de depuração."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Debug symbol generation is only supported on Linux.\n"
+"Windows support is still under development, while macOS is not supported."
+msgstr "A geração de símbolos de depuração só é compatível com o Linux. O suporte ao Windows ainda está em desenvolvimento, enquanto o macOS não é compatível."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"To generate debug symbols,\n"
+"add `-Dquarkus.native.debug.enabled=true` flag when generating the native executable.\n"
+"You will find the debug symbols for the native executable in a `.debug` file next to the native executable."
+msgstr "Para gerar símbolos de depuração, adicione o sinalizador `-Dquarkus.native.debug.enabled=true` ao gerar o executável nativo. Você encontrará os símbolos de depuração para o executável nativo em um arquivo `.debug` ao lado do executável nativo."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"The generation of the `.debug` file depends on `objcopy`.\n"
+"As a result, when using a local GraalVM installation on common Linux distributions you will need to install the `binutils` package:"
+msgstr "A geração do arquivo `.debug` depende do `objcopy` . Como resultado, ao usar uma instalação local do GraalVM em distribuições comuns do Linux, você precisará instalar o pacote `binutils` :"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "When `objcopy` is not available debug symbols are embedded in the executable."
+msgstr "Quando `objcopy` não está disponível, os símbolos de debug são incorporados no executável."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Aside from debug symbols,\n"
+"setting `-Dquarkus.native.debug.enabled=true` flag generates a cache of source files\n"
+"for any JDK runtime classes, GraalVM classes and application classes resolved during native executable generation.\n"
+"This source cache is useful for native debugging tools,\n"
+"to establish the link between the symbols and matching source code.\n"
+"It provides a convenient way of making just the necessary sources available to the debugger/IDE when debugging a native executable."
+msgstr "Além dos símbolos de depuração, a configuração do sinalizador `-Dquarkus.native.debug.enabled=true` gera um cache de arquivos de origem para todas as classes de tempo de execução do JDK, classes do GraalVM e classes de aplicação resolvidas durante a geração do executável nativo. Esse cache de fontes é útil para ferramentas de depuração nativas, para estabelecer o vínculo entre os símbolos e o código-fonte correspondente. Ele fornece uma maneira conveniente de disponibilizar apenas os códigos-fonte necessários para o depurador/IDE ao depurar um executável nativo."
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Sources for third party jar dependencies, including Quarkus source code,\n"
+"are not added to the source cache by default.\n"
+"To include those, make sure you invoke `mvn dependency:sources` first.\n"
+"This step is required in order to pull the sources for these dependencies,\n"
+"and get them included in the source cache."
+msgstr "Fontes para dependências jar de terceiros, incluindo o código-fonte do Quarkus, não são adicionadas ao cache de fontes por padrão. Para incluí-los, certifique-se de invocar `mvn dependency:sources` primeiro. Essa etapa é necessária para extrair os códigos-fonte dessas dependências e incluí-los no cache de código-fonte."
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "The source cache is located in the `target/sources` folder."
+msgstr "A cache de fonte está localizado na pasta `target/sources`."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "If running `gdb` from a different directory than `target`, then the sources can be loaded by running:"
+msgstr "Se executar `gdb` a partir de um diretório diferente do `target`, então as fontes podem ser carregadas ao executar:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "in the `gdb` prompt."
+msgstr "no prompt `gdb`."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Or start `gdb` with:"
+msgstr "Ou começar `gdb` com:"
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "e.g.,"
+msgstr "por exemplo,"
+
+#. type: delimited block =
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "For a more detailed guide about debugging native images please refer to the xref:native-reference.adoc[Native Reference Guide]."
+msgstr "Para obter um guia mais detalhado sobre o debug de imagens nativas, consulte o link:native-reference.html[Guia de Referência Nativo]."
+
+#. type: Title ==
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Using Monitoring Options"
+msgstr "Utilizar as opções de monitoração"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"Monitoring options such as JDK flight recorder, jvmstat, heap dumps, and remote JMX (experimental in Mandrel 23)\n"
+"can be added to the native executable build. Simply supply a comma separated list of the monitoring options you wish to\n"
+"include at build time."
+msgstr "As opções de monitoramento, como JDK flight recorder, jvmstat, heap dumps e JMX remoto (experimental no Mandrel 23), podem ser adicionadas à construção do executável nativo. Basta fornecer uma lista separada por vírgulas das opções de monitoramento que você deseja incluir no momento da construção."
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Monitoring Option"
+msgstr "Opção de monitoração"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Description"
+msgstr "Descrição"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Availability As Of"
+msgstr "Disponibilidade a partir de"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "jfr"
+msgstr "jfr"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Include JDK Flight Recorder support"
+msgstr "Incluir suporte para o JDK Flight Recorder"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "GraalVM CE 21.3 Mandrel 21.3"
+msgstr "GraalVM CE 21.3 Mandril 21.3"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "jvmstat"
+msgstr "jvmstat"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Adds jvmstat support"
+msgstr "Adiciona suporte a jvmstat"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "GraalVM 22.3, GraalVM CE 17.0.7 Mandrel 22.3 Mandrel 23.0 (17.0.7)"
+msgstr "GraalVM 22.3, GraalVM CE 17.0.7 Mandrel 22.3 Mandrel 23.0 (17.0.7)"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "heapdump"
+msgstr "heapdump"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Adds support for generating heap dumps"
+msgstr "Adiciona suporte para gerar heap dumps"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "jmxclient"
+msgstr "jmxclient"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Adds support for connections to JMX servers."
+msgstr "Adiciona suporte para conexões a servidores JMX."
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "GraalVM for JDK 17/20 Mandrel 23.0"
+msgstr "GraalVM para JDK 17/20 Mandrel 23.0"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "jmxserver"
+msgstr "jmxserver"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Adds support for accepting connections from JMX clients."
+msgstr "Adiciona suporte para aceitar conexões de clientes JMX."
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "GraalVM for JDK 17/20 Mandrel 23.0 (17.0.7)"
+msgstr "GraalVM para JDK 17/20 Mandrel 23.0 (17.0.7)"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "all"
+msgstr "todos"
+
+#. type: Table
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Adds all monitoring options."
+msgstr "Adiciona todas as opções de monitoração."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "Please see the Quarkus Native Reference Guide for more detailed information on these monitoring options."
+msgstr "Consulte o Guia de Referência do Quarkus Native para obter informações mais detalhadas sobre estas opções de monitoração."
+
+#. type: Title ==
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "Configuring the Native Executable"
+msgstr "Configuração do executável nativo"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"There are a lot of different configuration options that can affect how the native executable is generated.\n"
+"These are provided in `application.properties` the same as any other config property."
+msgstr "Há várias opções de configuração diferentes que podem afetar a forma como o executável nativo é gerado. Elas são fornecidas em `application.properties` da mesma forma que qualquer outra propriedade de configuração."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "The properties are shown below:"
+msgstr "As propriedades são apresentadas abaixo:"
+
+#. type: Title ==
+#: _versions/3.2/guides/building-native-image.adoc
+#, no-wrap
+msgid "What's next?"
+msgstr "O que vem a seguir?"
+
+#: _versions/3.2/guides/building-native-image.adoc
+msgid ""
+"This guide covered the creation of a native (binary) executable for your application.\n"
+"It provides an application exhibiting a swift startup time and consuming less memory.\n"
+"However, there is much more."
+msgstr "Este guia abordou a criação de um executável nativo (binário) para a sua aplicação. Ele fornece uma aplicação que exibe um tempo de inicialização rápido e consome menos memória. No entanto, há muito mais."
+
+#. type: Plain text
+#: _versions/3.2/guides/building-native-image.adoc
+msgid "We recommend continuing the journey with the xref:deploying-to-kubernetes.adoc[deployment to Kubernetes and OpenShift]."
+msgstr "Recomendamos continuar a jornada com a  link:deploying-to-kubernetes.html[implantação no Kubernetes e no OpenShift]."

@@ -1,0 +1,627 @@
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2023-09-21 08:09+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. This guide is maintained in the main Quarkus repository
+#. and pull requests should be submitted there:
+#. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
+#. type: Title =
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "Using OpenID Connect (OIDC) and Keycloak to Centralize Authorization"
+msgstr "Uso do OpenID Connect (OIDC) e do Keycloak para centralizar a autorização"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "This guide demonstrates how your Quarkus application can authorize a bearer token access to protected resources using https://www.keycloak.org/docs/latest/authorization_services/index.html[Keycloak Authorization Services]."
+msgstr "Este guia demonstra como o aplicativo Quarkus pode autorizar o acesso de um token de portador a recursos protegidos usando o link:https://www.keycloak.org/docs/latest/authorization_services/index.html[Keycloak Authorization Services] ."
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"The `quarkus-keycloak-authorization` extension is based on `quarkus-oidc` and provides a policy enforcer that enforces access to protected resources based on permissions managed by Keycloak and currently can only be used with the Quarkus xref:security-openid-connect.adoc[OIDC service applications].\n"
+"It provides a flexible and dynamic authorization capability based on Resource-Based Access Control.\n"
+"In other words, instead of explicitly enforcing access based on some specific access control mechanism (e.g.: RBAC), you just check whether or not a request is allowed to access a resource based on its name, identifier or URI."
+msgstr "A extensão `quarkus-keycloak-authorization` é baseada em `quarkus-oidc` e fornece um aplicador de políticas que impõe o acesso a recursos protegidos com base em permissões gerenciadas pelo Keycloak e, atualmente, só pode ser usada com os xref:security-openid-connect.adoc[aplicativos de serviço] Quarkus xref:security-openid-connect.adoc[OIDC] . Ele fornece um recurso de autorização flexível e dinâmico com base no Controle de Acesso Baseado em Recursos. Em outras palavras, em vez de impor explicitamente o acesso com base em algum mecanismo específico de controle de acesso (por exemplo, RBAC), basta verificar se uma solicitação tem ou não permissão para acessar um recurso com base em seu nome, identificador ou URI."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "By externalizing authorization from your application, you are allowed to protect your applications using different access control mechanisms as well as avoid re-deploying your application every time your security requirements change, where Keycloak will be acting as a centralized authorization service from where your protected resources and their associated permissions are managed."
+msgstr "Ao externalizar a autorização do aplicativo, o senhor pode proteger seus aplicativos usando diferentes mecanismos de controle de acesso e evitar a reimplantação do aplicativo sempre que os requisitos de segurança forem alterados, já que o Keycloak atuará como um serviço de autorização centralizado a partir do qual os recursos protegidos e as permissões associadas são gerenciados."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "See the xref:security-openid-connect.adoc[Using OpenID Connect to Protect Service Applications] guide for more information about `Bearer Token` authentication mechanism. It is important to realize that it is the `Bearer Token` authentication mechanism which does the authentication and creates a security identity - while the `quarkus-keycloak-authorization` extension is responsible for applying a Keycloak Authorization Policy to this identity based on the current request path and other policy settings."
+msgstr "Consulte o guia xref:security-openid-connect.adoc[Using OpenID Connect to Protect Service Applications] para obter mais informações sobre o mecanismo de autenticação `Bearer Token` . É importante perceber que é o mecanismo de autenticação `Bearer Token` que faz a autenticação e cria uma identidade de segurança, enquanto a extensão `quarkus-keycloak-authorization` é responsável por aplicar uma política de autorização do Keycloak a essa identidade com base no caminho da solicitação atual e em outras configurações de política."
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"If you are already familiar with Keycloak, you’ll notice that the extension is basically another adapter implementation but specific for Quarkus applications.\n"
+"Otherwise, you can find more information in the Keycloak https://www.keycloak.org/docs/latest/authorization_services/index.html#_enforcer_overview[documentation]."
+msgstr "Se já estiver familiarizado com o Keycloak, o senhor perceberá que a extensão é basicamente outra implementação de adaptador, mas específica para aplicativos Quarkus. Caso contrário, o senhor pode encontrar mais informações na link:https://www.keycloak.org/docs/latest/authorization_services/index.html#_enforcer_overview[documentação] do Keycloak."
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, no-wrap
+msgid "Prerequisites"
+msgstr "Pré-requisitos"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "https://stedolan.github.io/jq/[jq tool]"
+msgstr "link:https://stedolan.github.io/jq/[ferramenta jq]"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "https://www.keycloak.org/docs/latest/server_installation/index.html[Keycloak]"
+msgstr "link:https://www.keycloak.org/docs/latest/server_installation/index.html[Capa de chave]"
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, no-wrap
+msgid "Architecture"
+msgstr "Arquitetura"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "In this example, we build a very simple microservice which offers two endpoints:"
+msgstr "Neste exemplo, criamos um microsserviço muito simples que oferece dois endpoints:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+msgid "`/api/users/me`"
+msgstr "`/api/users/me`"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+msgid "`/api/admin`"
+msgstr "`/api/admin`"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "These endpoints are protected and can only be accessed if a client is sending a bearer token along with the request, which must be valid (e.g.: signature, expiration and audience) and trusted by the microservice."
+msgstr "Esses endpoints são protegidos e só podem ser acessados se o cliente enviar um token de portador junto com a solicitação, que deve ser válido (por exemplo, assinatura, expiração e audiência) e confiável para o microsserviço."
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"The bearer token is issued by a Keycloak Server and represents the subject to which the token was issued for.\n"
+"For being an OAuth 2.0 Authorization Server, the token also references the client acting on behalf of the user."
+msgstr "O token do portador é emitido por um servidor Keycloak e representa o assunto para o qual o token foi emitido. Por ser um servidor de autorização OAuth 2.0, o token também faz referência ao cliente que age em nome do usuário."
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"The `/api/users/me` endpoint can be accessed by any user with a valid token.\n"
+"As a response, it returns a JSON document with details about the user where these details are obtained from the information carried on the token.\n"
+"This endpoint is protected with RBAC (Role-Based Access Control) and only users granted with the `user` role can access this endpoint."
+msgstr "O ponto de extremidade `/api/users/me` pode ser acessado por qualquer usuário com um token válido. Como resposta, ele retorna um documento JSON com detalhes sobre o usuário, sendo que esses detalhes são obtidos a partir das informações contidas no token. Esse endpoint é protegido por RBAC (Role-Based Access Control) e somente os usuários com a função `user` podem acessá-lo."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "The `/api/admin` endpoint is protected with RBAC (Role-Based Access Control) and only users granted with the `admin` role can access it."
+msgstr "O endpoint `/api/admin` é protegido com RBAC (Role-Based Access Control) e somente os usuários com a função `admin` podem acessá-lo."
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"This is a very simple example using RBAC policies to govern access to your resources.\n"
+"However, Keycloak supports other types of policies that you can use to perform even more fine-grained access control.\n"
+"By using this example, you'll see that your application is completely decoupled from your authorization policies with enforcement being purely based on the accessed resource."
+msgstr "Este é um exemplo muito simples de uso de políticas RBAC para controlar o acesso aos seus recursos. No entanto, o Keycloak oferece suporte a outros tipos de políticas que o senhor pode usar para realizar um controle de acesso ainda mais refinado. Ao usar esse exemplo, o senhor verá que o seu aplicativo está completamente desacoplado das políticas de autorização, sendo a aplicação puramente baseada no recurso acessado."
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, no-wrap
+msgid "Solution"
+msgstr "Solução"
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+msgid ""
+"We recommend that you follow the instructions in the next sections and create the application step by step.\n"
+"However, you can go right to the completed example."
+msgstr "Recomendamos que siga as instruções nas seções seguintes e crie a aplicação passo a passo. No entanto, você pode ir diretamente para o exemplo completo."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+msgid "Clone the Git repository: `git clone {quickstarts-clone-url}`, or download an {quickstarts-archive-url}[archive]."
+msgstr "Clone o repositório Git: `git clone {quickstarts-clone-url}`, ou baixe um {quickstarts-archive-url}[arquivo]."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "The solution is located in the `security-keycloak-authorization-quickstart` {quickstarts-tree-url}/security-keycloak-authorization-quickstart[directory]."
+msgstr "A solução está localizada em `security-keycloak-authorization-quickstart` {quickstarts-tree-url}/security-keycloak-authorization-quickstart[directory]."
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "Creating the Project"
+msgstr "Criação do projeto"
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+msgid ""
+"First, we need a new project.\n"
+"Create a new project with the following command:"
+msgstr "Primeiro, precisamos de um novo projeto. Crie um novo projeto com o seguinte comando:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "This command generates a project, importing the `keycloak-authorization` extension which is an implementation of a Keycloak Adapter for Quarkus applications and provides all the necessary capabilities to integrate with a Keycloak Server and perform bearer token authorization."
+msgstr "Esse comando gera um projeto, importando a extensão `keycloak-authorization` , que é uma implementação de um Keycloak Adapter para aplicativos Quarkus e fornece todos os recursos necessários para a integração com um Keycloak Server e a execução da autorização de token de portador."
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"If you already have your Quarkus project configured, you can add the `oidc` and `keycloak-authorization` extensions\n"
+"to your project by running the following command in your project base directory:"
+msgstr "Se já tiver o projeto Quarkus configurado, o senhor pode adicionar as extensões `oidc` e `keycloak-authorization` ao projeto executando o seguinte comando no diretório base do projeto:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+msgid "This will add the following to your build file:"
+msgstr "Isto irá adicionar o seguinte trecho no seu arquivo de build:"
+
+#. type: Block title
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, no-wrap
+msgid "pom.xml"
+msgstr "pom.xml"
+
+#. type: Block title
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, no-wrap
+msgid "build.gradle"
+msgstr "build.gradle"
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"Let's start by implementing the `/api/users/me` endpoint.\n"
+"As you can see from the source code below it is just a regular JAX-RS resource:"
+msgstr "Vamos começar implementando o endpoint `/api/users/me` . Como o senhor pode ver no código-fonte abaixo, ele é apenas um recurso JAX-RS comum:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "The source code for the `/api/admin` endpoint is also very simple:"
+msgstr "O código-fonte do endpoint `/api/admin` também é muito simples:"
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"Note that we did not define any annotation such as `@RolesAllowed` to explicitly enforce access to a resource.\n"
+"The extension will be responsible to map the URIs of the protected resources you have in Keycloak and evaluate the permissions accordingly, granting or denying access depending on the permissions that will be granted by Keycloak."
+msgstr "Observe que não definimos nenhuma anotação, como `@RolesAllowed` , para impor explicitamente o acesso a um recurso. A extensão será responsável por mapear os URIs dos recursos protegidos que o senhor tem no Keycloak e avaliar as permissões de acordo, concedendo ou negando acesso dependendo das permissões que serão concedidas pelo Keycloak."
+
+#. type: Title ===
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "Configuring the application"
+msgstr "Configuração do aplicativo"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "The OpenID Connect extension allows you to define the adapter configuration using the `application.properties` file which should be located at the `src/main/resources` directory."
+msgstr "A extensão OpenID Connect permite que o senhor defina a configuração do adaptador usando o arquivo `application.properties` , que deve estar localizado no diretório `src/main/resources` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "Adding a `%prod.` profile prefix to `quarkus.oidc.auth-server-url` ensures that `Dev Services for Keycloak` will launch a container for you when the application is run in a dev mode. See <<keycloak-dev-mode, Running the Application in Dev mode>> section below for more information."
+msgstr "Adicionar um prefixo de perfil `%prod.` a `quarkus.oidc.auth-server-url` garante que `Dev Services for Keycloak` iniciará um contêiner para o senhor quando o aplicativo for executado no modo de desenvolvimento. Consulte a seção xref:keycloak-dev-mode[Executando o aplicativo no modo de] desenvolvimento abaixo para obter mais informações."
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "By default, applications using the `quarkus-oidc` extension are marked as a `service` type application (see `quarkus.oidc.application-type`). This extension also supports only  `web-app` type applications but only if the access token returned as part of the authorization code grant response is marked as a source of roles: `quarkus.oidc.roles.source=accesstoken` (`web-app` type applications check ID token roles by default)."
+msgstr "Por padrão, os aplicativos que usam a extensão `quarkus-oidc` são marcados como um aplicativo do tipo `service` (consulte `quarkus.oidc.application-type` ). Essa extensão também é compatível apenas com aplicativos do tipo `web-app` , mas somente se o token de acesso retornado como parte da resposta de concessão do código de autorização estiver marcado como uma fonte de funções: `quarkus.oidc.roles.source=accesstoken` (os aplicativos do tipo `web-app` verificam as funções do token de ID por padrão)."
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "Starting and Configuring the Keycloak Server"
+msgstr "Início e configuração do servidor Keycloak"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "Do not start the Keycloak server when you run the application in a dev mode - `Dev Services for Keycloak` will launch a container. See <<keycloak-dev-mode, Running the Application in Dev mode>> section below for more information."
+msgstr "Não inicie o servidor Keycloak quando executar o aplicativo no modo de desenvolvimento - o site `Dev Services for Keycloak` iniciará um contêiner. Consulte a seção xref:keycloak-dev-mode[Executando o aplicativo no modo de] desenvolvimento abaixo para obter mais informações."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "To start a Keycloak Server you can use Docker and just run the following command:"
+msgstr "Para iniciar um servidor Keycloak, o senhor pode usar o Docker e executar o seguinte comando:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "You should be able to access your Keycloak Server at http://localhost:8180/auth[localhost:8180/auth] or https://localhost:8543/auth[localhost:8543/auth]."
+msgstr "O senhor deve conseguir acessar o servidor Keycloak em link:http://localhost:8180/auth[localhost:8180/auth] ou link:https://localhost:8543/auth[localhost:8543/auth] ."
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"Log in as the `admin` user to access the Keycloak Administration Console.\n"
+"Username should be `admin` and password `admin`."
+msgstr "Faça login como o usuário `admin` para acessar o Console de administração do Keycloak. O nome de usuário deve ser `admin` e a senha `admin` ."
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"Import the {quickstarts-tree-url}/security-keycloak-authorization-quickstart/config/quarkus-realm.json[realm configuration file] to create a new realm.\n"
+"For more details, see the Keycloak documentation about how to https://www.keycloak.org/docs/latest/server_admin/index.html#_create-realm[create a new realm]."
+msgstr "Importe o {quickstarts-tree-url}/security-keycloak-authorization-quickstart/config/quarkus-realm.json [arquivo de configuração do reino] para criar um novo reino. Para obter mais detalhes, consulte a documentação do Keycloak sobre como link:https://www.keycloak.org/docs/latest/server_admin/index.html#_create-realm[criar um novo realm] ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "After importing the realm you can see the resource permissions:"
+msgstr "Depois de importar o realm, o senhor pode ver as permissões de recursos:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "It explains why the endpoint has no `@RolesAllowed` annotations - the resource access permissions are set directly in Keycloak."
+msgstr "Isso explica por que o endpoint não tem anotações em `@RolesAllowed` - as permissões de acesso ao recurso são definidas diretamente no Keycloak."
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "Running the Application in Dev mode"
+msgstr "Executar o aplicativo no modo de desenvolvimento"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "To run the application in dev mode, use:"
+msgstr "Para executar o aplicativo no modo de desenvolvimento, use:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "xref:security-openid-connect-dev-services.adoc[Dev Services for Keycloak] will launch a Keycloak container and import a `quarkus-realm.json`."
+msgstr "O Dev xref:security-openid-connect-dev-services.adoc[Services for Keycloak] iniciará um contêiner do Keycloak e importará um `quarkus-realm.json` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "Open a xref:dev-ui.adoc[Dev UI] available at http://localhost:8080/q/dev[/q/dev] and click on a `Provider: Keycloak` link in an `OpenID Connect` `Dev UI` card."
+msgstr "Abra uma Dev xref:dev-ui.adoc[UI] disponível em link:http://localhost:8080/q/dev[/q/dev] e clique em um link `Provider: Keycloak` em um cartão `OpenID Connect` `Dev UI` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "You will be asked to login into a `Single Page Application` provided by `OpenID Connect Dev UI`:"
+msgstr "O senhor será solicitado a fazer login em um site `Single Page Application` fornecido por `OpenID Connect Dev UI` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "Login as `alice` (password: `alice`) who only has a `User Permission` to access the `/api/users/me` resource"
+msgstr "Faça login como `alice` (senha: `alice` ), que só tem um `User Permission` para acessar o recurso `/api/users/me` "
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "accessing `/api/admin` will return `403`"
+msgstr "O acesso a `/api/admin` retornará `403`"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "accessing `/api/users/me` will return `200`"
+msgstr "O acesso a `/api/users/me` retornará `200`"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "Logout and login as `admin` (password: `admin`) who has both `Admin Permission` to access the `/api/admin` resource and `User Permission` to access the `/api/users/me` resource"
+msgstr "Faça logout e login como `admin` (senha: `admin` ), que possui `Admin Permission` para acessar o recurso `/api/admin` e `User Permission` para acessar o recurso `/api/users/me` "
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "accessing `/api/admin` will return `200`"
+msgstr "O acesso a `/api/admin` retornará `200`"
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "Running the Application in JVM mode"
+msgstr "Execução do aplicativo no modo JVM"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "When you're done playing with the `dev` mode\" you can run it as a standard Java application."
+msgstr "Quando terminar de brincar com o modo `dev` \", o senhor poderá executá-lo como um aplicativo Java padrão."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "First compile it:"
+msgstr "Primeiro, compile-o:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+msgid "Then run it:"
+msgstr "Em seguida, execute:"
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "Running the Application in Native Mode"
+msgstr "Execução do aplicativo no modo nativo"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "This same demo can be compiled into native code: no modifications required."
+msgstr "Essa mesma demonstração pode ser compilada em código nativo: não são necessárias modificações."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "This implies that you no longer need to install a JVM on your production environment, as the runtime technology is included in the produced binary, and optimized to run with minimal resource overhead."
+msgstr "Isso significa que o senhor não precisa mais instalar uma JVM no seu ambiente de produção, pois a tecnologia de tempo de execução está incluída no binário produzido e é otimizada para ser executada com o mínimo de sobrecarga de recursos."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "Compilation will take a bit longer, so this step is disabled by default; let's build again by enabling the `native` profile:"
+msgstr "A compilação será um pouco mais demorada, portanto, essa etapa é desativada por padrão; vamos compilar novamente ativando o perfil `native` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "After getting a cup of coffee, you'll be able to run this binary directly:"
+msgstr "Depois de tomar uma xícara de café, o senhor poderá executar esse binário diretamente:"
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "Testing the Application"
+msgstr "Testar o aplicativo"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "See <<keycloak-dev-mode, Running the Application in Dev mode>> section above about testing your application in a dev mode."
+msgstr "Consulte a seção xref:keycloak-dev-mode[Executando o aplicativo no modo] de desenvolvimento acima sobre como testar o aplicativo em um modo de desenvolvimento."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "You can test the application launched in JVM or Native modes with `curl`."
+msgstr "O senhor pode testar o aplicativo iniciado nos modos JVM ou Nativo com `curl` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "The application is using bearer token authorization and the first thing to do is obtain an access token from the Keycloak Server in order to access the application resources:"
+msgstr "O aplicativo está usando a autorização de token de portador e a primeira coisa a fazer é obter um token de acesso do Keycloak Server para acessar os recursos do aplicativo:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "The example above obtains an access token for user `alice`."
+msgstr "O exemplo acima obtém um token de acesso para o usuário `alice` ."
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"Any user is allowed to access the\n"
+"`http://localhost:8080/api/users/me` endpoint\n"
+"which basically returns a JSON payload with details about the user."
+msgstr "Qualquer usuário tem permissão para acessar o `http://localhost:8080/api/users/me` que basicamente retorna uma carga útil JSON com detalhes sobre o usuário."
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"The `http://localhost:8080/api/admin` endpoint can only be accessed by users with the `admin` role.\n"
+"If you try to access this endpoint with the previously issued access token, you should get a `403` response from the server."
+msgstr "O ponto de extremidade `http://localhost:8080/api/admin` só pode ser acessado por usuários com a função `admin` . Se o senhor tentar acessar esse endpoint com o token de acesso emitido anteriormente, deverá receber uma resposta `403` do servidor."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "In order to access the admin endpoint you should obtain a token for the `admin` user:"
+msgstr "Para acessar o endpoint de administração, o senhor deve obter um token para o usuário `admin` :"
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "Checking Permissions Programmatically"
+msgstr "Verificação de permissões de forma programática"
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"In some cases, you may want to programmatically check whether or not a request is granted to access a protected resource. By\n"
+"injecting a `SecurityIdentity` instance in your beans, you are allowed to check permissions as follows:"
+msgstr "Em alguns casos, o senhor pode querer verificar programaticamente se uma solicitação tem ou não permissão para acessar um recurso protegido. Ao injetar uma instância de `SecurityIdentity` em seus beans, o senhor pode verificar as permissões da seguinte forma:"
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "Injecting the Authorization Client"
+msgstr "Injetando o cliente de autorização"
+
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid ""
+"In some cases, you may want to use the https://www.keycloak.org/docs/latest/authorization_services/#_service_client_api[Keycloak Authorization Client Java API] to perform\n"
+"specific operations like managing resources and obtaining permissions directly from Keycloak. For that, you can inject a\n"
+"`AuthzClient` instance into your beans as follows:"
+msgstr "Em alguns casos, o senhor pode querer usar a link:https://www.keycloak.org/docs/latest/authorization_services/#_service_client_api[API Java do Keycloak Authorization Client] para executar operações específicas, como gerenciar recursos e obter permissões diretamente do Keycloak. Para isso, o senhor pode injetar uma instância do `AuthzClient` em seus beans da seguinte forma:"
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "Mapping Protected Resources"
+msgstr "Mapeamento de recursos protegidos"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "By default, the extension is going to fetch resources on-demand from Keycloak where their `URI` are used to map the resources in your application that should be protected."
+msgstr "Por padrão, a extensão vai buscar recursos sob demanda no Keycloak, onde o endereço `URI` é usado para mapear os recursos do seu aplicativo que devem ser protegidos."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "If you want to disable this behavior and fetch resources during startup, you can use the following configuration:"
+msgstr "Se quiser desativar esse comportamento e buscar recursos durante a inicialização, o senhor pode usar a seguinte configuração:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "Note that, depending on how many resources you have in Keycloak the time taken to fetch them may impact your application startup time."
+msgstr "Observe que, dependendo de quantos recursos o senhor tem no Keycloak, o tempo necessário para buscá-los pode afetar o tempo de inicialização do aplicativo."
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "More About Configuring Protected Resources"
+msgstr "Mais informações sobre a configuração de recursos protegidos"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "In the default configuration, Keycloak is responsible for managing the roles and deciding who can access which routes."
+msgstr "Na configuração padrão, o Keycloak é responsável por gerenciar as funções e decidir quem pode acessar quais rotas."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "To configure the protected routes using the `@RolesAllowed` annotation or the `application.properties` file, check the xref:security-openid-connect.adoc[Using OpenID Connect Adapter to Protect JAX-RS Applications] and xref:security-authorization.adoc[Security Authorization] guides. For more details, check the xref:security.adoc[Security guide]."
+msgstr "Para configurar as rotas protegidas usando a anotação `@RolesAllowed` ou o arquivo `application.properties` , consulte os guias xref:security-openid-connect.adoc[Using OpenID Connect Adapter to Protect JAX-RS Applications] e xref:security-authorization.adoc[Security Authorization] . Para obter mais detalhes, consulte o xref:security.adoc[guia Segurança] ."
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "Access to Public Resources"
+msgstr "Acesso a recursos públicos"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "If you'd like to access a public resource without `quarkus-keycloak-authorization` trying to apply its policies to it then you need to create a `permit` HTTP Policy configuration in `application.properties` as documented in the xref:security-authorization.adoc[Security Authorization] guide."
+msgstr "Se quiser acessar um recurso público sem que o `quarkus-keycloak-authorization` tente aplicar suas políticas a ele, o senhor precisará criar uma configuração de política HTTP `permit` em `application.properties` , conforme documentado no guia xref:security-authorization.adoc[Security Authorization] ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "Disabling a policy check using a Keycloak Authorization Policy such as:"
+msgstr "Desativar uma verificação de política usando uma política de autorização do Keycloak, como:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "is no longer required."
+msgstr "não é mais necessário."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "If you'd like to block an access to the public resource to anonymous users then you can create an enforcing Keycloak Authorization Policy:"
+msgstr "Se quiser bloquear o acesso ao recurso público para usuários anônimos, o senhor pode criar uma política de autorização do Keycloak:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "Note only the default tenant configuration applies when controlling an anonymous access to the public resource is required."
+msgstr "Observe que somente a configuração padrão do locatário se aplica quando é necessário controlar o acesso anônimo ao recurso público."
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy, no-wrap
+msgid "Multi-Tenancy"
+msgstr "Multitenancy"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "It is possible to configure multiple policy enforcer configurations, one per each tenant, similarly to how it can be done for xref:security-openid-connect-multitenancy.adoc[Multi-Tenant OpenID Connect Service Applications]."
+msgstr "É possível configurar várias configurações do policy enforcer, uma para cada locatário, de modo semelhante ao que pode ser feito para os xref:security-openid-connect-multitenancy.adoc[aplicativos de serviço OpenID Connect para vários loc] atários."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "For example:"
+msgstr "Por exemplo:"
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, no-wrap
+msgid "Configuration Reference"
+msgstr "Referência de configuração"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "The configuration is based on the official https://www.keycloak.org/docs/latest/authorization_services/index.html#_enforcer_filter[Keycloak Policy Enforcer Configuration]. If you are looking for more details about the different configuration options, please take a look at this documentation,"
+msgstr "A configuração é baseada na link:https://www.keycloak.org/docs/latest/authorization_services/index.html#_enforcer_filter[configuração] oficial do link:https://www.keycloak.org/docs/latest/authorization_services/index.html#_enforcer_filter[Keycloak Policy Enforcer] . Se quiser obter mais detalhes sobre as diferentes opções de configuração, consulte esta documentação,"
+
+#. type: Title ==
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, no-wrap
+msgid "References"
+msgstr "Referências"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "https://www.keycloak.org/documentation.html[Keycloak Documentation]"
+msgstr "link:https://www.keycloak.org/documentation.html[Documentação do Keycloak]"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "https://www.keycloak.org/docs/latest/authorization_services/index.html[Keycloak Authorization Services Documentation]"
+msgstr "link:https://www.keycloak.org/docs/latest/authorization_services/index.html[Documentação dos serviços de autorização do Keycloak]"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "https://openid.net/connect/[OpenID Connect]"
+msgstr "link:https://openid.net/connect/[OpenID Connect]"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "https://tools.ietf.org/html/rfc7519[JSON Web Token]"
+msgstr "link:https://tools.ietf.org/html/rfc7519[Token da Web JSON]"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-keycloak-authorization.adoc
+#, fuzzy
+msgid "xref:security.adoc[Quarkus Security]"
+msgstr "xref:security.adoc[Segurança Quarkus]"

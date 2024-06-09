@@ -1,0 +1,795 @@
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2023-09-21 08:09+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. This guide is maintained in the main Quarkus repository
+#. and pull requests should be submitted there:
+#. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
+#. type: Title =
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Using OpenID Connect (OIDC) and OAuth2 Client and Filters to manage access tokens"
+msgstr "Usar o OpenID Connect (OIDC) e o cliente e os filtros OAuth2 para gerenciar tokens de acesso"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "This guide explains how to use:"
+msgstr "Este guia explica como usar:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`quarkus-oidc-client`, `quarkus-oidc-client-reactive-filter` and `quarkus-oidc-client-filter` extensions to acquire and refresh access tokens from OpenID Connect and OAuth 2.0 compliant Authorization Servers such as https://www.keycloak.org[Keycloak]"
+msgstr "`quarkus-oidc-client` O OpenID Connect e os servidores de autorização compatíveis com o OAuth 2.0, como o link:https://www.keycloak.org[Keycloak] , têm extensões `quarkus-oidc-client-reactive-filter` e `quarkus-oidc-client-filter` para adquirir e atualizar tokens de acesso"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`quarkus-oidc-token-propagation` and `quarkus-oidc-token-propagation-reactive` extensions to propagate the current `Bearer` or `Authorization Code Flow` access tokens"
+msgstr "`quarkus-oidc-token-propagation` e as extensões `quarkus-oidc-token-propagation-reactive` para propagar os tokens de acesso `Bearer` ou `Authorization Code Flow` atuais"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "The access tokens managed by these extensions can be used as HTTP Authorization Bearer tokens to access the remote services."
+msgstr "Os tokens de acesso gerenciados por essas extensões podem ser usados como tokens de portador de autorização HTTP para acessar os serviços remotos."
+
+#. type: Title ==
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "OidcClient"
+msgstr "OidcClient"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Add the following dependency:"
+msgstr "Adicione a seguinte dependência:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`quarkus-oidc-client` extension provides a reactive `io.quarkus.oidc.client.OidcClient` which can be used to acquire and refresh tokens using SmallRye Mutiny `Uni` and `Vert.x WebClient`."
+msgstr "`quarkus-oidc-client` A extensão fornece um `io.quarkus.oidc.client.OidcClient` reativo que pode ser usado para adquirir e atualizar tokens usando SmallRye Mutiny `Uni` e `Vert.x WebClient` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`OidcClient` is initialized at the build time with the IDP token endpoint URL which can be auto-discovered or manually configured and uses this endpoint to acquire access tokens using the token grants such as `client_credentials` or `password` and refresh the tokens using a `refresh_token` grant."
+msgstr "`OidcClient` é inicializado no momento da compilação com o URL do ponto de extremidade do token do IDP, que pode ser descoberto automaticamente ou configurado manualmente, e usa esse ponto de extremidade para adquirir tokens de acesso usando as concessões de token, como `client_credentials` ou `password` , e atualizar os tokens usando uma concessão `refresh_token` ."
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Token Endpoint Configuration"
+msgstr "Configuração de ponto de extremidade de token"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "By default the token endpoint address is discovered by adding a `/.well-known/openid-configuration` path to the configured `quarkus.oidc-client.auth-server-url`."
+msgstr "Por padrão, o endereço do endpoint do token é descoberto adicionando um caminho `/.well-known/openid-configuration` ao `quarkus.oidc-client.auth-server-url` configurado."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "For example, given this Keycloak URL:"
+msgstr "Por exemplo, dado este URL do Keycloak:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`OidcClient` will discover that the token endpoint URL is `http://localhost:8180/auth/realms/quarkus/protocol/openid-connect/tokens`."
+msgstr "`OidcClient` descobrirá que o URL do ponto de extremidade do token é `http://localhost:8180/auth/realms/quarkus/protocol/openid-connect/tokens` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Alternatively, if the discovery endpoint is not available or you would like to save on the discovery endpoint roundtrip, you can disable the discovery and configure the token endpoint address with a relative path value, for example:"
+msgstr "Como alternativa, se o endpoint de descoberta não estiver disponível ou se o senhor quiser economizar na viagem de ida e volta do endpoint de descoberta, poderá desativar a descoberta e configurar o endereço do endpoint do token com um valor de caminho relativo, por exemplo:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "A more compact way to configure the token endpoint URL without the discovery is to set `quarkus.oidc-client.token-path` to an absolute URL:"
+msgstr "Uma maneira mais compacta de configurar o URL do endpoint do token sem a descoberta é definir `quarkus.oidc-client.token-path` como um URL absoluto:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Setting 'quarkus.oidc-client.auth-server-url' and 'quarkus.oidc-client.discovery-enabled' is not required in this case."
+msgstr "A configuração de 'quarkus.oidc-client.auth-server-url' e 'quarkus.oidc-client.discovery-enabled' não é necessária nesse caso."
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Supported Token Grants"
+msgstr "Subsídios de token com suporte"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "The main token grants which `OidcClient` can use to acquire the tokens are the `client_credentials` (default) and `password` grants."
+msgstr "As principais concessões de token que o site `OidcClient` pode usar para adquirir os tokens são as concessões `client_credentials` (padrão) e `password` ."
+
+#. type: Title ====
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Client Credentials Grant"
+msgstr "Concessão de credenciais de clientes"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Here is how `OidcClient` can be configured to use the `client_credentials` grant:"
+msgstr "Veja como o site `OidcClient` pode ser configurado para usar a concessão `client_credentials` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "The `client_credentials` grant allows to set extra parameters to the token request via `quarkus.oidc-client.grant-options.client.<param-name>=<value>`. Here is how to set the intended token recipient via the `audience` parameter:"
+msgstr "A concessão `client_credentials` permite definir parâmetros extras para a solicitação de token via `quarkus.oidc-client.grant-options.client.<param-name>=<value>` . Veja como definir o destinatário do token pretendido por meio do parâmetro `audience` :"
+
+#. type: Title ====
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Password Grant"
+msgstr "Concessão de senha"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Here is how `OidcClient` can be configured to use the `password` grant:"
+msgstr "Veja como o site `OidcClient` pode ser configurado para usar a concessão `password` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "It can be further customized using a `quarkus.oidc-client.grant-options.password` configuration prefix, similarly to how the client credentials grant can be customized."
+msgstr "Ele pode ser personalizado ainda mais usando um prefixo de configuração `quarkus.oidc-client.grant-options.password` , da mesma forma que a concessão de credenciais do cliente pode ser personalizada."
+
+#. type: Title ====
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Other Grants"
+msgstr "Outros subsídios"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`OidcClient` can also help with acquiring the tokens using the grants which require some extra input parameters which can not be captured in the configuration. These grants are `refresh token` (with the external refresh token), `token exchange` and `authorization code`."
+msgstr "`OidcClient` também pode ajudar a adquirir os tokens usando as concessões que exigem alguns parâmetros de entrada adicionais que não podem ser capturados na configuração. Essas concessões são `refresh token` (com o token de atualização externa), `token exchange` e `authorization code` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Using the `refresh_token` grant which uses an out of band refresh token to acquire a new set of tokens will be required if the existing refresh token has been posted to the current Quarkus endpoint for it to acquire the access token. In this case `OidcClient` needs to be configured as follows:"
+msgstr "O uso da concessão `refresh_token` , que usa um token de atualização fora da banda para adquirir um novo conjunto de tokens, será necessário se o token de atualização existente tiver sido postado no endpoint atual do Quarkus para que ele adquira o token de acesso. Nesse caso, o site `OidcClient` precisa ser configurado da seguinte forma:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "and then you can use `OidcClient.refreshTokens` method with a provided refresh token to get the access token."
+msgstr "e, em seguida, o senhor pode usar o método `OidcClient.refreshTokens` com um token de atualização fornecido para obter o token de acesso."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Using the `token exchange` grant may be required if you are building a complex microservices application and would like to avoid the same `Bearer` token be propagated to and used by more than one service. Please see <<token-propagation,Token Propagation in MicroProfile RestClient client filter>> for more details."
+msgstr "O uso da concessão `token exchange` pode ser necessário se o senhor estiver criando um aplicativo de microsserviços complexo e quiser evitar que o mesmo token `Bearer` seja propagado e usado por mais de um serviço. Para obter mais detalhes, consulte xref:token-propagation[Propagação de token no filtro de cliente MicroProfile RestClient] ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Using `OidcClient` to support the `authorization code` grant might be required if for some reasons you can not use the xref:security-openid-connect-web-authentication.adoc[Quarkus OpenID Connect extension] to support Authorization Code Flow. If there is a very good reason for you to implement Authorization Code Flow then you can configure `OidcClient` as follows:"
+msgstr "O uso do `OidcClient` para dar suporte à concessão `authorization code` pode ser necessário se, por algum motivo, o senhor não puder usar a xref:security-openid-connect-web-authentication.adoc[extensão Quarkus OpenID Connect] para dar suporte ao fluxo do código de autorização. Se houver um bom motivo para implementar o Authorization Code Flow, o senhor poderá configurar `OidcClient` da seguinte forma:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "and then you can use `OidcClient.accessTokens` method accepting a Map of extra properties and pass the current `code` and `redirect_uri` parameters to exchange the authorization code for the tokens."
+msgstr "E, em seguida, o senhor pode usar o método `OidcClient.accessTokens` que aceita um mapa de propriedades adicionais e passa os parâmetros `code` e `redirect_uri` atuais para trocar o código de autorização pelos tokens."
+
+#. type: Title ====
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Grant scopes"
+msgstr "Escopos de concessão"
+
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid ""
+"You may need to request that a specific set of scopes is associated with an issued access token.\n"
+"Use a dedicated `quarkus.oidc-client.scopes` list property, for example: `quarkus.oidc-client.scopes=email,phone`"
+msgstr "Talvez o senhor precise solicitar que um conjunto específico de escopos seja associado a um token de acesso emitido. Por exemplo, use uma propriedade dedicada da lista `quarkus.oidc-client.scopes` : `quarkus.oidc-client.scopes=email,phone`"
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Use OidcClient directly"
+msgstr "Usar o OidcClient diretamente"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "One can use `OidcClient` directly as follows:"
+msgstr "É possível usar o site `OidcClient` diretamente da seguinte forma:"
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Inject Tokens"
+msgstr "Injetar tokens"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "You can inject `Tokens` which uses `OidcClient` internally. `Tokens` can be used to acquire the access tokens and refresh them if necessary:"
+msgstr "O senhor pode injetar `Tokens` que usa `OidcClient` internamente. `Tokens` pode ser usado para adquirir os tokens de acesso e atualizá-los, se necessário:"
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Use OidcClients"
+msgstr "Usar OidcClients"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`io.quarkus.oidc.client.OidcClients` is a container of ``OidcClient``s - it includes a default `OidcClient` and named clients which can be configured like this:"
+msgstr "`io.quarkus.oidc.client.OidcClients` é um contêiner de `OidcClient` s - inclui um `OidcClient` padrão e clientes nomeados que podem ser configurados desta forma:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Note in this case the default client is disabled with a `client-enabled=false` property. The `jwt-secret` client can be accessed like this:"
+msgstr "Observe que, nesse caso, o cliente padrão está desativado com uma propriedade `client-enabled=false` . O cliente `jwt-secret` pode ser acessado da seguinte forma:"
+
+#. type: delimited block =
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "If you also use xref:security-openid-connect-multitenancy.adoc[OIDC multitenancy] and each OIDC tenant has its own associated `OidcClient` then you can use a Vert.x `RoutingContext` `tenantId` attribute, for example:"
+msgstr "Se o senhor também usar o OIDC xref:security-openid-connect-multitenancy.adoc[multitenancy] e cada tenant do OIDC tiver seu próprio `OidcClient` associado, poderá usar um atributo Vert.x `RoutingContext` `tenantId` , por exemplo:"
+
+#. type: delimited block =
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "If you need you can also create new `OidcClient` programmatically like this:"
+msgstr "Se necessário, o senhor também pode criar um novo `OidcClient` programaticamente, da seguinte forma:"
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Inject named OidcClient and Tokens"
+msgstr "Injetar o nome OidcClient e os tokens"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "In case of multiple configured ``OidcClient``s you can specify the `OidcClient` injection target by the extra qualifier `@NamedOidcClient` instead of working with `OidcClients`:"
+msgstr "No caso de vários `OidcClient` s configurados, o senhor pode especificar o alvo de injeção `OidcClient` com o qualificador extra `@NamedOidcClient` em vez de trabalhar com `OidcClients` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "The same qualifier can be used to specify the `OidcClient` used for a `Tokens` injection:"
+msgstr "O mesmo qualificador pode ser usado para especificar o `OidcClient` usado para uma injeção `Tokens` :"
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Use OidcClient in RestClient Reactive ClientFilter"
+msgstr "Usar o OidcClient no RestClient Reactive ClientFilter"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Add the following Maven Dependency:"
+msgstr "Adicione a seguinte dependência Maven:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Note it will also bring `io.quarkus:quarkus-oidc-client`."
+msgstr "Observe que ele também trará `io.quarkus:quarkus-oidc-client` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`quarkus-oidc-client-reactive-filter` extension provides `io.quarkus.oidc.client.filter.OidcClientRequestReactiveFilter`."
+msgstr "`quarkus-oidc-client-reactive-filter` A extensão fornece `io.quarkus.oidc.client.filter.OidcClientRequestReactiveFilter` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "It works similarly to the way `OidcClientRequestFilter` does (see <<oidc-client-filter, Use OidcClient in MicroProfile RestClient client filter>>) - it uses `OidcClient` to acquire the access token, refresh it if needed, and set it as an HTTP `Authorization` `Bearer` scheme value. The difference is that it works with xref:rest-client-reactive.adoc[Reactive RestClient] and implements a non-blocking client filter which does not block the current IO thread when acquiring or refreshing the tokens."
+msgstr "Ele funciona de forma semelhante ao `OidcClientRequestFilter` (consulte xref:oidc-client-filter[Use OidcClient in MicroProfile RestClient client filter] ) - ele usa o `OidcClient` para adquirir o token de acesso, atualizá-lo, se necessário, e defini-lo como um valor de esquema HTTP `Authorization` `Bearer` . A diferença é que ele funciona com o xref:rest-client-reactive.adoc[Reactive RestClient] e implementa um filtro de cliente sem bloqueio que não bloqueia o thread de E/S atual ao adquirir ou atualizar os tokens."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`OidcClientRequestReactiveFilter` delays an initial token acquisition until it is executed to avoid blocking an IO thread and it currently can only be registered with `org.eclipse.microprofile.rest.client.annotation.RegisterProvider` annotation:"
+msgstr "`OidcClientRequestReactiveFilter` atrasa a aquisição de um token inicial até que ele seja executado para evitar o bloqueio de um thread de IO e, atualmente, só pode ser registrado com a anotação `org.eclipse.microprofile.rest.client.annotation.RegisterProvider` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`OidcClientRequestReactiveFilter` uses a default `OidcClient` by default. A named `OidcClient` can be selected with a `quarkus.oidc-client-reactive-filter.client-name` configuration property."
+msgstr "`OidcClientRequestReactiveFilter` usa um `OidcClient` padrão por padrão. Um `OidcClient` nomeado pode ser selecionado com uma propriedade de configuração `quarkus.oidc-client-reactive-filter.client-name` ."
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Use OidcClient in RestClient ClientFilter"
+msgstr "Usar o OidcClient no RestClient ClientFilter"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`quarkus-oidc-client-filter` extension provides `io.quarkus.oidc.client.filter.OidcClientRequestFilter` JAX-RS ClientRequestFilter which uses `OidcClient` to acquire the access token, refresh it if needed, and set it as an HTTP `Authorization` `Bearer` scheme value."
+msgstr "`quarkus-oidc-client-filter` A extensão fornece `io.quarkus.oidc.client.filter.OidcClientRequestFilter` JAX-RS ClientRequestFilter que usa `OidcClient` para adquirir o token de acesso, atualizá-lo, se necessário, e defini-lo como um valor de esquema HTTP `Authorization` `Bearer` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "By default, this filter will get `OidcClient` to acquire the first pair of access and refresh tokens at its initialization time. If the access tokens are short-lived and refresh tokens are not available then the token acquisition should be delayed with `quarkus.oidc-client.early-tokens-acquisition=false`."
+msgstr "Por padrão, esse filtro receberá `OidcClient` para adquirir o primeiro par de tokens de acesso e atualização no momento da inicialização. Se os tokens de acesso forem de curta duração e os tokens de atualização não estiverem disponíveis, a aquisição do token deverá ser adiada com `quarkus.oidc-client.early-tokens-acquisition=false` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "You can selectively register `OidcClientRequestFilter` by using either `io.quarkus.oidc.client.filter.OidcClientFilter` or `org.eclipse.microprofile.rest.client.annotation.RegisterProvider` annotations:"
+msgstr "O senhor pode registrar seletivamente `OidcClientRequestFilter` usando as anotações `io.quarkus.oidc.client.filter.OidcClientFilter` ou `org.eclipse.microprofile.rest.client.annotation.RegisterProvider` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "or"
+msgstr "ou"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Alternatively, `OidcClientRequestFilter` can be registered automatically with all MP Rest or JAX-RS clients if `quarkus.oidc-client-filter.register-filter=true` property is set."
+msgstr "Como alternativa, `OidcClientRequestFilter` pode ser registrado automaticamente com todos os clientes MP Rest ou JAX-RS se a propriedade `quarkus.oidc-client-filter.register-filter=true` estiver definida."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`OidcClientRequestFilter` uses a default `OidcClient` by default. A named `OidcClient` can be selected with a `quarkus.oidc-client-filter.client-name` configuration property."
+msgstr "`OidcClientRequestFilter` usa um `OidcClient` padrão por padrão. Um `OidcClient` nomeado pode ser selecionado com uma propriedade de configuração `quarkus.oidc-client-filter.client-name` ."
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Use Custom RestClient ClientFilter"
+msgstr "Usar o RestClient ClientFilter personalizado"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "If you prefer you can use your own custom filter and inject `Tokens`:"
+msgstr "Se preferir, o senhor pode usar seu próprio filtro personalizado e injetar `Tokens` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "The `Tokens` producer will acquire and refresh the tokens, and the custom filter will decide how and when to use the token."
+msgstr "O produtor do `Tokens` adquirirá e atualizará os tokens, e o filtro personalizado decidirá como e quando usar o token."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "You can also inject named `Tokens`, see <<named-oidc-clients,Inject named OidcClient and Tokens>>"
+msgstr "O senhor também pode injetar o nome `Tokens` , consulte xref:named-oidc-clients[Injetar o nome OidcClient e Tokens]"
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Refreshing Access Tokens"
+msgstr "Atualização de tokens de acesso"
+
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid ""
+"`OidcClientRequestReactiveFilter`, `OidcClientRequestFilter` and `Tokens` producers will refresh the current expired access token if the refresh token is available.\n"
+"Additionally, `quarkus.oidc-client.refresh-token-time-skew` property can be used for a preemptive access token refreshment to avoid sending nearly expired access tokens which may cause HTTP 401 errors. For example if this property is set to `3S` and the access token will expire in less than 3 seconds then this token will be auto-refreshed."
+msgstr "`OidcClientRequestReactiveFilter` Os produtores `OidcClientRequestFilter` e `Tokens` atualizarão o token de acesso expirado atual se o token de atualização estiver disponível. Além disso, a propriedade `quarkus.oidc-client.refresh-token-time-skew` pode ser usada para uma atualização preventiva do token de acesso para evitar o envio de tokens de acesso quase expirados, o que pode causar erros HTTP 401. Por exemplo, se essa propriedade for definida como `3S` e o token de acesso expirar em menos de 3 segundos, esse token será atualizado automaticamente."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "If the access token needs to be refreshed but no refresh token is available then an attempt will be made to acquire a new token using the configured grant such as `client_credentials`."
+msgstr "Se o token de acesso precisar ser atualizado, mas nenhum token de atualização estiver disponível, será feita uma tentativa de adquirir um novo token usando a concessão configurada, como `client_credentials` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Please note that some OpenID Connect Providers will not return a refresh token in a `client_credentials` grant response. For example, starting from Keycloak 12 a refresh token will not be returned by default for `client_credentials`. The providers may also restrict a number of times a refresh token can be used."
+msgstr "Observe que alguns provedores OpenID Connect não retornarão um token de atualização em uma resposta de concessão `client_credentials` . Por exemplo, a partir do Keycloak 12, um token de atualização não será retornado por padrão para `client_credentials` . Os provedores também podem restringir o número de vezes que um token de atualização pode ser usado."
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "OidcClient Authentication"
+msgstr "Autenticação do OidcClient"
+
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid ""
+"`OidcClient` has to authenticate to the OpenID Connect Provider for the `client_credentials` and other grant requests to succeed.\n"
+"All the https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication[OIDC Client Authentication] options are supported, for example:"
+msgstr "`OidcClient` precisa se autenticar no provedor OpenID Connect para que o `client_credentials` e outras solicitações de concessão sejam bem-sucedidas. Todas as opções de link:https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication[autenticação de cliente do OIDC] são compatíveis, por exemplo:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`client_secret_basic`:"
+msgstr "`client_secret_basic` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "or with the secret retrieved from a xref:credentials-provider.adoc[CredentialsProvider]:"
+msgstr "ou com o segredo recuperado de um xref:credentials-provider.adoc[CredentialsProvider] :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`client_secret_post`:"
+msgstr "`client_secret_post` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`client_secret_jwt`, signature algorithm is `HS256`:"
+msgstr "`client_secret_jwt` O algoritmo de assinatura é `HS256` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "or with the secret retrieved from a xref:credentials-provider.adoc[CredentialsProvider], signature algorithm is `HS256`:"
+msgstr "ou com o segredo recuperado de um xref:credentials-provider.adoc[CredentialsProvider] , o algoritmo de assinatura é `HS256` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`private_key_jwt` with the PEM key file, signature algorithm is `RS256`:"
+msgstr "`private_key_jwt` Com o arquivo de chave PEM, o algoritmo de assinatura é `RS256` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`private_key_jwt` with the key store file, signature algorithm is `RS256`:"
+msgstr "`private_key_jwt` Com o arquivo de armazenamento de chaves, o algoritmo de assinatura é `RS256` :"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Using `client_secret_jwt` or `private_key_jwt` authentication methods ensures that no client secret goes over the wire."
+msgstr "O uso dos métodos de autenticação `client_secret_jwt` ou `private_key_jwt` garante que nenhum segredo do cliente passe pelo fio."
+
+#. type: Title ====
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Additional JWT Authentication options"
+msgstr "Opções adicionais de autenticação JWT"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "If either `client_secret_jwt` or `private_key_jwt` authentication methods are used then the JWT signature algorithm, key identifier, audience, subject and issuer can be customized, for example:"
+msgstr "Se os métodos de autenticação `client_secret_jwt` ou `private_key_jwt` forem usados, o algoritmo de assinatura JWT, o identificador de chave, o público, o assunto e o emissor poderão ser personalizados, por exemplo:"
+
+#. type: Title ====
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Apple POST JWT"
+msgstr "Apple POST JWT"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Apple OpenID Connect Provider uses a `client_secret_post` method where a secret is a JWT produced with a `private_key_jwt` authentication method but with Apple account specific issuer and subject properties."
+msgstr "O provedor Apple OpenID Connect usa um método `client_secret_post` em que um segredo é um JWT produzido com um método de autenticação `private_key_jwt` , mas com propriedades específicas de emissor e assunto da conta Apple."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`quarkus-oidc-client` supports a non-standard `client_secret_post_jwt` authentication method which can be configured as follows:"
+msgstr "`quarkus-oidc-client` suporta um método de autenticação não padrão `client_secret_post_jwt` que pode ser configurado da seguinte forma:"
+
+#. type: Title ====
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Mutual TLS"
+msgstr "TLS mútuo"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Some OpenID Connect Providers may require that a client is authenticated as part of the `Mutual TLS` (`MTLS`) authentication process."
+msgstr "Alguns provedores OpenID Connect podem exigir que um cliente seja autenticado como parte do processo de autenticação `Mutual TLS` ( `MTLS` )."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`quarkus-oidc-client` can be configured as follows to support `MTLS`:"
+msgstr "`quarkus-oidc-client` pode ser configurado da seguinte forma para suportar `MTLS` :"
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, no-wrap
+msgid "Testing"
+msgstr "Testando"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Start by adding the following dependencies to your test project:"
+msgstr "Comece adicionando as seguintes dependências ao seu projeto de teste:"
+
+#. type: Title ====
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Wiremock"
+msgstr "Wiremock"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Add the following dependencies to your test project:"
+msgstr "Adicione as seguintes dependências ao seu projeto de teste:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Write Wiremock based `QuarkusTestResourceLifecycleManager`, for example:"
+msgstr "Escreva `QuarkusTestResourceLifecycleManager` com base no Wiremock, por exemplo:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Prepare the REST test endpoints, you can have the test frontend endpoint which uses the injected MP REST client with a registered OidcClient filter to invoke on the downstream endpoint which echoes the token back, for example, see the `integration-tests/oidc-client-wiremock` in the `main` Quarkus repository."
+msgstr "Prepare os endpoints de teste REST, o senhor pode ter o endpoint de frontend de teste que usa o cliente MP REST injetado com um filtro OidcClient registrado para invocar o endpoint downstream que ecoa o token de volta, por exemplo, consulte `integration-tests/oidc-client-wiremock` no repositório `main` Quarkus."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Set `application.properties`, for example:"
+msgstr "Defina `application.properties` , por exemplo:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "and finally write the test code. Given the Wiremock-based resource above, the first test invocation should return `access_token_1` access token which will expire in 4 seconds. Use `awaitility` to wait for about 5 seconds, and now the next test invocation should return `access_token_2` access token which confirms the expired `access_token_1` access token has been refreshed."
+msgstr "e, por fim, escrever o código de teste. Considerando o recurso baseado em Wiremock acima, a primeira invocação de teste deve retornar o token de acesso `access_token_1` , que expirará em 4 segundos. Use `awaitility` para aguardar cerca de 5 segundos e, agora, a próxima invocação de teste deverá retornar o token de acesso `access_token_2` , que confirma que o token de acesso `access_token_1` expirado foi atualizado."
+
+#. type: Title ====
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, no-wrap
+msgid "Keycloak"
+msgstr "Keycloak"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "If you work with Keycloak then you can use the same approach as described in the xref:security-openid-connect#integration-testing-keycloak.adoc[OpenID Connect Bearer Token Integration testing] `Keycloak` section."
+msgstr "Se trabalhar com o Keycloak, o senhor poderá usar a mesma abordagem descrita na seção xref:security-openid-connect.adoc#integration-testing-keycloak.adoc[Teste de integração do token de portador do OpenID Connect] `Keycloak` ."
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "How to check the errors in the logs"
+msgstr "Como verificar os erros nos logs"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Please enable `io.quarkus.oidc.client.runtime.OidcClientImpl` `TRACE` level logging to see more details about the token acquisition and refresh errors:"
+msgstr "Ative o registro de nível `io.quarkus.oidc.client.runtime.OidcClientImpl` `TRACE` para ver mais detalhes sobre os erros de aquisição e atualização de token:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Please enable `io.quarkus.oidc.client.runtime.OidcClientRecorder` `TRACE` level logging to see more details about the OidcClient initialization errors:"
+msgstr "Ative o registro de nível `io.quarkus.oidc.client.runtime.OidcClientRecorder` `TRACE` para ver mais detalhes sobre os erros de inicialização do OidcClient:"
+
+#. type: Title ==
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Token Propagation"
+msgstr "Propagação de token"
+
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid ""
+"The `quarkus-oidc-token-propagation` extension provides two JAX-RS `javax.ws.rs.client.ClientRequestFilter` class implementations that simplify the propagation of authentication information.\n"
+"`io.quarkus.oidc.token.propagation.AccessTokenRequestFilter` propagates the xref:security-openid-connect.adoc[Bearer] token present in the current active request or the token acquired from the xref:security-openid-connect-web-authentication.adoc[Authorization Code Flow], as the HTTP `Authorization` header's `Bearer` scheme value.\n"
+"The `io.quarkus.oidc.token.propagation.JsonWebTokenRequestFilter` provides the same functionality, but in addition provides support for JWT tokens."
+msgstr "A extensão `quarkus-oidc-token-propagation` fornece duas implementações de classe JAX-RS `javax.ws.rs.client.ClientRequestFilter` que simplificam a propagação de informações de autenticação. `io.quarkus.oidc.token.propagation.AccessTokenRequestFilter` propaga o token xref:security-openid-connect.adoc[do portador] presente na solicitação ativa atual ou o token adquirido do xref:security-openid-connect-web-authentication.adoc[fluxo do código de autorização] como o valor do esquema `Bearer` do cabeçalho HTTP `Authorization` . O `io.quarkus.oidc.token.propagation.JsonWebTokenRequestFilter` oferece a mesma funcionalidade, mas, além disso, oferece suporte a tokens JWT."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "When you need to propagate the current Authorization Code Flow access token then the immediate token propagation will work well - as the code flow access tokens (as opposed to ID tokens) are meant to be propagated for the current Quarkus endpoint to access the remote services on behalf of the currently authenticated user."
+msgstr "Quando o senhor precisar propagar o token de acesso do fluxo de código de autorização atual, a propagação imediata do token funcionará bem, pois os tokens de acesso do fluxo de código (em oposição aos tokens de ID) devem ser propagados para que o endpoint atual do Quarkus acesse os serviços remotos em nome do usuário autenticado no momento."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "However, the direct end to end Bearer token propagation should be avoided if possible. For example, `Client -> Service A -> Service B` where `Service B` receives a token sent by `Client` to `Service A`. In such cases `Service B` will not be able to distinguish if the token came from `Service A` or from `Client` directly. For `Service B` to verify the token came from `Service A` it should be able to assert a new issuer and audience claims."
+msgstr "No entanto, a propagação direta do token do portador de ponta a ponta deve ser evitada, se possível. Por exemplo, `Client → Service A → Service B` onde `Service B` recebe um token enviado por `Client` para `Service A` . Nesses casos, `Service B` não conseguirá distinguir se o token veio de `Service A` ou de `Client` diretamente. Para que o `Service B` verifique se o token veio do `Service A` , ele deve ser capaz de afirmar um novo emissor e reivindicações de público-alvo."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Additionally, a complex application may need to exchange or update the tokens before propagating them. For example, the access context might be different when `Service A` is accessing `Service B`. In this case, `Service A` might be granted a narrow or a completely different set of scopes to access `Service B`."
+msgstr "Além disso, um aplicativo complexo pode precisar trocar ou atualizar os tokens antes de propagá-los. Por exemplo, o contexto de acesso pode ser diferente quando `Service A` estiver acessando `Service B` . Nesse caso, `Service A` pode receber um conjunto de escopos restrito ou completamente diferente para acessar `Service B` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "The following sections show how `AccessTokenRequestFilter` and `JsonWebTokenRequestFilter` can help."
+msgstr "As seções a seguir mostram como `AccessTokenRequestFilter` e `JsonWebTokenRequestFilter` podem ajudar."
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "RestClient AccessTokenRequestFilter"
+msgstr "RestClient AccessTokenRequestFilter"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`AccessTokenRequestFilter` treats all tokens as Strings and as such it can work with both JWT and opaque tokens."
+msgstr "`AccessTokenRequestFilter` trata todos os tokens como Strings e, portanto, pode trabalhar com tokens JWT e opacos."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "You can selectively register `AccessTokenRequestFilter` by using either `io.quarkus.oidc.token.propagation.AccessToken` or `org.eclipse.microprofile.rest.client.annotation.RegisterProvider`, for example:"
+msgstr "O senhor pode registrar seletivamente `AccessTokenRequestFilter` usando `io.quarkus.oidc.token.propagation.AccessToken` ou `org.eclipse.microprofile.rest.client.annotation.RegisterProvider` , por exemplo:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Alternatively, `AccessTokenRequestFilter` can be registered automatically with all MP Rest or JAX-RS clients if `quarkus.oidc-token-propagation.register-filter` property is set to `true` and `quarkus.oidc-token-propagation.json-web-token` property is set to `false` (which is a default value)."
+msgstr "Como alternativa, `AccessTokenRequestFilter` pode ser registrado automaticamente com todos os clientes MP Rest ou JAX-RS se a propriedade `quarkus.oidc-token-propagation.register-filter` for definida como `true` e a propriedade `quarkus.oidc-token-propagation.json-web-token` for definida como `false` (que é um valor padrão)."
+
+#. type: Title ====
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Exchange Token Before Propagation"
+msgstr "Trocar o token antes da propagação"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "If the current access token needs to be exchanged before propagation and you work with link:https://www.keycloak.org/docs/latest/securing_apps/#_token-exchange[Keycloak] or other OpenID Connect Provider which supports a link:https://tools.ietf.org/html/rfc8693[Token Exchange] token grant then you can configure `AccessTokenRequestFilter` like this:"
+msgstr "Se o token de acesso atual precisar ser trocado antes da propagação e o senhor trabalhar com o link:https://www.keycloak.org/docs/latest/securing_apps/#_token-exchange[Keycloak] ou outro provedor OpenID Connect que ofereça suporte a uma concessão de token de link:https://tools.ietf.org/html/rfc8693[troca de] token, poderá configurar o site `AccessTokenRequestFilter` da seguinte forma:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Note `AccessTokenRequestFilter` will use `OidcClient` to exchange the current token and you can use `quarkus.oidc-client.grant-options.exchange` to set the additional exchange properties expected by your OpenID Connect Provider."
+msgstr "Observação: `AccessTokenRequestFilter` usará `OidcClient` para trocar o token atual e o senhor pode usar `quarkus.oidc-client.grant-options.exchange` para definir as propriedades adicionais de troca esperadas pelo seu provedor OpenID Connect."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`AccessTokenRequestFilter` uses a default `OidcClient` by default. A named `OidcClient` can be selected with a `quarkus.oidc-token-propagation.client-name` configuration property."
+msgstr "`AccessTokenRequestFilter` usa um `OidcClient` padrão por padrão. Um `OidcClient` nomeado pode ser selecionado com uma propriedade de configuração `quarkus.oidc-token-propagation.client-name` ."
+
+#. type: Title ===
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "RestClient JsonWebTokenRequestFilter"
+msgstr "RestClient JsonWebTokenRequestFilter"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Using `JsonWebTokenRequestFilter` is recommended if you work with Bearer JWT tokens where these tokens can have their claims such as `issuer` and `audience` modified and the updated tokens secured (for example, re-signed) again. It expects an injected `org.eclipse.microprofile.jwt.JsonWebToken` and therefore will not work with the opaque tokens. Also, if your OpenID Connect Provider supports a Token Exchange protocol then it is recommended to use `AccessTokenRequestFilter` instead - as both JWT and opaque bearer tokens can be securely exchanged with `AccessTokenRequestFilter`."
+msgstr "Recomenda-se o uso do `JsonWebTokenRequestFilter` se o senhor trabalhar com tokens JWT de portador, em que esses tokens podem ter suas reivindicações, como `issuer` e `audience` , modificadas e os tokens atualizados protegidos (por exemplo, assinados novamente). Ele espera um `org.eclipse.microprofile.jwt.JsonWebToken` injetado e, portanto, não funcionará com os tokens opacos. Além disso, se o seu provedor OpenID Connect for compatível com um protocolo de troca de tokens, é recomendável usar `AccessTokenRequestFilter` em vez disso, pois os tokens JWT e opacos podem ser trocados com segurança com `AccessTokenRequestFilter` ."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "`JsonWebTokenRequestFilter` makes it easy for `Service A` implementations to update the injected `org.eclipse.microprofile.jwt.JsonWebToken` with the new `issuer` and `audience` claim values and secure the updated token again with a new signature. The only difficult step is to ensure `Service A` has a signing key - it should be provisioned from a secure file system or from the remote secure storage such as Vault."
+msgstr "`JsonWebTokenRequestFilter` torna fácil para as implementações do `Service A` atualizar o `org.eclipse.microprofile.jwt.JsonWebToken` injetado com os novos valores de reivindicação `issuer` e `audience` e proteger o token atualizado novamente com uma nova assinatura. A única etapa difícil é garantir que o `Service A` tenha uma chave de assinatura - ela deve ser provisionada a partir de um sistema de arquivos seguro ou do armazenamento seguro remoto, como o Vault."
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "You can selectively register `JsonWebTokenRequestFilter` by using either `io.quarkus.oidc.token.propagation.JsonWebToken` or `org.eclipse.microprofile.rest.client.annotation.RegisterProvider`, for example:"
+msgstr "O senhor pode registrar seletivamente `JsonWebTokenRequestFilter` usando `io.quarkus.oidc.token.propagation.JsonWebToken` ou `org.eclipse.microprofile.rest.client.annotation.RegisterProvider` , por exemplo:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "Alternatively, `JsonWebTokenRequestFilter` can be registered automatically with all MP Rest or JAX-RS clients if both `quarkus.oidc-token-propagation.register-filter` and `quarkus.oidc-token-propagation.json-web-token` properties are set to `true`."
+msgstr "Como alternativa, `JsonWebTokenRequestFilter` pode ser registrado automaticamente com todos os clientes MP Rest ou JAX-RS se ambas as propriedades `quarkus.oidc-token-propagation.register-filter` e `quarkus.oidc-token-propagation.json-web-token` estiverem definidas como `true` ."
+
+#. type: Title ====
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Update Token Before Propagation"
+msgstr "Atualizar o token antes da propagação"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "If the injected token needs to have its `iss` (issuer) and/or `aud` (audience) claims updated and secured again with a new signature then you can configure `JsonWebTokenRequestFilter` like this:"
+msgstr "Se o token injetado precisar ter suas reivindicações `iss` (emissor) e/ou `aud` (público) atualizadas e protegidas novamente com uma nova assinatura, o senhor poderá configurar `JsonWebTokenRequestFilter` da seguinte forma:"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "As already noted above, please use `AccessTokenRequestFilter` if you work with Keycloak or OpenID Connect Provider which supports a Token Exchange protocol."
+msgstr "Como já foi dito acima, use `AccessTokenRequestFilter` se o senhor trabalha com o Keycloak ou com o provedor OpenID Connect que oferece suporte a um protocolo de troca de tokens."
+
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid ""
+"You can generate the tokens as described in xref:security-openid-connect.adoc#integration-testing[OpenID Connect Bearer Token Integration testing] section.\n"
+"Prepare the REST test endpoints, you can have the test frontend endpoint which uses the injected MP REST client with a registered token propagation filter to invoke on the downstream endpoint, for example, see the `integration-tests/oidc-token-propagation` in the `main` Quarkus repository."
+msgstr "É possível gerar os tokens conforme descrito na seção xref:security-openid-connect.adoc#integration-testing[Teste de integração de token de portador do OpenID Connect] . Prepare os endpoints de teste REST, o senhor pode ter o endpoint de frontend de teste que usa o cliente MP REST injetado com um filtro de propagação de token registrado para invocar o endpoint downstream, por exemplo, consulte `integration-tests/oidc-token-propagation` no repositório `main` Quarkus."
+
+#. type: Title ==
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy, no-wrap
+msgid "Token Propagation Reactive"
+msgstr "Propagação de token Reativo"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "The `quarkus-oidc-token-propagation-reactive` extension provides `io.quarkus.oidc.token.propagation.reactive.AccessTokenRequestReactiveFilter` which can be used to propagate the current `Bearer` or `Authorization Code Flow` access tokens."
+msgstr "A extensão `quarkus-oidc-token-propagation-reactive` fornece `io.quarkus.oidc.token.propagation.reactive.AccessTokenRequestReactiveFilter` , que pode ser usado para propagar os tokens de acesso atuais `Bearer` ou `Authorization Code Flow` ."
+
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid ""
+"The `quarkus-oidc-token-propagation-reactive` extension (as opposed to the non-reactive `quarkus-oidc-token-propagation` extension) does not currently support the exchanging or resigning the tokens before the propagation.\n"
+"However these features may be added in the future."
+msgstr "No momento, a extensão `quarkus-oidc-token-propagation-reactive` (em oposição à extensão não reativa `quarkus-oidc-token-propagation` ) não oferece suporte à troca ou à renúncia dos tokens antes da propagação. No entanto, esses recursos podem ser adicionados no futuro."
+
+#. type: Title ==
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, no-wrap
+msgid "References"
+msgstr "Referências"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "xref:security.adoc[Quarkus Security]"
+msgstr "xref:security.adoc[Segurança Quarkus]"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "xref:security-openid-connect.adoc[Quarkus - Using OpenID Connect to Protect Service Applications using Bearer Token Authorization]"
+msgstr "xref:security-openid-connect.adoc[Quarkus - Uso do OpenID Connect para proteger aplicativos de serviço usando a autorização de token de portador]"
+
+#. type: Plain text
+#: _versions/2.7/guides/security-openid-connect-client.adoc
+#, fuzzy
+msgid "xref:security-openid-connect-web-authentication.adoc[Quarkus - Using OpenID Connect to Protect Web Applications using Authorization Code Flow]"
+msgstr "xref:security-openid-connect-web-authentication.adoc[Quarkus - Uso do OpenID Connect para proteger aplicativos da Web usando o fluxo de código de autorização]"

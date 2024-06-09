@@ -1,0 +1,240 @@
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2023-09-21 08:08+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. type: YAML Front Matter: title
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy, no-wrap
+msgid "Redis Job Queue - Reloaded"
+msgstr "Fila de trabalhos Redis - Recarregado"
+
+#. type: YAML Front Matter: synopsis
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy, no-wrap
+msgid "How to implement a more reliable job queue with Redis, including fault tolerance, de-duplication, and poison pill."
+msgstr "Como implementar uma fila de trabalho mais fiável com o Redis, incluindo tolerância a falhas, desduplicação e poison pill."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"In https://quarkus.io/blog/redis-job-queue/[How to implement a job queue with Redis], we explained how to implement a job queue mechanism with Redis and the new Redis API from Quarkus.\n"
+"The approach explored in that blog post had a significant flaw: if the execution of a job failed, the request was lost and will never be re-attempted."
+msgstr "Em link:https://quarkus.io/blog/redis-job-queue/[Como implementar uma fila de trabalho com o Redis] , explicamos como implementar um mecanismo de fila de trabalho com o Redis e a nova API do Redis da Quarkus. A abordagem explorada naquela postagem do blog tinha uma falha significativa: se a execução de um trabalho falhasse, a solicitação era perdida e nunca seria tentada novamente."
+
+#. type: Plain text
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "In this post, we explain how to improve the reliability of the job queue to handle failures, enable retry and use a _dead-letter queue_ to avoid poison pills."
+msgstr "Neste post, explicamos como melhorar a fiabilidade da fila de trabalhos para lidar com falhas, ativar a repetição e utilizar uma _fila de cartas mortas_ para evitar poison pills."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "Recap & Problem"
+msgstr "Recapitulação e problema"
+
+#. type: Plain text
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "In the https://quarkus.io/blog/redis-job-queue/[previous blog post], we implemented the following system."
+msgstr "Na  link:https://quarkus.io/blog/redis-job-queue/[publicação anterior do blogue], implementámos o seguinte sistema."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"An application receives _fight requests_ and writes these requests into a Redis list.\n"
+"Several simulators processed this list.\n"
+"The outcomes of the _fights_ were communicated using Redis Pub/Sub."
+msgstr "Um aplicativo recebe _solicitações de luta_ e grava essas solicitações em uma lista do Redis. Vários simuladores processaram essa lista. Os resultados das _lutas_ foram comunicados usando o Redis Pub/Sub."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"The architecture works and ensures that a fight can only be executed once, thanks to the `brpop` command used by the simulator code.\n"
+"This command pops the item from the queue in an atomic manner and ensure that the other simulators can't process it too."
+msgstr "A arquitetura funciona e garante que uma luta só possa ser executada uma vez, graças ao comando `brpop` usado pelo código do simulador. Esse comando retira o item da fila de forma atômica e garante que os outros simuladores não possam processá-lo também."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"However, this architecture has a drawback.\n"
+"If the processing of the popped fight request fails, the request is lost.\n"
+"No other simulator would be able to process it, and if the simulator that failed restarts, it will not reprocess the same request."
+msgstr "No entanto, essa arquitetura tem uma desvantagem. Se o processamento da solicitação de luta estourada falhar, a solicitação será perdida. Nenhum outro simulador poderá processá-la e, se o simulador que falhou for reiniciado, ele não reprocessará a mesma solicitação."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "Introducing more queues"
+msgstr "Introdução de mais filas"
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"An approach to handle that problem is to introduce more queues.\n"
+"In addition to the main queue (the Redis list from the image above), we introduce one queue per simulator.\n"
+"Thus, each simulator has its private queue."
+msgstr "Uma abordagem para lidar com esse problema é introduzir mais filas. Além da fila principal (a lista Redis da imagem acima), introduzimos uma fila por simulador. Assim, cada simulador tem sua fila particular."
+
+#. type: Plain text
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "These private queues form a safety net."
+msgstr "Estas filas de espera privadas constituem uma rede de segurança."
+
+#. type: Plain text
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "So, the simulator does use not only the _main queue_ but also its private queue:"
+msgstr "Assim, o simulador utiliza não só a _fila principal_, mas também a sua fila privada:"
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"When a simulator pops a request from the main queue, it does not process it immediately; it writes it to its private queue.\n"
+"To achieve this, we cannot use `brpop` and then write to the other queue, as if something wrong happens in between, we would have the same problem.\n"
+"Instead, we use `blmove,` which pops an element from a list and pushes it into another in an atomic fashion.\n"
+"Thus, we ensure that multiple simulators cannot consume the same request and that the request cannot be lost."
+msgstr "Quando um simulador abre uma solicitação da fila principal, ele não a processa imediatamente; ele a grava em sua fila privada. Para conseguir isso, não podemos usar `brpop` e depois gravar na outra fila, pois se algo errado acontecer nesse intervalo, teremos o mesmo problema. Em vez disso, usamos o `blmove,` que retira um elemento de uma lista e o coloca em outra de forma atômica. Assim, garantimos que vários simuladores não possam consumir a mesma solicitação e que a solicitação não possa ser perdida."
+
+#. type: Plain text
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "So, we use the following code to move the request from the main queue to the private queue:"
+msgstr "Assim, utilizamos o seguinte código para mover o pedido da fila principal para a fila privada:"
+
+#. type: Plain text
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "Now, the simulator does not simulate the requests from the main queue but needs to process the ones added to its private queue."
+msgstr "Agora, o simulador não simula os pedidos da fila principal, mas precisa de processar os pedidos adicionados à sua fila privada."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"This code is slightly different from the code from the previous blog.\n"
+"This time, we do not pop.\n"
+"We get the last item from the queue (index `-1` is the last one), process it, and then remove it from the queue.\n"
+"We do this until the queue is empty."
+msgstr "Esse código é um pouco diferente do código do blog anterior. Desta vez, não fazemos pop. Obtemos o último item da fila (o índice `-1` é o último), o processamos e o removemos da fila. Fazemos isso até que a fila esteja vazia."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"Let's put everything together:\n"
+"1. when the simulator starts, it should process the items from its private queue. So, if it crashes, it will retry to process the item.\n"
+"2. once the private queue is empty, it gets new requests from the main queue. It will not process them directly but re-trigger the processing of the private queue until the queue is empty."
+msgstr "Vamos juntar tudo: 1. quando o simulador é iniciado, ele deve processar os itens de sua fila particular. Portanto, se houver uma falha, ele tentará processar o item novamente. 2. quando a fila privada estiver vazia, ele recebe novas solicitações da fila principal. Ele não as processará diretamente, mas acionará novamente o processamento da fila privada até que a fila esteja vazia."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "New architecture, new problems"
+msgstr "Nova arquitetura, novos problemas"
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"That approach fixes the initial problem.\n"
+"If the processing fails, we retry it (as the request is not removed from the private queue).\n"
+"That will handle transient failures pretty well."
+msgstr "Essa abordagem corrige o problema inicial. Se o processamento falhar, tentamos novamente (já que a solicitação não é removida da fila privada). Isso resolverá muito bem as falhas transitórias."
+
+#. type: Plain text
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "However, it also has its own set of drawbacks:"
+msgstr "No entanto, também tem os seus próprios inconvenientes:"
+
+#. type: Plain text
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "_Duplicates_: if the processing succeeds, but the `lrem` fails for any reason (like a network failure), the request will be processed another time as it was not removed from the queue."
+msgstr "_Duplicados_: se o processamento for bem sucedido, mas o `lrem` falhar por qualquer razão (como uma falha de rede), o pedido será processado outra vez, uma vez que não foi removido da fila."
+
+#. type: Plain text
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "_Poison pill_: if a request cannot be processed successfully, it will retry to process it forever."
+msgstr "_Pílula venenosa_: se um pedido não puder ser processado com êxito, tentará novamente processá-lo para sempre."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "De-duplication"
+msgstr "Desduplicação"
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"Handling _duplicates_ require having a way to identify the requests uniquely and deduplicate manually.\n"
+"In other words, if all our requests have a unique id, we can check if that id has already been processed (for example, by storing the processed ids in another list or a hash). If the item has already been processed, ignore it (remove it from the queue) and process it to the next one:"
+msgstr "Para lidar com _duplicatas_ , é necessário ter uma maneira de identificar as solicitações de forma exclusiva e deduplicá-las manualmente. Em outras palavras, se todas as nossas solicitações tiverem um ID exclusivo, poderemos verificar se esse ID já foi processado (por exemplo, armazenando os IDs processados em outra lista ou em um hash). Se o item já tiver sido processado, ignore-o (remova-o da fila) e processe-o para o próximo:"
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "Avoiding swallowing the poison pill"
+msgstr "Evitar engolir a pílula de veneno"
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"Handling _poison pills_ is more complex.\n"
+"A _poison pill_ is a request that will always make the processing fails.\n"
+"It can be because of a bug in the processing code or something unexpected; it will always fail.\n"
+"Retrying, in this case, will not help; we are not facing a transient issue."
+msgstr "O tratamento de _poison pills_ é mais complexo. Uma _poison pill_ é uma solicitação que sempre fará com que o processamento falhe. Pode ser devido a um bug no código de processamento ou a algo inesperado; ela sempre falhará. Tentar novamente, nesse caso, não ajudará; não estamos enfrentando um problema transitório."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"So, what can we do?\n"
+"We need to track the number of processing attempts for that request, and if it exceeds a specific number, let's face it: we won't be able to handle the request.\n"
+"We generally want to send the request to a dead-letter queue (DLQ), i.e., a specific queue storing the unprocessable items:"
+msgstr "Então, o que podemos fazer? Precisamos rastrear o número de tentativas de processamento dessa solicitação e, se ele exceder um número específico, vamos encarar os fatos: não conseguiremos atender à solicitação. Geralmente, queremos enviar a solicitação para uma fila de letras mortas (DLQ), ou seja, uma fila específica que armazena os itens não processáveis:"
+
+#. type: Plain text
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "The counter is a specific Redis integer value that we increment and reset once we succeed or give up."
+msgstr "O contador é um valor inteiro específico do Redis que incrementamos e redefinimos quando temos sucesso ou desistimos."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"The items from the DLQ are not lost; they are saved for future processing.\n"
+"These items could be re-added to the main queue (to verify if it was not a transient issue or the bug was fixed).\n"
+"Another approach requires that a human administrator looks at these requests before re-injecting them into the system; maybe it was just a formatting issue..."
+msgstr "Os itens do DLQ não são perdidos; eles são salvos para processamento futuro. Esses itens podem ser adicionados novamente à fila principal (para verificar se não foi um problema transitório ou se o bug foi corrigido). Outra abordagem exige que um administrador humano examine essas solicitações antes de reinjetá-las no sistema; talvez tenha sido apenas um problema de formatação..."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid "Summary"
+msgstr "Resumo"
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"This post explores how to improve the job queue we implemented in https://quarkus.io/blog/redis-job-queue/[How to implement a job queue with Redis].\n"
+"This initial implementation, while simple, would lose requests if the processing fails.\n"
+"This post proposes another, more complex, architecture to handle that case but also handle duplicates and poison pills.\n"
+"But, nothing comes for free, and the resulting code is slightly more complex."
+msgstr "Esta postagem explora como melhorar a fila de trabalho que implementamos em link:https://quarkus.io/blog/redis-job-queue/[Como implementar uma fila de trabalho com o Redis] . Essa implementação inicial, embora simples, perderia solicitações se o processamento falhasse. Esta publicação propõe outra arquitetura, mais complexa, para lidar com esse caso, mas também com duplicatas e poison pills. Porém, nada vem de graça, e o código resultante é um pouco mais complexo."
+
+#: _posts/2022-11-22-redis-job-queue-reloaded.adoc
+#, fuzzy
+msgid ""
+"Remember: Redis is a fantastic toolbox.\n"
+"But, it's a toolbox; you build what you need with it, as it is rarely available out of the box.\n"
+"That being said, the richness of the Redis commands lets you do many things... (spoiler: we will see some of these things in future posts)."
+msgstr "Lembre-se: O Redis é uma caixa de ferramentas fantástica. Mas é uma caixa de ferramentas; o senhor constrói o que precisa com ela, pois raramente está disponível fora da caixa. Dito isso, a riqueza dos comandos do Redis permite que o senhor faça muitas coisas... (spoiler: veremos algumas dessas coisas em posts futuros)."

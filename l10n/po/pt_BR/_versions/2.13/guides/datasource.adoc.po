@@ -1,0 +1,1639 @@
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2023-09-21 08:11+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. This guide is maintained in the main Quarkus repository
+#. and pull requests should be submitted there:
+#. https://github.com/quarkusio/quarkus/tree/main/docs/src/main/asciidoc
+#. type: Title =
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Datasources"
+msgstr "Fontes de dados"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Many projects that use data require connections to a relational database."
+msgstr "Muitos projetos que usam dados exigem conexões com um banco de dados relacional."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"The usual way of obtaining connections to a database is to use a datasource and configure a JDBC driver.\n"
+"But you might also prefer using a reactive driver to connect to your database in a reactive way."
+msgstr "A maneira usual de obter conexões com um banco de dados é usar um datasource e configurar um driver JDBC. Mas o senhor também pode preferir usar um driver reativo para se conectar ao seu banco de dados de forma reativa."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Quarkus has you covered either way:"
+msgstr "A Quarkus ajuda o senhor de qualquer maneira:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "For JDBC, the preferred datasource and connection pooling implementation is https://agroal.github.io/[Agroal]."
+msgstr "Para JDBC, a implementação preferida de pooling de conexão e fonte de dados é o link:https://agroal.github.io/[Agroal] ."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "For reactive, we use the https://vertx.io/[Vert.x] reactive drivers."
+msgstr "Para reativo, usamos os drivers reativos link:https://vertx.io/[Vert.x] ."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Both are configured via unified and flexible configuration."
+msgstr "Ambos são configurados por meio de uma configuração unificada e flexível."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"Agroal is a modern, lightweight connection pool implementation designed for very high performance and scalability,\n"
+"and features first class integration with the other components in Quarkus, such as security, transaction management components, health, and metrics."
+msgstr "O Agroal é uma implementação de pool de conexões moderna e leve, projetada para desempenho e escalabilidade muito altos, e apresenta integração de primeira classe com os outros componentes do Quarkus, como segurança, componentes de gerenciamento de transações, saúde e métricas."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "This guide will explain how to:"
+msgstr "Este guia explicará como fazer:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "configure a datasource, or multiple datasources"
+msgstr "configurar uma fonte de dados ou várias fontes de dados"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "how to obtain a reference to those datasources in code"
+msgstr "como obter uma referência a esses recursos de dados no código"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "which pool tuning configuration properties are available"
+msgstr "quais propriedades de configuração de ajuste de pool estão disponíveis"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"This guide is mainly about datasource configuration.\n"
+"If you want more details about how to consume and make use of a reactive datasource,\n"
+"please refer to the xref:reactive-sql-clients.adoc[Reactive SQL clients guide]."
+msgstr "Este guia trata principalmente da configuração de fontes de dados. Se o senhor quiser obter mais detalhes sobre como consumir e usar um datasource reativo, consulte o xref:reactive-sql-clients.adoc[guia de clientes SQL reativos] ."
+
+#. type: Title ==
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "TL;DR"
+msgstr "TL;DR"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"This is a quick introduction to datasource configuration.\n"
+"If you want a better understanding of how all this works, this guide has a lot more information in the subsequent paragraphs."
+msgstr "Esta é uma rápida introdução à configuração de fontes de dados. Se o senhor quiser entender melhor como tudo isso funciona, este guia tem muito mais informações nos parágrafos subsequentes."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Zero Config Setup (Dev Services)"
+msgstr "Configuração Zero Config (serviços de desenvolvimento)"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"When testing or running in dev mode Quarkus can even provide you with a zero config database out of the box, a feature\n"
+"we refer to as Dev Services. Depending on your database type you may need Docker installed in order to use this feature."
+msgstr "Ao testar ou executar no modo de desenvolvimento, o Quarkus pode até mesmo fornecer ao senhor um banco de dados de configuração zero pronto para uso, um recurso que chamamos de Dev Services. Dependendo do tipo de banco de dados, talvez seja necessário ter o Docker instalado para usar esse recurso."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"If you want to use Dev Services then all you need to do is include the relevant extension for the type of database you want,\n"
+"e.g. `jdbc-postgresql`, `reactive-pg-client` or both. Don't configure a database URL, username and password -\n"
+"Quarkus will provide the database and you can just start coding without worrying about config."
+msgstr "Se quiser usar os serviços de desenvolvimento, basta incluir a extensão relevante para o tipo de banco de dados desejado, por exemplo, `jdbc-postgresql` , `reactive-pg-client` ou ambos. Não configure um URL de banco de dados, nome de usuário e senha - o Quarkus fornecerá o banco de dados e o senhor poderá começar a programar sem se preocupar com a configuração."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "See xref:databases-dev-services.adoc[Databases Dev Services] for more details and optional configurations."
+msgstr "Consulte xref:databases-dev-services.adoc[Databases Dev Services] para obter mais detalhes e configurações opcionais."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "JDBC datasource"
+msgstr "Fonte de dados JDBC"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Add the `agroal` extension plus one of `jdbc-db2`, `jdbc-derby`, `jdbc-h2`, `jdbc-mariadb`, `jdbc-mssql`, `jdbc-mysql`, `jdbc-oracle` or `jdbc-postgresql`."
+msgstr "Adicione a extensão `agroal` mais uma das seguintes opções: `jdbc-db2` , `jdbc-derby` , `jdbc-h2` , `jdbc-mariadb` , `jdbc-mssql` , `jdbc-mysql` , `jdbc-oracle` ou `jdbc-postgresql` ."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Then configure your datasource:"
+msgstr "Em seguida, configure sua fonte de dados:"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"If you only have a single JDBC extension, or you are running tests and only have a single test scoped JDBC extension installed then this is\n"
+"optional. If there is only one possible extension we assume this is the correct one, and if a driver has been added with test scope then\n"
+"we assume that this should be used in testing."
+msgstr "Se o senhor tiver apenas uma única extensão JDBC, ou se estiver executando testes e tiver apenas uma única extensão JDBC com escopo de teste instalada, isso é opcional. Se houver apenas uma extensão possível, presumimos que essa é a correta e, se um driver tiver sido adicionado com escopo de teste, presumimos que ele deve ser usado nos testes."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Reactive datasource"
+msgstr "Fonte de dados reativa"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"Add the correct reactive extension for the database you are using:\n"
+"`reactive-db2-client`, `reactive-mssql-client`, `reactive-mysql-client`, `reactive-oracle-client`, or `reactive-pg-client`."
+msgstr "Adicione a extensão reativa correta para o banco de dados que o senhor está usando: `reactive-db2-client` , `reactive-mssql-client` , `reactive-mysql-client` , `reactive-oracle-client` , ou `reactive-pg-client` ."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Then configure your reactive datasource:"
+msgstr "Em seguida, configure seu datasource reativo:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "As specified above this is optional."
+msgstr "Conforme especificado acima, isso é opcional."
+
+#. type: Title ==
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Default datasource"
+msgstr "Fonte de dados padrão"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"A datasource can be either a JDBC datasource, a reactive one or both.\n"
+"It all depends on how you configure it and which extensions you added to your project."
+msgstr "Um datasource pode ser um datasource JDBC, um reativo ou ambos. Tudo depende de como o senhor o configura e de quais extensões adicionou ao seu projeto."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"To define a datasource, start with the following (note that this is only required if you have more than one\n"
+"database type installed):"
+msgstr "Para definir um datasource, comece com o seguinte (observe que isso só é necessário se o senhor tiver mais de um tipo de banco de dados instalado):"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "The database kind defines which type of database you will connect to."
+msgstr "O tipo de banco de dados define a que tipo de banco de dados o senhor se conectará."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "We currently include these built-in database kinds:"
+msgstr "Atualmente, incluímos esses tipos de bancos de dados integrados:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "DB2: `db2`"
+msgstr "DB2: `db2`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Derby: `derby`"
+msgstr "Derby: `derby`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "H2: `h2`"
+msgstr "H2: `h2`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "MariaDB: `mariadb`"
+msgstr "MariaDB: `mariadb`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Microsoft SQL Server: `mssql`"
+msgstr "Microsoft SQL Server: `mssql`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "MySQL: `mysql`"
+msgstr "MySQL: `mysql`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Oracle: `oracle`"
+msgstr "Oracle: `oracle`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "PostgreSQL: `postgresql`, `pgsql` or `pg`"
+msgstr "PostgreSQL: `postgresql` , `pgsql` ou `pg`"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"Giving Quarkus the database kind you are targeting will facilitate configuration.\n"
+"By using a JDBC driver extension and setting the kind in the configuration,\n"
+"Quarkus resolves the JDBC driver automatically,\n"
+"so you don't need to configure it yourself.\n"
+"If you want to use a database kind that is not part of the built-in ones, use `other` and define the JDBC driver explicitly."
+msgstr "Fornecer ao Quarkus o tipo de banco de dados que o senhor está almejando facilitará a configuração. Ao usar uma extensão de driver JDBC e definir o tipo na configuração, o Quarkus resolve o driver JDBC automaticamente, de modo que o senhor não precisa configurá-lo. Se o senhor quiser usar um tipo de banco de dados que não faz parte dos tipos incorporados, use `other` e defina explicitamente o driver JDBC."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"You can use any JDBC driver in a Quarkus app in JVM mode (see <<other-databases,Using other databases>>).\n"
+"It is unlikely that it will work when compiling your application to a native executable though."
+msgstr "O senhor pode usar qualquer driver JDBC em um aplicativo Quarkus no modo JVM (consulte xref:other-databases[Usando outros bancos de dados] ). No entanto, é improvável que ele funcione ao compilar seu aplicativo em um executável nativo."
+
+#. type: delimited block =
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "If you plan to make a native executable, we recommend you use the existing JDBC Quarkus extensions (or contribute one for your driver)."
+msgstr "Se o senhor planeja criar um executável nativo, recomendamos que use as extensões JDBC Quarkus existentes (ou contribua com uma para o seu driver)."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "There is a good chance you will need to define some credentials to access your database."
+msgstr "É bem provável que o senhor precise definir algumas credenciais para acessar o banco de dados."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "This is done by configuring the following properties:"
+msgstr "Isso é feito por meio da configuração das seguintes propriedades:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "You can also retrieve the password from Vault by link:{vault-datasource-guide}[using a credential provider] for your datasource."
+msgstr "O senhor também pode recuperar a senha do Vault link:{vault-datasource-guide}[usando um provedor de credenciais] para o seu datasource."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Once you have defined the database kind and the credentials, you are ready to configure either a JDBC datasource, a reactive one, or both."
+msgstr "Depois de definir o tipo de banco de dados e as credenciais, o senhor está pronto para configurar um datasource JDBC, um reativo ou ambos."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"JDBC is the most common database connection pattern.\n"
+"You typically need a JDBC datasource when using Hibernate ORM."
+msgstr "O JDBC é o padrão de conexão de banco de dados mais comum. Normalmente, o senhor precisa de uma fonte de dados JDBC ao usar o Hibernate ORM."
+
+#. type: Title ====
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Install the Maven dependencies"
+msgstr "Instalar as dependências do Maven"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "First, you will need to add the `quarkus-agroal` dependency to your project."
+msgstr "Primeiro, o senhor precisará adicionar a dependência `quarkus-agroal` ao seu projeto."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "You can add it using a simple Maven command:"
+msgstr "O senhor pode adicioná-lo usando um simples comando Maven:"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"Agroal comes as a transitive dependency of the Hibernate ORM extension so if you are using Hibernate ORM,\n"
+"you don't need to add the Agroal extension dependency explicitly."
+msgstr "O Agroal vem como uma dependência transitiva da extensão Hibernate ORM, portanto, se o senhor estiver usando o Hibernate ORM, não precisará adicionar explicitamente a dependência da extensão Agroal."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "You will also need to choose, and add, the Quarkus extension for your relational database driver."
+msgstr "O senhor também precisará escolher e adicionar a extensão do Quarkus para o driver do banco de dados relacional."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Quarkus provides driver extensions for:"
+msgstr "O Quarkus fornece extensões de driver para:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "DB2 - `jdbc-db2`"
+msgstr "DB2 - `jdbc-db2`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Derby - `jdbc-derby`"
+msgstr "Derby - o `jdbc-derby`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "H2 - `jdbc-h2`"
+msgstr "H2 - `jdbc-h2`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "MariaDB - `jdbc-mariadb`"
+msgstr "MariaDB - `jdbc-mariadb`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Microsoft SQL Server - `jdbc-mssql`"
+msgstr "Microsoft SQL Server - o `jdbc-mssql`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "MySQL - `jdbc-mysql`"
+msgstr "MySQL - `jdbc-mysql`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Oracle - `jdbc-oracle`"
+msgstr "Oracle - (em inglês) `jdbc-oracle`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "PostgreSQL - `jdbc-postgresql`"
+msgstr "PostgreSQL - `jdbc-postgresql`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Some other JDBC extensions can be found in the Quarkiverse such as:"
+msgstr "Algumas outras extensões JDBC podem ser encontradas no Quarkiverse, como:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "SQLite: https://github.com/quarkiverse/quarkus-jdbc-sqlite[Project homepage] - https://quarkiverse.github.io/quarkiverse-docs/quarkus-jdbc-sqlite/dev/index.html[Documentation]"
+msgstr "SQLite: link:https://github.com/quarkiverse/quarkus-jdbc-sqlite[Página inicial do projeto] - link:https://quarkiverse.github.io/quarkiverse-docs/quarkus-jdbc-sqlite/dev/index.html[Documentação]"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "See <<other-databases>> if you want to use a JDBC driver for another database."
+msgstr "Consulte <<other-databases>> se o senhor quiser usar um driver JDBC para outro banco de dados."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"The H2 and Derby databases can normally be configured to run in \"embedded mode\";\n"
+"the extension does not support compiling the embedded database engine into native executables."
+msgstr "Os bancos de dados H2 e Derby normalmente podem ser configurados para serem executados no \"modo incorporado\"; a extensão não oferece suporte à compilação do mecanismo de banco de dados incorporado em executáveis nativos."
+
+#. type: delimited block =
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Read <<in-memory-databases,Testing with in-memory databases>> (below) for suggestions regarding integration testing."
+msgstr "Leia xref:in-memory-databases[Testes com bancos de dados na memória] (abaixo) para obter sugestões sobre testes de integração."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "As usual, you can install the extension using `add-extension`."
+msgstr "Como de costume, o senhor pode instalar a extensão usando `add-extension` ."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "To install the PostgreSQL driver dependency for instance, run the following command:"
+msgstr "Para instalar a dependência do driver do PostgreSQL, por exemplo, execute o seguinte comando:"
+
+#. type: Title ====
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Configure the JDBC connection"
+msgstr "Configurar a conexão JDBC"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Configuring your JDBC connection is easy, the only mandatory property is the JDBC URL."
+msgstr "Configurar sua conexão JDBC é fácil, a única propriedade obrigatória é a URL do JDBC."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"Note the `jdbc` prefix in the property name.\n"
+"All the configuration properties specific to JDBC have this prefix."
+msgstr "Observe o prefixo `jdbc` no nome da propriedade. Todas as propriedades de configuração específicas do JDBC têm esse prefixo."
+
+#. type: delimited block =
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "For more information about the JDBC URL format, please refer to the <<jdbc-url,JDBC url reference section>>."
+msgstr "Para obter mais informações sobre o formato de URL do JDBC, consulte a xref:jdbc-url[seção de referência de URL do JDBC] ."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "When using one of the built-in datasource kinds, the JDBC driver is resolved automatically to the following values:"
+msgstr "Ao usar um dos tipos de fonte de dados incorporados, o driver JDBC é resolvido automaticamente para os seguintes valores:"
+
+#. type: Block title
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Database kind to JDBC driver mapping"
+msgstr "Mapeamento do tipo de banco de dados para o driver JDBC"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Database kind"
+msgstr "Tipo de banco de dados"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "JDBC driver"
+msgstr "Driver JDBC"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "XA driver"
+msgstr "Driver XA"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`db2`"
+msgstr "`db2`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`com.ibm.db2.jcc.DBDriver`"
+msgstr "`com.ibm.db2.jcc.DBDriver`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`com.ibm.db2.jcc.DB2XADataSource`"
+msgstr "`com.ibm.db2.jcc.DB2XADataSource`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`derby`"
+msgstr "`derby`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`org.apache.derby.jdbc.ClientDriver`"
+msgstr "`org.apache.derby.jdbc.ClientDriver`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`org.apache.derby.jdbc.ClientXADataSource`"
+msgstr "`org.apache.derby.jdbc.ClientXADataSource`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`h2`"
+msgstr "`h2`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`org.h2.Driver`"
+msgstr "`org.h2.Driver`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`org.h2.jdbcx.JdbcDataSource`"
+msgstr "`org.h2.jdbcx.JdbcDataSource`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`mariadb`"
+msgstr "`mariadb`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`org.mariadb.jdbc.Driver`"
+msgstr "`org.mariadb.jdbc.Driver`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`org.mariadb.jdbc.MySQLDataSource`"
+msgstr "`org.mariadb.jdbc.MySQLDataSource`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`mssql`"
+msgstr "`mssql`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`com.microsoft.sqlserver.jdbc.SQLServerDriver`"
+msgstr "`com.microsoft.sqlserver.jdbc.SQLServerDriver`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`com.microsoft.sqlserver.jdbc.SQLServerXADataSource`"
+msgstr "`com.microsoft.sqlserver.jdbc.SQLServerXADataSource`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`mysql`"
+msgstr "`mysql`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`com.mysql.cj.jdbc.Driver`"
+msgstr "`com.mysql.cj.jdbc.Driver`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`com.mysql.cj.jdbc.MysqlXADataSource`"
+msgstr "`com.mysql.cj.jdbc.MysqlXADataSource`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`oracle`"
+msgstr "`oracle`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`oracle.jdbc.driver.OracleDriver`"
+msgstr "`oracle.jdbc.driver.OracleDriver`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`oracle.jdbc.xa.client.OracleXADataSource`"
+msgstr "`oracle.jdbc.xa.client.OracleXADataSource`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`postgresql`"
+msgstr "`postgresql`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`org.postgresql.Driver`"
+msgstr "`org.postgresql.Driver`"
+
+#. type: Table
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`org.postgresql.xa.PGXADataSource`"
+msgstr "`org.postgresql.xa.PGXADataSource`"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"As previously stated, most of the time, this automatic resolution will suit you and\n"
+"you won't need to configure the driver."
+msgstr "Como dito anteriormente, na maioria das vezes, essa resolução automática será adequada para o senhor e não será necessário configurar o driver."
+
+#. type: Title ====
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Use a database with no built-in extension or with a different driver"
+msgstr "Usar um banco de dados sem extensão incorporada ou com um driver diferente"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"You can use a specific driver if you need to (for instance for using the OpenTracing driver)\n"
+"or if you want to use a database for which Quarkus does not have a built-in JDBC driver extension."
+msgstr "O senhor pode usar um driver específico se precisar (por exemplo, para usar o driver OpenTracing) ou se quiser usar um banco de dados para o qual o Quarkus não tenha uma extensão de driver JDBC integrada."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"Without an extension, the driver will work fine in any Quarkus app running in JVM mode.\n"
+"It is unlikely that it will work when compiling your application to a native executable though.\n"
+"If you plan to make a native executable, we recommend you use the existing JDBC Quarkus extensions (or contribute one for your driver)."
+msgstr "Sem uma extensão, o driver funcionará bem em qualquer aplicativo Quarkus executado no modo JVM. No entanto, é improvável que ele funcione ao compilar seu aplicativo em um executável nativo. Se o senhor planeja criar um executável nativo, recomendamos que use as extensões JDBC Quarkus existentes (ou contribua com uma para o seu driver)."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Here is how you would use the OpenTracing driver:"
+msgstr "Veja como o senhor usaria o driver OpenTracing:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Here is how you would define access to a database with no built-in support (in JVM mode):"
+msgstr "Veja como o senhor definiria o acesso a um banco de dados sem suporte interno (no modo JVM):"
+
+#. type: Title ====
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "More configuration"
+msgstr "Mais configuração"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "You can configure a lot more things, for instance the size of the connection pool."
+msgstr "O senhor pode configurar muito mais coisas, por exemplo, o tamanho do pool de conexões."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Please refer to the <<jdbc-configuration,JDBC configuration reference>> for all the details about the JDBC configuration knobs."
+msgstr "Consulte a xref:jdbc-configuration[referência de configuração do JDBC] para obter todos os detalhes sobre os botões de configuração do JDBC."
+
+#. type: Title ====
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Consuming the datasource"
+msgstr "Consumir a fonte de dados"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "If you are using Hibernate ORM, the datasource will be consumed automatically."
+msgstr "Se o senhor estiver usando o Hibernate ORM, a fonte de dados será consumida automaticamente."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "If for whatever reason, access to the datasource is needed in code, it can be obtained as any other bean in the following manner:"
+msgstr "Se, por qualquer motivo, o acesso ao datasource for necessário no código, ele poderá ser obtido como qualquer outro bean da seguinte maneira:"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"In the above example, the type is `AgroalDataSource` which is a subtype of `javax.sql.DataSource`.\n"
+"Because of this, you can also use `javax.sql.DataSource` as the injected type."
+msgstr "No exemplo acima, o tipo é `AgroalDataSource` , que é um subtipo de `javax.sql.DataSource` . Por isso, o senhor também pode usar `javax.sql.DataSource` como o tipo injetado."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "If you prefer using a reactive datasource, Quarkus offers DB2, MariaDB/MySQL, Microsoft SQL Server, Oracle and PostgreSQL reactive clients."
+msgstr "Se o senhor preferir usar uma fonte de dados reativa, o Quarkus oferece clientes reativos DB2, MariaDB/MySQL, Microsoft SQL Server, Oracle e PostgreSQL."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Depending on which database you want to use, add the corresponding extension:"
+msgstr "Dependendo do banco de dados que o senhor deseja usar, adicione a extensão correspondente:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "DB2: `quarkus-reactive-db2-client`"
+msgstr "DB2: `quarkus-reactive-db2-client`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "MariaDB/MySQL: `quarkus-reactive-mysql-client`"
+msgstr "MariaDB/MySQL: `quarkus-reactive-mysql-client`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Microsoft SQL Server: `quarkus-reactive-mssql-client`"
+msgstr "Microsoft SQL Server: `quarkus-reactive-mssql-client`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Oracle: `quarkus-reactive-oracle-client`"
+msgstr "Oracle: `quarkus-reactive-oracle-client`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "PostgreSQL: `quarkus-reactive-pg-client`"
+msgstr "PostgreSQL: `quarkus-reactive-pg-client`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "The installed extension must be consistent with the `quarkus.datasource.db-kind` you define in your datasource configuration."
+msgstr "A extensão instalada deve ser consistente com o `quarkus.datasource.db-kind` que o senhor define na configuração do datasource."
+
+#. type: Title ====
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Configure the reactive datasource"
+msgstr "Configurar a fonte de dados reativa"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Once the driver is there, you just need to configure the connection URL."
+msgstr "Quando o driver estiver disponível, o senhor só precisa configurar o URL de conexão."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Optionally, but highly recommended, you should define a proper size for your connection pool."
+msgstr "Opcionalmente, mas altamente recomendado, o senhor deve definir um tamanho adequado para seu pool de conexões."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "JDBC and reactive datasources simultaneously"
+msgstr "JDBC e fontes de dados reativas simultaneamente"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"By default, if you include both a JDBC extension (+ Agroal) and a reactive datasource extension handling the given database kind,\n"
+"both will be created."
+msgstr "Por padrão, se o senhor incluir uma extensão JDBC (+ Agroal) e uma extensão de fonte de dados reativa que manipule o tipo de banco de dados fornecido, ambas serão criadas."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "If you want to disable the JDBC datasource explicitly, use:"
+msgstr "Se o senhor quiser desativar explicitamente a fonte de dados JDBC, use:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "If you want to disable the reactive datasource explicitly, use:"
+msgstr "Se o senhor quiser desativar explicitamente o datasource reativo, use:"
+
+#. type: delimited block =
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Most of the time, the configuration above won't be necessary as either a JDBC driver or a reactive datasource extension will be present and not both."
+msgstr "Na maioria das vezes, a configuração acima não será necessária, pois um driver JDBC ou uma extensão de fonte de dados reativa estará presente, e não ambos."
+
+#. type: Title ==
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Multiple Datasources"
+msgstr "Várias fontes de dados"
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Configuring Multiple Datasources"
+msgstr "Configuração de várias fontes de dados"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"For now, multiple datasources are only supported for JDBC and the Agroal extension.\n"
+"So it is not currently possible to create multiple reactive datasources."
+msgstr "Por enquanto, vários fontes de dados são compatíveis apenas com JDBC e com a extensão Agroal. Portanto, atualmente não é possível criar vários fontes de dados reativas."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"The Hibernate ORM extension xref:hibernate-orm.adoc#multiple-persistence-units[supports defining several persistence units using configuration properties].\n"
+"For each persistence unit, you can point to the datasource of your choice."
+msgstr "A extensão ORM do Hibernate xref:hibernate-orm.adoc#multiple-persistence-units[suporta a definição de várias unidades de persistência usando propriedades de configuração] . Para cada unidade de persistência, o senhor pode apontar para a fonte de dados de sua escolha."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"Defining multiple datasources works exactly the same way as defining a single datasource, with one important change:\n"
+"you define a name."
+msgstr "A definição de vários recursos de dados funciona exatamente da mesma forma que a definição de um único recurso de dados, com uma alteração importante: o senhor define um nome."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "In the following example, you have 3 different datasources:"
+msgstr "No exemplo a seguir, o senhor tem 3 fontes de dados diferentes:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "The default one,"
+msgstr "O padrão,"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "A datasource named `users`,"
+msgstr "Uma fonte de dados chamada `users` ,"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "A datasource named `inventory`,"
+msgstr "Uma fonte de dados chamada `inventory` ,"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "each with its own configuration."
+msgstr "cada um com sua própria configuração."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"Notice there is an extra bit in the key.\n"
+"The syntax is as follows: `quarkus.datasource.[optional name.][datasource property]`."
+msgstr "Observe que há um bit extra na chave. A sintaxe é a seguinte: `quarkus.datasource.[optional name.][datasource property]` ."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"Even when only one database extension is installed, named databases need to specify at least one build time\n"
+"property so that Quarkus knows they exist. Generally this will be the `db-kind` property, although you can also\n"
+"specify Dev Services properties to create named datasources (covered later in this guide)."
+msgstr "Mesmo quando apenas uma extensão de banco de dados está instalada, os bancos de dados nomeados precisam especificar pelo menos uma propriedade de tempo de compilação para que o Quarkus saiba que eles existem. Geralmente, essa será a propriedade `db-kind` , embora o senhor também possa especificar as propriedades Dev Services para criar fontes de dados nomeadas (abordadas mais adiante neste guia)."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Named Datasource Injection"
+msgstr "Injeção de fonte de dados nomeada"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"When using multiple datasources, each `DataSource` also has the `io.quarkus.agroal.DataSource` qualifier with the name of the datasource as the value.\n"
+"Using the above properties to configure three different datasources, you can also inject each one as follows:"
+msgstr "Ao usar vários recursos de dados, cada `DataSource` também tem o qualificador `io.quarkus.agroal.DataSource` com o nome do recurso de dados como valor. Usando as propriedades acima para configurar três fontes de dados diferentes, o senhor também pode injetar cada uma delas da seguinte forma:"
+
+#. type: Title ==
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Datasource Health Check"
+msgstr "Verificação da integridade do recurso de dados"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"If you are using the `quarkus-smallrye-health` extension, the `quarkus-agroal` and reactive client extensions will automatically add a readiness health check\n"
+"to validate the datasource."
+msgstr "Se o senhor estiver usando a extensão `quarkus-smallrye-health` , as extensões de cliente `quarkus-agroal` e reativa adicionarão automaticamente uma verificação de integridade de prontidão para validar a fonte de dados."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"When you access the `/q/health/ready` endpoint of your application you will have information about the datasource validation status.\n"
+"If you have multiple datasources, all datasources will be checked and the status will be `DOWN` as soon as there is one datasource validation failure."
+msgstr "Ao acessar o endpoint `/q/health/ready` do seu aplicativo, o senhor terá informações sobre o status de validação do recurso de dados. Se o senhor tiver vários recursos de dados, todos eles serão verificados e o status será `DOWN` assim que houver uma falha na validação do recurso de dados."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "This behavior can be disabled via the property `quarkus.datasource.health.enabled`."
+msgstr "Esse comportamento pode ser desativado por meio da propriedade `quarkus.datasource.health.enabled` ."
+
+#. type: Title ==
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Datasource Metrics"
+msgstr "Métricas de fontes de dados"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"If you are using the `quarkus-micrometer` or `quarkus-smallrye-metrics` extension, `quarkus-agroal` can expose some data source metrics on the\n"
+"`/q/metrics` endpoint. This can be turned on by setting the property `quarkus.datasource.metrics.enabled` to true."
+msgstr "Se o senhor estiver usando a extensão `quarkus-micrometer` ou `quarkus-smallrye-metrics` , o `quarkus-agroal` poderá expor algumas métricas da fonte de dados no endpoint `/q/metrics` . Isso pode ser ativado definindo a propriedade `quarkus.datasource.metrics.enabled` como true."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"For the exposed metrics to contain any actual values, it is necessary that metric collection is enabled internally\n"
+"by Agroal mechanisms. By default, this metric collection mechanism gets turned on for all data sources if a metrics extension\n"
+"is present and metrics for the Agroal extension are enabled. If you want to disable metrics for a particular data source,\n"
+"this can be done by setting `quarkus.datasource.jdbc.enable-metrics` to `false` (or `quarkus.datasource.<datasource name>.jdbc.enable-metrics` for a named datasource).\n"
+"This disables collecting the metrics as well as exposing them in the `/q/metrics` endpoint,\n"
+"because it does not make sense to expose metrics if the mechanism to collect them is disabled."
+msgstr "Para que as métricas expostas contenham quaisquer valores reais, é necessário que a coleta de métricas seja ativada internamente pelos mecanismos do Agroal. Por padrão, esse mecanismo de coleta de métricas é ativado para todas as fontes de dados se uma extensão de métricas estiver presente e as métricas para a extensão do Agroal estiverem ativadas. Se o senhor quiser desativar as métricas de uma determinada fonte de dados, poderá fazê-lo definindo `quarkus.datasource.jdbc.enable-metrics` como `false` (ou `quarkus.datasource.<datasource name>.jdbc.enable-metrics` para uma fonte de dados nomeada). Isso desativa a coleta de métricas e a exposição delas no ponto de extremidade `/q/metrics` , pois não faz sentido expor as métricas se o mecanismo para coletá-las estiver desativado."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"Conversely, setting `quarkus.datasource.jdbc.enable-metrics` to `true` (or `quarkus.datasource.<datasource name>.jdbc.enable-metrics` for a named datasource) explicitly can be used to enable collection of metrics even if\n"
+"a metrics extension is not in use.\n"
+"This can be useful if you need to access the collected metrics programmatically.\n"
+"They are available after calling `dataSource.getMetrics()` on an injected `AgroalDataSource` instance. If collection of metrics is disabled\n"
+"for this data source, all values will be zero."
+msgstr "Por outro lado, a configuração explícita de `quarkus.datasource.jdbc.enable-metrics` para `true` (ou `quarkus.datasource.<datasource name>.jdbc.enable-metrics` para uma fonte de dados nomeada) pode ser usada para ativar a coleta de métricas mesmo que uma extensão de métricas não esteja em uso. Isso pode ser útil se o senhor precisar acessar as métricas coletadas de forma programática. Elas ficam disponíveis depois de chamar `dataSource.getMetrics()` em uma instância injetada de `AgroalDataSource` . Se a coleta de métricas estiver desativada para essa fonte de dados, todos os valores serão zero."
+
+#. type: Title ==
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Narayana Transaction Manager integration"
+msgstr "Integração do gerente de transações Narayana"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "If the Narayana JTA extension is also available, integration is automatic."
+msgstr "Se a extensão Narayana JTA também estiver disponível, a integração será automática."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "You can override this by setting the `transactions` configuration property - see the <<configuration-reference, Configuration Reference>> below."
+msgstr "O senhor pode substituir isso definindo a propriedade de configuração `transactions` - consulte a xref:configuration-reference[Referência de configuração] abaixo."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Named Datasources"
+msgstr "Fontes de dados nomeadas"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"When using Dev Services the default datasource will always be created, but to specify a named datasource you need to have\n"
+"at least one build time property so Quarkus knows to create the datasource. You will usually either specify\n"
+"the `db-kind` property, or explicitly enable Dev Services: `quarkus.datasource.\"name\".devservices.enabled=true`."
+msgstr "Ao usar os serviços de desenvolvimento, a fonte de dados padrão sempre será criada, mas para especificar uma fonte de dados nomeada, o senhor precisa ter pelo menos uma propriedade de tempo de compilação para que o Quarkus saiba como criar a fonte de dados. Normalmente, o senhor especificará a propriedade `db-kind` ou habilitará explicitamente os Dev Services: `quarkus.datasource.\"name\".devservices.enabled=true` ."
+
+#. type: Title ==
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Testing with in-memory databases"
+msgstr "Testes com bancos de dados na memória"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Some databases like H2 and Derby are commonly used in \"embedded mode\" as a facility to run quick integration tests."
+msgstr "Alguns bancos de dados, como o H2 e o Derby, são comumente usados no \"modo incorporado\" como um recurso para executar testes rápidos de integração."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"Our suggestion is to use the real database you intend to use in production; container technologies made this simple enough so you no longer have an excuse. Still, there are sometimes\n"
+"good reasons to also want the ability to run quick integration tests using the JVM powered databases,\n"
+"so this is possible as well."
+msgstr "Nossa sugestão é usar o banco de dados real que o senhor pretende usar na produção; as tecnologias de contêineres tornaram isso simples o suficiente para que o senhor não tenha mais uma desculpa. Ainda assim, às vezes há bons motivos para que o senhor também queira executar testes rápidos de integração usando os bancos de dados alimentados pela JVM, portanto, isso também é possível."
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"It is important to remember that when configuring H2 (or Derby) to use the embedded engine,\n"
+"this will work as usual in JVM mode but such an application will not compile into a native executable, as the Quarkus extensions only cover for making the JDBC client code compatible with the native compilation step: embedding the whole database engine into a native executable is currently not implemented."
+msgstr "É importante lembrar que, ao configurar o H2 (ou o Derby) para usar o mecanismo incorporado, ele funcionará normalmente no modo JVM, mas esse aplicativo não será compilado em um executável nativo, pois as extensões do Quarkus cobrem apenas a compatibilidade do código do cliente JDBC com a etapa de compilação nativa: a incorporação de todo o mecanismo de banco de dados em um executável nativo não está implementada no momento."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "If you plan to run such integration tests in the JVM exclusively, it will of course work as usual."
+msgstr "Se o senhor planeja executar esses testes de integração exclusivamente na JVM, é claro que isso funcionará normalmente."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "If you want the ability to run such integration test in both JVM and/or native executables, we have some cool helpers for you: just add either `@QuarkusTestResource(H2DatabaseTestResource.class)` or `@QuarkusTestResource(DerbyDatabaseTestResource.class)` on any class in your integration tests, this will make sure the test suite starts (and stops) the embedded database into a separate process as necessary to run your tests."
+msgstr "Se quiser executar esse teste de integração em executáveis JVM e/ou nativos, temos alguns auxiliares interessantes para o senhor: basta adicionar `@QuarkusTestResource(H2DatabaseTestResource.class)` ou `@QuarkusTestResource(DerbyDatabaseTestResource.class)` em qualquer classe dos seus testes de integração, o que garantirá que o conjunto de testes inicie (e pare) o banco de dados incorporado em um processo separado, conforme necessário para executar os testes."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "These additional helpers are provided by the artifacts having Maven coordinates `io.quarkus:quarkus-test-h2` and `io.quarkus:quarkus-test-derby`, respectively for H2 and Derby."
+msgstr "Esses auxiliares adicionais são fornecidos pelos artefatos com coordenadas Maven `io.quarkus:quarkus-test-h2` e `io.quarkus:quarkus-test-derby` , respectivamente para H2 e Derby."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Follows an example for H2:"
+msgstr "Segue um exemplo para H2:"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"This will allow you to test your application even when it's compiled into a native executable,\n"
+"while the database will run in the JVM as usual."
+msgstr "Isso permitirá que o senhor teste o aplicativo mesmo quando ele for compilado em um executável nativo, enquanto o banco de dados será executado na JVM normalmente."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Connect to it using:"
+msgstr "Conecte-se a ele usando:"
+
+#. type: Title ==
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Common Datasource Configuration Reference"
+msgstr "Referência de configuração de fonte de dados comum"
+
+#: _versions/2.13/guides/datasource.adoc
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-0\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de Configuração Fixa no Momento da Compilação - Todas as outras propriedades de configuração podem ser sobrepostas em tempo de execução. <input type=\"search\" id=\"config-search-0\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#. type: Title ==
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "JDBC Configuration Reference"
+msgstr "Referência de configuração de JDBC"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-1\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de configuração fixada no momento da construção - Todas as outras propriedades de configuração podem ser substituídas no momento da execução <input type=\"search\" id=\"config-search-1\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#. type: Title ==
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "JDBC URL Reference"
+msgstr "Referência de URL JDBC"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"Each of the supported databases contains different JDBC URL configuration options.\n"
+"Going into each of those options is beyond the scope of this document,\n"
+"but the following section gives an overview of each database URL and a link to the official documentation."
+msgstr "Cada um dos bancos de dados compatíveis contém diferentes opções de configuração de URL JDBC. A análise de cada uma dessas opções está além do escopo deste documento, mas a seção a seguir apresenta uma visão geral de cada URL de banco de dados e um link para a documentação oficial."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "DB2"
+msgstr "DB2"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:db2://<serverName>[:<portNumber>]/<databaseName>[:<key1>=<value>;[<key2>=<value2>;]]`"
+msgstr "`jdbc:db2://<serverName>[:<portNumber>]/<databaseName>[:<key1>=<value>;[<key2>=<value2>;]]`"
+
+#. type: Labeled list
+#: _versions/2.13/guides/datasource.adoc
+#, no-wrap
+msgid "Example"
+msgstr "Exemplo"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:db2://localhost:50000/MYDB:user=dbadm;password=dbadm;`"
+msgstr "`jdbc:db2://localhost:50000/MYDB:user=dbadm;password=dbadm;`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "See the https://www.ibm.com/support/knowledgecenter/SSEPGG_11.5.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_r0052342.html[official documentation] for more detail on URL syntax and additional supported options."
+msgstr "Consulte a link:https://www.ibm.com/support/knowledgecenter/SSEPGG_11.5.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_r0052342.html[documentação oficial] para obter mais detalhes sobre a sintaxe do URL e outras opções compatíveis."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Derby"
+msgstr "Derby"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:derby:[//serverName[:portNumber]/][memory:]databaseName[;property=value[;property=value]]`"
+msgstr "`jdbc:derby:[//serverName[:portNumber]/][memory:]databaseName[;property=value[;property=value]]`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:derby://localhost:1527/myDB`, `jdbc:derby:memory:myDB;create=true`"
+msgstr "`jdbc:derby://localhost:1527/myDB` , `jdbc:derby:memory:myDB;create=true`"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"Derby is an embedded database.\n"
+"It can run as a server, based on a file, or live completely in memory.\n"
+"All of these options are available as listed above.\n"
+"You can find more information at the https://db.apache.org/derby/docs/10.8/devguide/cdevdvlp17453.html#cdevdvlp17453[official documentation]."
+msgstr "O Derby é um banco de dados incorporado. Ele pode ser executado como um servidor, com base em um arquivo, ou ficar totalmente na memória. Todas essas opções estão disponíveis conforme listado acima. O senhor pode encontrar mais informações na link:https://db.apache.org/derby/docs/10.8/devguide/cdevdvlp17453.html#cdevdvlp17453[documentação oficial] ."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "H2"
+msgstr "H2"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:h2:{ {.|mem:}[name] | [file:]fileName | {tcp|ssl}:[//]server[:port][,server2[:port]]/name }[;key=value...]`"
+msgstr "`jdbc:h2:{ {.|mem:}[name] | [file:]fileName | {tcp|ssl}:[//]server[:port][,server2[:port]]/name }[;key=value…​]`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:h2:tcp://localhost/~/test`, `jdbc:h2:mem:myDB`"
+msgstr "`jdbc:h2:tcp://localhost/~/test` , `jdbc:h2:mem:myDB`"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"H2 is an embedded database.\n"
+"It can run as a server, based on a file, or live completely in memory.\n"
+"All of these options are available as listed above.\n"
+"You can find more information at the https://h2database.com/html/features.html?highlight=url&search=url#database_url[official documentation]."
+msgstr "O H2 é um banco de dados incorporado. Ele pode ser executado como um servidor, com base em um arquivo, ou ficar totalmente na memória. Todas essas opções estão disponíveis conforme listado acima. O senhor pode encontrar mais informações na link:https://h2database.com/html/features.html?highlight=url&search=url#database_url[documentação oficial] ."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "MariaDB"
+msgstr "MariaDB"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"`jdbc:mariadb:[replication:|failover:|sequential:|aurora:]//<hostDescription>[,<hostDescription>...]/[database][?<key1>=<value1>[&<key2>=<value2>]]`\n"
+"hostDescription:: `<host>[:<portnumber>]  or address=(host=<host>)[(port=<portnumber>)][(type=(master|slave))]`"
+msgstr "`jdbc:mariadb:[replication:|failover:|sequential:|aurora:]//<hostDescription>[,<hostDescription>…​]/[database][?<key1>=<value1>[&<key2>=<value2>]]` hostDescription:: `<host>[:<portnumber>] or address=(host=<host>)[(port=<portnumber>)][(type=(master|slave))]`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:mariadb://localhost:3306/test`"
+msgstr "`jdbc:mariadb://localhost:3306/test`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "You can find more information about this feature and others detailed in the https://mariadb.com/kb/en/library/about-mariadb-connector-j/[official documentation]."
+msgstr "O senhor pode encontrar mais informações sobre esse recurso e outros detalhados na link:https://mariadb.com/kb/en/library/about-mariadb-connector-j/[documentação oficial] ."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Microsoft SQL Server"
+msgstr "Microsoft SQL Server"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:sqlserver://[serverName[\\instanceName][:portNumber]][;property=value[;property=value]]`"
+msgstr "`jdbc:sqlserver://[serverName[\\instanceName][:portNumber]][;property=value[;property=value]]`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:sqlserver://localhost:1433;databaseName=AdventureWorks`"
+msgstr "`jdbc:sqlserver://localhost:1433;databaseName=AdventureWorks`"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"The Microsoft SQL Server JDBC driver works essentially the same as the others.\n"
+"More details can be found in the https://docs.microsoft.com/en-us/sql/connect/jdbc/connecting-to-sql-server-with-the-jdbc-driver?view=sql-server-2017[official documentation]."
+msgstr "O driver JDBC do Microsoft SQL Server funciona essencialmente da mesma forma que os outros. Mais detalhes podem ser encontrados na link:https://docs.microsoft.com/en-us/sql/connect/jdbc/connecting-to-sql-server-with-the-jdbc-driver?view=sql-server-2017[documentação oficial] ."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "MySQL"
+msgstr "MySQL"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"`jdbc:mysql:[replication:|failover:|sequential:|aurora:]//<hostDescription>[,<hostDescription>...]/[database][?<key1>=<value1>[&<key2>=<value2>]]`\n"
+"hostDescription:: `<host>[:<portnumber>]  or address=(host=<host>)[(port=<portnumber>)][(type=(master|slave))]`"
+msgstr "`jdbc:mysql:[replication:|failover:|sequential:|aurora:]//<hostDescription>[,<hostDescription>…​]/[database][?<key1>=<value1>[&<key2>=<value2>]]` hostDescription:: `<host>[:<portnumber>] or address=(host=<host>)[(port=<portnumber>)][(type=(master|slave))]`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:mysql://localhost:3306/test`"
+msgstr "`jdbc:mysql://localhost:3306/test`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "You can find more information about this feature and others detailed in the https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference.html[official documentation]."
+msgstr "O senhor pode encontrar mais informações sobre esse recurso e outros detalhados na link:https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference.html[documentação oficial] ."
+
+#. type: Title ====
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "MySQL Limitations"
+msgstr "Limitações do MySQL"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"When compiling a Quarkus application to native-image, the MySQL support for JMX and Oracle Cloud Infrastructure (OCI) integrations are disabled as they are not compatible\n"
+"with GraalVM native-images.\n"
+"The lack of JMX support is a natural consequence of running in native and is unlikely to be resolved.\n"
+"The integration with OCI could be resolved, if you need it we suggest opening a support request with the MySQL Connector/J maintainers."
+msgstr "Ao compilar um aplicativo Quarkus para a imagem nativa, o suporte do MySQL para as integrações JMX e Oracle Cloud Infrastructure (OCI) é desativado, pois não é compatível com as imagens nativas do GraalVM. A falta de suporte ao JMX é uma consequência natural da execução nativa e é improvável que seja resolvida. A integração com a OCI pode ser resolvida; se o senhor precisar dela, sugerimos que abra uma solicitação de suporte com os mantenedores do MySQL Connector/J."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Oracle"
+msgstr "Oráculo"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:oracle:driver_type:@database_specifier`"
+msgstr "`jdbc:oracle:driver_type:@database_specifier`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:oracle:thin:@localhost:1521/ORCL_SVC`"
+msgstr "`jdbc:oracle:thin:@localhost:1521/ORCL_SVC`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "More details can be found in the https://docs.oracle.com/en/database/oracle/oracle-database/21/jjdbc/data-sources-and-URLs.html#GUID-AEA8E228-1B21-4111-AF4C-B1F33744CA08[official documentation]."
+msgstr "Mais detalhes podem ser encontrados na link:https://docs.oracle.com/en/database/oracle/oracle-database/21/jjdbc/data-sources-and-URLs.html#GUID-AEA8E228-1B21-4111-AF4C-B1F33744CA08[documentação oficial] ."
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "PostgreSQL"
+msgstr "PostgreSQL"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid ""
+"PostgreSQL only runs as a server, as do the rest of the databases below.\n"
+"As such, you must specify connection details, or use the defaults."
+msgstr "O PostgreSQL é executado somente como servidor, assim como os demais bancos de dados abaixo. Dessa forma, o senhor deve especificar os detalhes da conexão ou usar os padrões."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:postgresql:[//][host][:port][/database][?key=value...]`"
+msgstr "`jdbc:postgresql:[//][host][:port][/database][?key=value…​]`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`jdbc:postgresql://localhost/test`"
+msgstr "`jdbc:postgresql://localhost/test`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Defaults for the different parts are as follows:"
+msgstr "Os padrões para as diferentes partes são os seguintes:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`host`"
+msgstr "`host`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "localhost"
+msgstr "localhost"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`port`"
+msgstr "`port`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "5432"
+msgstr "5432"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "`database`"
+msgstr "`database`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "same name as the username"
+msgstr "mesmo nome que o nome de usuário"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "The https://jdbc.postgresql.org/documentation/head/connect.html[official documentation] go into more detail and list optional parameters as well."
+msgstr "A link:https://jdbc.postgresql.org/documentation/head/connect.html[documentação oficial] apresenta mais detalhes e também lista os parâmetros opcionais."
+
+#. type: Title ==
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Reactive Datasource Configuration Reference"
+msgstr "Referência de configuração de fonte de dados reativa"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-2\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de configuração fixada em tempo de compilação - Todas as outras propriedades de configuração podem ser substituídas em tempo de execução <input type=\"search\" id=\"config-search-2\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Reactive DB2 Configuration"
+msgstr "Configuração reativa do DB2"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-3\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de configuração fixada no momento da construção - Todas as outras propriedades de configuração podem ser substituídas no momento da execução <input type=\"search\" id=\"config-search-3\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Reactive MariaDB/MySQL Specific Configuration"
+msgstr "Configuração específica do MariaDB/MySQL reativo"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-4\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de configuração fixada no momento da construção - Todas as outras propriedades de configuração podem ser substituídas no momento da execução <input type=\"search\" id=\"config-search-4\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Reactive Microsoft SQL Server Specific Configuration"
+msgstr "Configuração específica do Microsoft SQL Server reativo"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-5\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de configuração fixada no momento da construção - Todas as outras propriedades de configuração podem ser substituídas no momento da execução <input type=\"search\" id=\"config-search-5\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Reactive Oracle Specific Configuration"
+msgstr "Configuração específica do Oracle reativo"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-6\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de configuração fixada no momento da construção - Todas as outras propriedades de configuração podem ser substituídas no momento da execução <input type=\"search\" id=\"config-search-6\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Reactive PostgreSQL Specific Configuration"
+msgstr "Configuração específica do PostgreSQL reativo"
+
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-7\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de configuração fixada no momento da construção - Todas as outras propriedades de configuração podem ser substituídas no momento da execução <input type=\"search\" id=\"config-search-7\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#. type: Title ==
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "Reactive Datasource URL Reference"
+msgstr "Referência de URL de fonte de dados reativa"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`db2://[user[:[password]]@]host[:port][/database][?<key1>=<value1>[&<key2>=<value2>]]`"
+msgstr "`db2://[user[:[password]]@]host[:port][/database][?<key1>=<value1>[&<key2>=<value2>]]`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`db2://dbuser:secretpassword@database.server.com:50000/mydb`"
+msgstr "`db2://dbuser:secretpassword@database.server.com:50000/mydb`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Currently, the client supports the following parameter keys:"
+msgstr "Atualmente, o cliente é compatível com as seguintes chaves de parâmetro:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`user`"
+msgstr "`user`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`password`"
+msgstr "`password`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Configuring parameters in connection URL will override the default properties."
+msgstr "A configuração de parâmetros no URL de conexão substituirá as propriedades padrão."
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`sqlserver://[user[:[password]]@]host[:port][/database][?<key1>=<value1>[&<key2>=<value2>]]`"
+msgstr "`sqlserver://[user[:[password]]@]host[:port][/database][?<key1>=<value1>[&<key2>=<value2>]]`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`sqlserver://dbuser:secretpassword@database.server.com:1433/mydb`"
+msgstr "`sqlserver://dbuser:secretpassword@database.server.com:1433/mydb`"
+
+#. type: Title ===
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "MySQL / MariaDB"
+msgstr "MySQL / MariaDB"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`mysql://[user[:[password]]@]host[:port][/database][?<key1>=<value1>[&<key2>=<value2>]]`"
+msgstr "`mysql://[user[:[password]]@]host[:port][/database][?<key1>=<value1>[&<key2>=<value2>]]`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`mysql://dbuser:secretpassword@database.server.com:3211/mydb`"
+msgstr "`mysql://dbuser:secretpassword@database.server.com:3211/mydb`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "Currently, the client supports the following parameter keys (case-insensitive):"
+msgstr "Atualmente, o cliente é compatível com as seguintes chaves de parâmetro (sem distinção entre maiúsculas e minúsculas):"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`schema`"
+msgstr "`schema`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`socket`"
+msgstr "`socket`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`useAffectedRows`"
+msgstr "`useAffectedRows`"
+
+#. type: Title ====
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "EZConnect Format"
+msgstr "Formato EZConnect"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`oracle:thin:@[[protocol:]//]host[:port][/service_name][:server_mode][/instance_name][?connection properties]`"
+msgstr "`oracle:thin:@[[protocol:]//]host[:port][/service_name][:server_mode][/instance_name][?connection properties]`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`oracle:thin:@mydbhost1:5521/mydbservice?connect_timeout=10sec`"
+msgstr "`oracle:thin:@mydbhost1:5521/mydbservice?connect_timeout=10sec`"
+
+#. type: Title ====
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy, no-wrap
+msgid "TNS Alias Format"
+msgstr "Formato do TNS Alias"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`oracle:thin:@<alias_name>[?connection properties]`"
+msgstr "`oracle:thin:@<alias_name>[?connection properties]`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`oracle:thin:@prod_db?TNS_ADMIN=/work/tns/`"
+msgstr "`oracle:thin:@prod_db?TNS_ADMIN=/work/tns/`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`postgresql://[user[:[password]]@]host[:port][/database][?<key1>=<value1>[&<key2>=<value2>]]`"
+msgstr "`postgresql://[user[:[password]]@]host[:port][/database][?<key1>=<value1>[&<key2>=<value2>]]`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`postgresql://dbuser:secretpassword@database.server.com:5432/mydb`"
+msgstr "`postgresql://dbuser:secretpassword@database.server.com:5432/mydb`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`dbname`"
+msgstr "`dbname`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`sslmode`"
+msgstr "`sslmode`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "additional properties, including:"
+msgstr "propriedades adicionais, incluindo:"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`application_name`"
+msgstr "`application_name`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`fallback_application_name`"
+msgstr "`fallback_application_name`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`search_path`"
+msgstr "`search_path`"
+
+#. type: Plain text
+#: _versions/2.13/guides/datasource.adoc
+#, fuzzy
+msgid "`options`"
+msgstr "`options`"

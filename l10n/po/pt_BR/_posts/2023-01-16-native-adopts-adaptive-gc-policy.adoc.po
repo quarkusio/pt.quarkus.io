@@ -1,0 +1,207 @@
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2023-09-21 08:08+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. type: YAML Front Matter: title
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy, no-wrap
+msgid "Quarkus Native adopts Adaptive GC policy"
+msgstr "O Quarkus Native adopta a política de GC adaptativo"
+
+#. type: YAML Front Matter: synopsis
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy, no-wrap
+msgid "Native runtime GC policy switches to adaptive to more consistency and predictability"
+msgstr "A política de GC em tempo de execução nativa muda para adaptativa para maior consistência e previsibilidade"
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"Starting with Quarkus 2.13.6.Final, the native runtime garbage collection policy switched in order to provide more consistent and predictable runtime performance.\n"
+"This blog post tells the story of this switch."
+msgstr "A partir do Quarkus 2.13.6.Final, a política nativa de coleta de lixo em tempo de execução mudou para oferecer um desempenho mais consistente e previsível em tempo de execução. Esta postagem do blog conta a história dessa mudança."
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"Sometime in 2022 while carrying out some native runtime performance benchmarking we observed that, in constant load plain text benchmarks,\n"
+"memory consumption would grow continuously until it reached around 500MB and then it would drop.\n"
+"The memory consumption graph would look something like this:"
+msgstr "Em algum momento de 2022, enquanto realizávamos alguns benchmarks de desempenho de tempo de execução nativo, observamos que, em benchmarks de texto simples de carga constante, o consumo de memória aumentava continuamente até atingir cerca de 500 MB e depois caía. O gráfico de consumo de memória seria mais ou menos assim:"
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"The graph above was obtained with VisualVM.\n"
+"This feature has only been available in the GraalVM Community Edition starting with version 22.3.0.\n"
+"See\n"
+"https://www.graalvm.org/latest/tools/visualvm[here]\n"
+"for more details."
+msgstr "O gráfico acima foi obtido com o VisualVM. Esse recurso só está disponível no GraalVM Community Edition a partir da versão 22.3.0. Consulte link:https://www.graalvm.org/latest/tools/visualvm[aqui] para obter mais detalhes."
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"The graph looked suspicious.\n"
+"At a first glance, small garbage collections were happening regularly but those collections were not able to fully collect all the garbage.\n"
+"This uncollected garbage would continue to grow until around the 500MB mark, at which point a full garbage collection would happen and it would clear the growing leak."
+msgstr "O gráfico parecia suspeito. À primeira vista, pequenas coletas de lixo estavam ocorrendo regularmente, mas essas coletas não eram capazes de coletar todo o lixo. Esse lixo não coletado continuava a crescer até a marca de 500 MB, momento em que ocorria uma coleta de lixo completa que eliminava o vazamento crescente."
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"The first thing we wondered was,\n"
+"what this ~500MB limit was and where it was coming from.\n"
+"To do that,\n"
+"we enabled GC logging to see if we could get some clues:"
+msgstr "A primeira coisa que nos perguntamos foi qual era esse limite de ~500 MB e de onde ele vinha. Para isso, ativamos o registro do GC para ver se conseguíamos obter alguma pista:"
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"We realized that this number is actually 512MB,\n"
+"which is the default minimum heap size GraalVM configures when the maximum heap size is anything above ~3GB of physical memory."
+msgstr "Percebemos que esse número é, na verdade, 512 MB, que é o tamanho mínimo padrão do heap que o GraalVM configura quando o tamanho máximo do heap está acima de ~3 GB de memória física."
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"The next question was,\n"
+"why is there a relationship between the minimum heap size and the memory consumption at which a full GC appears to happen?\n"
+"Looking at the output above,\n"
+"on our system the default maximum heap size is 25.6GB.\n"
+"GraalVM defaults the maximum heap size to 80% of the physical memory if no specific configuration is passed, and indeed 25.6GB is 80% of 32GB.\n"
+"It would seem odd to do a full GC when 512MB have been consumed,\n"
+"given that our system has given it a maximum heap size that is far bigger.\n"
+"The answer was found in the GC policy Quarkus was explicitly configuring."
+msgstr "A próxima pergunta foi: por que existe uma relação entre o tamanho mínimo do heap e o consumo de memória em que um GC completo parece ocorrer? Observando a saída acima, em nosso sistema o tamanho máximo padrão do heap é 25,6 GB. O GraalVM padroniza o tamanho máximo do heap para 80% da memória física se nenhuma configuração específica for passada e, de fato, 25,6 GB é 80% de 32 GB. Parece estranho fazer um GC completo quando 512 MB foram consumidos, uma vez que nosso sistema deu a ele um tamanho máximo de heap que é muito maior. A resposta foi encontrada na política de GC que o Quarkus estava configurando explicitamente."
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"By default GraalVM uses a GC policy called \"adaptive\",\n"
+"but Quarkus was instead instructing GraalVM to use another GC policy called \"by space and time\".\n"
+"The full story on why Quarkus was using a different GC policy can be found\n"
+"https://github.com/quarkusio/quarkus/issues/28267[here],\n"
+"but to summarize,\n"
+"the decision was made in 2018, when \"by space and time\" appeared to generate less full GCs and offered considerably better throughput."
+msgstr "Por padrão, o GraalVM usa uma política de GC chamada \"adaptativa\", mas o Quarkus estava instruindo o GraalVM a usar outra política de GC chamada \"por espaço e tempo\". A história completa sobre por que o Quarkus estava usando uma política de GC diferente pode ser encontrada link:https://github.com/quarkusio/quarkus/issues/28267[aqui] , mas, para resumir, a decisão foi tomada em 2018, quando \"por espaço e tempo\" parecia gerar menos GCs completos e oferecia uma taxa de transferência consideravelmente melhor."
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"The \"by space and time\" GC policy implemented a `shouldCollectCompletely` method that decided whether to do a complete (full) or incremental (minimal) collection.\n"
+"The relevant code of the \"by space and time\" GC policy is the following:"
+msgstr "A política de GC \"por espaço e tempo\" implementou um método `shouldCollectCompletely` que decidiu se a coleta seria completa (total) ou incremental (mínima). O código relevante da política de GC \"por espaço e tempo\" é o seguinte:"
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"One option `(1)` for doing a full GC would be when it estimates that the used heap will exceed maximum heap size,\n"
+"but that wasn’t our case.\n"
+"The other `(2)` would be if enough minimal collections had happened and the used heap was above the minimum heap size.\n"
+"This latter option was what was happening here."
+msgstr "Uma opção `(1)` para fazer um GC completo seria quando ele estima que o heap usado excederá o tamanho máximo do heap, mas esse não foi o nosso caso. A outra `(2)` seria se tivessem ocorrido coletas mínimas suficientes e o heap usado estivesse acima do tamanho mínimo do heap. Essa última opção era o que estava acontecendo aqui."
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"At this point we thought,\n"
+"do the assumptions made about the default GC policy still apply in 2022?\n"
+"So, we removed the GC policy configuration tweak,\n"
+"repeated the test and we observed the following memory consumption:"
+msgstr "Nesse ponto, pensamos: as suposições feitas sobre a política de GC padrão ainda se aplicam em 2022? Então, removemos o ajuste da configuração da política de GC, repetimos o teste e observamos o seguinte consumo de memória:"
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"For the same workload the default GC policy, called \"adaptive\",\n"
+"consumed close to 50% less heap compared to the \"by space and time\" one.\n"
+"Note, however, that these graphs alone are not enough to make the switch since we could have a situation where \"adaptive\" is using less memory because the overall throughput is less.\n"
+"So, let’s look at the benchmark that generated the graphs above and see what throughput numbers we obtain.\n"
+"Using https://github.com/Hyperfoil/Hyperfoil[Hyperfoil],\n"
+"the \"by space and time\" policy reported these numbers on our environment:"
+msgstr "Para a mesma carga de trabalho, a política de GC padrão, chamada \"adaptativa\", consumiu cerca de 50% menos heap em comparação com a política \"por espaço e tempo\". Observe, no entanto, que esses gráficos por si só não são suficientes para fazer a troca, pois poderíamos ter uma situação em que a \"adaptativa\" está usando menos memória porque a taxa de transferência geral é menor. Então, vamos examinar o benchmark que gerou os gráficos acima e ver quais números de taxa de transferência obtemos. Usando link:https://github.com/Hyperfoil/Hyperfoil[o Hyperfoil] , a política \"por espaço e tempo\" informou esses números em nosso ambiente:"
+
+#. type: Plain text
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid "And here are the numbers for the \"adaptive\" policy:"
+msgstr "E aqui estão os números da política \"adaptativa\":"
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"The results were obtained with `wrk`,\n"
+"which is known to have issues with latency numbers\n"
+"(see https://redhatperf.github.io/post/coordinated-omission[this blog post] for more details),\n"
+"so we can ignore those in the context of this blog post and focus on throughput numbers."
+msgstr "Os resultados foram obtidos com o site `wrk` , que é conhecido por ter problemas com os números de latência (consulte link:https://redhatperf.github.io/post/coordinated-omission[esta postagem do blog] para obter mais detalhes), portanto, podemos ignorá-los no contexto desta postagem do blog e nos concentrar nos números de throughput."
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"For the same workload,\n"
+"the throughput obtained with the \"adaptive\" policy is within 1% of the one obtained with the \"by space and time\" policy.\n"
+"So getting pretty much the same throughput with \"adaptive\" as with \"by space and time\" and close to 50% less memory consumption,\n"
+"made it a pretty convincing argument to switch to the \"adaptive\" GC policy as the default for Quarkus,\n"
+"as it was already the case for other GraalVM."
+msgstr "Para a mesma carga de trabalho, a taxa de transferência obtida com a política \"adaptativa\" está dentro de 1% da obtida com a política \"por espaço e tempo\". Portanto, obter praticamente a mesma taxa de transferência com a política \"adaptativa\" e com a política \"por espaço e tempo\" e cerca de 50% menos consumo de memória tornou um argumento bastante convincente a mudança para a política de GC \"adaptativa\" como padrão para o Quarkus, como já era o caso para outros GraalVM."
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"The memory consumption benefits do not apply evenly across all heap sizes.\n"
+"Numbers like the ones published in this blog post would apply for maximum heap sizes that are equal or above 3GB,\n"
+"at which stage the default minimum heap size is set to ~512MB unless configured otherwise.\n"
+"For smaller maximum heap sizes, the memory consumption improvements might be smaller or non-existent."
+msgstr "Os benefícios do consumo de memória não se aplicam uniformemente a todos os tamanhos de heap. Números como os publicados nesta postagem do blog se aplicam a tamanhos máximos de heap iguais ou superiores a 3 GB, estágio no qual o tamanho mínimo de heap padrão é definido como ~512 MB, a menos que seja configurado de outra forma. Para tamanhos máximos de heap menores, as melhorias no consumo de memória podem ser menores ou inexistentes."
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"We often see tests or benchmarks run with no `-Xmx` configured,\n"
+"in which case as stated above,\n"
+"the maximum heap size is set to 80% of the available physical memory and this heap size can easily exceed 3GB on modern hardware.\n"
+"These users would see better out of the box experience with the \"adaptive\" GC policy."
+msgstr "Frequentemente, vemos testes ou benchmarks executados sem o site `-Xmx` configurado e, nesse caso, conforme mencionado acima, o tamanho máximo do heap é definido como 80% da memória física disponível e esse tamanho do heap pode facilmente exceder 3 GB no hardware moderno. Esses usuários teriam uma melhor experiência imediata com a política de GC \"adaptável\"."
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"So, starting with Quarkus 2.13.6.Final, the GC policy for Quarkus native applications was aligned with GraalVM's default, called \"adaptive\".\n"
+"It is still possible to set the GC policy back to \"by space and time\", should that work better in a specific case.\n"
+"This can be useful to do if you observe a regression with this GC policy change in your own Quarkus application.\n"
+"To do so, pass in:"
+msgstr "Portanto, a partir do Quarkus 2.13.6.Final, a política de GC para aplicativos nativos do Quarkus foi alinhada com o padrão do GraalVM, chamado de \"adaptativo\". Ainda é possível definir a política de GC de volta para \"por espaço e tempo\", caso isso funcione melhor em um caso específico. Isso pode ser útil se o senhor observar uma regressão com essa alteração da política de GC em seu próprio aplicativo Quarkus. Para fazer isso, insira:"
+
+#. type: Plain text
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid "It is necessary to escape `$` sign if passing in via command line."
+msgstr "É necessário escapar ao sinal `$` se a transmissão for efectuada através da linha de comandos."
+
+#: _posts/2023-01-16-native-adopts-adaptive-gc-policy.adoc
+#, fuzzy
+msgid ""
+"More details on the investigation carried out can be found in\n"
+"https://github.com/quarkusio/quarkus/issues/28267[the original GitHub issue].\n"
+"As a result of this work,\n"
+"we have also enhanced the Quarkus Native Reference Guide to add a\n"
+"https://quarkus.io/guides/native-reference#native-memory-management[Native Memory Management section].\n"
+"This new section should help Quarkus Native users understand how memory management works and how to get the most out of it."
+msgstr "Mais detalhes sobre a investigação realizada podem ser encontrados na link:https://github.com/quarkusio/quarkus/issues/28267[edição original do GitHub] . Como resultado desse trabalho, também aprimoramos o Guia de Referência do Quarkus Native para adicionar uma link:https://quarkus.io/guides/native-reference#native-memory-management[seção de Gerenciamento de Memória Nativa] . Essa nova seção deve ajudar os usuários do Quarkus Native a entender como o gerenciamento de memória funciona e como tirar o máximo proveito dele."
