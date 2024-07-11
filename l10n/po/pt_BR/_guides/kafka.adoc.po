@@ -416,14 +416,13 @@ msgid ""
 msgstr "`checkpoint` permite persistir os offsets do consumidor em um **state store**, em vez de registra-los de volta para o broker Kafka. Usando a API `CheckpointMetadata`, o código do consumidor pode persistir um _processing state_ com o offset do registro para marcar o progresso de um consumidor. Quando o processamento continua a partir de um offset previamente persistido, ele posiciona o consumidor Kafka nesse offset e também restaura o estado persistido, continuando o processamento com estado de onde parou. A estratégia de checkpoint mantém localmente o estado de processamento associado ao último offset e o persiste periodicamente no state store (período especificado por `auto.commit.interval.ms` (padrão: 5000)). O conector será marcado como não saudável se nenhum estado de processamento for persistido no state store em `checkpoint.unsynced-state-max-age.ms` (padrão: 10000). Se `checkpoint.unsynced-state-max-age.ms` for definido como menor ou igual a 0, ele não realizará nenhuma verificação de saúde. Para mais informações, consulte <<stateful-processing-checkpointing>>."
 
 #: _guides/kafka.adoc
-#, fuzzy
 msgid ""
 "`latest` commits the record offset received by the Kafka consumer as soon as the associated message is acknowledged (if the offset is higher than the previously committed offset).\n"
 "This strategy provides at-least-once delivery if the channel processes the message without performing any asynchronous processing. Specifically, the offset of the most recent acknowledged\n"
 "message will always be committed, even if older messages have not finished being processed. In case of an incident such as a crash, processing would restart after the last commit, leading\n"
 "to older messages never being successfully and fully processed, which would appear as message loss.\n"
 "This strategy should not be used in high load environment, as offset commit is expensive. However, it reduces the risk of duplicates."
-msgstr "`latest` confirma o deslocamento do registro recebido pelo consumidor do Kafka assim que a mensagem associada é confirmada (se o deslocamento for maior do que o deslocamento confirmado anteriormente). Essa estratégia oferece entrega pelo menos uma vez se o canal processar a mensagem sem executar nenhum processamento assíncrono. Especificamente, o deslocamento da mensagem confirmada mais recente sempre será confirmado, mesmo que as mensagens mais antigas não tenham terminado de ser processadas. No caso de um incidente, como uma falha, o processamento seria reiniciado após a última confirmação, fazendo com que as mensagens mais antigas nunca fossem processadas com êxito e totalmente, o que apareceria como perda de mensagem. Essa estratégia não deve ser usada em ambientes de alta carga, pois a confirmação de deslocamento é cara. No entanto, ela reduz o risco de duplicatas."
+msgstr "`latest` confirma o offset do registro recebido pelo consumidor Kafka assim que a mensagem associada é reconhecida (se o offset for maior que o offset previamente confirmado). Esta estratégia fornece entrega pelo menos uma vez se o canal processa a mensagem sem realizar nenhum processamento assíncrono. Especificamente, o offset da mensagem mais recentemente reconhecida sempre será confirmado, mesmo que mensagens mais antigas ainda não tenham terminado de ser processadas. Em caso de incidente, como uma falha, o processamento reiniciaria após o último commit, resultando em mensagens mais antigas que nunca foram processadas com sucesso e completamente, o que poderia ser interpretado como perda de mensagem. Esta estratégia não deve ser usada em um ambiente de carga alta, pois a confirmação do offset é custosa. No entanto, ela reduz o risco de duplicatas."
 
 #: _guides/kafka.adoc
 msgid ""
@@ -597,17 +596,15 @@ msgid ""
 msgstr "O manipulador é chamado com detalhes da desserialização, inclusive a ação representada como `Uni<T>`. Na desserialização `Uni` podem ser implementadas estratégias de falha, como tentar novamente, fornecer um valor de reserva ou aplicar o tempo limite."
 
 #: _guides/kafka.adoc
-#, fuzzy
 msgid ""
 "If you don’t configure a deserialization failure handler and a deserialization failure happens, the application is marked unhealthy.\n"
 "You can also ignore the failure, which will log the exception and produce a `null` value.\n"
 "To enable this behavior, set the `mp.messaging.incoming.$channel.fail-on-deserialization-failure` attribute to `false`."
-msgstr "Se o senhor não configurar um manipulador de falha de desserialização e ocorrer uma falha de desserialização, o aplicativo será marcado como não saudável. Também é possível ignorar a falha, o que registrará a exceção e produzirá um valor `null` . Para ativar esse comportamento, defina o atributo `mp.messaging.incoming.$channel.fail-on-deserialization-failure` como `false` ."
+msgstr "Se você não configurar um manipulador de falha de desserialização e ocorrer uma falha de desserialização, a aplicação será marcada como não saudável. Você também pode ignorar a falha, o que registrará a exceção e produzirá um valor `null`. Para habilitar esse comportamento, configure o atributo `mp.messaging.incoming.$channel.fail-on-deserialization-failure` para `false`."
 
 #: _guides/kafka.adoc
-#, fuzzy
 msgid "If the `fail-on-deserialization-failure` attribute is set to `false` and the `failure-strategy` attribute is `dead-letter-queue` the failed record will be sent to the corresponding *dead letter queue* topic."
-msgstr "Se o atributo `fail-on-deserialization-failure` for definido como `false` e o atributo `failure-strategy` for `dead-letter-queue` , o registro com falha será enviado para o tópico correspondente *da fila de cartas mortas* ."
+msgstr "Se o atributo `fail-on-deserialization-failure` estiver configurado como `false` e o atributo `failure-strategy` for `dead-letter-queue`, o registro com falha será enviado para o tópico da *dead letter queue* correspondente."
 
 #. type: Title ===
 #: _guides/kafka.adoc
