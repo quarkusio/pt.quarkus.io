@@ -7,217 +7,271 @@ msgstr ""
 "X-Generator: jekyll-l10n\n"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Leveraging Quarkus build-time metaprogramming capabilities to improve Jackson's serialization performance"
-msgstr ""
+msgstr "Aproveitamento dos recursos de metaprogramação de tempo de compilação do Quarkus para melhorar o desempenho da serialização do Jackson"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "One of the key architectural decisions taken by Quarkus designers has been moving as much work as possible from the startup time to the build time. This choice implies a clear separation between the deployment (aka. build-time) and runtime parts of each extension, and allows to perform the biggest part of the work once and for all during the build, thus allowing the typical Quarkus application to have a smaller footprint and faster load time."
-msgstr ""
+msgstr "Uma das principais decisões arquitetônicas tomadas pelos designers do Quarkus foi transferir o máximo de trabalho possível do momento da inicialização para o momento da construção. Essa escolha implica uma separação clara entre a implantação (também conhecida como tempo de compilação) e as partes de tempo de execução de cada extensão, e permite executar a maior parte do trabalho de uma vez por todas durante a compilação, permitindo assim que o aplicativo Quarkus típico tenha uma pegada menor e um tempo de carregamento mais rápido."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "A consequence of this architecture is the possibility of extensively leveraging https://en.wikipedia.org/wiki/Metaprogramming[metaprogramming], identifying and analyzing the Java classes implementing the domain model of a given application and generating other code intended to opportunely and efficiently manipulate those classes. In particular the goal of the improvement discussed in this article is replacing the standard Jackson serialization mechanism, based on reflection, with code generated at build time."
-msgstr ""
+msgstr "Uma consequência dessa arquitetura é a possibilidade de aproveitar amplamente a link:https://en.wikipedia.org/wiki/Metaprogramming[metaprogramação] , identificando e analisando as classes Java que implementam o modelo de domínio de um determinado aplicativo e gerando outro código destinado a manipular essas classes de forma oportuna e eficiente. Em particular, o objetivo do aprimoramento discutido neste artigo é substituir o mecanismo de serialização padrão da Jackson, baseado em reflexão, pelo código gerado no momento da construção."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Reflection is used (and abused) by many Java frameworks and libraries to support dynamic behavior. If more work is done at build time, this dynamism is no longer needed. Reducing reflection to a bare minimum gives performance improvements. It also makes the application more suitable for compilation to a native binary (the https://docs.oracle.com/en/learn/understanding-reflection-graalvm-native-image/index.html#step-2-the-closed-world-assumption[GraalVM closed world assumption])."
-msgstr ""
+msgstr "A reflexão é usada (e abusada) por muitos frameworks e bibliotecas Java para dar suporte ao comportamento dinâmico. Se mais trabalho for feito no momento da compilação, esse dinamismo não será mais necessário. Reduzir a reflexão ao mínimo necessário proporciona melhorias no desempenho. Isso também torna o aplicativo mais adequado para compilação em um binário nativo (a link:https://docs.oracle.com/en/learn/understanding-reflection-graalvm-native-image/index.html#step-2-the-closed-world-assumption[suposição de mundo fechado do GraalVM] )."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "A similar idea has been already implemented also in the area of object to JSON serialization by https://github.com/quarkusio/qson[Qson], a Quarkus extension that generates through Gizmo the bytecode of deserializer (parser) and serializer (writer) classes. However, this is a full replacement of Jackson and comes with some, quite significant, https://github.com/quarkusio/qson?tab=readme-ov-file#limitations[limitations]."
-msgstr ""
+msgstr "Uma ideia semelhante já foi implementada também na área de serialização de objeto para JSON pelo link:https://github.com/quarkusio/qson[Qson] , uma extensão do Quarkus que gera, por meio do Gizmo, o bytecode das classes de desserializador (analisador) e serializador (gravador). No entanto, essa é uma substituição completa do Jackson e vem com algumas link:https://github.com/quarkusio/qson?tab=readme-ov-file#limitations[limitações] bastante significativas."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "If you decide to remain on the most common choice and keep using Jackson for the JSON serialization of objects returned by the invocation of a REST endpoint, you will still pay the price of the heavily reflection-based implementation offered out of the box by that library. In this article I will illustrate how I filled this gap and, most importantly, what I learned on how to write a Quarkus extension, or in my case improve an existing one, and in particular on how to use tools like Jandex and Gizmo."
-msgstr ""
+msgstr "Se o senhor decidir manter a opção mais comum e continuar usando a Jackson para a serialização JSON de objetos retornados pela invocação de um endpoint REST, ainda pagará o preço da implementação fortemente baseada em reflexão oferecida por essa biblioteca. Neste artigo, ilustrarei como preenchi essa lacuna e, o mais importante, o que aprendi sobre como escrever uma extensão do Quarkus ou, no meu caso, melhorar uma extensão existente e, em particular, como usar ferramentas como Jandex e Gizmo."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Out-of-the-box Jackson’s reflection-based serialization"
-msgstr ""
+msgstr "A serialização baseada em reflexão do Jackson pronta para uso"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Before trying to remove the use of reflection from Jackson's serialization, let’s look at the current situation. To do so I added a https://github.com/franz1981/quarkus-profiling-workshop/blob/b0f1f61e2ed5f8b196d62bd74ad15d658e949d8c/src/main/java/profiling/workshop/json/CustomerLookupResource.java#L18[new REST endpoint] to the https://github.com/franz1981/quarkus-profiling-workshop[benchmark suite] written by https://x.com/forked_franz[Francesco Nigro] and myself that we also used for our https://www.youtube.com/watch?v=Cw4nN5L-2vU[Devoxx Belgium workshop on profiling]. The goal of this benchmark is stressing the JSON serialization, so this endpoint doesn’t do anything else other than returning and then serializing in JSON a fixed object, in essence, writing and returning a JSON like the following:"
-msgstr ""
+msgstr "Antes de tentar remover o uso de reflexão da serialização do Jackson, vamos analisar a situação atual. Para fazer isso, adicionei um link:https://github.com/franz1981/quarkus-profiling-workshop/blob/b0f1f61e2ed5f8b196d62bd74ad15d658e949d8c/src/main/java/profiling/workshop/json/CustomerLookupResource.java#L18[novo endpoint REST] ao link:https://github.com/franz1981/quarkus-profiling-workshop[conjunto de benchmark] escrito por link:https://x.com/forked_franz[Francesco Nigro] e por mim, que também usamos em nosso link:https://www.youtube.com/watch?v=Cw4nN5L-2vU[workshop Devoxx Belgium sobre criação de perfil] . O objetivo desse benchmark é enfatizar a serialização de JSON, de modo que esse endpoint não faz nada além de retornar e serializar em JSON um objeto fixo, em essência, escrevendo e retornando um JSON como o seguinte:"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Running the benchmark suite against that endpoint I got the following result."
-msgstr ""
+msgstr "Ao executar o conjunto de benchmark nesse endpoint, obtive o seguinte resultado."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "or in other words my laptop can process just a bit more than 81K requests per second when serving that endpoint. We will see how getting rid of reflection will bring a 12% improvement of this figure, allowing it to process more than 92K requests per second, and in particular producing the following result."
-msgstr ""
+msgstr "ou, em outras palavras, meu laptop pode processar apenas um pouco mais de 81 mil solicitações por segundo ao atender a esse endpoint. Veremos como a eliminação da reflexão trará uma melhoria de 12% nesse número, permitindo que ele processe mais de 92 mil solicitações por segundo e, em particular, produzindo o seguinte resultado."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Being intended to be used for profiling, our benchmark suite also automatically produces a flamegraph of the benchmark under investigation. Zooming the resulting flamegraph on the https://github.com/quarkusio/quarkus/blob/5f2d29b4500e88ebd6a3c7a8731f6165fb6b64e0/extensions/resteasy-reactive/rest-jackson/runtime/src/main/java/io/quarkus/resteasy/reactive/jackson/runtime/serialisers/FullyFeaturedServerJacksonMessageBodyWriter.java#L52[method of the rest-jackson extension] triggering the JSON serialization we find the following situation where we can see that the `ObjectWriter::writeValue` Jackson’s method actually converting the object to its JSON representation has been found on the stack of 252 samples during the benchmark execution."
-msgstr ""
+msgstr "Como o objetivo é ser usado para criação de perfil, nosso conjunto de benchmark também produz automaticamente um gráfico de chama do benchmark sob investigação. Ao ampliar o gráfico de chama resultante no link:https://github.com/quarkusio/quarkus/blob/5f2d29b4500e88ebd6a3c7a8731f6165fb6b64e0/extensions/resteasy-reactive/rest-jackson/runtime/src/main/java/io/quarkus/resteasy/reactive/jackson/runtime/serialisers/FullyFeaturedServerJacksonMessageBodyWriter.java#L52[método da extensão rest-jackson] que aciona a serialização JSON, encontramos a seguinte situação, na qual podemos ver que o método da `ObjectWriter::writeValue` Jackson que realmente converte o objeto em sua representação JSON foi encontrado na pilha de 252 amostras durante a execução do parâmetro de comparação."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Flamegraph of out of the box Jackson’s serialization"
-msgstr ""
+msgstr "Flamegraph da serialização do Jackson fora da caixa"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Further zooming the flamegraph on the Jackson’s `BeanPropertyWriter::serializeAsField` method and searching for the word “reflect” it is possible to see in how many different places, evidenced in purple in this flamegraph, Jackson needs to use Java reflection in order to read the state of the object to be serialized and write it into a JSON string."
-msgstr ""
+msgstr "Ao ampliar ainda mais o gráfico de chama no método `BeanPropertyWriter::serializeAsField` de Jackson e procurar a palavra \"reflect\", é possível ver em quantos lugares diferentes, evidenciados em roxo nesse gráfico de chama, Jackson precisa usar a reflexão do Java para ler o estado do objeto a ser serializado e gravá-lo em uma string JSON."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Use of reflection in out of the box Jackson’s serialization"
-msgstr ""
+msgstr "Uso de reflexão na serialização do Jackson fora da caixa"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "As expected this use case requires a quite heavy use of reflection which is the thing that we want to avoid. We have already found that the JSON serialization is performed by the rest-jackson extension, so let’s see how we can modify it to achieve this goal."
-msgstr ""
+msgstr "Como esperado, esse caso de uso requer um uso bastante intenso de reflexão, que é o que queremos evitar. Já descobrimos que a serialização do JSON é realizada pela extensão rest-jackson, portanto, vamos ver como podemos modificá-la para atingir esse objetivo."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Overriding Jackson serialization"
-msgstr ""
+msgstr "Substituir a serialização Jackson"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Jackson makes it possible to override its standard reflection-based serialization behavior in a pretty simple way. It is sufficient to implement a class extending its `StdSerializer` thus defining how an instance of a given pojo should be rendered in JSON, something like:"
-msgstr ""
+msgstr "O Jackson torna possível substituir seu comportamento padrão de serialização baseado em reflexão de uma maneira bastante simples. Basta implementar uma classe que estenda seu `StdSerializer` , definindo assim como uma instância de um determinado pojo deve ser renderizada em JSON, algo como:"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "and then to add this serializer to a module and register it on the ObjectMapper used by Jackson to perform the JSON serialization."
-msgstr ""
+msgstr "e, em seguida, adicionar esse serializador a um módulo e registrá-lo no ObjectMapper usado pelo Jackson para executar a serialização do JSON."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "With this setup everytime Jackson will have to convert an instance of the `Person` class into its JSON representation it will do this through this custom serializer instead of accessing the person’s fields via reflection."
-msgstr ""
+msgstr "Com essa configuração, sempre que a Jackson precisar converter uma instância da classe `Person` em sua representação JSON, ela fará isso por meio desse serializador personalizado, em vez de acessar os campos da pessoa por meio de reflexão."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "The strategy to implement reflection-free JSON serialization is then quite straightforward, but of course it would be great if the Quarkus extension could generate and register those serializers automatically and effortlessly. The first step to achieve this is discovering at deployment time for which classes we need to generate those serializers. In our case they are the classes returned by all the REST endpoints in our application, but of course the same approach could be extended to a wider scope."
-msgstr ""
+msgstr "A estratégia para implementar a serialização JSON sem reflexão é, então, bastante simples, mas é claro que seria ótimo se a extensão Quarkus pudesse gerar e registrar esses serializadores automaticamente e sem esforço. A primeira etapa para conseguir isso é descobrir, no momento da implantação, para quais classes precisamos gerar esses serializadores. No nosso caso, são as classes retornadas por todos os pontos de extremidade REST do nosso aplicativo, mas é claro que a mesma abordagem poderia ser estendida a um escopo mais amplo."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Discovering and indexing the classes to be serialized with Jandex"
-msgstr ""
+msgstr "Descobrir e indexar as classes a serem serializadas com o Jandex"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "In general https://quarkus.io/guides/cdi-reference#bean_discovery[bean discovery] is performed by Quarkus, which indexes all the beans that are part of the CDI process through https://smallrye.io/jandex/[Jandex]. Since it finds all the bean classes having a https://jakarta.ee/specifications/cdi/4.1/jakarta-cdi-spec-4.1.html#bean_defining_annotations[bean defining annotation], this already includes all services exposing one or more REST endpoints that must have such an annotation. This means that all endpoints are already discovered by default. Even better, the https://jakarta.ee/specifications/cdi/4.1/jakarta-cdi-spec-4.1.html#bean_defining_annotations[quarkus-rest] extension already collects https://github.com/quarkusio/quarkus/blob/4ee036a19d64f537bea7836a25d5362091b0e8fc/extensions/resteasy-reactive/rest/deployment/src/main/java/io/quarkus/resteasy/reactive/server/deployment/ResteasyReactiveResourceMethodEntriesBuildItem.java#L30[an Entry for each rest method] in the `ResteasyReactiveResourceMethodEntriesBuildItem`."
-msgstr ""
+msgstr "Em geral, link:https://quarkus.io/guides/cdi-reference#bean_discovery[a descoberta de beans] é realizada pelo Quarkus, que indexa todos os beans que fazem parte do processo de CDI por meio do link:https://smallrye.io/jandex/[Jandex] . Como ele encontra todas as classes de beans que têm uma link:https://jakarta.ee/specifications/cdi/4.1/jakarta-cdi-spec-4.1.html#bean_defining_annotations[anotação de definição de bean] , isso já inclui todos os serviços que expõem um ou mais endpoints REST que devem ter essa anotação. Isso significa que todos os pontos de extremidade já são descobertos por padrão. Melhor ainda, a extensão link:https://jakarta.ee/specifications/cdi/4.1/jakarta-cdi-spec-4.1.html#bean_defining_annotations[quarkus-rest] já coleta link:https://github.com/quarkusio/quarkus/blob/4ee036a19d64f537bea7836a25d5362091b0e8fc/extensions/resteasy-reactive/rest/deployment/src/main/java/io/quarkus/resteasy/reactive/server/deployment/ResteasyReactiveResourceMethodEntriesBuildItem.java#L30[uma entrada para cada método rest] no site `ResteasyReactiveResourceMethodEntriesBuildItem` ."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Here each of these entries contains an instance of the Jandex `MethodInfo` that carries all the necessary offline reflection information about the signature of a Java method implementing a specific REST endpoint. As anticipated we are interested in the types returned by those methods, because those are the classes of the objects that will require to be converted in JSON as response to the REST endpoints invocation."
-msgstr ""
+msgstr "Aqui, cada uma dessas entradas contém uma instância do Jandex `MethodInfo` que contém todas as informações de reflexão off-line necessárias sobre a assinatura de um método Java que implementa um ponto de extremidade REST específico. Como previsto, estamos interessados nos tipos retornados por esses métodos, porque essas são as classes dos objetos que precisarão ser convertidos em JSON como resposta à invocação dos pontos de extremidade REST."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Now we have all the building blocks to start developing a https://quarkus.io/guides/writing-extensions#build-step-processors[`BuildStep`] that collects, without duplications, all those return types, represented as Jandex `ClassInfo` s, and pass them to another service that will have the responsibility of generating the bytecode of a Jackson serializer for each of them."
-msgstr ""
+msgstr "Agora temos todos os blocos de construção para começar a desenvolver um serviço de link:https://quarkus.io/guides/writing-extensions#build-step-processors[BuildStep] que coleta, sem duplicações, todos esses tipos de retorno, representados como Jandex `ClassInfo` s, e os passa para outro serviço que terá a responsabilidade de gerar o bytecode de um serializador Jackson para cada um deles."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "where the `JaxRsResourceIndexBuildItem` provides the Jandex `IndexView` that allows access to all reflection information collected and indexed by Jandex. Since we already know that the JSON serialization will be triggered by the rest-jackson extension it is convenient to simply add this new `BuildStep` to the https://github.com/quarkusio/quarkus/blob/main/extensions/resteasy-reactive/rest-jackson/deployment/src/main/java/io/quarkus/resteasy/reactive/jackson/deployment/processor/ResteasyReactiveJacksonProcessor.java[BuildStepsProcessor already present in that extension]."
-msgstr ""
+msgstr "onde o `JaxRsResourceIndexBuildItem` fornece o `IndexView` do Jandex que permite o acesso a todas as informações de reflexão coletadas e indexadas pelo Jandex. Como já sabemos que a serialização do JSON será acionada pela extensão rest-jackson, é conveniente simplesmente adicionar esse novo `BuildStep` ao link:https://github.com/quarkusio/quarkus/blob/main/extensions/resteasy-reactive/rest-jackson/deployment/src/main/java/io/quarkus/resteasy/reactive/jackson/deployment/processor/ResteasyReactiveJacksonProcessor.java[BuildStepsProcessor já presente nessa extensão] ."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Generating the Jackson serializers with Gizmo"
-msgstr ""
+msgstr "Gerando os serializadores Jackson com o Gizmo"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "At this point we know the classes for which it will be necessary to automatically generate the bytecode implementing a Jackson serializer, something similar to the one sketched when discussing how to customize Jackson serialization."
-msgstr ""
+msgstr "Neste ponto, conhecemos as classes para as quais será necessário gerar automaticamente o bytecode implementando um serializador Jackson, algo semelhante ao que foi esboçado quando discutimos como personalizar a serialização Jackson."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Quarkus makes heavy use of https://github.com/quarkusio/gizmo/blob/main/USAGE.adoc[Gizmo] in all the many cases when it needs to perform some bytecode generation. Generating bytecode is a relatively low level task, so using a library like Gizmo, with a convenient higher level API that abstracts lots of the underlying complexity, is practically mandatory to perform this difficult task with a reasonable level of productivity and to keep the code readable and maintainable."
-msgstr ""
+msgstr "O Quarkus faz uso intenso do link:https://github.com/quarkusio/gizmo/blob/main/USAGE.adoc[Gizmo] em todos os muitos casos em que precisa executar alguma geração de bytecode. A geração de bytecode é uma tarefa de nível relativamente baixo, portanto, o uso de uma biblioteca como o Gizmo, com uma conveniente API de nível superior que abstrai grande parte da complexidade subjacente, é praticamente obrigatório para executar essa difícil tarefa com um nível razoável de produtividade e para manter o código legível e passível de manutenção."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "We don’t make an exception this time, so for each of the Jandex `ClassInfo` collected during the former step, Gizmo is used to generate the bytecode of a class extending the Jackson’s `StdSerializer` and having a name equal to the one of the bean to be serialized plus the `$quarkusjacksonserializer` suffix."
-msgstr ""
+msgstr "Não abrimos exceção desta vez, portanto, para cada um dos Jandex `ClassInfo` coletados durante a etapa anterior, o Gizmo é usado para gerar o bytecode de uma classe que estende o `StdSerializer` da Jackson e tem um nome igual ao do bean a ser serializado mais o sufixo `$quarkusjacksonserializer` ."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Without going into too many details the core logic of this serializer is contained in the `serialize` method that can be generated as follows"
-msgstr ""
+msgstr "Sem entrar em muitos detalhes, a lógica central desse serializador está contida no método `serialize` , que pode ser gerado da seguinte forma"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Querying the `ClassInfo` it is possible to iterate all the fields to be serialized, together with their accessor methods, in order to generate the code serializing in JSON each of those fields. For instance if valueHandle is the handle to the object to be serialized, which is the first argument of the signature of the `serialize` method, and `getterMethod` is the `MethodInfo` of a getter returning a numeric field, the corresponding code generating the serialization of that field can be something like"
-msgstr ""
+msgstr "Ao consultar o site `ClassInfo` , é possível iterar todos os campos a serem serializados, juntamente com seus métodos de acesso, para gerar o código de serialização em JSON de cada um desses campos. Por exemplo, se valueHandle é o identificador do objeto a ser serializado, que é o primeiro argumento da assinatura do método `serialize` , e `getterMethod` é o `MethodInfo` de um getter que retorna um campo numérico, o código correspondente que gera a serialização desse campo pode ser algo como"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Note that, doing so, the logic to decide whether a field should be serialized or not, and how, totally bypasses the one implemented in Jackson and could sometimes differ from it. In particular this behavior can be explicitly modified by users through some specific Jackson annotations. To play safe when the serializers generator https://github.com/quarkusio/quarkus/blob/b3e608507e3bdcbcebe15a3d45de1b6cc6945d10/extensions/resteasy-reactive/rest-jackson/deployment/src/main/java/io/quarkus/resteasy/reactive/jackson/deployment/processor/JacksonSerializerFactory.java#L312[meets any of those annotations], it simply gives up generating a serializer for the specific class containing it. In this circumstance the serialization of that class will be performed with the normal reflection-based mechanism employed by Jackson."
-msgstr ""
+msgstr "Observe que, ao fazer isso, a lógica para decidir se um campo deve ser serializado ou não, e como, ignora totalmente a lógica implementada na Jackson e, às vezes, pode ser diferente dela. Em particular, esse comportamento pode ser explicitamente modificado pelos usuários por meio de algumas anotações específicas da Jackson. Para garantir a segurança, quando o gerador de serializadores link:https://github.com/quarkusio/quarkus/blob/b3e608507e3bdcbcebe15a3d45de1b6cc6945d10/extensions/resteasy-reactive/rest-jackson/deployment/src/main/java/io/quarkus/resteasy/reactive/jackson/deployment/processor/JacksonSerializerFactory.java#L312[encontra qualquer uma dessas anotações] , ele simplesmente desiste de gerar um serializador para a classe específica que o contém. Nessa circunstância, a serialização dessa classe será realizada com o mecanismo normal baseado em reflexão empregado pela Jackson."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Actually I see this as a defect and I tried to figure out if I could reuse Jackson's logic in some way also for this serializers generation. As discussed https://github.com/FasterXML/jackson-modules-base/issues/247[here], the main problem is that a library like Jackson, but also the vast majority of the Java frameworks, doesn’t have a clear separation between deployment and runtime as it happens with Quarkus. This however also demonstrates the clear advantage of this separation as implemented in Quarkus, that allows to develop features and optimizations that are otherwise simply impossible for other tools."
-msgstr ""
+msgstr "Na verdade, vejo isso como um defeito e tentei descobrir se poderia reutilizar a lógica do Jackson de alguma forma também para essa geração de serializadores. Conforme discutido link:https://github.com/FasterXML/jackson-modules-base/issues/247[aqui] , o principal problema é que uma biblioteca como a Jackson, mas também a grande maioria das estruturas Java, não tem uma separação clara entre a implantação e o tempo de execução, como acontece com o Quarkus. No entanto, isso também demonstra a clara vantagem dessa separação, conforme implementada no Quarkus, que permite desenvolver recursos e otimizações que, de outra forma, seriam simplesmente impossíveis para outras ferramentas."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Finally, we also need to take into account the fact that during the iteration of the fields of a class, the serializers generator also will very likely encounter other types belonging to the application’s business domain. In our original example the `Customer` has an `Address`, a `List<Person>` who are her children and a `CreditCard[]`. When this happens these new types are added to a queue of `ClassInfo` s for which another serializer has to be generated. The whole bytecode generation process terminates only when this queue is empty."
-msgstr ""
+msgstr "Por fim, também precisamos levar em conta o fato de que, durante a iteração dos campos de uma classe, o gerador de serializadores provavelmente também encontrará outros tipos pertencentes ao domínio de negócios do aplicativo. Em nosso exemplo original, o `Customer` tem um `Address` , um `List<Person>` que são seus filhos e um `CreditCard[]` . Quando isso acontece, esses novos tipos são adicionados a uma fila de `ClassInfo` s para os quais outro serializador deve ser gerado. Todo o processo de geração de bytecode termina somente quando essa fila estiver vazia."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "At the end of this process all the newly created classes are passed back to the `BuildStep` that will record them in the `ResteasyReactiveServerJacksonRecorder` thus making them available also at runtime."
-msgstr ""
+msgstr "Ao final desse processo, todas as classes recém-criadas são passadas de volta para o `BuildStep` , que as registrará no `ResteasyReactiveServerJacksonRecorder` , tornando-as disponíveis também no tempo de execução."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "For this reason it is necessary to add the `@Record` annotation to the `BuildStep` in order to indicate that it also outputs https://quarkus.io/guides/writing-extensions#bytecode-recording[recorded bytecode]. This concludes the description of all the steps necessary to the implementation of this new feature, that can be visually summarized as it follows."
-msgstr ""
+msgstr "Por esse motivo, é necessário adicionar a anotação `@Record` ao site `BuildStep` para indicar que ele também gera link:https://quarkus.io/guides/writing-extensions#bytecode-recording[bytecode gravado] . Isso conclui a descrição de todas as etapas necessárias para a implementação desse novo recurso, que pode ser visualmente resumido da seguinte forma."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Blocks diagram describing the implementation of the generated reflection-free Jackson serializers"
-msgstr ""
+msgstr "Diagrama de blocos que descreve a implementação dos serializadores Jackson sem reflexão gerados"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Making it optional"
-msgstr ""
+msgstr "Tornando-o opcional"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Since it was not possible to reuse any of the heuristics used by Jackson to decide if and how a specific field should be serialized, and as discussed there could still exist some edge cases when the generated serializers produce a result that differs from what Jackson would do using reflection, we decided for now to disable this feature by default and give the possibility to users to opt-in. Considering that all the code implementing this new feature is self-contained in a single `BuildStep`, that is easily achievable using a https://quarkus.io/guides/writing-extensions#conditional-step-inclusion[conditional step inclusion]."
-msgstr ""
+msgstr "Como não foi possível reutilizar nenhuma das heurísticas usadas pela Jackson para decidir se e como um campo específico deve ser serializado e, conforme discutido, ainda podem existir alguns casos extremos em que os serializadores gerados produzem um resultado diferente do que a Jackson faria usando reflexão, decidimos, por enquanto, desativar esse recurso por padrão e dar aos usuários a possibilidade de optar por ele. Considerando que todo o código que implementa esse novo recurso está contido em um único `BuildStep` , isso pode ser feito facilmente usando uma link:https://quarkus.io/guides/writing-extensions#conditional-step-inclusion[inclusão de etapa condicional] ."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "For this purpose it is sufficient to https://quarkus.io/guides/config-mappings[map a configuration to an interface] using the `@ConfigMapping` annotation"
-msgstr ""
+msgstr "Para isso, basta link:https://quarkus.io/guides/config-mappings[mapear uma configuração para uma interface] usando a anotação `@ConfigMapping` "
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "and also having an implementation of a `BooleanSupplier` reading that configuration"
-msgstr ""
+msgstr "E também ter uma implementação de um `BooleanSupplier` lendo essa configuração"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "so that the `BuildStep` will be enabled only if this supplier returns true."
-msgstr ""
+msgstr "para que o `BuildStep` seja ativado somente se esse fornecedor retornar true."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "In this way this optimization is turned off by default (note the `@WithDefault(\"false\")` annotation on the boolean method) and can be enabled by simply adding the flag"
-msgstr ""
+msgstr "Dessa forma, essa otimização é desativada por padrão (observe a anotação `@WithDefault(\"false\")` no método booleano) e pode ser ativada simplesmente adicionando o sinalizador"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "to the `application.properties` configuration file. With this last change, the final code of the complete `BuildStep` is available https://github.com/quarkusio/quarkus/blob/39ec43201a690e7895b643e6c328d9042e73ccf0/extensions/resteasy-reactive/rest-jackson/deployment/src/main/java/io/quarkus/resteasy/reactive/jackson/deployment/processor/ResteasyReactiveJacksonProcessor.java#L374[here]."
-msgstr ""
+msgstr "para o arquivo de configuração `application.properties` . Com essa última alteração, o código final do site `BuildStep` completo está disponível link:https://github.com/quarkusio/quarkus/blob/39ec43201a690e7895b643e6c328d9042e73ccf0/extensions/resteasy-reactive/rest-jackson/deployment/src/main/java/io/quarkus/resteasy/reactive/jackson/deployment/processor/ResteasyReactiveJacksonProcessor.java#L374[aqui] ."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Putting it at work and measuring the results"
-msgstr ""
+msgstr "Colocando-o em prática e medindo os resultados"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Now that all the development has been done, let’s try to put this at work with the same benchmark from where we started and check if this change comes with a real performance gain as we hoped. First of all it is necessary to enable this feature by setting the above mentioned flag in the Quarkus `application.properties` file. Additionally it will be useful to also set a second flag enabling Quarkus to dump the decompiled bytecode generated at deployment time"
-msgstr ""
+msgstr "Agora que todo o desenvolvimento foi feito, vamos tentar colocar isso em prática com o mesmo benchmark de onde começamos e verificar se essa alteração traz um ganho real de desempenho, como esperávamos. Antes de tudo, é necessário ativar esse recurso definindo o sinalizador mencionado acima no arquivo Quarkus `application.properties` . Além disso, será útil definir também um segundo sinalizador que permita ao Quarkus despejar o bytecode descompilado gerado no momento da implantação"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "In fact thanks to this second flag, after having recompiled our application, it is possible to find the bytecode of the generated classes under the folder `target/decompiled/generated-bytecode`"
-msgstr ""
+msgstr "Na verdade, graças a esse segundo sinalizador, depois de recompilar nosso aplicativo, é possível encontrar o bytecode das classes geradas na pasta `target/decompiled/generated-bytecode`"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "The Jackson serializers generated at deployment time"
-msgstr ""
+msgstr "Os serializadores Jackson gerados no momento da implantação"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Here, other than the code already generated by Quarkus to perform the invocation of the REST endpoints without reflection, you can see all the classes, terminating in `$quarkusjacksonserializer`, implementing the reflection-free JSON serialization of all the classes in our domain. For instance for the Customer class it generates a Jackson’s `StdSerializer` implementation like the following."
-msgstr ""
+msgstr "Aqui, além do código já gerado pelo Quarkus para executar a invocação dos endpoints REST sem reflexão, o senhor pode ver todas as classes, terminando em `$quarkusjacksonserializer` , implementando a serialização JSON sem reflexão de todas as classes em nosso domínio. Por exemplo, para a classe Customer, ele gera uma implementação `StdSerializer` da Jackson como a seguinte."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "As already anticipated, running again the benchmark with this optimization in place I got the following result"
-msgstr ""
+msgstr "Como já era esperado, ao executar novamente o benchmark com essa otimização, obtive o seguinte resultado"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "This time Quarkus can serve more than 92K requests per second, compared with the 81K we had before doing this work, quite an interesting improvement. Finally also the corresponding flamegraph helps to make sense of this improvement: there isn’t any trace of usage of Java reflection in it and now the `ObjectWriter::writeValue` Jackson’s method is sampled only 193 times instead of the 252 observed before."
-msgstr ""
+msgstr "Desta vez, o Quarkus pode atender a mais de 92 mil solicitações por segundo, em comparação com as 81 mil que tínhamos antes de fazer esse trabalho, uma melhoria bastante interessante. Por fim, o gráfico de chama correspondente também ajuda a entender essa melhoria: não há nenhum traço de uso de reflexão Java nele e agora o método `ObjectWriter::writeValue` Jackson é amostrado apenas 193 vezes em vez das 252 observadas anteriormente."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Flamegraph of serialization using the generated Jackson’s serializers demonstrating the absence of any usage of reflection"
-msgstr ""
+msgstr "Flamegraph de serialização usando os serializadores gerados pela Jackson, demonstrando a ausência de qualquer uso de reflexão"
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "In fact in this case all the objects serializations, the one of the `Customer` instance returned by the rest endpoint plus all other objects referenced by it, are now performed by the serializers generated during the deployment phase, the ones with the class names terminating in `$quarkusjacksonserializer` and evidenced in purple in this last flamegraph."
-msgstr ""
+msgstr "De fato, nesse caso, todas as serializações de objetos, a da instância `Customer` retornada pelo endpoint de repouso mais todos os outros objetos referenciados por ela, são agora executadas pelos serializadores gerados durante a fase de implantação, aqueles com os nomes de classe terminando em `$quarkusjacksonserializer` e evidenciados em roxo nesse último gráfico de chama."
 
 #: _posts/2024-08-19-quarkus-metaprogramming.adoc
+#, fuzzy
 msgid "Flamegraph of serialization demonstrating how all the necessary generated serializers are invoked"
-msgstr ""
+msgstr "Flamegraph de serialização demonstrando como todos os serializadores gerados necessários são invocados"
