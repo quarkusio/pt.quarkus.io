@@ -803,12 +803,18 @@ msgid ""
 msgstr "Se uma unidade de persistência for configurada no momento da compilação, por padrão ela estará ativa no tempo de execução, ou seja, o Quarkus iniciará o Hibernate ORM `SessionFactory` correspondente na inicialização do aplicativo."
 
 #: _versions/main/guides/hibernate-orm.adoc
-#, fuzzy
 msgid ""
 "To deactivate a persistence unit at runtime, set `quarkus.hibernate-orm[.optional name].active` to `false`.\n"
-"Then Quarkus will not start the corresponding Hibernate ORM `SessionFactory` on application startup.\n"
-"Any attempt to use the corresponding persistence unit at runtime will fail with a clear error message."
-msgstr "Para desativar uma unidade de persistência em tempo de execução, defina `quarkus.hibernate-orm[.optional name].active` como `false` . Assim, o Quarkus não iniciará o Hibernate ORM `SessionFactory` correspondente na inicialização do aplicativo. Qualquer tentativa de usar a unidade de persistência correspondente em tempo de execução falhará com uma mensagem de erro clara."
+"If a persistence unit is not active:"
+msgstr ""
+
+#: _versions/main/guides/hibernate-orm.adoc
+msgid "The `SessionFactory` will not start during application startup."
+msgstr ""
+
+#: _versions/main/guides/hibernate-orm.adoc
+msgid "Accessing the `EntityManagerFactory`/`EntityManager` or `SessionFactory`/`Session` will cause an exception to be thrown."
+msgstr ""
 
 #: _versions/main/guides/hibernate-orm.adoc
 #, fuzzy
@@ -842,11 +848,31 @@ msgid ""
 msgstr "xref:config-reference.adoc#custom-profiles[Os perfis de configuração personalizados] podem ajudar a simplificar essa configuração. Ao anexar a seguinte configuração específica de perfil à configuração acima, o senhor pode selecionar uma unidade de persistência/fonte de dados em tempo de execução simplesmente xref:config-reference.adoc#multiple-profiles[definindo quarkus.profile] : `quarkus.profile=prod,pg` ou `quarkus.profile=prod,oracle` ."
 
 #: _versions/main/guides/hibernate-orm.adoc
-#, fuzzy
 msgid ""
-"It can also be useful to define a xref:cdi.adoc#ok-you-said-that-there-are-several-kinds-of-beans[CDI bean producer] redirecting to the currently active persistence unit,\n"
-"like this:"
-msgstr "Também pode ser útil definir um xref:cdi.adoc#ok-you-said-that-there-are-several-kinds-of-beans[produtor de bean CDI] que redirecione para a unidade de persistência ativa no momento, da seguinte forma:"
+"With such a setup, you will need to take care to only ever access the _active_ persistence unit.\n"
+"To do so, you may define a xref:cdi.adoc#ok-you-said-that-there-are-several-kinds-of-beans[CDI bean producer] for the default `Session` redirecting to the currently active named `Session`, so that it can be injected directly, like this:"
+msgstr ""
+
+#: _versions/main/guides/hibernate-orm.adoc
+msgid ""
+"Don't inject a `DataSource` or `AgroalDatasource` directly,\n"
+"because that would lead to a failure on startup (can't inject inactive beans).\n"
+"Instead, inject `InjectableInstance<DataSource>` or `InjectableInstance<AgroalDataSource>`."
+msgstr ""
+
+#: _versions/main/guides/hibernate-orm.adoc
+msgid ""
+"Declare a CDI producer method that will define the default session\n"
+"as either PostgreSQL or Oracle, depending on what is active."
+msgstr ""
+
+#: _versions/main/guides/hibernate-orm.adoc
+msgid "Check whether datasource beans are active before retrieving the corresponding session."
+msgstr ""
+
+#: _versions/main/guides/hibernate-orm.adoc
+msgid "This will get injected with the (only) active session."
+msgstr ""
 
 #. type: Title ==
 #: _versions/main/guides/hibernate-orm.adoc
