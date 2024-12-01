@@ -34,9 +34,15 @@ msgid ""
 msgstr ""
 
 #: _guides/tls-registry-reference.adoc
+msgid "As a result, applications that use the TLS Registry can be ready to handle secure communications out of the box."
+msgstr ""
+
+#: _guides/tls-registry-reference.adoc
 msgid ""
-"As a result, applications that use the TLS Registry can be ready to handle secure communications out of the box.\n"
-"TLS Registry also provides features like automatic certificate reloading, Let's Encrypt (ACME) integration, Kubernetes Cert-Manager support, and compatibility with various keystore formats, such as PKCS12, PEM, and JKS."
+"TLS Registry also provides automatic certificate reloading\n"
+", integration with Let's Encrypt (ACME)\n"
+", support for Kubernetes Cert-Manager,\n"
+"and compatibility with various keystore formats, such as PKCS12, PEM, and JKS."
 msgstr ""
 
 #: _guides/tls-registry-reference.adoc
@@ -62,6 +68,13 @@ msgid ""
 "Creating separate, named configurations by using `+quarkus.tls.<name>.*+`.\n"
 "By specifying the `+quarkus.tls.<name>.*+` properties, you can adapt the TLS settings for a specific component."
 msgstr "Criar configurações separadas e nomeadas usando `quarkus.tls.<name>.*` . Ao especificar as propriedades de `quarkus.tls.<name>.*` , o senhor pode adaptar as configurações de TLS para um componente específico."
+
+#: _guides/tls-registry-reference.adoc
+msgid ""
+"The default TLS configuration is not a fallback/global configuration. This means that each named TLS configuration\n"
+"(or \"TLS bucket\") needs to provide its own properties. For instance, `quarkus.tls.reload-period` will only be applied\n"
+"to the default TLS configuration."
+msgstr ""
 
 #: _guides/tls-registry-reference.adoc
 #, fuzzy
@@ -821,11 +834,10 @@ msgid "Reloading certificates"
 msgstr "Certificados de recarga"
 
 #: _guides/tls-registry-reference.adoc
-#, fuzzy
 msgid ""
 "The `TlsConfiguration` obtained from the `TLSConfigurationRegistry` includes a mechanism for reloading certificates.\n"
-"The `reload` method refreshes the keystores and truststores, typically by reloading them from the file system."
-msgstr "O `TlsConfiguration` obtido do `TLSConfigurationRegistry` inclui um mecanismo para recarregar certificados. O método `reload` atualiza os keystores e truststores, normalmente recarregando-os do sistema de arquivos."
+"The `reload` method refreshes the keystores, truststores and CRLs, typically by reloading them from the file system."
+msgstr ""
 
 #: _guides/tls-registry-reference.adoc
 #, fuzzy
@@ -860,7 +872,6 @@ msgid "Manually triggering a reload and firing a `CertificateUpdatedEvent`:"
 msgstr "Acionar manualmente uma recarga e disparar um `CertificateUpdatedEvent` :"
 
 #: _guides/tls-registry-reference.adoc
-#, fuzzy
 msgid ""
 "// in the class that performs the reload\n"
 "@Inject\n"
@@ -875,15 +886,17 @@ msgid ""
 "    }\n"
 "}\n"
 "\n"
-"// In the server or client code\n"
-"public void onReload(@Observes CertificateUpdatedEvent reload) {\n"
+"// In the server (or client) code\n"
+"private final io.vertx.core.http.HttpServer server;\n"
+"\n"
+"public void onCertificateUpdate(@Observes CertificateUpdatedEvent reload) {\n"
 "    if (\"name\".equals(event.getName())) {\n"
 "        server.updateSSLOptions(reload.tlsConfiguration().getSSLOptions());\n"
 "        // Or update the SSLContext.\n"
 "    }\n"
 "\n"
 "}"
-msgstr "@Inject Event<CertificateUpdatedEvent> event; @Inject TlsConfigurationRegistry registry;"
+msgstr ""
 
 #: _guides/tls-registry-reference.adoc
 #, fuzzy
@@ -910,7 +923,12 @@ msgstr "Para cada configuração nomeada, o senhor pode definir um período de r
 #: _guides/tls-registry-reference.adoc
 msgid ""
 "Impacted server and client may need to listen to the `CertificateUpdatedEvent` to apply the new certificates.\n"
-"This is automatically done for the Quarkus HTTP server, including the management interface if it is enabled."
+"This is automatically done for the Quarkus HTTP server (i.e. Quarkus REST server, gRPC server, Web Socket server) and\n"
+"the management interface if it is enabled."
+msgstr ""
+
+#: _guides/tls-registry-reference.adoc
+msgid "In Quarkus dev mode, when files are touched, it will trigger the `CertificateUpdatedEvent` much more frequently."
 msgstr ""
 
 #: _guides/tls-registry-reference.adoc
