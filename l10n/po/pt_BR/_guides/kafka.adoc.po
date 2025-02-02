@@ -2921,10 +2921,8 @@ msgstr "Se você estiver usando Hibernate Reactive, veja <<writing-entities-mana
 msgid ""
 "Because we write to a database, we must run this method in a transaction.\n"
 "Yet, sending the entity to Kafka happens asynchronously.\n"
-"The operation returns a `CompletionStage` (or a `Uni` if you use a `MutinyEmitter`) reporting when the operation completes.\n"
-"We must be sure that the transaction is still running until the object is written.\n"
-"Otherwise, you may access the object outside the transaction, which is not allowed."
-msgstr "Como gravamos em um banco de dados, precisamos executar esse método em uma transação. No entanto, o envio da entidade para o Kafka ocorre de forma assíncrona. A operação retorna um relatório `CompletionStage` (ou um `Uni` se você usar um `MutinyEmitter`) quando a operação for concluída. Precisamos ter certeza de que a transação ainda está em execução até que o objeto seja gravado. Caso contrário, você poderá acessar o objeto fora da transação, o que não é permitido."
+"We can achieve this by using `.sendAndAwait()` or `.sendAndForget()` on the `MutinyEmitter`, or `.send().toCompletableFuture().join()` on the `Emitter`."
+msgstr ""
 
 #. type: Plain text
 #: _guides/kafka.adoc
@@ -2936,16 +2934,20 @@ msgstr "Para implementar este processo, é necessária a seguinte abordagem:"
 msgid "As we are writing to the database, make sure we run inside a transaction"
 msgstr "Como estamos escrevendo para a base de dados, certifique-se de que executamos dentro de uma transação"
 
-#. type: Plain text
 #: _guides/kafka.adoc
-msgid "The method receives the fruit instance to persist. It returns a `CompletionStage` which is used for the transaction demarcation. The transaction is committed when the return `CompletionStage` completes. In our case, it's when the message is written to Kafka."
-msgstr "O método recebe a instância de fruit a ser persistida. Devolve um `CompletionStage` que é utilizado para a demarcação da transação. A transação é confirmada quando o retorno `CompletionStage` é concluído. No nosso caso, é quando a mensagem é escrita no Kafka."
+msgid "The method receives the fruit instance to persist."
+msgstr ""
 
 #: _guides/kafka.adoc
 msgid ""
 "Wrap the managed entity inside a Data transfer object and send it to Kafka.\n"
-"This makes sure that managed entity is not impacted by the Kafka serialization."
-msgstr "Envolva a entidade gerenciada em um objeto de transferência de dados e envie-a para o Kafka. Isso garante que a entidade gerenciada não seja afetada pela serialização do Kafka."
+"This makes sure that managed entity is not impacted by the Kafka serialization.\n"
+"Then await the completion of the operation before returning."
+msgstr ""
+
+#: _guides/kafka.adoc
+msgid "You should not return a `CompletionStage` or `Uni` when using `@Transactional`, as all transaction commits will happen on a single thread, which impacts performance."
+msgstr ""
 
 #. type: Title ===
 #: _guides/kafka.adoc

@@ -126,7 +126,7 @@ msgstr "Pontos finais"
 msgid ""
 "Both the <<server-api>> and <<client-api>> define _endpoints_ that are used to consume and send messages.\n"
 "The endpoints are implemented as CDI beans and support injection.\n"
-"Endpoints declare <<callback-methods,_callback methods_>> annotated with `@OnTextMessage`, `@OnBinaryMessage`, `@OnPong`, `@OnOpen`, `@OnClose` and `@OnError`.\n"
+"Endpoints declare <<callback-methods,_callback methods_>> annotated with `@OnTextMessage`, `@OnBinaryMessage`, `@OnPingMessage`, `@OnPongMessage`, `@OnOpen`, `@OnClose` and `@OnError`.\n"
 "These methods are used to handle various WebSocket events.\n"
 "Typically, a method annotated with `@OnTextMessage` is called when the connected client sends a message to the server and vice versa."
 msgstr ""
@@ -300,6 +300,10 @@ msgid "At most one `@OnBinaryMessage` method: Handles the binary messages from t
 msgstr "No máximo um método `@OnBinaryMessage` : Trata as mensagens binárias do cliente/servidor conectado."
 
 #: _guides/websockets-next-reference.adoc
+msgid "At most one `@OnPingMessage` method: Handles the ping messages from the connected client/server."
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
 #, fuzzy
 msgid "At most one `@OnPongMessage` method: Handles the pong messages from the connected client/server."
 msgstr "No máximo um método `@OnPongMessage` : Trata as mensagens de pong do cliente/servidor conectado."
@@ -361,16 +365,14 @@ msgid "Invocation rules"
 msgstr "Regras de invocação"
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
 msgid ""
-"When invoking these annotated methods, the _session_ scope linked to the WebSocket connection remains active.\n"
+"When invoking the callback methods, the _session_ scope linked to the WebSocket connection remains active.\n"
 "In addition, the request scope is active until the completion of the method (or until it produces its result for async and reactive methods)."
-msgstr "Ao invocar esses métodos anotados, o escopo _da sessão_ vinculado à conexão WebSocket permanece ativo. Além disso, o escopo da solicitação fica ativo até a conclusão do método (ou até que ele produza seu resultado para métodos assíncronos e reativos)."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "Quarkus WebSocket Next supports _blocking_ and _non-blocking_ logic, akin to Quarkus REST, determined by the method signature and additional annotations such as `@Blocking` and `@NonBlocking`."
-msgstr "O Quarkus WebSocket Next suporta lógica _de bloqueio_ e _não bloqueio_ , semelhante ao Quarkus REST, determinada pela assinatura do método e anotações adicionais, como `@Blocking` e `@NonBlocking` ."
+msgid "WebSocket Next supports _blocking_ and _non-blocking_ logic, akin to Quarkus REST, determined from the return type of the method and additional annotations such as `@Blocking` and `@NonBlocking`."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
 #, fuzzy
@@ -378,39 +380,54 @@ msgid "Here are the rules governing execution:"
 msgstr "Aqui estão as regras que regem a execução:"
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "Non-blocking methods must execute on the connection's event loop."
-msgstr "Os métodos sem bloqueio devem ser executados no loop de eventos da conexão."
+msgid "Methods annotated with `@RunOnVirtualThread`, `@Blocking` or `@Transactional` are considered blocking."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "Methods annotated with `@RunOnVirtualThread` are considered blocking and should execute on a virtual thread."
-msgstr "Os métodos anotados com `@RunOnVirtualThread` são considerados bloqueadores e devem ser executados em um thread virtual."
+msgid "Methods declared in a class annotated with `@RunOnVirtualThread` are considered blocking."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "Blocking methods must execute on a worker thread if not annotated with `@RunOnVirtualThread`."
-msgstr "Os métodos de bloqueio devem ser executados em um thread de trabalho se não forem anotados com `@RunOnVirtualThread` ."
+msgid "Methods annotated with `@NonBlocking` are considered non-blocking."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "When `@RunOnVirtualThread` is employed, each invocation spawns a new virtual thread."
-msgstr "Quando o `@RunOnVirtualThread` é empregado, cada invocação gera um novo thread virtual."
+msgid "Methods declared in a class annotated with `@Transactional` are considered blocking unless annotated with `@NonBlocking`."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "Methods returning `CompletionStage`, `Uni` and `Multi` are considered non-blocking."
-msgstr "Os métodos que retornam `CompletionStage` , `Uni` e `Multi` são considerados não bloqueantes."
+msgid "If the method does not declare any of the annotations listed above the execution model is derived from the return type:"
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "Methods returning `void` or plain objects are considered blocking."
-msgstr "Os métodos que retornam `void` ou objetos simples são considerados bloqueadores."
+msgid "Methods returning `Uni` and `Multi` are considered non-blocking."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "Kotlin `suspend` functions are considered non-blocking."
-msgstr "As funções do Kotlin `suspend` são consideradas não bloqueantes."
+msgid "Methods returning `void` or any other type are considered blocking."
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid ""
+"Kotlin `suspend` functions are always considered non-blocking and may not be annotated with `@Blocking`, `@NonBlocking`\n"
+"or `@RunOnVirtualThread` and may not be in a class annotated with `@RunOnVirtualThread`."
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid "Non-blocking methods must execute on the connection's event loop thread."
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid ""
+"Blocking methods must execute on a worker thread unless annotated with `@RunOnVirtualThread` or in a class annotated\n"
+"with `@RunOnVirtualThread`."
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid ""
+"Methods annotated with `@RunOnVirtualThread` or declared in class annotated with `@RunOnVirtualThread` must execute on\n"
+"a virtual thread, each invocation spawns a new virtual thread."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
 #, fuzzy
@@ -458,11 +475,19 @@ msgid "The message object represents the data sent and can be accessed as either
 msgstr "O objeto de mensagem representa os dados enviados e pode ser acessado como conteúdo bruto ( `String` , `JsonObject` , `JsonArray` , `Buffer` ou `byte[]` ) ou como objetos de alto nível desserializados, que é a abordagem recomendada."
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
 msgid ""
 "When receiving a `Multi`, the method is invoked once per connection, and the provided `Multi` receives the items transmitted by this connection.\n"
-"The method must subscribe to the `Multi` to receive these items (or return a Multi)."
-msgstr "Ao receber um `Multi` , o método é chamado uma vez por conexão, e o `Multi` fornecido recebe os itens transmitidos por essa conexão. O método deve se inscrever no `Multi` para receber esses itens (ou retornar um Multi)."
+"If the method returns a `Multi` (constructed from the received one), Quarkus will automatically subscribe to it and write the emitted items until completion, failure, or cancellation.\n"
+"However, if your method does not return a `Multi`, you must subscribe to the incoming `Multi` to consume the data."
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid "Here are two examples:"
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid "See <<subscribe-or-not-subscribe>> to learn more about subscribing to the incoming `Multi`."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
 #, fuzzy
@@ -515,9 +540,11 @@ msgid "Here are some examples of these methods:"
 msgstr "Aqui estão alguns exemplos desses métodos:"
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "When returning a Multi, Quarkus subscribes to the returned Multi automatically and writes the emitted items until completion, failure, or cancellation. Failure or cancellation terminates the connection."
-msgstr "Ao retornar um Multi, o Quarkus se inscreve automaticamente no Multi retornado e grava os itens emitidos até a conclusão, falha ou cancelamento. A falha ou o cancelamento encerra a conexão."
+msgid ""
+"Methods returning `Uni` and `Multi` are considered non-blocking.\n"
+"In addition, Quarkus automatically subscribes to the returned `Multi` / `Uni` and writes the emitted items until completion, failure, or cancellation.\n"
+"Failure or cancellation terminates the connection."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
 #, fuzzy
@@ -545,9 +572,14 @@ msgid "This approach allows bi-directional streaming."
 msgstr "Essa abordagem permite o streaming bidirecional."
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "When the method returns `void`, it must subscribe to the incoming `Multi`:"
-msgstr "Quando o método retorna `void` , ele deve se inscrever para receber `Multi` :"
+msgid ""
+"When the method returns `void`, and so does not return a `Multi`, the code must subscribe to the incoming `Multi`.\n"
+"Otherwise, no data will be consumed, and the connection will not be closed:"
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid "Also note that the `stream` method will complete before the `Multi` completes."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
 #, fuzzy
@@ -805,9 +837,8 @@ msgid "Specify the codec to use for the serialization of the outgoing message"
 msgstr "Especifique o codec a ser usado para a serialização da mensagem de saída"
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "Ping/pong messages"
-msgstr "Mensagens de ping/pong"
+msgid "Ping/Pong messages"
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
 #, fuzzy
@@ -817,38 +848,57 @@ msgid ""
 msgstr "Uma mensagem de link:https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.2[ping] pode servir como um keepalive ou para verificar o ponto de extremidade remoto. Uma link:https://datatracker.ietf.org/doc/html/rfc6455#section-5.5.3[mensagem pong] é enviada em resposta a uma mensagem ping e deve ter uma carga útil idêntica."
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid ""
-"Server/client endpoints automatically respond to a ping message sent from the client/server.\n"
-"In other words, there is no need for `@OnPingMessage` callback declared on an endpoint."
-msgstr "Os endpoints de servidor/cliente respondem automaticamente a uma mensagem de ping enviada pelo cliente/servidor. Em outras palavras, não há necessidade de `@OnPingMessage` callback declarado em um endpoint."
+msgid "Sending ping messages"
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid ""
-"The server can send ping messages to a connected client.\n"
-"`WebSocketConnection`/`WebSocketClientConnection` declare methods to send ping messages; there is a non-blocking variant: `sendPing(Buffer)` and a blocking variant: `sendPingAndAwait(Buffer)`.\n"
-"By default, the ping messages are not sent automatically.\n"
-"However, the configuration properties `quarkus.websockets-next.server.auto-ping-interval` and `quarkus.websockets-next.client.auto-ping-interval` can be used to set the interval after which, the server/client sends a ping message to a connected client/server automatically."
-msgstr "O servidor pode enviar mensagens de ping para um cliente conectado. `WebSocketConnection` Os sites / `WebSocketClientConnection` declaram métodos para enviar mensagens de ping; há uma variante sem bloqueio: `sendPing(Buffer)` e uma variante com bloqueio: `sendPingAndAwait(Buffer)` . Por padrão, as mensagens de ping não são enviadas automaticamente. Entretanto, as propriedades de configuração `quarkus.websockets-next.server.auto-ping-interval` e `quarkus.websockets-next.client.auto-ping-interval` podem ser usadas para definir o intervalo após o qual o servidor/cliente envia automaticamente uma mensagem de ping para um cliente/servidor conectado."
+msgid "Ping messages are optional and not sent by default. However, server and client endpoints can be configured to automatically send ping messages on an interval."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "Sends a ping message from the server to a connected client every 2 seconds."
-msgstr "Envia uma mensagem de ping do servidor para um cliente conectado a cada 2 segundos."
+msgid "Sends a ping message from the server to each connected client every 2 seconds."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
+msgid "Sends a ping message from all connected client instances to their remote servers every 10 seconds."
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
 msgid ""
-"The `@OnPongMessage` annotation is used to define a callback that consumes pong messages sent from the client/server.\n"
-"An endpoint must declare at most one method annotated with `@OnPongMessage`.\n"
+"Servers and clients can send ping messages programmatically at any time using `WebSocketConnection` or `WebSocketClientConnection`.\n"
+"There is a non-blocking variant: `Sender#sendPing(Buffer)` and a blocking variant: `Sender#sendPingAndAwait(Buffer)`."
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid "Sending pong messages"
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid ""
+"Server and client endpoints will always respond to a ping message sent from the remote party with a corresponding pong message, using the application data from the ping message.\n"
+"This behavior is built-in and requires no additional code or configuration."
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid "Servers and clients can send unsolicited pong messages that may serve as a unidirectional heartbeat using `WebSocketConnection` or `WebSocketClientConnection`. There is a non-blocking variant: `Sender#sendPong(Buffer)` and a blocking variant: `Sender#sendPongAndAwait(Buffer)`."
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid "Handling ping/pong messages"
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid ""
+"Because ping messages are handled automatically and pong messages require no response, it is not necessary to write handlers for these messages to comply with the WebSocket protocol.\n"
+"However, it is sometimes useful to know when ping or pong messages are received by an endpoint."
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid ""
+"The `@OnPingMessage` and `@OnPongMessage` annotations can be used to define callbacks that consume ping or pong messages sent from the remote party.\n"
+"An endpoint may declare at most one `@OnPingMessage` callback and at most  one `@OnPongMessage` callback.\n"
 "The callback method must return either `void` or `Uni<Void>` (or be a Kotlin `suspend` function returning `Unit`), and it must accept a single parameter of type `Buffer`."
-msgstr "A anotação `@OnPongMessage` é usada para definir um retorno de chamada que consome mensagens pong enviadas pelo cliente/servidor. Um ponto de extremidade deve declarar no máximo um método anotado com `@OnPongMessage` . O método de retorno de chamada deve retornar `void` ou `Uni<Void>` (ou ser uma função Kotlin `suspend` que retorna `Unit` ) e deve aceitar um único parâmetro do tipo `Buffer` ."
-
-#: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "The server/client can also send unsolicited pong messages that may serve as a unidirectional heartbeat. There is a non-blocking variant: `WebSocketConnection#sendPong(Buffer)` and also a blocking variant: `WebSocketConnection#sendPongAndAwait(Buffer)`."
-msgstr "O servidor/cliente também pode enviar mensagens pong não solicitadas que podem servir como um heartbeat unidirecional. Há uma variante sem bloqueio: `WebSocketConnection#sendPong(Buffer)` e também uma variante com bloqueio: `WebSocketConnection#sendPongAndAwait(Buffer)` ."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
 #, fuzzy
@@ -957,9 +1007,15 @@ msgid "`sendTextAndAwait(String message)`: Sends a text message to the client an
 msgstr "`sendTextAndAwait(String message)` : Envia uma mensagem de texto para o cliente e aguarda o envio da mensagem. É bloqueador e só deve ser chamado a partir de um thread executor."
 
 #: _guides/websockets-next-reference.adoc
-#, fuzzy
-msgid "`sendText(String message)`: Sends a text message to the client. It returns a `Uni`. It's non-blocking, but you must subscribe to it."
-msgstr "`sendText(String message)` : Envia uma mensagem de texto para o cliente. Retorna um `Uni` . Não é bloqueado, mas o senhor deve se inscrever nele."
+msgid ""
+"`sendText(String message)`: Sends a text message to the client. It returns a `Uni`. It's non-blocking. Make sure you or Quarkus subscribes to the returned `Uni` to send the message.\n"
+"If you return the `Uni` from a method invoked by Quarkus (like with Quarkus REST, Quarkus WebSocket Next or Quarkus Messaging), it will subscribe to it and send the message.\n"
+"For example:"
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid "See <<subscribe-or-not-subscribe>> to learn more about subscribing to the `Uni`."
+msgstr ""
 
 #: _guides/websockets-next-reference.adoc
 #, fuzzy
@@ -1410,6 +1466,30 @@ msgid "Enable `DEBUG` level is for the logger `io.quarkus.websockets.next.traffi
 msgstr "Habilitar `DEBUG` nível é para o registrador `io.quarkus.websockets.next.traffic` ."
 
 #: _guides/websockets-next-reference.adoc
+msgid "When to subscribe to a `Uni` or `Multi`"
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid "`Uni` and `Multi` are lazy types, which means that they do not start processing until they are subscribed to."
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid "When you get (from a parameter or from a method you called) a `Uni` or a `Multi`, whether you should subscribe to it depends on the context:"
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid "if you return the `Uni` or `Multi` in a method invoked by Quarkus (like with Quarkus REST, Quarkus WebSocket Next or Quarkus Messaging), Quarkus subscribes to it and processes the items emitted by the `Multi` or the item emitted by the `Uni`:"
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid "When a `Uni` or `Multi` is returned from a method annotated with `@OnOpen`, `@OnTextMessage`, `@OnBinaryMessage`, or `@OnClose`, Quarkus subscribes to it automatically."
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid "if you do not return the `Uni` or `Multi` in a method invoked by Quarkus, you should subscribe to it:"
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
 msgid "Telemetry"
 msgstr ""
 
@@ -1417,6 +1497,12 @@ msgstr ""
 msgid ""
 "When the OpenTelemetry extension is present, traces for opened and closed WebSocket connections are collected by default.\n"
 "If you do not require WebSocket traces, you can disable collecting of traces like in the example below:"
+msgstr ""
+
+#: _guides/websockets-next-reference.adoc
+msgid ""
+"When the Micrometer extension is present, Quarkus can collect metrics for messages, errors and bytes transferred.\n"
+"If you require a WebSocket metrics, you can enable the metrics like in the example below:"
 msgstr ""
 
 #: _guides/websockets-next-reference.adoc
