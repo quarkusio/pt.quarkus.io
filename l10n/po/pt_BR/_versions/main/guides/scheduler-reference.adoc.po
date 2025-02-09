@@ -572,16 +572,15 @@ msgid "How to use multiple scheduler implementations"
 msgstr "Como usar várias implementações de agendamento"
 
 #: _versions/main/guides/scheduler-reference.adoc
-#, fuzzy
 msgid ""
 "In some cases, it might be useful to choose a scheduler implementation used to execute a scheduled method.\n"
 "However, only one `Scheduler` implementation is used for all scheduled methods by default.\n"
-"For example, the `quarkus-quartz` extension provides an implementation that supports clustering but it also removes the simple in-memory implementation from the game.\n"
+"For example, the `quarkus-quartz` extension provides an implementation that supports clustering, but it also removes the simple in-memory implementation from the game.\n"
 "Now, if clustering is enabled then it's not possible to define a scheduled method that would be executed locally on a single node.\n"
 "Nevertheless, if you set the `quarkus.scheduler.use-composite-scheduler` config property to `true` then a composite `Scheduler` is used instead.\n"
 "This means that multiple scheduler implementations are kept running side by side.\n"
-"Furthermore, it's possible to chose a specific implementation used to execute a scheduled method using `@Scheduled#executeWith()`."
-msgstr "Em alguns casos, pode ser útil escolher uma implementação do agendador usada para executar um método agendado. Entretanto, apenas uma implementação do `Scheduler` é usada para todos os métodos agendados por padrão. Por exemplo, a extensão `quarkus-quartz` fornece uma implementação que dá suporte ao agrupamento, mas também remove a implementação simples na memória do jogo. Agora, se o agrupamento estiver ativado, não será possível definir um método agendado que seria executado localmente em um único nó. No entanto, se o senhor definir a propriedade de configuração `quarkus.scheduler.use-composite-scheduler` como `true` , será usado um `Scheduler` composto. Isso significa que várias implementações de agendamento são mantidas em execução lado a lado. Além disso, é possível escolher uma implementação específica usada para executar um método agendado usando `@Scheduled#executeWith()` ."
+"Furthermore, it's possible to choose a specific implementation used to execute a scheduled method using `@Scheduled#executeWith()`."
+msgstr ""
 
 #: _versions/main/guides/scheduler-reference.adoc
 #, fuzzy
@@ -658,6 +657,44 @@ msgstr "O senhor pode configurar o período de carência para isOverdue() com qu
 #, fuzzy
 msgid "A CDI event is fired synchronously and asynchronously when the scheduler or a scheduled job is paused/resumed. The payload is `io.quarkus.scheduler.SchedulerPaused`, `io.quarkus.scheduler.SchedulerResumed`, `io.quarkus.scheduler.ScheduledJobPaused` and `io.quarkus.scheduler.ScheduledJobResumed` respectively."
 msgstr "Um evento CDI é disparado de forma síncrona e assíncrona quando o agendador ou um trabalho agendado é pausado/retomado. O payload é `io.quarkus.scheduler.SchedulerPaused` , `io.quarkus.scheduler.SchedulerResumed` , `io.quarkus.scheduler.ScheduledJobPaused` e `io.quarkus.scheduler.ScheduledJobResumed` respectivamente."
+
+#: _versions/main/guides/scheduler-reference.adoc
+msgid "Scheduling Long-Running Tasks"
+msgstr ""
+
+#: _versions/main/guides/scheduler-reference.adoc
+msgid "Executing a long-running task might yield a warning message similar to the following:"
+msgstr ""
+
+#: _versions/main/guides/scheduler-reference.adoc
+msgid "This is happening because the default worker thread pool is coming from Vert.x which guards against threads being blocked for far too long."
+msgstr ""
+
+#: _versions/main/guides/scheduler-reference.adoc
+msgid "The amount of time for which a Vert.x worker thread can be blocked is also https://quarkus.io/guides/all-config#quarkus-vertx_quarkus-vertx-max-worker-execute-time[configurable]."
+msgstr ""
+
+#: _versions/main/guides/scheduler-reference.adoc
+msgid ""
+"Therefore, a proper way to execute long tasks is to offload them from the scheduled method to a custom executor service.\n"
+"Here's an example of such setup for a long-running task that we do not expect to execute often:"
+msgstr ""
+
+#: _versions/main/guides/scheduler-reference.adoc
+msgid "Create a fitting executor. In this case, a new thread is created per scheduled task and stopped once the task finishes."
+msgstr ""
+
+#: _versions/main/guides/scheduler-reference.adoc
+msgid "`@PreDestroy` callback is used to shut down the executor service."
+msgstr ""
+
+#: _versions/main/guides/scheduler-reference.adoc
+msgid "Scheduled method only delegates the job to the custom executor - this prevent Vert.x thread from being blocked."
+msgstr ""
+
+#: _versions/main/guides/scheduler-reference.adoc
+msgid "The bean implements `Runnable`, a format we can directly pass to the executor service as a parameter."
+msgstr ""
 
 #. type: Block title
 #: _versions/main/guides/scheduler-reference.adoc
