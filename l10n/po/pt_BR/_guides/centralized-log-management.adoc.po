@@ -33,18 +33,14 @@ msgid ""
 msgstr "Este guia explica como o senhor pode enviar seus logs para um sistema centralizado de gerenciamento de logs, como Graylog, Logstash (dentro do Elastic Stack ou ELK - Elasticsearch, Logstash, Kibana) ou Fluentd (dentro do EFK - Elasticsearch, Fluentd, Kibana)."
 
 #: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid ""
-"There are a lot of different ways to centralize your logs (if you are using Kubernetes, the simplest way is to log to the console and ask you cluster administrator to integrate a central log manager inside your cluster).\n"
-"In this guide, we will expose how to send them to an external tool using the `quarkus-logging-gelf` extension that can use TCP or UDP to send logs in the Graylog Extended Log Format (GELF)."
-msgstr "Há muitas maneiras diferentes de centralizar seus logs (se estiver usando o Kubernetes, a maneira mais simples é fazer login no console e pedir ao administrador do cluster para integrar um gerenciador de logs central dentro do cluster). Neste guia, mostraremos como enviá-los a uma ferramenta externa usando a extensão `quarkus-logging-gelf` que pode usar TCP ou UDP para enviar logs no Graylog Extended Log Format (GELF)."
+msgid "This document is part of the xref:observability.adoc[Observability in Quarkus reference guide] which features this and other observability related components."
+msgstr ""
 
 #: _guides/centralized-log-management.adoc
-#, fuzzy
 msgid ""
-"The `quarkus-logging-gelf` extension will add a GELF log handler to the underlying logging backend that Quarkus uses (jboss-logmanager).\n"
-"By default, it is disabled, if you enable it but still use another handler (by default the console handler is enabled), your logs will be sent to both handlers."
-msgstr "A extensão `quarkus-logging-gelf` adicionará um manipulador de registro GELF ao backend de registro subjacente que o Quarkus usa (jboss-logmanager). Por padrão, ele está desativado. Se o senhor o ativar, mas ainda usar outro manipulador (por padrão, o manipulador do console está ativado), os logs serão enviados para ambos os manipuladores."
+"There are a lot of different ways to centralize your logs (if you are using Kubernetes, the simplest way is to log to the console and ask your cluster administrator to integrate a central log manager inside your cluster).\n"
+"In this guide, we will expose how to send them to an external tool using supported Quarkus extensions in supported standard formats like Graylog Extended Log Format (GELF), Elastic Common Schema (ECS) or the OpenTelemetry Log signal."
+msgstr ""
 
 #. type: Title ==
 #: _guides/centralized-log-management.adoc
@@ -64,24 +60,33 @@ msgstr "Exemplo de aplicação"
 msgid "The following examples will all be based on the same example application that you can create with the following steps."
 msgstr "Os exemplos a seguir serão todos baseados no mesmo aplicativo de exemplo que o senhor pode criar com as etapas a seguir."
 
+#: _guides/centralized-log-management.adoc
+msgid "Create an application with the REST extension. You can use the following command to create it:"
+msgstr ""
+
 #. type: Plain text
 #: _guides/centralized-log-management.adoc
 #, fuzzy
-msgid "Create an application with the `quarkus-logging-gelf` extension. You can use the following command to create it:"
-msgstr "Crie um aplicativo com a extensão `quarkus-logging-gelf` . O senhor pode usar o seguinte comando para criá-lo:"
+msgid "For demonstration purposes, we create an endpoint that does nothing but log a sentence. You don't need to do this inside your application."
+msgstr "Para fins de demonstração, criamos um endpoint que não faz nada além de registrar uma frase. O senhor não precisa fazer isso dentro do seu aplicativo."
 
 #: _guides/centralized-log-management.adoc
-#, fuzzy
+msgid "Send logs to the Elastic Stack (ELK) in the ECS (Elastic Common Schema) format with the Socket handler"
+msgstr ""
+
+#: _guides/centralized-log-management.adoc
 msgid ""
-"If you already have your Quarkus project configured, you can add the `logging-gelf` extension\n"
-"to your project by running the following command in your project base directory:"
-msgstr "Se já tiver o projeto Quarkus configurado, o senhor pode adicionar a extensão `logging-gelf` ao projeto executando o seguinte comando no diretório base do projeto:"
+"You can send your logs to Logstash using a TCP input in the https://www.elastic.co/guide/en/ecs-logging/overview/current/intro.html[ECS] format.\n"
+"To achieve this, we will use the `quarkus-logging-json` extension to format the logs in JSON format and the socket handler to send them to Logstash."
+msgstr ""
 
-#. type: Plain text
 #: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid "This will add the following dependency to your build file:"
-msgstr "Isso adicionará a seguinte dependência ao seu arquivo de compilação:"
+msgid "Create the following file  in `$HOME/pipelines/ecs.conf`:"
+msgstr ""
+
+#: _guides/centralized-log-management.adoc
+msgid "Then configure your application to log in JSON format"
+msgstr ""
 
 #. type: Block title
 #: _guides/centralized-log-management.adoc
@@ -95,23 +100,135 @@ msgstr "pom.xml"
 msgid "build.gradle"
 msgstr "build.gradle"
 
-#. type: Plain text
 #: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid "For demonstration purposes, we create an endpoint that does nothing but log a sentence. You don't need to do this inside your application."
-msgstr "Para fins de demonstração, criamos um endpoint que não faz nada além de registrar uma frase. O senhor não precisa fazer isso dentro do seu aplicativo."
+msgid "and specify the host and port of your Logstash endpoint. To be ECS compliant, specify the log format."
+msgstr ""
 
 #. type: Plain text
 #: _guides/centralized-log-management.adoc
 #, fuzzy
-msgid "Configure the GELF log handler to send logs to an external UDP endpoint on the port 12201:"
-msgstr "Configure o manipulador de logs do GELF para enviar logs para um ponto de extremidade UDP externo na porta 12201:"
+msgid "Finally, launch the components that compose the Elastic Stack:"
+msgstr "Por fim, inicie os componentes que compõem o Elastic Stack:"
+
+#. type: Plain text
+#: _guides/centralized-log-management.adoc
+msgid "Elasticsearch"
+msgstr "Elasticsearch"
+
+#. type: Plain text
+#: _guides/centralized-log-management.adoc
+#, fuzzy
+msgid "Logstash"
+msgstr "Logstash"
+
+#. type: Plain text
+#: _guides/centralized-log-management.adoc
+#, fuzzy
+msgid "Kibana"
+msgstr "Kibana"
+
+#. type: Plain text
+#: _guides/centralized-log-management.adoc
+#, fuzzy
+msgid "You can do this via the following `docker-compose.yml` file that you can launch via `docker-compose up -d`:"
+msgstr "O senhor pode fazer isso por meio do seguinte arquivo `docker-compose.yml` que pode ser iniciado via `docker-compose up -d` :"
+
+#. type: Plain text
+#: _guides/centralized-log-management.adoc
+#, fuzzy
+msgid "Launch your application, you should see your logs arriving inside the Elastic Stack; you can use Kibana available at http://localhost:5601/ to access them."
+msgstr "Inicie seu aplicativo e você verá seus logs chegando dentro do Elastic Stack; é possível usar o Kibana disponível em http://localhost:5601/ para acessá-los."
+
+#: _guides/centralized-log-management.adoc
+msgid "Send logs to Fluentd with the Syslog handler"
+msgstr ""
+
+#: _guides/centralized-log-management.adoc
+msgid ""
+"You can send your logs to Fluentd using a Syslog input.\n"
+"As opposed to the GELF input, the Syslog input will not render multiline logs in one event."
+msgstr ""
+
+#: _guides/centralized-log-management.adoc
+msgid ""
+"First, you need to create a Fluentd image with the Elasticsearch plugin.\n"
+"You can use the following Dockerfile that should be created inside a `fluentd` directory."
+msgstr ""
+
+#: _guides/centralized-log-management.adoc
+msgid "Then, you need to create a Fluentd configuration file inside `$HOME/fluentd/fluent.conf`"
+msgstr ""
+
+#. type: Plain text
+#: _guides/centralized-log-management.adoc
+#, fuzzy
+msgid "Then, launch the components that compose the EFK Stack:"
+msgstr "Em seguida, inicie os componentes que compõem o EFK Stack:"
+
+#. type: Plain text
+#: _guides/centralized-log-management.adoc
+#, fuzzy
+msgid "Fluentd"
+msgstr "Fluentd"
+
+#. type: Plain text
+#: _guides/centralized-log-management.adoc
+#, fuzzy
+msgid "Finally, configure your application to send logs to EFK using Syslog:"
+msgstr "Por fim, configure seu aplicativo para enviar logs ao EFK usando o Syslog:"
+
+#. type: Plain text
+#: _guides/centralized-log-management.adoc
+#, fuzzy
+msgid "Launch your application, you should see your logs arriving inside EFK: you can use Kibana available at http://localhost:5601/ to access them."
+msgstr "Inicie seu aplicativo e verá os logs chegando dentro do EFK: o senhor pode usar o Kibana disponível em http://localhost:5601/ para acessá-los."
+
+#: _guides/centralized-log-management.adoc
+msgid "Send logs with OpenTelemetry Logging"
+msgstr ""
+
+#: _guides/centralized-log-management.adoc
+msgid "OpenTelemetry Logging is able to send logs to a compatible OpenTelemetry collector. Its usage is described in the guide xref:opentelemetry-logging.adoc[Using OpenTelemetry Logging]."
+msgstr ""
+
+#: _guides/centralized-log-management.adoc
+msgid "Send logs with the `logging-gelf` extension"
+msgstr ""
+
+#: _guides/centralized-log-management.adoc
+msgid "This extension is deprecated, we advise considering the alternatives described above in this guide."
+msgstr ""
+
+#: _guides/centralized-log-management.adoc
+#, fuzzy
+msgid ""
+"The `quarkus-logging-gelf` extension will add a GELF log handler to the underlying logging backend that Quarkus uses (jboss-logmanager).\n"
+"By default, it is disabled, if you enable it but still use another handler (by default the console handler is enabled), your logs will be sent to both handlers."
+msgstr "A extensão `quarkus-logging-gelf` adicionará um manipulador de registro GELF ao backend de registro subjacente que o Quarkus usa (jboss-logmanager). Por padrão, ele está desativado. Se o senhor o ativar, mas ainda usar outro manipulador (por padrão, o manipulador do console está ativado), os logs serão enviados para ambos os manipuladores."
+
+#: _guides/centralized-log-management.adoc
+msgid "You can add the `logging-gelf` extension to your project by running the following command in your project base directory:"
+msgstr ""
+
+#. type: Plain text
+#: _guides/centralized-log-management.adoc
+#, fuzzy
+msgid "This will add the following dependency to your build file:"
+msgstr "Isso adicionará a seguinte dependência ao seu arquivo de compilação:"
+
+#: _guides/centralized-log-management.adoc
+msgid "Configure the GELF log handler to send logs to an external UDP endpoint on port 12201:"
+msgstr ""
 
 #. type: Title ==
 #: _guides/centralized-log-management.adoc
 #, fuzzy, no-wrap
 msgid "Send logs to Graylog"
 msgstr "Enviar registros para o Graylog"
+
+#: _guides/centralized-log-management.adoc
+msgid "It is advised to use the Syslog handler instead."
+msgstr ""
 
 #. type: Plain text
 #: _guides/centralized-log-management.adoc
@@ -126,20 +243,9 @@ msgstr "MongoDB"
 
 #. type: Plain text
 #: _guides/centralized-log-management.adoc
-msgid "Elasticsearch"
-msgstr "Elasticsearch"
-
-#. type: Plain text
-#: _guides/centralized-log-management.adoc
 #, fuzzy
 msgid "Graylog"
 msgstr "Graylog"
-
-#. type: Plain text
-#: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid "You can do this via the following `docker-compose.yml` file that you can launch via `docker-compose up -d`:"
-msgstr "O senhor pode fazer isso por meio do seguinte arquivo `docker-compose.yml` que pode ser iniciado via `docker-compose up -d` :"
 
 #: _guides/centralized-log-management.adoc
 #, fuzzy
@@ -166,6 +272,10 @@ msgstr "Inicie seu aplicativo e o senhor verá seus registros chegando ao Graylo
 msgid "Send logs to Logstash / the Elastic Stack (ELK)"
 msgstr "Enviar logs para o Logstash / Elastic Stack (ELK)"
 
+#: _guides/centralized-log-management.adoc
+msgid "It is advised to use xref:opentelemetry-logging.adoc[OpenTelemetry Logging] or the Socket handler instead."
+msgstr ""
+
 #. type: Plain text
 #: _guides/centralized-log-management.adoc
 #, fuzzy
@@ -176,52 +286,6 @@ msgstr "Por padrão, o Logstash vem com um plug-in de entrada que pode entender 
 #, fuzzy
 msgid "Create the following file  in `$HOME/pipelines/gelf.conf`:"
 msgstr "Crie o seguinte arquivo em `$HOME/pipelines/gelf.conf` :"
-
-#. type: Plain text
-#: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid "Finally, launch the components that compose the Elastic Stack:"
-msgstr "Por fim, inicie os componentes que compõem o Elastic Stack:"
-
-#. type: Plain text
-#: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid "Logstash"
-msgstr "Logstash"
-
-#. type: Plain text
-#: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid "Kibana"
-msgstr "Kibana"
-
-#. type: Plain text
-#: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid "Launch your application, you should see your logs arriving inside the Elastic Stack; you can use Kibana available at http://localhost:5601/ to access them."
-msgstr "Inicie seu aplicativo e você verá seus logs chegando dentro do Elastic Stack; é possível usar o Kibana disponível em http://localhost:5601/ para acessá-los."
-
-#: _guides/centralized-log-management.adoc
-msgid "GELF alternative: Send logs to Logstash in the ECS (Elastic Common Schema) format"
-msgstr ""
-
-#: _guides/centralized-log-management.adoc
-msgid ""
-"You can also send your logs to Logstash using a TCP input in the https://www.elastic.co/guide/en/ecs-logging/overview/current/intro.html[ECS] format.\n"
-"To achieve this we will use the `quarkus-logging-json` extension to format the logs in JSON format and the socket handler to send them to Logstash."
-msgstr ""
-
-#: _guides/centralized-log-management.adoc
-msgid "For this you can use the same `docker-compose.yml` file as above but with a different Logstash pipeline configuration."
-msgstr ""
-
-#: _guides/centralized-log-management.adoc
-msgid "Then configure your application to log in JSON format instead of GELF"
-msgstr ""
-
-#: _guides/centralized-log-management.adoc
-msgid "and specify the host and port of your Logstash endpoint. To be ECS compliant, specify the log format."
-msgstr ""
 
 #. type: Title ==
 #: _guides/centralized-log-management.adoc
@@ -253,56 +317,6 @@ msgstr "Em seguida, o senhor precisa criar um arquivo de configuração do fluen
 #, fuzzy
 msgid "Finally, launch the components that compose the EFK Stack:"
 msgstr "Por fim, inicie os componentes que compõem o EFK Stack:"
-
-#. type: Plain text
-#: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid "Fluentd"
-msgstr "Fluentd"
-
-#. type: Plain text
-#: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid "Launch your application, you should see your logs arriving inside EFK: you can use Kibana available at http://localhost:5601/ to access them."
-msgstr "Inicie seu aplicativo e verá os logs chegando dentro do EFK: o senhor pode usar o Kibana disponível em http://localhost:5601/ para acessá-los."
-
-#. type: Title ==
-#: _guides/centralized-log-management.adoc
-#, fuzzy, no-wrap
-msgid "GELF alternative: use Syslog"
-msgstr "Alternativa GELF: usar o Syslog"
-
-#: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid ""
-"You can also send your logs to Fluentd using a Syslog input.\n"
-"As opposed to the GELF input, the Syslog input will not render multiline logs in one event, that's why we advise to use the GELF input that we implement in Quarkus."
-msgstr "O senhor também pode enviar seus logs para o Fluentd usando uma entrada Syslog. Ao contrário da entrada GELF, a entrada Syslog não renderizará logs de várias linhas em um evento, por isso recomendamos o uso da entrada GELF que implementamos no Quarkus."
-
-#: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid ""
-"First, you need to create a Fluentd image with the elasticsearch plugin.\n"
-"You can use the following Dockerfile that should be created inside a `fluentd` directory."
-msgstr "Primeiro, o senhor precisa criar uma imagem do Fluentd com o plug-in elasticsearch. O senhor pode usar o seguinte Dockerfile que deve ser criado dentro de um diretório `fluentd` ."
-
-#. type: Plain text
-#: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid "Then, you need to create a fluentd configuration file inside `$HOME/fluentd/fluent.conf`"
-msgstr "Em seguida, o senhor precisa criar um arquivo de configuração do fluentd dentro do `$HOME/fluentd/fluent.conf`"
-
-#. type: Plain text
-#: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid "Then, launch the components that compose the EFK Stack:"
-msgstr "Em seguida, inicie os componentes que compõem o EFK Stack:"
-
-#. type: Plain text
-#: _guides/centralized-log-management.adoc
-#, fuzzy
-msgid "Finally, configure your application to send logs to EFK using Syslog:"
-msgstr "Por fim, configure seu aplicativo para enviar logs ao EFK usando o Syslog:"
 
 #. type: Title ==
 #: _guides/centralized-log-management.adoc
@@ -362,8 +376,7 @@ msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\
 msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de Configuração Fixa no Momento da Compilação - Todas as outras propriedades de configuração podem ser sobrepostas em tempo de execução. <input type=\"search\" id=\"config-search-0\" placeholder=\"FILTER CONFIGURATION\" disabled>"
 
 #: _guides/centralized-log-management.adoc
-#, fuzzy
 msgid ""
 "This extension uses the `logstash-gelf` library that allow more configuration options via system properties,\n"
-"you can access its documentation here: https://logging.paluch.biz/ ."
-msgstr "Essa extensão usa a biblioteca `logstash-gelf` que permite mais opções de configuração por meio das propriedades do sistema. O senhor pode acessar a documentação aqui: https://logging.paluch.biz/ ."
+"you can access its documentation here: https://logging.paluch.biz/."
+msgstr ""
