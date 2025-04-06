@@ -7,277 +7,344 @@ msgstr ""
 "X-Generator: jekyll-l10n\n"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Generating CycloneDX BOMs"
-msgstr ""
+msgstr "Geração de listas técnicas do CycloneDX"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid ""
 "An SBOM (Software Bill of Material) is a manifest that describes what a given software distribution consists of in terms of components. In addition to that, it may include a lot more information such as relationships between those components, licenses, provenance, etc.\n"
 "SBOMs would typically be used by software security and software supply chain risk management tools to perform vulnerability and compliance related analysis."
-msgstr ""
+msgstr "Um SBOM (Software Bill of Material) é um manifesto que descreve em que consiste uma determinada distribuição de software em termos de componentes. Além disso, pode incluir muito mais informações, como relações entre esses componentes, licenças, proveniência etc. Normalmente, os SBOMs são usados por ferramentas de segurança de software e de gerenciamento de riscos da cadeia de suprimentos de software para realizar análises relacionadas à vulnerabilidade e à conformidade."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "This guide describes Quarkus SBOM generation capabilities following https://cyclonedx.org/[CycloneDX] specification."
-msgstr ""
+msgstr "Este guia descreve os recursos de geração de SBOM do Quarkus de acordo com a especificação link:https://cyclonedx.org/[do CycloneDX] ."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Why Quarkus-specific tooling?"
-msgstr ""
+msgstr "Por que ferramentas específicas para o Quarkus?"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "While Quarkus integrates with build tools such as https://maven.apache.org/[Maven] and https://gradle.org/[Gradle], it could itself be categorized as a build tool with its own component and dependency model, build steps, and build outcomes. One of the essential component types of a Quarkus application is a Quarkus extension, which consists of a runtime and a build time artifacts, and their dependencies."
-msgstr ""
+msgstr "Embora o Quarkus se integre a ferramentas de compilação como o link:https://maven.apache.org/[Maven] e o link:https://gradle.org/[Gradle] , ele próprio poderia ser classificado como uma ferramenta de compilação com seu próprio componente e modelo de dependência, etapas de compilação e resultados de compilação. Um dos tipos de componentes essenciais de um aplicativo Quarkus é uma extensão Quarkus, que consiste em artefatos de tempo de execução e de tempo de construção e suas dependências."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "To properly resolve Quarkus extension and other application dependencies Quarkus uses its own dependency resolver, which is implemented on top of the dependency resolver provided by the underlying build tool: Maven or Gradle."
-msgstr ""
+msgstr "Para resolver adequadamente a extensão do Quarkus e outras dependências de aplicativos, o Quarkus usa seu próprio resolvedor de dependências, que é implementado sobre o resolvedor de dependências fornecido pela ferramenta de compilação subjacente: Maven ou Gradle."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "As a consequence, in case of Maven, for example, the results of `dependency:tree` will not include all the dependencies Quarkus will use to build an application. A similar issue will affect other dependency analysis tools that assume a project adheres to the standard Maven dependency model: they will not be able to capture the effective Quarkus application dependency graph. Unfortunately, that includes the implementation of the https://github.com/CycloneDX/cyclonedx-maven-plugin[CycloneDX Maven plugin]."
-msgstr ""
+msgstr "Como consequência, no caso do Maven, por exemplo, os resultados do `dependency:tree` não incluirão todas as dependências que o Quarkus usará para criar um aplicativo. Um problema semelhante afetará outras ferramentas de análise de dependência que presumem que um projeto adere ao modelo de dependência Maven padrão: elas não conseguirão capturar o gráfico de dependência efetivo do aplicativo Quarkus. Infelizmente, isso inclui a implementação do link:https://github.com/CycloneDX/cyclonedx-maven-plugin[plug-in Maven do CycloneDX] ."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Besides the dependencies, that are an input to a build process, there is also an outcome of the build that is the final distribution of an application. Users of an application may request an SBOM manifesting not only the dependencies (the input to a build) but also the final distribution (the outcome of the build) before they agree to deploy the application. Quarkus allows application developers to choose various packaging types for their applications, some of which are Quarkus-specific. Providing certain Quarkus-specific details about components included in a distribution may help better evaluate the impact of potential security-related issues."
-msgstr ""
+msgstr "Além das dependências, que são uma entrada para um processo de compilação, há também um resultado da compilação que é a distribuição final de um aplicativo. Os usuários de um aplicativo podem solicitar um SBOM que manifeste não apenas as dependências (a entrada para uma compilação), mas também a distribuição final (o resultado da compilação) antes de concordarem com a implantação do aplicativo. O Quarkus permite que os desenvolvedores de aplicativos escolham vários tipos de empacotamento para seus aplicativos, alguns dos quais são específicos do Quarkus. O fornecimento de determinados detalhes específicos do Quarkus sobre os componentes incluídos em uma distribuição pode ajudar a avaliar melhor o impacto de possíveis problemas relacionados à segurança."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Dependency SBOMs"
-msgstr ""
+msgstr "SBOMs de dependência"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "This chapter describes how to generate SBOMs manifesting only the dependencies of an application before it is built. In other words, these SBOMs will manifest the input into a build. These SBOMs could be used to perform vulnerability and compliance related analysis before building applications."
-msgstr ""
+msgstr "Este capítulo descreve como gerar SBOMs que manifestam apenas as dependências de um aplicativo antes de ele ser criado. Em outras palavras, esses SBOMs manifestarão a entrada em uma compilação. Esses SBOMs podem ser usados para realizar análises relacionadas à vulnerabilidade e à conformidade antes da criação dos aplicativos."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Maven Dependency SBOMs"
-msgstr ""
+msgstr "SBOMs de dependência do Maven"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "For Quarkus Maven projects dependency SBOMs can be generated with the `quarkus:dependency-sbom` goal. The outcome of the goal will be saved in a `target/<artifactId>-<version>-dependency-cyclonedx.json` file (which can be changed by setting the `outputFile` goal parameter or the `quarkus.dependency.sbom.output-file` property). The complete Quarkus build and runtime dependency graphs will be recorded in the https://cyclonedx.org/[CycloneDX] `JSON` format."
-msgstr ""
+msgstr "Para projetos Quarkus Maven, os SBOMs de dependência podem ser gerados com a meta `quarkus:dependency-sbom` . O resultado da meta será salvo em um arquivo `target/<artifactId>-<version>-dependency-cyclonedx.json` (que pode ser alterado definindo o parâmetro de meta `outputFile` ou a propriedade `quarkus.dependency.sbom.output-file` ). Os gráficos completos de dependência de construção e de tempo de execução do Quarkus serão registrados no formato link:https://cyclonedx.org/[do CycloneDX] `JSON` ."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "`XML` format can be requested by setting `format` goal parameter (or `quarkus.dependency.sbom.format` property) to `xml`."
-msgstr ""
+msgstr "`XML` O formato pode ser solicitado definindo o parâmetro de meta `format` (ou a propriedade `quarkus.dependency.sbom.format` ) como `xml` ."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Each component in the generated SBOM will include the `quarkus:component:scope` property that will indicate whether this component is used at runtime or only development/build time."
-msgstr ""
+msgstr "Cada componente no SBOM gerado incluirá a propriedade `quarkus:component:scope` que indicará se esse componente é usado no tempo de execução ou somente no tempo de desenvolvimento/construção."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "By default, `quarkus:dependency-sbom` captures the dependencies of a production build. Quarkus supports three application bootstrap modes: normal (production), test, and dev. In all three modes, an application may have different dependency graphs. The `mode` parameter can be used to indicate which dependency graph should be recorded. If the `mode` is set to `test` or `dev`, the target file name will become `target/<artifactId>-<version>-<mode>-dependency-cyclonedx.json`."
-msgstr ""
+msgstr "Por padrão, o site `quarkus:dependency-sbom` captura as dependências de uma compilação de produção. O Quarkus oferece suporte a três modos de inicialização de aplicativos: normal (produção), teste e desenvolvimento. Em todos os três modos, um aplicativo pode ter diferentes gráficos de dependência. O parâmetro `mode` pode ser usado para indicar qual gráfico de dependência deve ser registrado. Se o parâmetro `mode` for definido como `test` ou `dev` , o nome do arquivo de destino será `target/<artifactId>-<version>-<mode>-dependency-cyclonedx.json` ."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "The complete set of parameters and their description can be obtained by executing `mvn help:describe -Dcmd=quarkus:dependency-sbom -Ddetail`."
-msgstr ""
+msgstr "O conjunto completo de parâmetros e sua descrição podem ser obtidos por meio da execução do site `mvn help:describe -Dcmd=quarkus:dependency-sbom -Ddetail` ."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Gradle Dependency SBOMs"
-msgstr ""
+msgstr "SBOMs de dependência do Gradle"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Unlike Maven, the https://github.com/CycloneDX/cyclonedx-gradle-plugin[Gradle CycloneDX plugin implementation] can be used in Quarkus projects to generate dependency SBOMs, since the implementation manifests dependency configurations registered by configured plugins."
-msgstr ""
+msgstr "Ao contrário do Maven, a link:https://github.com/CycloneDX/cyclonedx-gradle-plugin[implementação do plug-in Gradle CycloneDX] pode ser usada em projetos Quarkus para gerar SBOMs de dependência, pois a implementação manifesta as configurações de dependência registradas pelos plug-ins configurados."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Please, refer to the https://github.com/CycloneDX/cyclonedx-gradle-plugin[Gradle CycloneDX plugin] documentation for its configuration options. Here is a list of Quarkus dependency configurations that would be relevant for manifesting:"
-msgstr ""
+msgstr "Consulte a documentação link:https://github.com/CycloneDX/cyclonedx-gradle-plugin[do plug-in Gradle CycloneDX] para conhecer as opções de configuração. Aqui está uma lista das configurações de dependência do Quarkus que seriam relevantes para o manifesto:"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "`quarkusProdRuntimeClasspathConfiguration` - Quarkus application production runtime dependencies;"
-msgstr ""
+msgstr "`quarkusProdRuntimeClasspathConfiguration` - Dependências de tempo de execução de produção do aplicativo Quarkus;"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "`quarkusProdRuntimeClasspathConfigurationDeployment` - Quarkus application production runtime and build time dependencies;"
-msgstr ""
+msgstr "`quarkusProdRuntimeClasspathConfigurationDeployment` - Dependências de tempo de execução e de tempo de construção do aplicativo Quarkus;"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "`quarkusTestRuntimeClasspathConfiguration` - Quarkus application test runtime dependencies;"
-msgstr ""
+msgstr "`quarkusTestRuntimeClasspathConfiguration` - Dependências de tempo de execução do teste do aplicativo Quarkus;"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "`quarkusTestRuntimeClasspathConfigurationDeployment` - Quarkus application test runtime and build time dependencies;"
-msgstr ""
+msgstr "`quarkusTestRuntimeClasspathConfigurationDeployment` - O aplicativo Quarkus testa o tempo de execução e as dependências do tempo de construção;"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "`quarkusDevRuntimeClasspathConfiguration` - Quarkus application dev mode runtime dependencies;"
-msgstr ""
+msgstr "`quarkusDevRuntimeClasspathConfiguration` - Dependências de tempo de execução do modo de desenvolvimento do aplicativo Quarkus;"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "`quarkusDevRuntimeClasspathConfigurationDeployment` - Quarkus application dev mode runtime and build time dependencies."
-msgstr ""
+msgstr "`quarkusDevRuntimeClasspathConfigurationDeployment` - Dependências de tempo de execução e de tempo de compilação do modo de desenvolvimento do aplicativo Quarkus."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Given that the plugin is not aware of how Quarkus uses these dependencies, it will not be able to set the `quarkus:component:scope` property for components. On the other hand, the requested configuration name can be used indicate which scope to target."
-msgstr ""
+msgstr "Como o plug-in não está ciente de como o Quarkus usa essas dependências, ele não poderá definir a propriedade `quarkus:component:scope` para os componentes. Por outro lado, o nome da configuração solicitada pode ser usado para indicar qual escopo deve ser direcionado."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Distribution SBOMs"
-msgstr ""
+msgstr "SBOMs de distribuição"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "This chapter describes SBOMs that manifest outcomes of Quarkus builds that are final application distributions."
-msgstr ""
+msgstr "Este capítulo descreve as SBOMs que manifestam os resultados das compilações do Quarkus que são distribuições finais de aplicativos."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "During an application build and package assembly process, Quarkus captures certain details about the produced distribution and then allows an SBOM generator to consume and record that information in an SBOM format."
-msgstr ""
+msgstr "Durante um processo de criação de aplicativos e montagem de pacotes, o Quarkus captura determinados detalhes sobre a distribuição produzida e, em seguida, permite que um gerador de SBOM consuma e registre essas informações em um formato SBOM."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "At this point, the only SBOM generator available for Quarkus users that can manifest application distributions is `io.quarkus:quarkus-cyclonedx`. Once it's added as a project dependency it will generate SBOMs every time an application is built. SBOMs will be saved in the project's build output directory under `<executable-name>-cyclonedx.<format>` name, where"
-msgstr ""
+msgstr "Neste momento, o único gerador de SBOM disponível para os usuários do Quarkus que pode manifestar distribuições de aplicativos é o `io.quarkus:quarkus-cyclonedx` . Depois de adicionado como uma dependência do projeto, ele gerará SBOMs sempre que um aplicativo for compilado. Os SBOMs serão salvos no diretório de saída de compilação do projeto em `<executable-name>-cyclonedx.<format>` name, onde"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "`<executable-name>` is the base file name (without the extension) of the executable that launches an application;"
-msgstr ""
+msgstr "`<executable-name>` é o nome do arquivo base (sem a extensão) do executável que inicia um aplicativo;"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "`<format>` is either `json` (the default) or `xml`, which can be configured using `quarkus.cyclonedx.format` property. If both formats are desired `quarkus.cyclonedx.format` can be set to `all`."
-msgstr ""
+msgstr "`<format>` é `json` (o padrão) ou `xml` , que pode ser configurado usando a propriedade `quarkus.cyclonedx.format` . Se ambos os formatos forem desejados, `quarkus.cyclonedx.format` pode ser definido como `all` ."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Fast JAR"
-msgstr ""
+msgstr "JAR rápido"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Fast JAR packaging uses a Quarkus-specific filesystem directory layout that contains files generated by Quarkus and Maven artifacts that are runtime dependencies of an application."
-msgstr ""
+msgstr "O empacotamento rápido de JARs usa um layout de diretório de sistema de arquivos específico do Quarkus que contém arquivos gerados pelo Quarkus e artefatos Maven que são dependências de tempo de execução de um aplicativo."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "SBOMs for Fast JAR packaging type will use the executable JAR file as their main component and record both runtime and build time Quarkus application dependencies."
-msgstr ""
+msgstr "Os SBOMs para o tipo de empacotamento Fast JAR usarão o arquivo JAR executável como seu componente principal e registrarão as dependências do aplicativo Quarkus em tempo de execução e de compilação."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Runtime Components"
-msgstr ""
+msgstr "Componentes de tempo de execução"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Every file in the resulting Fast JAR distribution will appear in the SBOM with the `quarkus:component:scope` property set to `runtime` and `evidence.occurrences.location` field pointing to the location of the component in the application distribution directory, for example"
-msgstr ""
+msgstr "Cada arquivo na distribuição Fast JAR resultante aparecerá no SBOM com a propriedade `quarkus:component:scope` definida como `runtime` e o campo `evidence.occurrences.location` apontando para o local do componente no diretório de distribuição do aplicativo, por exemplo"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "`evidence.occurrences.location` was introduced in CycloneDX schema version 1.5, for older versions the location will be indicated using the `quarkus:component:location` property."
-msgstr ""
+msgstr "`evidence.occurrences.location` foi introduzido no esquema do CycloneDX versão 1.5; para versões mais antigas, o local será indicado usando a propriedade `quarkus:component:location` ."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Pedigree"
-msgstr ""
+msgstr "Pedigree"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Pedigree is a way to provide information that certain patches, or changes in general, have been applied to a certain component."
-msgstr ""
+msgstr "O pedigree é uma forma de fornecer informações de que determinados patches, ou alterações em geral, foram aplicados a um determinado componente."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "In certain cases, Quarkus may copy modified versions of dependency artifacts to an application distribution. Manipulating the original content of a component will change its hash sums which may get highlighted as suspicious by the tools comparing original component hash sums to those found in the distribution."
-msgstr ""
+msgstr "Em certos casos, o Quarkus pode copiar versões modificadas de artefatos de dependência para uma distribuição de aplicativos. A manipulação do conteúdo original de um componente alterará suas somas de hash, que podem ser destacadas como suspeitas pelas ferramentas que comparam as somas de hash do componente original com as encontradas na distribuição."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid ""
 "When Quarkus applies modifications to artifacts resolved from Maven repositories, it can manifest these changes as pedigree notes in the generated SBOM.\n"
 "For example, if an application developer decided to remove certain classpath resources from a dependency, such as"
-msgstr ""
+msgstr "Quando o Quarkus aplica modificações a artefatos resolvidos a partir de repositórios Maven, ele pode manifestar essas alterações como notas de pedigree no SBOM gerado. Por exemplo, se um desenvolvedor de aplicativos decidir remover determinados recursos de classpath de uma dependência, como"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "The resulting SBOM will include"
-msgstr ""
+msgstr "O SBOM resultante incluirá"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Build time dependencies"
-msgstr ""
+msgstr "Dependências de tempo de construção"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Build time dependencies will be recorded with the `quarkus:component:scope` property set to `development`:"
-msgstr ""
+msgstr "As dependências de tempo de compilação serão registradas com a propriedade `quarkus:component:scope` definida como `development` :"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "They will not include `evidence.occurrences.location` since they will not be found in the distribution."
-msgstr ""
+msgstr "Eles não incluirão `evidence.occurrences.location` , pois não serão encontrados na distribuição."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Uber JAR"
-msgstr ""
+msgstr "Uber JAR"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "SBOMs for Uber JARs will use the Uber JAR Maven artifact as their main component."
-msgstr ""
+msgstr "Os SBOMs para Uber JARs usarão o artefato Uber JAR Maven como seu componente principal."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Since an Uber JAR is published as a Maven artifact itself, SBOMs generated for Uber JARs will also be automatically published as Maven artifacts. This, however, can be disabled by setting the `attachSboms` parameter of the `quarkus:build` goal to `false`."
-msgstr ""
+msgstr "Como um Uber JAR é publicado como um artefato Maven, os SBOMs gerados para Uber JARs também serão publicados automaticamente como artefatos Maven. Isso, no entanto, pode ser desativado definindo o parâmetro `attachSboms` da meta `quarkus:build` como `false` ."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Gradle users will have to explicitly configure a publishing plugin to deploy SBOMs as Maven artifacts."
-msgstr ""
+msgstr "Os usuários do Gradle terão que configurar explicitamente um plug-in de publicação para implantar SBOMs como artefatos Maven."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Runtime components in an SBOM generated for an Uber JAR will not include `evidence.occurrences.location` since their content is merged in a single JAR file."
-msgstr ""
+msgstr "Os componentes de tempo de execução em um SBOM gerado para um Uber JAR não incluirão `evidence.occurrences.location` , pois seu conteúdo é mesclado em um único arquivo JAR."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Native image"
-msgstr ""
+msgstr "Imagem nativa"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "SBOMs for native images will use the native executable file as their main component."
-msgstr ""
+msgstr "Os SBOMs para imagens nativas usarão o arquivo executável nativo como seu componente principal."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Since native executables are not currently attached to projects as Maven artifacts, their SBOMs will not be attached as Maven artifacts either."
-msgstr ""
+msgstr "Como os executáveis nativos não estão atualmente anexados aos projetos como artefatos Maven, seus SBOMs também não serão anexados como artefatos Maven."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "As in the case of an Uber JAR, runtime components in an SBOM generated for an native executable will not include `evidence.occurrences.location` since their corresponding code and resources are included in a single native executable file."
-msgstr ""
+msgstr "Como no caso de um Uber JAR, os componentes de tempo de execução em um SBOM gerado para um executável nativo não incluirão `evidence.occurrences.location` , pois o código e os recursos correspondentes estão incluídos em um único arquivo executável nativo."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Mutable JAR"
-msgstr ""
+msgstr "JAR mutável"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Mutable JAR distribution is similar to the Fast JAR one except it also includes build time dependencies to support re-augmentation (re-building) of an application."
-msgstr ""
+msgstr "A distribuição do Mutable JAR é semelhante à do Fast JAR, mas também inclui dependências de tempo de compilação para dar suporte à re-augmentação (recompilação) de um aplicativo."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "SBOMs generated for Mutable JAR distributions will also record locations of components that will be used during re-augmentation process using `evidence.occurrences.location` but keeping their `quarkus:component:scope` property set to `development`. For example:"
-msgstr ""
+msgstr "Os SBOMs gerados para distribuições JAR mutáveis também registrarão os locais dos componentes que serão usados durante o processo de re-augmentação usando `evidence.occurrences.location` , mas mantendo a propriedade `quarkus:component:scope` definida como `development` . Por exemplo:"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Quarkus Property Taxonomy"
-msgstr ""
+msgstr "Taxonomia de propriedades do Quarkus"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Value range"
-msgstr ""
+msgstr "Faixa de valores"
 
 #: _versions/3.20/guides/cyclonedx.adoc
 msgid "Description"
 msgstr ""
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "`quarkus:component:scope`"
-msgstr ""
+msgstr "`quarkus:component:scope`"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "`runtime` or `development`"
-msgstr ""
+msgstr "`runtime` ou `development`"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Indicates whether a component is a runtime or a build/development time dependency of an application."
-msgstr ""
+msgstr "Indica se um componente é uma dependência de tempo de execução ou de tempo de construção/desenvolvimento de um aplicativo."
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "`quarkus:component:location`"
-msgstr ""
+msgstr "`quarkus:component:location`"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "String representing a file system path using `/` as a path element"
-msgstr ""
+msgstr "String que representa um caminho de sistema de arquivos usando `/` como elemento de caminho"
 
 #: _versions/3.20/guides/cyclonedx.adoc
+#, fuzzy
 msgid "Used in SBOMs with schema versions 1.4 or older. Starting from schema 1.5, `evidence.occurrences.location` is used instead. This property is used only if a component is found in the distribution. The value is a relative path to a file pointing to the location of a component in a distribution using `/` as a path element separator."
-msgstr ""
+msgstr "Usado em SBOMs com versões de esquema 1.4 ou anteriores. A partir do esquema 1.5, `evidence.occurrences.location` é usado em seu lugar. Essa propriedade é usada somente se um componente for encontrado na distribuição. O valor é um caminho relativo para um arquivo que aponta para o local de um componente em uma distribuição usando `/` como separador de elementos de caminho."
