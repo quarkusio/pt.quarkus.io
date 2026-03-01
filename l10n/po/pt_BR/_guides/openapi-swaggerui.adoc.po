@@ -252,19 +252,16 @@ msgid "You can change the Generated OpenAPI Schema using one or more filter. Fil
 msgstr "O senhor pode alterar o esquema OpenAPI gerado usando um ou mais filtros. Os filtros podem ser executados durante o tempo de compilação ou no tempo de execução."
 
 #: _guides/openapi-swaggerui.adoc
-#, fuzzy
-msgid "Annotate method with `@OpenApiFilter` and the run stage (BUILD,RUN,BOTH)"
-msgstr "Anotar o método com `@OpenApiFilter` e o estágio de execução (BUILD, RUN, BOTH)"
+msgid "Annotate the class with `@OpenApiFilter` and use the `stages` field with one or more of `BUILD`, `RUNTIME_STARTUP`, or `RUNTIME_PER_REQUEST`. This filter runs once during build, and once every time the OpenAPI document is requested."
+msgstr ""
 
 #: _guides/openapi-swaggerui.adoc
-#, fuzzy
-msgid "Implement OASFilter and override any of the methods"
-msgstr "Implemente o OASFilter e substitua qualquer um dos métodos"
+msgid "Implement OASFilter and override any of its methods"
+msgstr ""
 
 #: _guides/openapi-swaggerui.adoc
-#, fuzzy
-msgid "For Build stage filters, the index can be passed in (optional)"
-msgstr "Para filtros de estágio de construção, o índice pode ser passado (opcional)"
+msgid "Filters which run during the build of the application - i.e. `BUILD` Stage filters (See also <<Advanced interactions of RunStages>>) - the Jandex index can be passed in the constructor. During application runtime, the Jandex index will *not* be null. However it will be empty, i.e it won't contain info about any classes or annotations."
+msgstr ""
 
 #: _guides/openapi-swaggerui.adoc
 #, fuzzy
@@ -277,16 +274,94 @@ msgid "Remember that setting fields on the schema will override what has been ge
 msgstr "Lembre-se de que a configuração de campos no esquema substituirá o que foi gerado; talvez o senhor queira obter e adicionar (portanto, modificar). Saiba também que os valores gerados podem ser nulos, portanto, o senhor terá de verificar isso."
 
 #: _guides/openapi-swaggerui.adoc
-#, fuzzy
-msgid "Runtime filters"
-msgstr "Filtros de tempo de execução"
+msgid "Overview of RunStages"
+msgstr ""
 
 #: _guides/openapi-swaggerui.adoc
-#, fuzzy
+msgid "Stage"
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "Meaning"
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "BUILD"
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "The filter executes at build time."
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "RUNTIME_STARTUP"
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "The filter executes (eagerly) at application startup."
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "RUNTIME_PER_REQUEST"
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "The filter executes each time the OpenAPI document is requested."
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "RUN"
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
 msgid ""
-"Runtime filters by default runs on startup (when the final OpenAPI document gets created). You can change runtime filters to run on every request, making the OpenAPI document dynamic.\n"
-"To do this you need to set this propery: `quarkus.smallrye-openapi.always-run-filter=true`."
-msgstr "Por padrão, os filtros de tempo de execução são executados na inicialização (quando o documento OpenAPI final é criado). O senhor pode alterar os filtros de tempo de execução para que sejam executados em todas as solicitações, tornando o documento OpenAPI dinâmico. Para fazer isso, o senhor precisa definir esta propriedade: `quarkus.smallrye-openapi.always-run-filter=true` ."
+"DEPRECATED. The filter executes at stage `RUNTIME_STARTUP` if `quarkus.smallrye-openapi.always-run-filter` is set to `false`,\n"
+"or at stage `RUNTIME_PER_REQUEST` if `quarkus.smallrye-openapi.always-run-filter` is set to `true`. (See also <<Advanced interactions of RunStages>>.)"
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "BOTH"
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "DEPRECATED. The filter executes as if both the `BUILD` and `RUN` stages were specified."
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "The `quarkus.smallrye-openapi.always-run-filter` configuration property is deprecated. Annotate your filters with `@OpenApiFilter(stages = OpenApiFilter.RunStage.RUNTIME_PER_REQUEST)` instead."
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "Advanced interactions of RunStages"
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "While the `BUILD` RunStage is expected to run at build time - as the name already suggests - there are additional RunStages that also execute at build time."
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid ""
+"The `quarkus-smallrye-openapi` extension saves the OpenAPI Document to a file when the `quarkus.smallrye-openapi.store-schema-directory` is configured.\n"
+"This saved version of the OpenAPI Document is useful for downstream consumers."
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid ""
+"To produce an OpenAPI Document which possibly *could* match the one produced during runtime, the `RUN` and `RUNTIME_STARTUP` RunStages are executed at build time - in a separate step from the `BUILD` RunStage.\n"
+"Any exception which occurs during this additional processing step is ignored, i.e. if one of the filters throws, none will have any effect."
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "This additional processing step is done even if `quarkus.smallrye-openapi.store-schema-directory` is *NOT* configured."
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "The MicroProfile OpenAPI way"
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid "The Microprofile OpenAPI specification defines that *one* OASFilter implementation can be specified using the `mp.openapi.filter` configuration property. This filter will be run during RunStage `RUN`."
+msgstr ""
 
 #. type: Title ==
 #: _guides/openapi-swaggerui.adoc
@@ -547,8 +622,14 @@ msgstr ""
 
 #: _guides/openapi-swaggerui.adoc
 msgid ""
+"The `@Extension` annotation can be placed on resource classes and resource methods. However, the list of extensions defined at both places will *not* be combined.\n"
+"The effective extensions of an OpenAPI operation are either the list of extensions from the resource method, or if none are present the list of extensions from the resource class."
+msgstr ""
+
+#: _guides/openapi-swaggerui.adoc
+msgid ""
 "Multiple profiles can be specified for the `scan-profiles` and `scan-exclude-profiles` configuration properties.\n"
-"Multiple profiles can be specified on a resource method by using multiple `@Extension` annotations.\n"
+"Multiple profiles can be specified on resource classes and resource methods by using multiple `@Extension` annotations.\n"
 "The `x-smallrye-profile` extensions are *not* included in the final OpenAPI documents."
 msgstr ""
 
