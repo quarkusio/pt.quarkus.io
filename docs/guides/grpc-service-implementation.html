@@ -1,0 +1,2338 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+
+
+
+
+
+
+<head>
+  <title>Implementando um serviço gRPC - Quarkus</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="
+  connect-src 'self' https://dpm.demdex.net https://adobedc.demdex.net https://analytics.ossupstream.org/ https://search.quarkus.io https://smetrics.redhat.com https://ajax.googleapis.com; 
+  script-src 'self' 'unsafe-inline' 'unsafe-eval'
+      
+      https://assets.adobedtm.com
+      js.bizographics.com
+      https://www.redhat.com
+      https://static.redhat.com
+      https://app.requestly.io/
+      jsonip.com
+      https://ajax.googleapis.com
+      https://use.fontawesome.com
+      http://www.youtube.com
+      http://www.googleadservices.com
+      https://googleads.g.doubleclick.net
+      https://giscus.app
+      https://analytics.ossupstream.org/
+      https://app.mailjet.com;
+
+  style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com; 
+  img-src 'self' * data:; 
+  media-src 'self'; 
+  frame-src https://redhat.demdex.net https://www.youtube.com https://player.restream.io https://app.mailjet.com http://xy0p2.mjt.lu https://mj.quarkus.io https://giscus.app; 
+  base-uri 'none'; 
+  object-src 'none'; 
+  form-action 'none'; 
+  font-src 'self' https://use.fontawesome.com https://fonts.gstatic.com;" />
+
+  <script id="adobe_dtm" src="https://www.redhat.com/dtm.js" type="text/javascript"></script>
+  <script src="/assets/javascript/highlight.pack.js" type="text/javascript"></script>
+  <META HTTP-EQUIV='X-XSS-Protection' CONTENT="1; mode=block">
+  <META HTTP-EQUIV='X-Content-Type-Options' CONTENT="nosniff">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Quarkus: Supersonic Subatomic Java">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@QuarkusIO"> 
+  <meta name="twitter:creator" content="@QuarkusIO">
+  <meta property="og:url" content="https://quarkus.io/guides/grpc-service-implementation" />
+  <meta property="og:title" content="Implementando um serviço gRPC" />
+  <meta property="og:description" content="Quarkus: Supersonic Subatomic Java" />
+  <meta property="og:image" content="https://quarkus.io/assets/images/quarkus_card.png" />
+  
+  <link rel="canonical" href="https://quarkus.io/guides/grpc-service-implementation">
+  <link rel="shortcut icon" type="image/png" href="/favicon.ico" >
+  <link rel="stylesheet" href="/guides/stylesheet/config.css" />
+  <link rel="stylesheet" href="/assets/css/main.css?2021-07-29" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" crossorigin="anonymous">
+  <link rel="alternate" type="application/rss+xml"  href="/feed.xml" title="Quarkus">
+  <script src="/assets/javascript/hl.js" type="text/javascript"></script>
+  
+  
+  
+  
+  <link rel="alternate" hreflang="en" href="https://quarkus.io/guides/grpc-service-implementation" />
+  
+  <link rel="alternate" hreflang="pt-br" href="https://pt.quarkus.io/guides/grpc-service-implementation" />
+  
+  <link rel="alternate" hreflang="es" href="https://es.quarkus.io/guides/grpc-service-implementation" />
+  
+  <link rel="alternate" hreflang="zh" href="https://cn.quarkus.io/guides/grpc-service-implementation" />
+  
+  <link rel="alternate" hreflang="ja" href="https://ja.quarkus.io/guides/grpc-service-implementation" />
+  
+  <link rel="alternate" hreflang="x-default" href="https://quarkus.io/" />  
+  <script src="/assets/javascript/tracking.js"></script>
+  
+  <script src="/assets/javascript/colormode.js" type="text/javascript"></script>
+
+</head>
+
+<body class="guides">
+
+  
+
+
+<div class="grid-wrapper communitysite">
+  <div class="grid__item width-12-12">The <a href="https://quarkus.io/guides/grpc-service-implementation">English version of quarkus.io</a> is the official project site. Translated sites are community supported on a best-effort basis.</div>
+</div>
+
+
+  <div class="nav-wrapper">
+  <div class="grid-wrapper">
+    <div class="width-12-12">
+      <input type="checkbox" id="checkbox" />
+      <nav id="main-nav" class="main-nav">
+        <div class="logo-wrapper">
+           <a href="/"><img src="/assets/images/quarkus_logo_horizontal_rgb_600px_reverse.png" class="project-logo" title="Quarkus"></a>
+        </div>
+    <label class="nav-toggle" for="checkbox"> <i class="fa fa-bars"></i>
+</label>
+    <ul id="menu" class="menu">
+      <li class="dropdown">
+        <span href="#">Why<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          <li><a href="/about" class="">O QUE É QUARKUS?</a></li>
+          <li><a href="/developer-joy" class="">ALEGRIA DO DESENVOLVEDOR</a></li>
+          <li><a href="/performance" class="">PERFORMANCE</a></li>
+          <li><a href="/kubernetes-native" class="">KUBERNETES NATIVO</a></li>
+          <li><a href="/standards" class="">PADRÕES</a></li>
+          <li><a href="/versatility" class="">VERSATILITY</a></li>
+          <li><a href="/container-first" class="">CONTAINER PRIMEIRO</a></li>
+          <li><a href="/spring" class="">USING SPRING?</a></li>
+          <li class="tertiarydropdown">
+            <span href="#">AI<i class="fas fa-chevron-down"></i></span>
+            <ul class="tertiarymenu">
+              <li><a href="/ai" class="">AI OVERVIEW</a></li>
+              <li><a href="/java-for-ai" class="">JAVA FOR AI</a></li>
+              <li><a href="/quarkus-for-ai" class="">WHY QUARKUS FOR AI</a></li>
+              <li><a href="/ai-blueprints" class="">AI BLUEPRINTS</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <span href="#">Learn<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          <li><a href="/get-started" class="">COMEÇAR</a></li>
+          <li><a href="/guides" class="active">DOCUMENTAÇÃO</a></li>
+          <li><a href="/userstories/" class="">USER STORIES</a></li>  
+          <li><a href="/qtips" class="">VÍDEOS "Q" TIP</a></li>          
+          <li><a href="/books" class="">LIVROS</a></li>
+          </ul>
+      </li>
+      <li class="dropdown">
+        <span href="#">Extensions<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          
+          <!-- Note that quarkus.io is hardcoded here, because it is the only url which supports extensions -->
+<li><a href="https://quarkus.io/extensions/" class="">PROCURAR EXTENSÕES</a></li>
+          <li><a href="/faq/#what-is-a-quarkus-extension" class="">USAR
+EXTENSÕES</a></li>
+          <li><a href="/guides/writing-extensions" class="">CRIAR
+EXTENSÕES</a></li>
+          <li><a href="https://hub.quarkiverse.io" class="">COMPARTILHE EXTENSÕES</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <span href="#">Community<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          <li><a href="/support/" class="">SUPORTE</a></li>
+          <li><a href="/blog" class="">BLOG</a></li>
+          <li><a href="/discussion" class="">DISCUSSÃO</a></li>
+          <li><a href="/working-groups" class="">WORKING GROUPS</a></li>
+          <li><a href="/insights" class="">PODCAST</a></li>
+          <li><a href="/events" class="">EVENTOS</a></li>
+          <li><a href="/newsletter" class="">BOLETIM INFORMATIVO</a></li>
+          <li><a href="https://github.com/orgs/quarkusio/projects/13/views/1" class="">ROADMAP</a></li>
+          <li><a href="/benefactors" class="">BENEFACTORS</a></li>
+          </ul>
+      </li>
+      <li>
+        <a href="https://code.quarkus.io" class="button-cta secondary white">COMECE
+A CODIFICAR</a>
+      </li>
+      <li class="dropdown">
+        <span href="/language/"><div class="fas fa-globe langicon"></div><i class="fas fa-chevron-down"></i></span>
+        <ul class="submenu">
+          <li><a href="https://quarkus.io/guides/grpc-service-implementation" >OFFICIAL (ENGLISH)</a></li>
+          <li><a href="https://pt.quarkus.io/guides/grpc-service-implementation">PORTUGUÊS (BR)</a></li>
+          <li><a href="https://es.quarkus.io/guides/grpc-service-implementation">ESPAÑOL</a></li>
+          <li><a href="https://cn.quarkus.io/guides/grpc-service-implementation">简体中文</a></li>
+          <li><a href="https://ja.quarkus.io/guides/grpc-service-implementation">日本語</a></li>
+          </ul>
+      </li>
+      <li>
+        <span href="#" class="modeswitcher" id='theme-toggle'><i class="fas
+fa-sun"></i><i class="fas fa-moon"></i><i class="fas fa-cog"></i></span>
+      </li>
+    </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+  <div class="content">
+    
+
+
+
+
+
+<section class="full-width-version-bg flexfilterbar guides">
+    <div class="guideflexcontainer">
+        <div class="docslink">
+            <a class="returnlink" href="/guides/"> Voltar aos Guias</a>
+        </div>
+        <div class="flexlabel">
+            <label>Por Versão</label>
+        </div>
+        <div class="guidepulldown version">
+            <select id="guide-version-dropdown">
+                
+                
+                
+                <option value="main" >Main - SNAPSHOT</option>
+                
+                
+                
+                <option value="latest" selected>3.32.1 - Latest</option>
+                
+                
+                
+                <option value="3.27" >3.27</option>
+                
+                
+                
+                <option value="3.20" >3.20</option>
+                
+                
+                
+                <option value="3.15" >3.15</option>
+                
+                
+                
+                <option value="3.8" >3.8</option>
+                </select>
+        </div>
+    </div>
+</section>
+
+<div class="guide">
+    <div class="grid-wrapper">
+        <div class="grid__item width-8-12 width-12-12-m">
+            <h1 class="text-caps">Implementando um serviço gRPC </h1>
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>As implementações de serviço gRPC expostas como beans CDI são automaticamente registradas e servidas pelo quarkus-grpc.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+A implementação de um serviço gRPC requer que as classes gRPC sejam geradas.
+Coloque seus arquivos 'proto' em 'src/main/proto' e execute 'mvn compile'.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="generated-code"><a class="anchor" href="#generated-code"></a>Código Gerado</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>O Quarkus gera algumas classes de implementação para serviços declarados no arquivo 'proto':</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Um <em>service interface</em> usando a API Mutiny</p>
+<div class="ulist">
+<ul>
+<li>
+<p>o nome da classe é '${JAVA_PACKAGE}.${NAME_OF_THE_SERVICE}'</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Uma classe <em>base de implementação</em> que utiliza a API gRPC</p>
+<div class="ulist">
+<ul>
+<li>
+<p>o nome da classe está estruturado da seguinte forma: '${JAVA_PACKAGE}.${NAME_OF_THE_SERVICE}Grpc.${NAME_OF_THE_SERVICE}ImplBase'</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Por exemplo, se você usar o seguinte trecho de arquivo 'proto':</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">option java_package = "hello"; <i class="conum" data-value="1"></i><b>(1)</b>
+
+service Greeter { <i class="conum" data-value="2"></i><b>(2)</b>
+    rpc SayHello (HelloRequest) returns (HelloReply) {}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>hello</code> é o pacote java para as classes geradas.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>Greeter</code> é o nome do serviço.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Em seguida, a interface de serviço é 'Olá. Greeter' e a base de implementação é a classe aninhada estática abstrata: 'hello. GreeterGrpc.GreeterImplBase'.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Você precisará implementar o <em>service interface</em> ou estender o <em>base class</em> com seu bean de implementação de serviço, conforme descrito nas seções a seguir.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementing-a-service-with-the-mutiny-api"><a class="anchor" href="#implementing-a-service-with-the-mutiny-api"></a>Implementando um serviço com a API Mutiny</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Para implementar um serviço gRPC usando a API Mutiny , crie uma classe que implemente a interface de serviço.
+Em seguida, implemente os métodos definidos na interface de serviço.
+Se você não quiser implementar um método de serviço, basta lançar um 'java.lang.UnsupportedOperationException' do corpo do método (a exceção será convertida automaticamente para a exceção gRPC apropriada).
+Finalmente, implemente o serviço e adicione a anotação '@GrpcService':</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.quarkus.grpc.GrpcService;
+import hello.Greeter;
+
+@GrpcService <i class="conum" data-value="1"></i><b>(1)</b>
+public class HelloService implements Greeter { <i class="conum" data-value="2"></i><b>(2)</b>
+
+    @Override
+    public Uni&lt;HelloReply&gt; sayHello(HelloRequest request) {
+        return Uni.createFrom().item(() -&gt;
+                HelloReply.newBuilder().setMessage("Hello " + request.getName()).build()
+        );
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Um bean de implementação de serviço gRPC deve ser anotado com a anotação '@GrpcService' e não deve declarar nenhum outro qualificador CDI. Todos os serviços gRPC têm o escopo 'jakarta.inject.Singleton'. Além disso, o contexto de solicitação está sempre ativo durante uma chamada de serviço.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>hello.Greeter</code> é a interface de serviço gerada.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+O bean de implementação de serviço também pode estender a base de implementação do Mutiny , onde o nome da classe é estruturado da seguinte maneira: 'Mutiny${NAME_OF_THE_SERVICE}Grpc.${NAME_OF_THE_SERVICE}ImplBase'.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementing-a-service-with-the-default-grpc-api"><a class="anchor" href="#implementing-a-service-with-the-default-grpc-api"></a>Implementando um serviço com a API gRPC padrão</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Para implementar um serviço gRPC usando a API gRPC padrão, crie uma classe que estenda a base de implementação padrão.
+Em seguida, substitua os métodos definidos na interface de serviço.
+Finalmente, implemente o serviço e adicione a anotação '@GrpcService':</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.quarkus.grpc.GrpcService;
+
+@GrpcService
+public class HelloService extends GreeterGrpc.GreeterImplBase {
+
+    @Override
+    public void sayHello(HelloRequest request, StreamObserver&lt;HelloReply&gt; responseObserver) {
+        String name = request.getName();
+        String message = "Hello " + name;
+        responseObserver.onNext(HelloReply.newBuilder().setMessage(message).build());
+        responseObserver.onCompleted();
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="blocking-service-implementation"><a class="anchor" href="#blocking-service-implementation"></a>Implementação do serviço de bloqueio</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Por padrão, todos os métodos de um serviço gRPC são executados no loop de eventos.
+Como consequência, você deve <strong>não</strong> bloquear.
+Se a lógica do serviço precisar bloquear, anote o método com 'io.smallrye.common.annotation.Blocking':</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
+@Blocking
+public Uni&lt;HelloReply&gt; sayHelloBlocking(HelloRequest request) {
+    // Do something blocking before returning the Uni
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="handling-streams"><a class="anchor" href="#handling-streams"></a>Manipulação de fluxos</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>gRPC permite receber e retornar fluxos:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">service Streaming {
+    rpc Source(Empty) returns (stream Item) {} // Returns a stream
+    rpc Sink(stream Item) returns (Empty) {}   // Reads a stream
+    rpc Pipe(stream Item) returns (stream Item) {}  // Reads a streams and return a streams
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Usando o Mutiny, você pode implementá-los da seguinte maneira:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.quarkus.grpc.GrpcService;
+
+@GrpcService
+public class StreamingService implements Streaming {
+
+    @Override
+    public Multi&lt;Item&gt; source(Empty request) {
+        // Just returns a stream emitting an item every 2ms and stopping after 10 items.
+        return Multi.createFrom().ticks().every(Duration.ofMillis(2))
+                .select().first(10)
+                .map(l -&gt; Item.newBuilder().setValue(Long.toString(l)).build());
+    }
+
+    @Override
+    public Uni&lt;Empty&gt; sink(Multi&lt;Item&gt; request) {
+        // Reads the incoming streams, consume all the items.
+        return request
+                .map(Item::getValue)
+                .map(Long::parseLong)
+                .collect().last()
+                .map(l -&gt; Empty.newBuilder().build());
+    }
+
+    @Override
+    public Multi&lt;Item&gt; pipe(Multi&lt;Item&gt; request) {
+        // Reads the incoming stream, compute a sum and return the cumulative results
+        // in the outbound stream.
+        return request
+                .map(Item::getValue)
+                .map(Long::parseLong)
+                .onItem().scan(() -&gt; 0L, Long::sum)
+                .onItem().transform(l -&gt; Item.newBuilder().setValue(Long.toString(l)).build());
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="health"><a class="anchor" href="#health"></a>Health Check</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Para os serviços implementados, o Quarkus gRPC expõe informações de integridade no seguinte formato:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-protobuf hljs" data-lang="protobuf">syntax = "proto3";
+
+package grpc.health.v1;
+
+message HealthCheckRequest {
+  string service = 1;
+}
+
+message HealthCheckResponse {
+  enum ServingStatus {
+    UNKNOWN = 0;
+    SERVING = 1;
+    NOT_SERVING = 2;
+  }
+  ServingStatus status = 1;
+}
+
+service Health {
+  rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
+
+  rpc Watch(HealthCheckRequest) returns (stream HealthCheckResponse);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Os clientes podem especificar o nome de serviço totalmente qualificado para obter o status de integridade de um serviço específico
+ou ignore a especificação do nome do serviço para obter o status geral do servidor gRPC.</p>
+</div>
+<div class="paragraph">
+<p>Para mais detalhes, confira o
+<a href="https://github.com/grpc/grpc/blob/v1.28.1/doc/health-checking.md">documentação do gRPC</a></p>
+</div>
+<div class="paragraph">
+<p>Além disso, se o Quarkus SmallRye Health for adicionado ao aplicativo, uma verificação de prontidão para
+o estado dos serviços gRPC será adicionado à resposta de ponto de extremidade do MicroProfile Health, ou seja, '/q/health'.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reflection-service"><a class="anchor" href="#reflection-service"></a>Reflection Service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>O Quarkus gRPC Server implementa o <a href="https://github.com/grpc/grpc/blob/master/doc/server-reflection.md">reflection service</a>.
+Este serviço permite que ferramentas como <a href="https://github.com/fullstorydev/grpcurl">grpcurl</a> ou <a href="https://github.com/gusaul/grpcox">grpcox</a> interajam com seus serviços.</p>
+</div>
+<div class="paragraph">
+<p>O reflection service é habilitado por padrão no modo <em>dev</em>.
+No modo de teste ou produção, você precisa habilitá-lo explicitamente definindo 'quarkus.grpc.server.enable-reflection-service' como 'true'.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+O Quarkus expõe o reflection service <code>v1</code> e <code>v1alpha</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="scaling"><a class="anchor" href="#scaling"></a>Dimensionamento</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Por padrão, o quarkus-grpc inicia um único servidor gRPC em execução em um único loop de eventos.</p>
+</div>
+<div class="paragraph">
+<p>Se você deseja dimensionar seu servidor, você pode definir o número de instâncias do servidor definindo 'quarkus.grpc.server.instances'.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="server-configuration"><a class="anchor" href="#server-configuration"></a>Configuração do Servidor</h2>
+<div class="sectionbody">
+<div class="paragraph configuration-legend">
+<p><span class="icon"><i class="fa fa-lock" title="Fixed at build time"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime</p>
+</div>
+<table class="tableblock frame-all grid-all stretch configuration-reference configuration-reference-all-rows">
+<colgroup>
+<col style="width: 80%;">
+<col style="width: 10%;">
+<col style="width: 10%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock"><span class="header-title">Configuration property</span></p></th>
+<th class="tableblock halign-left valign-middle"><p class="tableblock">Tipo</p></th>
+<th class="tableblock halign-left valign-middle"><p class="tableblock">Padrão</p></th>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-use-separate-server"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-use-separate-server"><code>quarkus.grpc.server.use-separate-server</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.use-separate-server' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-1" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Do we use separate HTTP server to serve gRPC requests. Set this to false if you want to use new Vert.x gRPC support, which uses existing Vert.x HTTP server.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6461">QUARKUS_GRPC_SERVER_USE_SEPARATE_SERVER</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6461" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>true</code></p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock"><a id="quarkus-grpc_quarkus-grpc-server_section_quarkus-grpc-server-xds"></a> <span class="section-name section-level1"><a href="#quarkus-grpc_quarkus-grpc-server_section_quarkus-grpc-server-xds">Configure XDS usage, if enabled</a></span></p></th>
+<th class="tableblock halign-left valign-middle"><p class="tableblock">Tipo</p></th>
+<th class="tableblock halign-left valign-middle"><p class="tableblock">Padrão</p></th>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-xds-enabled"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-xds-enabled"><code>quarkus.grpc.server.xds.enabled</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.xds.enabled' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-2" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Explicitly enable use of XDS.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6462">QUARKUS_GRPC_SERVER_XDS_ENABLED</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6462" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>false</code></p></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-xds-secure"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-xds-secure"><code>quarkus.grpc.server.xds.secure</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.xds.secure' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-3" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Use secure credentials.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6463">QUARKUS_GRPC_SERVER_XDS_SECURE</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6463" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>false</code></p></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-in-process-enabled"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-in-process-enabled"><code>quarkus.grpc.server.in-process.enabled</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.in-process.enabled' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-4" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Explicitly enable use of in-process.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6464">QUARKUS_GRPC_SERVER_IN_PROCESS_ENABLED</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6464" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>false</code></p></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-in-process-name"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-in-process-name"><code>quarkus.grpc.server.in-process.name</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.in-process.name' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-5" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Set in-process name.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6465">QUARKUS_GRPC_SERVER_IN_PROCESS_NAME</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6465" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>quarkus-grpc</code></p></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-port"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-port"><code>quarkus.grpc.server.port</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.port' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-6" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>The gRPC Server port.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6466">QUARKUS_GRPC_SERVER_PORT</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6466" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>9000</code></p></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-test-port"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-test-port"><code>quarkus.grpc.server.test-port</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.test-port' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-7" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>The gRPC Server port used for tests.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6467">QUARKUS_GRPC_SERVER_TEST_PORT</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6467" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>9001</code></p></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-host"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-host"><code>quarkus.grpc.server.host</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.host' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-8" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>The gRPC server host.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6468">QUARKUS_GRPC_SERVER_HOST</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6468" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>0.0.0.0</code></p></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-handshake-timeout"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-handshake-timeout"><code>quarkus.grpc.server.handshake-timeout</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.handshake-timeout' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-9" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>The gRPC handshake timeout.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6469">QUARKUS_GRPC_SERVER_HANDSHAKE_TIMEOUT</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6469" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html">Duration</a> <a href="#duration-note-anchor-quarkus-grpc_quarkus-grpc-server"><span class="icon"><i class="fa fa-question-circle" title="More information about the Duration format"></i></span></a></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-max-inbound-message-size"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-max-inbound-message-size"><code>quarkus.grpc.server.max-inbound-message-size</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.max-inbound-message-size' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-10" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>The max inbound message size in bytes.</p>
+</div>
+<div class="paragraph">
+<p>When using a single server (using <code>quarkus.grpc.server.use-separate-server=false</code>), the default value is 256KB. When using a separate server (using <code>quarkus.grpc.server.use-separate-server=true</code>), the default value is 4MB.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6470">QUARKUS_GRPC_SERVER_MAX_INBOUND_MESSAGE_SIZE</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6470" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-max-inbound-metadata-size"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-max-inbound-metadata-size"><code>quarkus.grpc.server.max-inbound-metadata-size</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.max-inbound-metadata-size' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-11" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>The max inbound metadata size in bytes</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6471">QUARKUS_GRPC_SERVER_MAX_INBOUND_METADATA_SIZE</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6471" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-certificate"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-certificate"><code>quarkus.grpc.server.ssl.certificate</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.ssl.certificate' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-12" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>The classpath path or file path to a server certificate or certificate chain in PEM format.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6472">QUARKUS_GRPC_SERVER_SSL_CERTIFICATE</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6472" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">path</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-key"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-key"><code>quarkus.grpc.server.ssl.key</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.ssl.key' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-13" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>The classpath path or file path to the corresponding certificate private key file in PEM format.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6473">QUARKUS_GRPC_SERVER_SSL_KEY</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6473" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">path</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-key-store"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-key-store"><code>quarkus.grpc.server.ssl.key-store</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.ssl.key-store' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-14" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>An optional keystore that holds the certificate information instead of specifying separate files. The keystore can be either on classpath or an external file.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6474">QUARKUS_GRPC_SERVER_SSL_KEY_STORE</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6474" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">path</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-key-store-type"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-key-store-type"><code>quarkus.grpc.server.ssl.key-store-type</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.ssl.key-store-type' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-15" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>An optional parameter to specify the type of the keystore file. If not given, the type is automatically detected based on the file name.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6475">QUARKUS_GRPC_SERVER_SSL_KEY_STORE_TYPE</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6475" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-key-store-password"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-key-store-password"><code>quarkus.grpc.server.ssl.key-store-password</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.ssl.key-store-password' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-16" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>A parameter to specify the password of the keystore file.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6476">QUARKUS_GRPC_SERVER_SSL_KEY_STORE_PASSWORD</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6476" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-key-store-alias"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-key-store-alias"><code>quarkus.grpc.server.ssl.key-store-alias</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.ssl.key-store-alias' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-17" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>A parameter to specify the alias of the keystore file.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6477">QUARKUS_GRPC_SERVER_SSL_KEY_STORE_ALIAS</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6477" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-key-store-alias-password"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-key-store-alias-password"><code>quarkus.grpc.server.ssl.key-store-alias-password</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.ssl.key-store-alias-password' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-18" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>A parameter to specify the alias password of the keystore file.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6478">QUARKUS_GRPC_SERVER_SSL_KEY_STORE_ALIAS_PASSWORD</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6478" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-trust-store"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-trust-store"><code>quarkus.grpc.server.ssl.trust-store</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.ssl.trust-store' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-19" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>An optional trust store which holds the certificate information of the certificates to trust</p>
+</div>
+<div class="paragraph">
+<p>The trust store can be either on classpath or an external file.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6479">QUARKUS_GRPC_SERVER_SSL_TRUST_STORE</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6479" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">path</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-trust-store-type"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-trust-store-type"><code>quarkus.grpc.server.ssl.trust-store-type</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.ssl.trust-store-type' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-20" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>An optional parameter to specify type of the trust store file. If not given, the type is automatically detected based on the file name.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6480">QUARKUS_GRPC_SERVER_SSL_TRUST_STORE_TYPE</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6480" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-trust-store-password"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-trust-store-password"><code>quarkus.grpc.server.ssl.trust-store-password</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.ssl.trust-store-password' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-21" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>A parameter to specify the password of the trust store file.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6481">QUARKUS_GRPC_SERVER_SSL_TRUST_STORE_PASSWORD</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6481" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-cipher-suites"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-cipher-suites"><code>quarkus.grpc.server.ssl.cipher-suites</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.ssl.cipher-suites' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-22" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>The cipher suites to use. If none is given, a reasonable default is selected.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6482">QUARKUS_GRPC_SERVER_SSL_CIPHER_SUITES</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6482" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">list of string</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-protocols"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-protocols"><code>quarkus.grpc.server.ssl.protocols</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.ssl.protocols' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-23" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Sets the ordered list of enabled SSL/TLS protocols.</p>
+</div>
+<div class="paragraph">
+<p>If not set, it defaults to <code>"TLSv1.3, TLSv1.2"</code>. The following list of protocols are supported: <code>TLSv1, TLSv1.1, TLSv1.2, TLSv1.3</code>. To only enable <code>TLSv1.3</code>, set the value to <code>to "TLSv1.3"</code>.</p>
+</div>
+<div class="paragraph">
+<p>Note that setting an empty list, and enabling SSL/TLS is invalid. You must at least have one protocol.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6483">QUARKUS_GRPC_SERVER_SSL_PROTOCOLS</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6483" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">list of string</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>TLSv1.3</code>, <code>TLSv1.2</code></p></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-client-auth"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-ssl-client-auth"><code>quarkus.grpc.server.ssl.client-auth</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.ssl.client-auth' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-24" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Configures the engine to require/request client authentication. NONE, REQUEST, REQUIRED</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6484">QUARKUS_GRPC_SERVER_SSL_CLIENT_AUTH</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6484" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><code>none</code>, <code>request</code>, <code>required</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>none</code></p></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-plain-text"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-plain-text"><code>quarkus.grpc.server.plain-text</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.plain-text' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-25" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Disables SSL, and uses plain text instead. If disabled, configure the ssl configuration.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6485">QUARKUS_GRPC_SERVER_PLAIN_TEXT</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6485" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>true</code></p></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-alpn"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-alpn"><code>quarkus.grpc.server.alpn</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.alpn' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-26" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Whether ALPN should be used.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6486">QUARKUS_GRPC_SERVER_ALPN</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6486" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>true</code></p></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-transport-security-certificate"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-transport-security-certificate"><code>quarkus.grpc.server.transport-security.certificate</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.transport-security.certificate' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-27" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>The path to the certificate file.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6487">QUARKUS_GRPC_SERVER_TRANSPORT_SECURITY_CERTIFICATE</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6487" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-transport-security-key"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-transport-security-key"><code>quarkus.grpc.server.transport-security.key</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.transport-security.key' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-28" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>The path to the private key file.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6488">QUARKUS_GRPC_SERVER_TRANSPORT_SECURITY_KEY</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6488" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-enable-reflection-service"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-enable-reflection-service"><code>quarkus.grpc.server.enable-reflection-service</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.enable-reflection-service' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-29" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Enables the gRPC Reflection Service. By default, the reflection service is only exposed in <code>dev</code> mode. This setting allows overriding this choice and enable the reflection service every time.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6489">QUARKUS_GRPC_SERVER_ENABLE_REFLECTION_SERVICE</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6489" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>false</code></p></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-instances"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-instances"><code>quarkus.grpc.server.instances</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.instances' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-30" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Number of gRPC server verticle instances. This is useful for scaling easily across multiple cores. The number should not exceed the amount of event loops.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6490">QUARKUS_GRPC_SERVER_INSTANCES</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6490" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">int</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>1</code></p></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc row-hidden odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-netty-keep-alive-time"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-netty-keep-alive-time"><code>quarkus.grpc.server.netty.keep-alive-time</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.netty.keep-alive-time' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-31" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Sets a custom keep-alive duration. This configures the time before sending a <code>keepalive</code> ping when there is no read activity.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6491">QUARKUS_GRPC_SERVER_NETTY_KEEP_ALIVE_TIME</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6491" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html">Duration</a> <a href="#duration-note-anchor-quarkus-grpc_quarkus-grpc-server"><span class="icon"><i class="fa fa-question-circle" title="More information about the Duration format"></i></span></a></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc row-hidden">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-netty-permit-keep-alive-time"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-netty-permit-keep-alive-time"><code>quarkus.grpc.server.netty.permit-keep-alive-time</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.netty.permit-keep-alive-time' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-32" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Sets a custom permit-keep-alive duration. This configures the most aggressive keep-alive time clients are permitted to configure. The server will try to detect clients exceeding this rate and when detected will forcefully close the connection.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6492">QUARKUS_GRPC_SERVER_NETTY_PERMIT_KEEP_ALIVE_TIME</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6492" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html">Duration</a> <a href="#duration-note-anchor-quarkus-grpc_quarkus-grpc-server"><span class="icon"><i class="fa fa-question-circle" title="More information about the Duration format"></i></span></a></p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc row-hidden odd">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-netty-permit-keep-alive-without-calls"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-netty-permit-keep-alive-without-calls"><code>quarkus.grpc.server.netty.permit-keep-alive-without-calls</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.netty.permit-keep-alive-without-calls' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-33" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>Sets whether to allow clients to send keep-alive HTTP/2 PINGs even if there are no outstanding RPCs on the connection.</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6493">QUARKUS_GRPC_SERVER_NETTY_PERMIT_KEEP_ALIVE_WITHOUT_CALLS</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6493" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr class="row-collapsible row-collapsed row-with-desc row-hidden">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a id="quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-compression"></a> <span class="property-path"><a href="#quarkus-grpc_quarkus-grpc-server_quarkus-grpc-server-compression"><code>quarkus.grpc.server.compression</code></a></span>
+<button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-text='quarkus.grpc.server.compression' title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+<div id="conf-collapsible-desc-34" class="openblock description description-collapsed">
+<div class="content">
+<div class="paragraph">
+<p>gRPC compression, e.g. "gzip"</p>
+</div>
+<div class="paragraph">
+<p>Environment variable: <code id="env-var-6494">QUARKUS_GRPC_SERVER_COMPRESSION</code><button class="btn-copy fa fa-clipboard inline-btn-copy" data-clipboard-action="copy" data-clipboard-target="#env-var-6494" title="Copy to clipboard" do-not-collapse="true"></button></p>
+</div>
+</div>
+</div>
+<div class="paragraph description-decoration">
+<p><i class="fa fa-chevron-down"></i><span>Show more</span></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+</tbody>
+</table>
+<div id="duration-note-anchor-quarkus-grpc_quarkus-grpc-server" class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">About the Duration format</div>
+<div class="paragraph">
+<p>To write duration values, use the standard <code>java.time.Duration</code> format.
+See the <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)">Duration#parse() Java API documentation</a> for more information.</p>
+</div>
+<div class="paragraph">
+<p>Você também pode usar um formato simplificado, começando com um número:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Se o valor for apenas um número, ele representará o tempo em segundos.</p>
+</li>
+<li>
+<p>Se o valor for um número seguido de 'ms', ele representa o tempo em milissegundos.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Em outros casos, o formato simplificado é traduzido para o formato 'java.time.Duration' para análise:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Se o valor for um número seguido de 'h', 'm' ou 's', ele é prefixado com 'PT'.</p>
+</li>
+<li>
+<p>Se o valor for um número seguido de 'd', ele é prefixado com 'P'.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Quando você desabilita 'quarkus.grpc.server.use-separate-server', você está usando a nova implementação do servidor gRPC Vert.x
+que usa o servidor HTTP existente. O que significa que a porta do servidor agora é '8080' (ou a porta configurada com 'quarkus.http.port').
+Além disso, a maioria das outras propriedades de configuração não são mais aplicadas, pois é o servidor HTTP que já deve estar configurado corretamente.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Quando você habilita 'quarkus.grpc.server.xds.enabled', é o xDS que deve lidar com a maior parte da configuração acima.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-of-configuration"><a class="anchor" href="#example-of-configuration"></a>Exemplo de configuração</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="enabling-tls"><a class="anchor" href="#enabling-tls"></a>Habilitando o TLS</h3>
+<div class="paragraph">
+<p>Para habilitar o TLS, use a configuração a seguir.</p>
+</div>
+<div class="paragraph">
+<p>Observe que todos os caminhos na configuração podem especificar um recurso no classpath
+(normalmente de 'src/main/resources' ou sua subpasta) ou um arquivo externo.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.grpc.server.ssl.certificate=tls/server.pem
+quarkus.grpc.server.ssl.key=tls/server.key</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Quando SSL/TLS é configurado, 'texto sem formatação' é automaticamente desabilitado.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="tls-with-mutual-auth"><a class="anchor" href="#tls-with-mutual-auth"></a>TLS com autenticação mútua</h3>
+<div class="paragraph">
+<p>Para usar o TLS com autenticação mútua, use a seguinte configuração:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.grpc.server.ssl.certificate=tls/server.pem
+quarkus.grpc.server.ssl.key=tls/server.key
+quarkus.grpc.server.ssl.trust-store=tls/ca.jks
+quarkus.grpc.server.ssl.trust-store-password=*****
+quarkus.grpc.server.ssl.client-auth=REQUIRED</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="custom-server-building"><a class="anchor" href="#custom-server-building"></a>Custom server building</h3>
+<div class="paragraph">
+<p>When Quarkus builds a gRPC server instance, users can apply their own Server(Builder) customizers. The customizers are applied by <code>priority</code>, the higher the number the later customizer is applied. The customizers are applied before Quarkus applies user&#8217;s server configuration; e.g. ideal for some initial defaults.</p>
+</div>
+<div class="paragraph">
+<p>There are two <code>customize</code> methods, the first one uses gRPC&#8217;s <code>ServerBuilder</code> as a parameter - to be used with Quarkus' legacy gRPC support, where the other uses <code>GrpcServerOptions</code> - to be used with the new Vert.x gRPC support. User should implement the right <code>customize</code> method per gRPC support type usage, or both if the customizer is gRPC type neutral.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface ServerBuilderCustomizer&lt;T extends ServerBuilder&lt;T&gt;&gt; {
+
+    /**
+     * Customize a ServerBuilder instance.
+     *
+     * @param config server's configuration
+     * @param builder Server builder instance
+     */
+    default void customize(GrpcServerConfiguration config, T builder) {
+    }
+
+    /**
+     * Customize a GrpcServerOptions instance.
+     *
+     * @param config server's configuration
+     * @param options GrpcServerOptions instance
+     */
+    default void customize(GrpcServerConfiguration config, GrpcServerOptions options) {
+    }
+
+    /**
+     * Priority by which the customizers are applied.
+     * Higher priority is applied later.
+     *
+     * @return the priority
+     */
+    default int priority() {
+        return 0;
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="server-interceptors"><a class="anchor" href="#server-interceptors"></a>Interceptores de servidor</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Os interceptadores de servidor gRPC permitem que você execute lógica, como autenticação, antes que seu serviço seja chamado.</p>
+</div>
+<div class="paragraph">
+<p>Você pode implementar um interceptor de servidor gRPC criando um bean '@ApplicationScoped' implementando 'io.grpc.ServerInterceptor':</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ApplicationScoped
+// add @GlobalInterceptor for interceptors meant to be invoked for every service
+public class MyInterceptor implements ServerInterceptor {
+
+    @Override
+    public &lt;ReqT, RespT&gt; ServerCall.Listener&lt;ReqT&gt; interceptCall(ServerCall&lt;ReqT, RespT&gt; serverCall,
+            Metadata metadata, ServerCallHandler&lt;ReqT, RespT&gt; serverCallHandler) {
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Também é possível anotar um método de produtor como um interceptador global:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.quarkus.grpc.GlobalInterceptor;
+
+import jakarta.enterprise.inject.Produces;
+
+public class MyProducer {
+    @GlobalInterceptor
+    @Produces
+    public MyInterceptor myInterceptor() {
+        return new MyInterceptor();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Verifique o <a href="https://grpc.github.io/grpc-java/javadoc/io/grpc/ServerInterceptor.html">ServerInterceptor JavaDoc</a> para implementar corretamente seu interceptador.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Para aplicar um interceptador a todos os serviços expostos, anote-o com '@io.quarkus.grpc.GlobalInterceptor'.
+Para aplicar um interceptador a um único serviço, registre-o no serviço com '@io.quarkus.grpc.RegisterInterceptor':</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import io.quarkus.grpc.GrpcService;
+import io.quarkus.grpc.RegisterInterceptor;
+
+@GrpcService
+@RegisterInterceptor(MyInterceptor.class)
+public class StreamingService implements Streaming {
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Quando você tem vários interceptadores de servidor, você pode encomendá-los implementando a interface 'jakarta.enterprise.inject.spi.Priorizd'. Observe que todos os interceptores globais são invocados antes do serviço específico
+Interceptadores.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ApplicationScoped
+public class MyInterceptor implements ServerInterceptor, Prioritized {
+
+    @Override
+    public &lt;ReqT, RespT&gt; ServerCall.Listener&lt;ReqT&gt; interceptCall(ServerCall&lt;ReqT, RespT&gt; serverCall,
+            Metadata metadata, ServerCallHandler&lt;ReqT, RespT&gt; serverCallHandler) {
+        // ...
+    }
+
+    @Override
+    public int getPriority() {
+        return 10;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Os interceptores com a maior prioridade são chamados primeiro.
+A prioridade padrão, usada se o interceptador não implementar a interface 'Priorizada', é '0'.</p>
+</div>
+<div class="paragraph">
+<p>There is also a support to inject Vert.x <code>RoutingContext</code> instance into your gRPC service, if / when needed.
+Quarkus doesn&#8217;t do that by default, you will need to add <code>RoutingContextGrpcInterceptor</code> to your gRPC service.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@GrpcService
+@RegisterInterceptor(RoutingContextGrpcInterceptor.class)
+public class HelloWorldService extends GreeterGrpc.GreeterImplBase {
+
+    @Inject
+    RoutingContext context;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="testing-your-services"><a class="anchor" href="#testing-your-services"></a>Testando seus serviços</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A maneira mais fácil de testar um serviço gRPC é usar um cliente gRPC conforme descrito
+em <a href="grpc-service-consumption">Consumindo um serviço gRPC</a>.</p>
+</div>
+<div class="paragraph">
+<p>Observe que, no caso de usar um cliente para testar um serviço exposto que não usa TLS,
+Não há necessidade de fornecer nenhuma configuração. Por exemplo, para testar o 'HelloService'
+definido acima, pode-se criar o seguinte teste:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class HelloServiceTest implements Greeter {
+
+    @GrpcClient
+    Greeter client;
+
+    @Test
+    void shouldReturnHello() {
+        CompletableFuture&lt;String&gt; message = new CompletableFuture&lt;&gt;();
+        client.sayHello(HelloRequest.newBuilder().setName("Quarkus").build())
+                .subscribe().with(reply -&gt; message.complete(reply.getMessage()));
+        assertThat(message.get(5, TimeUnit.SECONDS)).isEqualTo("Hello Quarkus");
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="trying-out-your-services-manually"><a class="anchor" href="#trying-out-your-services-manually"></a>Experimentando seus serviços manualmente</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the dev mode, you can try out your gRPC services in the Quarkus Dev UI.
+Just go to <a href="http://localhost:8080/q/dev-ui" class="bare">http://localhost:8080/q/dev-ui</a> and click on <em>Services</em> under the gRPC tile.</p>
+</div>
+<div class="paragraph">
+<p>Observe que seu aplicativo precisa expor a porta HTTP "normal" para que a interface do usuário de desenvolvimento seja acessível. Se seu aplicativo não expor nenhum ponto de extremidade HTTP, você poderá criar um perfil dedicado com uma dependência em 'quarkus-vertx-http':</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">    &lt;profiles&gt;
+        &lt;profile&gt;
+            &lt;id&gt;development&lt;/id&gt;
+            &lt;dependencies&gt;
+                &lt;dependency&gt;
+                    &lt;groupId&gt;io.quarkus&lt;/groupId&gt;
+                    &lt;artifactId&gt;quarkus-vertx-http&lt;/artifactId&gt;
+                &lt;/dependency&gt;
+            &lt;/dependencies&gt;
+        &lt;/profile&gt;
+    &lt;/profiles&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Tendo isso, você pode executar o modo dev com: 'mvn quarkus:dev -Pdevelopment'.</p>
+</div>
+<div class="paragraph">
+<p>Se você usar o Gradle, você pode simplesmente adicionar uma dependência para a tarefa 'quarkusDev':</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">dependencies {
+    quarkusDev 'io.quarkus:quarkus-vertx-http'
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="grpc-server-metrics"><a class="anchor" href="#grpc-server-metrics"></a>Métricas do gRPC Server</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="enabling-metrics-collection"><a class="anchor" href="#enabling-metrics-collection"></a>Habilitando a coleta de métricas</h3>
+<div class="paragraph">
+<p>As métricas do servidor gRPC são ativadas automaticamente quando o aplicativo também usa a extensão <a href="telemetry-micrometer">'quarkus-micrometer'</a>.
+O Micrometer coleta as métricas de todos os serviços gRPC implementados pelo aplicativo.</p>
+</div>
+<div class="paragraph">
+<p>Por exemplo, se você exportar as métricas para o Prometheus, você terá:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text"># HELP grpc_server_responses_sent_messages_total The total number of responses sent
+# TYPE grpc_server_responses_sent_messages_total counter
+grpc_server_responses_sent_messages_total{method="SayHello",methodType="UNARY",service="helloworld.Greeter",} 6.0
+# HELP grpc_server_processing_duration_seconds The total time taken for the server to complete the call
+# TYPE grpc_server_processing_duration_seconds summary
+grpc_server_processing_duration_seconds_count{method="SayHello",methodType="UNARY",service="helloworld.Greeter",statusCode="OK",} 6.0
+grpc_server_processing_duration_seconds_sum{method="SayHello",methodType="UNARY",service="helloworld.Greeter",statusCode="OK",} 0.016216771
+# HELP grpc_server_processing_duration_seconds_max The total time taken for the server to complete the call
+# TYPE grpc_server_processing_duration_seconds_max gauge
+grpc_server_processing_duration_seconds_max{method="SayHello",methodType="UNARY",service="helloworld.Greeter",statusCode="OK",} 0.007985236
+# HELP grpc_server_requests_received_messages_total The total number of requests received
+# TYPE grpc_server_requests_received_messages_total counter
+grpc_server_requests_received_messages_total{method="SayHello",methodType="UNARY",service="helloworld.Greeter",} 6.0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>O nome do serviço, o método e o tipo podem ser encontrados em <em>tags</em>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="disabling-metrics-collection"><a class="anchor" href="#disabling-metrics-collection"></a>Desabilitando a coleta de métricas</h3>
+<div class="paragraph">
+<p>Para desabilitar as métricas do servidor gRPC quando 'quarkus-micrometer' for usado, adicione a seguinte propriedade à configuração do aplicativo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.micrometer.binder.grpc-server.enabled=false</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="use-virtual-threads"><a class="anchor" href="#use-virtual-threads"></a>Usar threads virtuais</h3>
+<div class="paragraph">
+<p>Para usar threads virtuais na implementação do serviço gRPC, verifique o <a href="./grpc-virtual-threads">guia</a> dedicado.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="grpc-server-authorization"><a class="anchor" href="#grpc-server-authorization"></a>gRPC Server authorization</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Quarkus includes built-in security to allow <a href="security-authorize-web-endpoints-reference#standard-security-annotations">authorization using annotations</a> when the Vert.x gRPC support, which uses existing Vert.x HTTP server, is enabled.</p>
+</div>
+<div class="sect2">
+<h3 id="add-the-quarkus-security-extension"><a class="anchor" href="#add-the-quarkus-security-extension"></a>Add the Quarkus Security extension</h3>
+<div class="paragraph">
+<p>Security capabilities are provided by the Quarkus Security extension, therefore make sure your <code>pom.xml</code> file contains following dependency:</p>
+</div>
+<div class="listingblock primary asciidoc-tabs-target-sync-cli asciidoc-tabs-target-sync-maven">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.quarkus&lt;/groupId&gt;
+    &lt;artifactId&gt;quarkus-security&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To add the Quarkus Security extension to an existing Maven project, run the following command from your project base directory:</p>
+</div>
+<div class="listingblock primary asciidoc-tabs-sync-cli">
+<div class="title">CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">quarkus extension add security</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-maven">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw quarkus:add-extension -Dextensions='security'</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-gradle">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./gradlew addExtension --extensions='security'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="overview-of-supported-authentication-mechanisms"><a class="anchor" href="#overview-of-supported-authentication-mechanisms"></a>Overview of supported authentication mechanisms</h3>
+<div class="paragraph">
+<p>Some supported authentication mechanisms are built into Quarkus, while others require you to add an extension.
+The following table maps specific authentication requirements to a supported mechanism that you can use in Quarkus:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Authentication requirements and mechanisms</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Authentication requirement</th>
+<th class="tableblock halign-left valign-top">Authentication mechanism</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Username and password</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#basic-auth-mechanism">Autenticação básica</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Client certificate</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#mutual-tls-auth-mechanism">Mutual TLS authentication</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Custom requirements</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#custom-auth-mechanism">Custom authentication</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bearer access token</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="security-oidc-bearer-token-authentication">OIDC Bearer token authentication</a>, <a href="security-jwt">JWT</a>, <a href="security-oauth2">OAuth2</a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Do not forget to install at least one extension that provides an <code>IdentityProvider</code> based on selected authentication requirements.
+Please refer to the <a href="security-basic-authentication-howto">Basic authentication guide</a> for example how to provide the <code>IdentityProvider</code> based on username and password.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If you use separate HTTP server to serve gRPC requests, <a href="#custom-auth-mechanism">Custom authentication</a> is your only option.
+Set the <code>quarkus.grpc.server.use-separate-server</code> configuration property to <code>false</code> so that you can use other mechanisms.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="secure-grpc-service"><a class="anchor" href="#secure-grpc-service"></a>Secure gRPC service</h3>
+<div class="paragraph">
+<p>The gRPC services can be secured with the <a href="security-authorize-web-endpoints-reference#standard-security-annotations">standard security annotations</a> like in the example below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package org.acme.grpc.auth;
+
+import hello.Greeter;
+import io.quarkus.grpc.GrpcService;
+import jakarta.annotation.security.RolesAllowed;
+
+@GrpcService
+public class HelloService implements Greeter {
+
+    @RolesAllowed("admin")
+    @Override
+    public Uni&lt;HelloReply&gt; sayHello(HelloRequest request) {
+        return Uni.createFrom().item(() -&gt;
+                HelloReply.newBuilder().setMessage("Hello " + request.getName()).build()
+        );
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Most of the examples of the supported mechanisms sends authentication headers, please refer to the <a href="grpc-service-consumption">gRPC Headers</a>
+section of the Consuming a gRPC Service guide for more information about the gRPC headers.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="basic-auth-mechanism"><a class="anchor" href="#basic-auth-mechanism"></a>Autenticação básica</h3>
+<div class="paragraph">
+<p>Quarkus Security provides built-in authentication support for the <a href="security-basic-authentication">Basic authentication</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.grpc.server.use-separate-server=false
+quarkus.http.auth.basic=true <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Enable the Basic authentication.</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package org.acme.grpc.auth;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
+import org.acme.proto.Greeter;
+import org.acme.proto.HelloRequest;
+import io.grpc.Metadata;
+import io.quarkus.grpc.GrpcClient;
+import io.quarkus.grpc.GrpcClientUtils;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.Test;
+
+@QuarkusTest
+public class GreeterServiceTest {
+
+    private static final Metadata.Key&lt;String&gt; AUTHORIZATION = Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER);
+
+    @GrpcClient
+    Greeter greeterClient;
+
+    @Test
+    void shouldReturnHello() throws ExecutionException, InterruptedException, TimeoutException {
+        Metadata headers = new Metadata();
+
+        // Set the headers - Basic auth for testing
+        headers.put(AUTHORIZATION, "Basic YWxpY2U6YWxpY2U="); // alice:alice with "admin" role
+        var client = GrpcClientUtils.attachHeaders(greeterClient, headers);
+
+        // Call the client
+        CompletableFuture&lt;String&gt; message = new CompletableFuture&lt;&gt;();
+        client.sayHello(HelloRequest.newBuilder().setName("Quarkus").build())
+                .subscribe().with(reply -&gt; message.complete(reply.getMessage()));
+
+        // Get the values
+        String theValue = message.get(5, TimeUnit.SECONDS);
+
+        // Assert
+        assertThat(theValue, is("Hello Quarkus"));
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="mutual-tls-auth-mechanism"><a class="anchor" href="#mutual-tls-auth-mechanism"></a>Mutual TLS authentication</h3>
+<div class="paragraph">
+<p>Quarkus provides mutual TLS (mTLS) authentication so that you can authenticate users based on their X.509 certificates.
+The simplest way to enforce authentication for all your gRPC services is described in the <a href="#tls-with-mutual-auth">TLS com autenticação mútua</a> section of this guide.
+However, the Quarkus Security supports role mapping that you can use to perform even more fine-grained access control.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.grpc.server.use-separate-server=false
+quarkus.http.insecure-requests=disabled
+quarkus.http.ssl.certificate.files=tls/server.pem
+quarkus.http.ssl.certificate.key-files=tls/server.key
+quarkus.http.ssl.certificate.trust-store-file=tls/ca.jks
+quarkus.http.ssl.certificate.trust-store-password=**********
+quarkus.http.ssl.client-auth=required
+quarkus.http.auth.certificate-role-properties=role-mappings.txt     <i class="conum" data-value="1"></i><b>(1)</b>
+quarkus.native.additional-build-args=-H:IncludeResources=.*\\.txt</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Adds certificate role mapping.</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example of the role mapping file</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">testclient=admin <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Map the <code>testclient</code> certificate CN (Common Name) to the <code>SecurityIdentity</code> role <code>admin</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="custom-auth-mechanism"><a class="anchor" href="#custom-auth-mechanism"></a>Custom authentication</h3>
+<div class="paragraph">
+<p>You can always implement one or more <code>GrpcSecurityMechanism</code> bean if above-mentioned mechanisms provided by Quarkus do no meet your needs.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of custom <code>GrpcSecurityMechanism</code></div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package org.acme.grpc.auth;
+
+import jakarta.inject.Singleton;
+
+import io.grpc.Metadata;
+import io.quarkus.security.credential.PasswordCredential;
+import io.quarkus.security.identity.request.AuthenticationRequest;
+import io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest;
+
+@Singleton
+public class CustomGrpcSecurityMechanism implements GrpcSecurityMechanism {
+
+    private static final Metadata.Key&lt;String&gt; AUTHORIZATION = Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER);
+
+    @Override
+    public boolean handles(Metadata metadata) {
+        String authString = metadata.get(AUTHORIZATION);
+        return authString != null &amp;&amp; authString.startsWith("Custom ");
+    }
+
+    @Override
+    public AuthenticationRequest createAuthenticationRequest(Metadata metadata) {
+        final String authString = metadata.get(AUTHORIZATION);
+        final String userName;
+        final String password;
+        // here comes your application logic that transforms 'authString' to user name and password
+        return new UsernamePasswordAuthenticationRequest(userName, new PasswordCredential(password));
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+        </div>
+        <div class="grid__item width-4-12 width-12-12-m tocwrapper">
+            <div class="hide-mobile toc"><ul class="sectlevel1">
+<li><a href="#generated-code">Código Gerado</a></li>
+<li><a href="#implementing-a-service-with-the-mutiny-api">Implementando um serviço com a API Mutiny</a></li>
+<li><a href="#implementing-a-service-with-the-default-grpc-api">Implementando um serviço com a API gRPC padrão</a></li>
+<li><a href="#blocking-service-implementation">Implementação do serviço de bloqueio</a></li>
+<li><a href="#handling-streams">Manipulação de fluxos</a></li>
+<li><a href="#health">Health Check</a></li>
+<li><a href="#reflection-service">Reflection Service</a></li>
+<li><a href="#scaling">Dimensionamento</a></li>
+<li><a href="#server-configuration">Configuração do Servidor</a></li>
+<li><a href="#example-of-configuration">Exemplo de configuração</a>
+<ul class="sectlevel2">
+<li><a href="#enabling-tls">Habilitando o TLS</a></li>
+<li><a href="#tls-with-mutual-auth">TLS com autenticação mútua</a></li>
+<li><a href="#custom-server-building">Custom server building</a></li>
+</ul>
+</li>
+<li><a href="#server-interceptors">Interceptores de servidor</a></li>
+<li><a href="#testing-your-services">Testando seus serviços</a></li>
+<li><a href="#trying-out-your-services-manually">Experimentando seus serviços manualmente</a></li>
+<li><a href="#grpc-server-metrics">Métricas do gRPC Server</a>
+<ul class="sectlevel2">
+<li><a href="#enabling-metrics-collection">Habilitando a coleta de métricas</a></li>
+<li><a href="#disabling-metrics-collection">Desabilitando a coleta de métricas</a></li>
+<li><a href="#use-virtual-threads">Usar threads virtuais</a></li>
+</ul>
+</li>
+<li><a href="#grpc-server-authorization">gRPC Server authorization</a>
+<ul class="sectlevel2">
+<li><a href="#add-the-quarkus-security-extension">Add the Quarkus Security extension</a></li>
+<li><a href="#overview-of-supported-authentication-mechanisms">Overview of supported authentication mechanisms</a></li>
+<li><a href="#secure-grpc-service">Secure gRPC service</a></li>
+<li><a href="#basic-auth-mechanism">Autenticação básica</a></li>
+<li><a href="#mutual-tls-auth-mechanism">Mutual TLS authentication</a></li>
+<li><a href="#custom-auth-mechanism">Custom authentication</a></li>
+</ul>
+</li>
+</ul></div>
+        </div>
+    </div>
+    <h2>Conteúdo Relacionado</h2>
+    <div class="grid-wrapper relations">
+        <div class="grid__item width-6-12 width-12-12-m">
+            <h3>Nas mesmas extensões</h3>
+            <ul class="related-content">
+                
+                
+                <li class="guide"><a href="/guides/grpc-service-consumption">Consumindo um serviço gRPC</a></li>
+                
+                
+                <li class="guide"><a href="/guides/grpc-kubernetes">Implantando seu serviço gRPC no Kubernetes</a></li>
+                
+                
+                <li class="guide"><a href="/guides/grpc-getting-started">Introdução ao gRPC</a></li>
+                
+                
+                <li class="guide"><a href="/guides/grpc">gRPC</a></li>
+                
+                
+                <li class="reference"><a href="/guides/grpc-generation-reference">gRPC code generation reference guide</a></li>
+                
+                
+                <li class="reference"><a href="/guides/grpc-reference">gRPC reference guide</a></li>
+                
+                
+                <li class="guide"><a href="/guides/grpc-virtual-threads">Suporte a Threads Virtuais do Quarkus para serviços gRPC</a></li>
+                </ul>
+        </div>
+        <div class="grid__item width-6-12 width-12-12-m">
+            <h3>Nos mesmos tópicos</h3>
+            <ul class="related-content">
+                
+                
+                <li class="guide"><a href="/guides/grpc-service-consumption">Consumindo um serviço gRPC</a></li>
+                
+                
+                <li class="guide"><a href="/guides/grpc-kubernetes">Implantando seu serviço gRPC no Kubernetes</a></li>
+                
+                
+                <li class="guide"><a href="/guides/grpc-getting-started">Introdução ao gRPC</a></li>
+                
+                
+                <li class="guide"><a href="/guides/grpc">gRPC</a></li>
+                
+                
+                <li class="reference"><a href="/guides/grpc-generation-reference">gRPC code generation reference guide</a></li>
+                
+                
+                <li class="reference"><a href="/guides/grpc-reference">gRPC reference guide</a></li>
+                
+                
+                <li class="guide"><a href="/guides/grpc-virtual-threads">Suporte a Threads Virtuais do Quarkus para serviços gRPC</a></li>
+                
+                
+                <li class="guide"><a href="/guides/grpc-cli">Using gRPC CLI</a></li>
+                
+                
+                <li class="guide"><a href="/guides/grpc-xds">Usando o xDS gRPC</a></li>
+                </ul>
+        </div>
+        </div>
+    </div>
+
+  </div>
+
+  <div class="content project-footer">
+  <div class="footer-section">
+    <div class="logo-wrapper">
+      <a href="/"><img src="/assets/images/quarkus_logo_horizontal_rgb_reverse.svg" class="project-logo" title="Quarkus"></a>
+    </div>
+  </div>
+  <div class="grid-wrapper">
+    <p class="grid__item width-3-12">Quarkus is open. All dependencies of this project are available under the <a href='https://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache Software License 2.0</a> or compatible license. <i class='fab fa-creative-commons'></i><i class='fab fa-creative-commons-by'></i> <a href='https://creativecommons.org/licenses/by/3.0/' target='_blank'>CC by 3.0</a><br /><br />This website was built with <a href='https://jekyllrb.com/' target='_blank'>Jekyll</a>, is hosted on <a href='https://pages.github.com/' target='_blank'>GitHub Pages</a> and is completely open source. If you want to make it better, <a href='https://github.com/quarkusio/quarkusio.github.io' target='_blank'>fork the website</a> and show us what you’ve got.</p>
+
+    
+      <div class="width-1-12 project-links">
+        <span>Navigation</span>
+        <ul class="footer-links">
+          
+          
+            <li><a href="/" target="_blank">Home</a></li>
+          
+          
+          
+            <li><a href="/about" target="_blank">About</a></li>
+          
+          
+          
+            <li><a href="/blog" target="_blank">Blog</a></li>
+          
+          
+          
+            <li><a href="/insights" target="_blank">Podcast</a></li>
+          
+          
+          
+            <li><a href="/events" target="_blank">Eventos</a></li>
+          
+          
+          
+            <li><a href="/newsletter" target="_blank">Newsletter</a></li>
+          
+          
+          
+            <li><a href="/userstories" target="_blank">User Stories</a></li>
+          
+          
+          
+            <li><a href="https://github.com/orgs/quarkusio/projects/13/views/1" target="_blank">Roadmap</a></li>
+          
+          
+          
+            <li><a href="/security" target="_blank">Security&nbsp;policy</a></li>
+          
+          
+          
+            <li><a href="/usage" target="_blank">Usage</a></li>
+          
+          
+          
+            <li><a href="https://github.com/commonhaus/artwork/tree/main/projects/quarkus" target="_blank">Brand</a></li>
+          
+          
+          
+            <li><a href="/desktopwallpapers" target="_blank">Wallpapers</a></li>
+          
+          
+          
+            <li><a href="https://www.redhat.com/en/about/privacy-policy" target="_blank">Privacy Policy</a></li>
+          
+          
+        </ul>
+      </div>
+    
+      <div class="width-1-12 project-links">
+        <span>Follow Us</span>
+        <ul class="footer-links">
+          
+          
+            <li><a href="https://x.com/quarkusio" target="_blank">X</a></li>
+          
+          
+          
+            <li><a href="https://bsky.app/profile/quarkus.io" target="_blank">Bluesky</a></li>
+          
+          
+          
+            <li><a rel="me" href="https://fosstodon.org/@quarkusio" target="_blank">Mastodon</a></li>
+            
+          
+          
+            <li><a href="https://www.threads.com/@quarkusio" target="_blank">Threads</a></li>
+          
+          
+          
+            <li><a href="https://www.facebook.com/quarkusio" target="_blank">Facebook</a></li>
+          
+          
+          
+            <li><a href="https://www.linkedin.com/company/quarkusio/" target="_blank">Linkedin</a></li>
+          
+          
+          
+            <li><a href="https://www.youtube.com/channel/UCaW8QG_QoIk_FnjLgr5eOqg" target="_blank">Youtube</a></li>
+          
+          
+          
+            <li><a href="https://github.com/quarkusio" target="_blank">GitHub</a></li>
+          
+          
+        </ul>
+      </div>
+    
+      <div class="width-2-12 project-links">
+        <span>Get Help</span>
+        <ul class="footer-links">
+          
+          
+            <li><a href="/support" target="_blank">Support</a></li>
+          
+          
+          
+            <li><a href="/guides" target="_blank">Guias</a></li>
+          
+          
+          
+            <li><a href="/faq" target="_blank">FAQ</a></li>
+          
+          
+          
+            <li><a href="/get-started" target="_blank">Get Started</a></li>
+          
+          
+          
+            <li><a href="https://stackoverflow.com/questions/tagged/quarkus" target="_blank">Stack Overflow</a></li>
+          
+          
+          
+            <li><a href="https://github.com/quarkusio/quarkus/discussions" target="_blank">Discussions</a></li>
+          
+          
+          
+            <li><a href="https://groups.google.com/forum/#!forum/quarkus-dev" target="_blank">Development mailing list</a></li>
+          
+          
+          
+            <li><a href="https://stats.uptimerobot.com/ze1PfweT2p" target="_blank">Quarkus Service Status</a></li>
+          
+          
+        </ul>
+      </div>
+    
+      <div class="width-1-12 project-links">
+        <span>Languages</span>
+        <ul class="footer-links">
+          
+          
+            <li><a href="https://quarkus.io/" target="_blank">English</a></li>
+          
+          
+          
+            <li><a href="https://pt.quarkus.io/" target="_blank">Português&nbsp;(Brasileiro)</a></li>
+          
+          
+          
+            <li><a href="https://es.quarkus.io/" target="_blank">Español</a></li>
+          
+          
+          
+            <li><a href="https://cn.quarkus.io/" target="_blank">简体中文</a></li>
+          
+          
+          
+            <li><a href="https://ja.quarkus.io/" target="_blank">日本語</a></li>
+          
+          
+        </ul>
+      </div>
+    
+
+    
+      <div class="width-4-12 more-links">
+        <span>Quarkus is made of community projects</span>
+        <ul class="footer-links">
+          
+            <li><a blah href="https://vertx.io/" target="_blank">Eclipse Vert.x</a></li>
+          
+            <li><a blah href="https://smallrye.io" target="_blank">SmallRye</a></li>
+          
+            <li><a blah href="https://hibernate.org" target="_blank">Hibernate</a></li>
+          
+            <li><a blah href="https://netty.io" target="_blank">Netty</a></li>
+          
+            <li><a blah href="https://resteasy.github.io" target="_blank">RESTEasy</a></li>
+          
+            <li><a blah href="https://camel.apache.org" target="_blank">Apache Camel</a></li>
+          
+            <li><a blah href="https://microprofile.io" target="_blank">Eclipse MicroProfile</a></li>
+          
+            <li><a blah href="https://code.quarkus.io/" target="_blank">And many more...</a></li>
+          
+        </ul>
+      </div>
+    
+  </div>
+</div>
+
+  <div class="content cf-footer">
+  <div class="flexcontainer">
+    <div class="cf-logo">
+      <a class="cf-logo" href="https://www.commonhaus.org/" target="_blank"><img src="https://raw.githubusercontent.com/commonhaus/artwork/main/foundation/brand/svg/CF_logo_horizontal_single_reverse.svg"/></a>
+    </div>
+    <div class="license">
+      Copyright © Quarkus. All rights reserved. For details on our trademarks, please visit our <a href="https://www.commonhaus.org/policies/trademark-policy/">Trademark Policy</a> and <a href="https://www.commonhaus.org/trademarks/">Trademark List</a>. Trademarks of third parties are owned by their respective holders and their mention here does not suggest any endorsement or association.
+    </div>
+  </div>
+</div>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="/assets/javascript/mobile-nav.js"></script>
+  <script type="text/javascript" src="/assets/javascript/scroll-down.js"></script>
+  <script src="/assets/javascript/satellite.js" type="text/javascript"></script>
+  <script src="/guides/javascript/config.js" type="text/javascript"></script>
+  <script src="/assets/javascript/guides-version-dropdown.js" type="text/javascript"></script>
+  <script src="/assets/javascript/back-to-top.js" type="text/javascript"></script>
+  <script src="/assets/javascript/clipboard.min.js" type="text/javascript"></script>
+  <script src="/assets/javascript/copy.js" type="text/javascript"></script>
+  <script src="/assets/javascript/asciidoc-tabs.js" type="text/javascript"></script>
+  <script src="/assets/javascript/future-date.js" type="text/javascript"></script>
+  <script src="/assets/javascript/randomize.js" type="text/javascript"></script>
+  <script src="/assets/javascript/time.js" type="text/javascript"></script>
+</body>
+
+</html>
