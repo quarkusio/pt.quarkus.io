@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+
+
+
+
+
+
+<head>
+  <title>Amazon Lambda - 2.13 - Quarkus</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="
+  connect-src 'self' https://dpm.demdex.net https://adobedc.demdex.net https://analytics.ossupstream.org/ https://search.quarkus.io https://smetrics.redhat.com https://ajax.googleapis.com; 
+  script-src 'self' 'unsafe-inline' 'unsafe-eval'
+      
+      https://assets.adobedtm.com
+      js.bizographics.com
+      https://www.redhat.com
+      https://static.redhat.com
+      https://app.requestly.io/
+      jsonip.com
+      https://ajax.googleapis.com
+      https://use.fontawesome.com
+      http://www.youtube.com
+      http://www.googleadservices.com
+      https://googleads.g.doubleclick.net
+      https://giscus.app
+      https://analytics.ossupstream.org/
+      https://app.mailjet.com;
+
+  style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com; 
+  img-src 'self' * data:; 
+  media-src 'self'; 
+  frame-src https://redhat.demdex.net https://www.youtube.com https://player.restream.io https://app.mailjet.com http://xy0p2.mjt.lu https://mj.quarkus.io https://giscus.app; 
+  base-uri 'none'; 
+  object-src 'none'; 
+  form-action 'none'; 
+  font-src 'self' https://use.fontawesome.com https://fonts.gstatic.com;" />
+
+  <script id="adobe_dtm" src="https://www.redhat.com/dtm.js" type="text/javascript"></script>
+  <script src="/assets/javascript/highlight.pack.js" type="text/javascript"></script>
+  <META HTTP-EQUIV='X-XSS-Protection' CONTENT="1; mode=block">
+  <META HTTP-EQUIV='X-Content-Type-Options' CONTENT="nosniff">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Quarkus: Supersonic Subatomic Java">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@QuarkusIO"> 
+  <meta name="twitter:creator" content="@QuarkusIO">
+  <meta property="og:url" content="https://quarkus.io/version/2.13/guides/amazon-lambda" />
+  <meta property="og:title" content="Amazon Lambda - 2.13" />
+  <meta property="og:description" content="Quarkus: Supersonic Subatomic Java" />
+  <meta property="og:image" content="https://quarkus.io/assets/images/quarkus_card.png" />
+  
+  <link rel="canonical" href="https://quarkus.io/guides/amazon-lambda">
+  <link rel="shortcut icon" type="image/png" href="/favicon.ico" >
+  <link rel="stylesheet" href="/guides/stylesheet/config.css" />
+  <link rel="stylesheet" href="/assets/css/main.css?2021-07-29" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" crossorigin="anonymous">
+  <link rel="alternate" type="application/rss+xml"  href="/feed.xml" title="Quarkus">
+  <script src="/assets/javascript/hl.js" type="text/javascript"></script>
+  
+  
+  
+  
+  <link rel="alternate" hreflang="en" href="https://quarkus.io/version/2.13/guides/amazon-lambda" />
+  
+  <link rel="alternate" hreflang="pt-br" href="https://pt.quarkus.io/version/2.13/guides/amazon-lambda" />
+  
+  <link rel="alternate" hreflang="es" href="https://es.quarkus.io/version/2.13/guides/amazon-lambda" />
+  
+  <link rel="alternate" hreflang="zh" href="https://cn.quarkus.io/version/2.13/guides/amazon-lambda" />
+  
+  <link rel="alternate" hreflang="ja" href="https://ja.quarkus.io/version/2.13/guides/amazon-lambda" />
+  
+  <link rel="alternate" hreflang="x-default" href="https://quarkus.io/" />  
+  <script src="/assets/javascript/tracking.js"></script>
+  
+  <script src="/assets/javascript/colormode.js" type="text/javascript"></script>
+
+</head>
+
+<body class="guides">
+
+  
+
+
+<div class="grid-wrapper communitysite">
+  <div class="grid__item width-12-12">The <a href="https://quarkus.io/version/2.13/guides/amazon-lambda">English version of quarkus.io</a> is the official project site. Translated sites are community supported on a best-effort basis.</div>
+</div>
+
+
+  <div class="nav-wrapper">
+  <div class="grid-wrapper">
+    <div class="width-12-12">
+      <input type="checkbox" id="checkbox" />
+      <nav id="main-nav" class="main-nav">
+        <div class="logo-wrapper">
+           <a href="/"><img src="/assets/images/quarkus_logo_horizontal_rgb_600px_reverse.png" class="project-logo" title="Quarkus"></a>
+        </div>
+    <label class="nav-toggle" for="checkbox"> <i class="fa fa-bars"></i>
+</label>
+    <ul id="menu" class="menu">
+      <li class="dropdown">
+        <span href="#">Why<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          <li><a href="/about" class="">O QUE É QUARKUS?</a></li>
+          <li><a href="/developer-joy" class="">ALEGRIA DO DESENVOLVEDOR</a></li>
+          <li><a href="/performance" class="">PERFORMANCE</a></li>
+          <li><a href="/kubernetes-native" class="">KUBERNETES NATIVO</a></li>
+          <li><a href="/standards" class="">PADRÕES</a></li>
+          <li><a href="/versatility" class="">VERSATILITY</a></li>
+          <li><a href="/container-first" class="">CONTAINER PRIMEIRO</a></li>
+          <li><a href="/spring" class="">USING SPRING?</a></li>
+          <li class="tertiarydropdown">
+            <span href="#">AI<i class="fas fa-chevron-down"></i></span>
+            <ul class="tertiarymenu">
+              <li><a href="/ai" class="">AI OVERVIEW</a></li>
+              <li><a href="/java-for-ai" class="">JAVA FOR AI</a></li>
+              <li><a href="/quarkus-for-ai" class="">WHY QUARKUS FOR AI</a></li>
+              <li><a href="/ai-blueprints" class="">AI BLUEPRINTS</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <span href="#">Learn<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          <li><a href="/get-started" class="">COMEÇAR</a></li>
+          <li><a href="/guides" class="active">DOCUMENTAÇÃO</a></li>
+          <li><a href="/userstories/" class="">USER STORIES</a></li>  
+          <li><a href="/qtips" class="">VÍDEOS "Q" TIP</a></li>          
+          <li><a href="/books" class="">LIVROS</a></li>
+          </ul>
+      </li>
+      <li class="dropdown">
+        <span href="#">Extensions<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          
+          <!-- Note that quarkus.io is hardcoded here, because it is the only url which supports extensions -->
+<li><a href="https://quarkus.io/extensions/" class="">PROCURAR EXTENSÕES</a></li>
+          <li><a href="/faq/#what-is-a-quarkus-extension" class="">USAR
+EXTENSÕES</a></li>
+          <li><a href="/guides/writing-extensions" class="">CRIAR
+EXTENSÕES</a></li>
+          <li><a href="https://hub.quarkiverse.io" class="">COMPARTILHE EXTENSÕES</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <span href="#">Community<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          <li><a href="/support/" class="">SUPORTE</a></li>
+          <li><a href="/blog" class="">BLOG</a></li>
+          <li><a href="/discussion" class="">DISCUSSÃO</a></li>
+          <li><a href="/working-groups" class="">WORKING GROUPS</a></li>
+          <li><a href="/insights" class="">PODCAST</a></li>
+          <li><a href="/events" class="">EVENTOS</a></li>
+          <li><a href="/newsletter" class="">BOLETIM INFORMATIVO</a></li>
+          <li><a href="https://github.com/orgs/quarkusio/projects/13/views/1" class="">ROADMAP</a></li>
+          <li><a href="/benefactors" class="">BENEFACTORS</a></li>
+          </ul>
+      </li>
+      <li>
+        <a href="https://code.quarkus.io" class="button-cta secondary white">COMECE
+A CODIFICAR</a>
+      </li>
+      <li class="dropdown">
+        <span href="/language/"><div class="fas fa-globe langicon"></div><i class="fas fa-chevron-down"></i></span>
+        <ul class="submenu">
+          <li><a href="https://quarkus.io/version/2.13/guides/amazon-lambda" >OFFICIAL (ENGLISH)</a></li>
+          <li><a href="https://pt.quarkus.io/version/2.13/guides/amazon-lambda">PORTUGUÊS (BR)</a></li>
+          <li><a href="https://es.quarkus.io/version/2.13/guides/amazon-lambda">ESPAÑOL</a></li>
+          <li><a href="https://cn.quarkus.io/version/2.13/guides/amazon-lambda">简体中文</a></li>
+          <li><a href="https://ja.quarkus.io/version/2.13/guides/amazon-lambda">日本語</a></li>
+          </ul>
+      </li>
+      <li>
+        <span href="#" class="modeswitcher" id='theme-toggle'><i class="fas
+fa-sun"></i><i class="fas fa-moon"></i><i class="fas fa-cog"></i></span>
+      </li>
+    </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+  <div class="content">
+    
+
+
+
+
+
+<section class="full-width-version-bg flexfilterbar guides">
+    <div class="guideflexcontainer">
+        <div class="docslink">
+            <a class="returnlink" href="/version/2.13/guides/"> Voltar aos Guias</a>
+        </div>
+        <div class="flexlabel">
+            <label>Por Versão</label>
+        </div>
+        <div class="guidepulldown version">
+            <select id="guide-version-dropdown">
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                </select>
+        </div>
+    </div>
+</section>
+
+<div class="guide">
+    <div class="grid-wrapper">
+        <div class="grid__item width-8-12 width-12-12-m">
+            <h1 class="text-caps">Amazon Lambda </h1>
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A extensão <code>quarkus-amazon-lambda</code> permite que você use o Quarkus para criar seus Lambdas da AWS. Seus lambdas podem usar anotações de injeção do CDI ou do Spring e outros recursos do Quarkus, conforme a necessidade.</p>
+</div>
+<div class="paragraph">
+<p>Os lambdas do Quarkus podem ser implantados usando o runtime Java do AWS Lambda, ou você pode criar um executável nativo e usar o runtime personalizado da Amazon, se quiser um espaço de memória menor e um tempo de inicialização mais rápido no cold boot.</p>
+</div>
+<div class="paragraph">
+<p>A integração do Quarkus com lambdas também suporta o ciclo de desenvolvimento Quarkus&#8217;s Live Coding. Você pode abrir seu projeto lambda do Quarkus no modo de desenvolvimento ou teste e codificar seu projeto ao vivo.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="prerequisites"><a class="anchor" href="#prerequisites"></a>Pré-requisitos</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Para concluir este guia, você precisa:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Mais ou menos 30 minutes</p>
+</li>
+<li>
+<p>Um IDE</p>
+</li>
+<li>
+<p>JDK 11+ instalado com 'JAVA_HOME' configurado adequadamente</p>
+</li>
+<li>
+<p>Apache Maven 3.8.6</p>
+</li>
+<li>
+<p>Opcionalmente, o <a href="cli-tooling">Quarkus CLI</a> se você quiser usá-lo</p>
+</li>
+<li>
+<p>Opcionalmente, Mandrel ou GraalVM instalado e <a href="building-native-image#configuring-graalvm">configurado apropriadamente</a> se você quiser criar um executável nativo (ou Docker se você usar uma compilação de contêiner nativo)</p>
+</li>
+<li>
+<p><a href="https://aws.amazon.com">Uma conta Amazon AWS</a></p>
+</li>
+<li>
+<p><a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html">CLI da AWS</a></p>
+</li>
+<li>
+<p><a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html">AWS SAM CLI</a>, para testes locais</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For Gradle projects please <a href="#gradle">see below</a>, or for further reference consult the guide in the <a href="gradle-tooling">Gradle setup page</a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="getting-started"><a class="anchor" href="#getting-started"></a>Primeiros passos</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Este guia orienta-o na geração de um projeto Java de exemplo através de um arquétipo maven e na sua implementação na AWS.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="installing-aws-bits"><a class="anchor" href="#installing-aws-bits"></a>Instalando os componentes AWS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A instalação de todos os bits da AWS é provavelmente a parte mais difícil deste guia. Certifique-se de seguir todas as etapas para instalar a AWS CLI.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-the-maven-deployment-project"><a class="anchor" href="#creating-the-maven-deployment-project"></a>Criando o Maven Deployment Project</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Crie o projeto maven do Quarkus AWS Lambda utilizando o nosso Arquétipo Maven.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn archetype:generate \
+       -DarchetypeGroupId=io.quarkus \
+       -DarchetypeArtifactId=quarkus-amazon-lambda-archetype \
+       -DarchetypeVersion=2.13.9.Final</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Se preferir usar o Gradle, você pode gerar um projeto Gradle de forma rápida e fácil em <a href="https://code.quarkus.io/">code.quarkus.io</a> , adicionando a extensão <code>quarkus-amazon-lambda</code> como uma dependência.</p>
+</div>
+<div class="paragraph">
+<p>Copy the build.gradle, gradle.properties and settings.gradle into the above generated Maven archetype project, to follow along with this guide.</p>
+</div>
+<div class="paragraph">
+<p>Execute: gradle wrapper para configurar o gradle wrapper (recomendado).</p>
+</div>
+<div class="paragraph">
+<p>For full Gradle details <a href="#gradle">see below</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="choose"><a class="anchor" href="#choose"></a>Escolha o seu Lambda</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>quarkus-amazon-lambda</code> extension scans your project for a class that directly implements the Amazon <code>RequestHandler&lt;?, ?&gt;</code> or <code>RequestStreamHandler</code> interface.
+It must find a class in your project that implements this interface or it will throw a build time failure.
+If it finds more than one handler class, a build time exception will also be thrown.</p>
+</div>
+<div class="paragraph">
+<p>Às vezes, porém, você pode ter alguns lambdas relacionados que compartilham código e a criação de vários módulos maven é apenas uma sobrecarga que não se deseja fazer. A extensão <code>quarkus-amazon-lambda</code> permite agrupar vários lambdas em um projeto e usar a configuração ou uma variável de ambiente para escolher o manipulador que deseja implantar.</p>
+</div>
+<div class="paragraph">
+<p>O projeto gerado tem três lambdas dentro dele. Dois que implementam a interface <code>RequestHandler&lt;?, ?&gt;</code> e um que implementa a interface <code>RequestStreamHandler</code>. Um que é usado e dois que não são usados. Se você abrir o arquivo <code>src/main/resources/application.properties</code> , verá o seguinte:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.lambda.handler=test</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A propriedade <code>quarkus.lambda.handler</code> informa ao Quarkus qual manipulador de lambda deve ser implantado. Isso também pode ser substituído por uma variável de ambiente.</p>
+</div>
+<div class="paragraph">
+<p>Se olhar para as três classes de manipuladores geradas no projeto, verá que são <code>@Named</code> diferentes.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Named("test")
+public class TestLambda implements RequestHandler&lt;InputObject, OutputObject&gt; {
+}
+
+@Named("unused")
+public class UnusedLambda implements RequestHandler&lt;InputObject, OutputObject&gt; {
+}
+
+@Named("stream")
+public class StreamLambda implements RequestStreamHandler {
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>O nome CDI da classe do manipulador deve corresponder ao valor especificado na propriedade <code>quarkus.lambda.handler</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploy-to-aws-lambda-java-runtime"><a class="anchor" href="#deploy-to-aws-lambda-java-runtime"></a>Implantar no runtime Java da AWS Lambda</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Há algumas etapas para que seu lambda seja executado na AWS. O projeto maven gerado contém um script útil para criar, atualizar, excluir e invocar seus lambdas para implantações puramente Java e nativas.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="build-and-deploy"><a class="anchor" href="#build-and-deploy"></a>Build e Deploy</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Compile o projeto:</p>
+</div>
+<div class="listingblock primary asciidoc-tabs-sync-cli">
+<div class="title">CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">quarkus build</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-maven">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw install</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-gradle">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./gradlew build</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Isto irá compilar e empacotar o seu código.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-an-execution-role"><a class="anchor" href="#create-an-execution-role"></a>Criar uma função de execução</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Consulte o <a href="https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-awscli.html">Guia de Introdução</a> para implantar um lambda com a AWS CLI. Especificamente, certifique-se de ter criado um <code>Execution Role</code>. Será necessário definir uma variável de ambiente <code>LAMBDA_ROLE_ARN</code> no seu perfil ou na janela do console. Como alternativa, você pode editar o script <code>manage.sh</code> gerado pela compilação e colocar o valor da função diretamente lá:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">LAMBDA_ROLE_ARN="arn:aws:iam::1234567890:role/lambda-role"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="extra-build-generated-files"><a class="anchor" href="#extra-build-generated-files"></a>Arquivos extras gerados pela compilação</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Depois você executa a compilação, há alguns arquivos extras gerados pela extensão <code>quarkus-amazon-lambda</code>. Esses arquivos estão no diretório de compilação: <code>target/</code> para maven, <code>build/</code> para gradle.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>function.zip</code> - arquivo de deployment lambda</p>
+</li>
+<li>
+<p><code>manage.sh</code> - script para chamadas do lambda através da AWS CLI</p>
+</li>
+<li>
+<p><code>bootstrap-example.sh</code> - exemplo de script de inicialização para implementações nativas</p>
+</li>
+<li>
+<p><code>sam.jvm.yaml</code> - (opcional) para utilização com SAM CLI e testes locais</p>
+</li>
+<li>
+<p><code>sam.native.yaml</code> - (opcional) para utilização com SAM CLI e testes locais nativos</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-the-function"><a class="anchor" href="#create-the-function"></a>Criar a função</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>O script <code>target/manage.sh</code> serve para gerenciar seu lambda usando o tempo de execução Java do AWS Lambda. Esse script é fornecido apenas para sua conveniência. Examine a saída do script <code>manage.sh</code> se quiser saber quais comandos do AWS são executados para criar, excluir e atualizar seus lambdas.</p>
+</div>
+<div class="paragraph">
+<p><code>manage.sh</code> suporta quatro operações: <code>create</code> , <code>delete</code> , <code>update</code> , e <code>invoke</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Para verificar a configuração, se você tem a AWS CLI instalada, se executou o aws configure para as chaves de acesso da AWS, e configurou a variável de ambiente <code>LAMBDA_ROLE_ARN</code> (conforme descrito acima), execute <code>manage.sh</code> sem nenhum parâmetro. Uma declaração de uso será impressa para orientá-lo adequadamente.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Se estiver utilizando o Gradle, o caminho para os binários em <code>manage.sh</code> deve ser alterado de <code>target</code> para <code>build</code>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Para ver a declaração <code>usage</code> e validar a configuração da AWS:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh target/manage.sh</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Pode <code>create</code> a sua função utilizando o seguinte comando:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh target/manage.sh create</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ou se não tiver <code>LAMBDA_ROLE_ARN</code> já definido neste shell:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">LAMBDA_ROLE_ARN="arn:aws:iam::1234567890:role/lambda-role" sh target/manage.sh create</code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Não altere a chave do manipulador. Isso deve ser codificado para <code>io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest</code>. Esse manipulador inicializa o Quarkus e envolve o seu manipulador real para que a injeção possa ser executada.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Se houver algum problema na criação da função, você deverá excluí-la com a função <code>delete</code> antes de executar novamente o comando <code>create</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh target/manage.sh delete</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Os comandos também podem ser empilhados:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh target/manage.sh delete create</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="invoke-the-lambda"><a class="anchor" href="#invoke-the-lambda"></a>Invocar o Lambda</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Utilize o comando <code>invoke</code> para invocar a sua função.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh target/manage.sh invoke</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>O exemplo de lambda recebe a entrada passada por meio da opção <code>--payload</code> que aponta para um arquivo json no diretório raiz do projeto.</p>
+</div>
+<div class="paragraph">
+<p>O lambda também pode ser invocado localmente com o SAM CLI da seguinte forma:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sam local invoke --template target/sam.jvm.yaml --event payload.json</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Se estiver a trabalhar com a sua compilação de imagem nativa, basta substituir o nome do modelo pela versão nativa:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sam local invoke --template target/sam.native.yaml --event payload.json</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="update-the-lambda"><a class="anchor" href="#update-the-lambda"></a>Atualizar o Lambda</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Você pode atualizar o código Java conforme achar necessário. Após a reconstrução, você pode reimplantar o lambda executando o comando <code>update</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh target/manage.sh update</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploy-to-aws-lambda-custom-native-runtime"><a class="anchor" href="#deploy-to-aws-lambda-custom-native-runtime"></a>Implantar no runtime personalizado (nativo) do AWS Lambda</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you want a lower memory footprint and faster initialization times for your lambda, you can compile your Java
+code to a native executable.  Just make sure to rebuild your project with the <code>-Pnative</code> switch.</p>
+</div>
+<div class="paragraph">
+<p>Para sistemas Linux, execute:</p>
+</div>
+<div class="listingblock primary asciidoc-tabs-sync-cli">
+<div class="title">CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">quarkus build --native</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-maven">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw install -Dnative</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-gradle">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./gradlew build -Dquarkus.package.type=native</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Se estiver construindo em um sistema que não seja Linux, também precisará passar uma propriedade instruindo o Quarkus a usar uma construção do docker, pois o Amazon Lambda exige binários Linux. Você pode fazer isso passando esta propriedade para sua compilação: <code>-Dquarkus.native.container-build=true</code>. No entanto, isso exige que o Docker esteja instalado localmente.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock primary asciidoc-tabs-sync-cli">
+<div class="title">CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">quarkus build --native --no-tests -Dquarkus.native.container-build=true
+# The --no-tests flag is required only on Windows and macOS.</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-maven">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw install -Dnative -DskipTests -Dquarkus.native.container-build=true</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-gradle">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Qualquer um desses comandos compilará e criará uma imagem executável nativa. Ele também gera um arquivo zip <code>target/function.zip</code>. Esse arquivo zip contém sua imagem executável nativa renomeada para <code>bootstrap</code>. Esse é um requisito do runtime personalizado (fornecido) do AWS Lambda.</p>
+</div>
+<div class="paragraph">
+<p>As instruções aqui são exatamente como acima, com uma alteração: você precisará adicionar <code>native</code> como o primeiro parâmetro do script <code>manage.sh</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh target/manage.sh native create</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Como acima, os comandos podem ser empilhados. A única exigência é que <code>native</code> seja o primeiro parâmetro, caso deseje trabalhar com compilações de imagens nativas. O script cuidará dos detalhes necessários para gerenciar suas implementações de funções de imagem nativa.</p>
+</div>
+<div class="paragraph">
+<p>Examine a saída do script <code>manage.sh</code> se quiser saber quais comandos da aws são executados para criar, excluir e atualizar seus lambdas.</p>
+</div>
+<div class="paragraph">
+<p>Um aspecto a ser observado sobre o comando create para nativo é que a chamada <code>aws lambda create-function</code> deve definir uma variável de ambiente específica:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">--environment 'Variables={DISABLE_SIGNAL_HANDLERS=true}'</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="examine-the-pom-and-gradle-build"><a class="anchor" href="#examine-the-pom-and-gradle-build"></a>Examinar o POM e a compilação do Gradle</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Não há nada de especial no POM além da inclusão da extensão <code>quarkus-amazon-lambda</code> como uma dependência. A extensão gera automaticamente tudo o que pode precisar para a implantação do lambda.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In previous versions of this extension you had to set up your pom or gradle
+to zip up your executable for native deployments, but this is not the case anymore.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gradle"><a class="anchor" href="#gradle"></a>Construção Gradle</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Da mesma forma, para projetos Gradle, você também só precisa adicionar a dependência <code>quarkus-amazon-lambda</code>. A extensão gera automaticamente tudo o que pode precisar para a implantação do lambda.</p>
+</div>
+<div class="paragraph">
+<p>Exemplo de dependências do Gradle:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-resteasy'
+    implementation 'io.quarkus:quarkus-amazon-lambda'
+
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="live-coding-and-unitintegration-testing"><a class="anchor" href="#live-coding-and-unitintegration-testing"></a>Live Coding e testes unitários/integração</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To mirror the AWS Lambda environment as closely as possible in a dev environment,
+the Quarkus Amazon Lambda extension boots up a mock AWS Lambda event server in Quarkus Dev and Test mode.
+This mock event server simulates a true AWS Lambda environment.</p>
+</div>
+<div class="paragraph">
+<p>Durante a execução no modo de desenvolvimento do Quarkus, voê pode alimentar eventos para ele fazendo um HTTP POST para <code><a href="http://localhost:8080" class="bare">http://localhost:8080</a></code>. O servidor de eventos simulado receberá os eventos e seu lambda será chamado. Você pode executar a codificação ao vivo no seu lambda e as alterações serão automaticamente recompiladas e estarão disponíveis na próxima invocação que fizer. Veja um exemplo:</p>
+</div>
+<div class="listingblock primary asciidoc-tabs-sync-cli">
+<div class="title">CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">quarkus dev</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-maven">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw quarkus:dev</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-gradle">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./gradlew --console=plain quarkusDev</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -d "{\"name\":\"John\"}" -X POST http://localhost:8080</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Para seus testes de unidade, você também pode invocar o servidor de eventos simulado usando qualquer cliente HTTP que desejar. Aqui está um exemplo usando o rest-assured. O Quarkus inicia um servidor de evento simulado separado na porta 8081. A porta padrão do Rest Assured é automaticamente definida como 8081 pelo Quarkus, portanto, pode invocar esse endpoint.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.junit.jupiter.api.Test;
+
+import io.quarkus.test.junit.QuarkusTest;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.containsString;
+
+@QuarkusTest
+public class LambdaHandlerTest {
+
+    @Test
+    public void testSimpleLambdaSuccess() throws Exception {
+        Person in = new Person();
+        in.setName("Stu");
+        given()
+                .contentType("application/json")
+                .accept("application/json")
+                .body(in)
+                .when()
+                .post()
+                .then()
+                .statusCode(200)
+                .body(containsString("Hello Stu"));
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The mock event server is also started for <code>@NativeImageTest</code> and <code>@QuarkusIntegrationTest</code> tests so will work
+with native binaries too.  All this provides similar functionality to the SAM CLI local testing, without the overhead of Docker.</p>
+</div>
+<div class="paragraph">
+<p>Por fim, se a porta 8080 ou a porta 8081 não estiver disponível em seu computador, você poderá modificar as portas dos modos dev e test com application.properties</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">quarkus.lambda.mock-event-server.dev-port=8082
+quarkus.lambda.mock-event-server.test-port=8083</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Um valor de porta zero resultará numa porta atribuída aleatoriamente.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="testing-with-the-sam-cli"><a class="anchor" href="#testing-with-the-sam-cli"></a>Testes com a SAM CLI</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Se não pretende utilizar o servidor de eventos simulado, pode testar os seus lambdas com o SAM CLI.</p>
+</div>
+<div class="paragraph">
+<p>O <a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html">AWS SAM CLI</a> permite que execute seus lambdas localmente no seu laptop em um ambiente Lambda simulado. Isso requer a instalação do <a href="https://www.docker.com/products/docker-desktop">docker</a> . Essa é uma abordagem opcional, caso opte por aproveitá-la. Caso contrário, a integração do Quarkus JUnit deve ser suficiente para a maioria das suas necessidades.</p>
+</div>
+<div class="paragraph">
+<p>Foi gerado um modelo inicial para os modos de execução JVM e nativo.</p>
+</div>
+<div class="paragraph">
+<p>Execute o seguinte comando SAM CLI para testar localmente sua função lambda, passando o <code>template</code> SAM apropriado. O parâmetro <code>event</code> usa qualquer arquivo JSON, neste caso o exemplo <code>payload.json</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Se estiver a utilizar o Gradle, o caminho para os binários nos modelos YAML deve ser alterado de <code>target</code> para <code>build</code>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sam local invoke --template target/sam.jvm.yaml --event payload.json</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A imagem nativa também pode ser testada localmente utilizando o modelo <code>sam.native.yaml</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sam local invoke --template target/sam.native.yaml --event payload.json</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="modifying-function-zip"><a class="anchor" href="#modifying-function-zip"></a>Modificar <code>function.zip</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Há ocasiões em que você pode ter de adicionar alguns acréscimos à implementação do lambda <code>function.zip</code> gerada pela compilação. Para fazer isso, crie um diretório <code>zip.jvm</code> ou <code>zip.native</code> dentro de <code>src/main</code>. Crie <code>zip.jvm/</code> se estiver fazendo um lambda Java puro. <code>zip.native/</code> se estiver fazendo uma implementação nativa.</p>
+</div>
+<div class="paragraph">
+<p>Todos os ficheiros e diretórios que criar no seu diretório zip serão incluídos no <code>function.zip</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="custom-bootstrap-script"><a class="anchor" href="#custom-bootstrap-script"></a>Script personalizado <code>bootstrap</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Às vezes, você pode querer definir propriedades específicas do sistema ou outros argumentos quando o lambda invoca a implantação nativa do lambda do quarkus. Se incluir um arquivo de script <code>bootstrap</code> em <code>zip.native</code>, a extensão quarkus renomeará automaticamente o executável para <code>runner</code> em <code>function.zip</code> e definirá o modo unix do script <code>bootstrap</code> como executável.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+O executável nativo tem de ser referenciado como <code>runner</code> se incluir um script <code>bootstrap</code> personalizado.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>A extensão gera um script de exemplo em <code>target/bootstrap-example.sh</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="tracing-with-aws-xray-and-graalvm"><a class="anchor" href="#tracing-with-aws-xray-and-graalvm"></a>Tracing com AWS XRay e GraalVM</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Se estiver criando imagens nativas e quiser usar o <a href="https://aws.amazon.com/xray">AWS X-Ray Tracing</a> com seu lambda, será necessário incluir <code>quarkus-amazon-lambda-xray</code> como uma dependência no seu pom. A biblioteca do AWS X-Ray não é totalmente compatível com o GraalVM, portanto, tivemos que fazer algum trabalho de integração para que isso funcionasse.</p>
+</div>
+<div class="paragraph">
+<p>Além disso, lembre-se de ativar o parâmetro de rastreamento do AWS X-Ray em <code>manage.sh</code>, na função <code>cmd_create()</code>. Isso também pode ser definido no Console de gerenciamento da AWS.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">    --tracing-config Mode=Active</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Para os arquivos de modelo SAM, adicione o seguinte às propriedades da função YAML.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">    Tracing: Active</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>O AWS X-Ray adiciona muitas classes à sua distribuição, portanto, certifique-se de que esteja usando pelo menos o tamanho de memória do AWS Lambda de 256 MB. Isso é definido explicitamente em <code>manage.sh</code> <code>cmd_create()</code>. Embora a imagem nativa sempre possa usar uma configuração de memória menor, seria recomendável manter a mesma configuração, especialmente para ajudar a comparar o desempenho.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="https"><a class="anchor" href="#https"></a>Utilizar HTTPS ou SSL/TLS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Se o seu código fizer chamadas HTTPS (por exemplo, para um microsserviço, para um serviço AWS), precisará adicionar a configuração à imagem nativa, pois o GraalVM só incluirá as dependências quando declaradas explicitamente. O Quarkus, por padrão, habilita essa funcionalidade em extensões que implicitamente a exigem. Para obter mais informações, consulte o <a href="native-and-ssl">guia SSL do Quarkus</a></p>
+</div>
+<div class="paragraph">
+<p>Abra src/main/resources/application.properties e adicione a seguinte linha para ativar o SSL na sua imagem nativa.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.ssl.native=true</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="aws-sdk-v2"><a class="anchor" href="#aws-sdk-v2"></a>Utilizar o AWS Java SDK v2</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+O Quarkus agora tem extensões para DynamoDB, S3, SNS e SQS (mais em breve). Consulte <a href="https://quarkiverse.github.io/quarkiverse-docs/quarkus-amazon-services/dev/index.html">esses guias</a> sobre como usar os vários serviços da AWS com o Quarkus, em vez de fazer a conexão manualmente, como abaixo.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Com uma integração mínima, é possível aproveitar o AWS Java SDK v2, que pode ser usado para invocar serviços como SQS, SNS, S3 e DynamoDB.</p>
+</div>
+<div class="paragraph">
+<p>For native image, however the URL Connection client must be preferred over the Apache HTTP Client
+when using synchronous mode, due to issues in the GraalVM compilation (at present).</p>
+</div>
+<div class="paragraph">
+<p>Adicione <code>quarkus-jaxb</code> como uma dependência no seu arquivo Maven <code>pom.xml</code>, ou Gradle <code>build.gradle</code>.</p>
+</div>
+<div class="paragraph">
+<p>You must also force your AWS service client for SQS, SNS, S3 et al., to use the URL Connection client,
+which connects to AWS services over HTTPS, hence the inclusion of the SSL enabled property, as described in the <a href="#https">Utilizar HTTPS ou SSL/TLS</a> section above.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// select the appropriate client, in this case SQS, and
+// insert your region, instead of XXXX, which also improves startup time over the default client
+  client = SqsClient.builder().region(Region.XXXX).httpClient(software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient.builder().build()).build();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Para o Maven, adicione o seguinte ao seu <code>pom.xml</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">    &lt;properties&gt;
+        &lt;aws.sdk2.version&gt;2.10.69&lt;/aws.sdk2.version&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencyManagement&gt;
+        &lt;dependencies&gt;
+
+            &lt;dependency&gt;
+                &lt;groupId&gt;software.amazon.awssdk&lt;/groupId&gt;
+                &lt;artifactId&gt;bom&lt;/artifactId&gt;
+                &lt;version&gt;${aws.sdk2.version}&lt;/version&gt;
+                &lt;type&gt;pom&lt;/type&gt;
+                &lt;scope&gt;import&lt;/scope&gt;
+            &lt;/dependency&gt;
+
+        &lt;/dependencies&gt;
+    &lt;/dependencyManagement&gt;
+    &lt;dependencies&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;software.amazon.awssdk&lt;/groupId&gt;
+            &lt;artifactId&gt;url-connection-client&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;software.amazon.awssdk&lt;/groupId&gt;
+            &lt;artifactId&gt;apache-client&lt;/artifactId&gt;
+            &lt;exclusions&gt;
+                &lt;exclusion&gt;
+                    &lt;groupId&gt;commons-logging&lt;/groupId&gt;
+                    &lt;artifactId&gt;commons-logging&lt;/artifactId&gt;
+                &lt;/exclusion&gt;
+            &lt;/exclusions&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;software.amazon.awssdk&lt;/groupId&gt;
+            &lt;!-- sqs/sns/s3 etc --&gt;
+            &lt;artifactId&gt;sqs&lt;/artifactId&gt;
+            &lt;exclusions&gt;
+                &lt;!-- exclude the apache-client and netty client --&gt;
+                &lt;exclusion&gt;
+                    &lt;groupId&gt;software.amazon.awssdk&lt;/groupId&gt;
+                    &lt;artifactId&gt;apache-client&lt;/artifactId&gt;
+                &lt;/exclusion&gt;
+                &lt;exclusion&gt;
+                    &lt;groupId&gt;software.amazon.awssdk&lt;/groupId&gt;
+                    &lt;artifactId&gt;netty-nio-client&lt;/artifactId&gt;
+                &lt;/exclusion&gt;
+                &lt;exclusion&gt;
+                    &lt;groupId&gt;commons-logging&lt;/groupId&gt;
+                    &lt;artifactId&gt;commons-logging&lt;/artifactId&gt;
+                &lt;/exclusion&gt;
+            &lt;/exclusions&gt;
+        &lt;/dependency&gt;
+
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.jboss.logging&lt;/groupId&gt;
+            &lt;artifactId&gt;commons-logging-jboss-logging&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Se você vir <code>java.security.InvalidAlgorithmParameterException: the trustAnchors parameter must be non-empty</code> ou erro SSL semelhante, devido ao status atual do GraalVM, há algum trabalho adicional para agrupar o <code>function.zip</code> , conforme abaixo. Para obter mais informações, consulte o <a href="native-and-ssl">Guia do Quarkus Native SSL</a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="additional-requirements-for-client-ssl"><a class="anchor" href="#additional-requirements-for-client-ssl"></a>Requisitos adicionais para o cliente SSL</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>O executável nativo requer algumas etapas adicionais para habilitar o SSL do cliente que o S3 e outras bibliotecas da AWS precisam.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Um script <code>bootstrap</code> personalizado</p>
+</li>
+<li>
+<p><code>libsunec.so</code> deve ser adicionado a <code>function.zip</code></p>
+</li>
+<li>
+<p><code>cacerts</code> deve ser adicionado a <code>function.zip</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Para fazer isso, primeiro crie um diretório <code>src/main/zip.native/</code> com sua compilação. Em seguida, crie um arquivo de script de shell chamado <code>bootstrap</code> dentro de <code>src/main/zip.native/</code>, como abaixo. Um exemplo é criado automaticamente em sua pasta de compilação (target ou build), chamado <code>bootstrap-example.sh</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">#!/usr/bin/env bash
+
+./runner -Djava.library.path=./ -Djavax.net.ssl.trustStore=./cacerts</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Conjunto adicional <code>-Djavax.net.ssl.trustStorePassword=changeit</code> se o arquivo <code>cacerts</code> estiver protegido por senha.</p>
+</div>
+<div class="paragraph">
+<p>Em seguida, deve copiar alguns arquivos da sua distribuição GraalVM para <code>src/main/zip.native/</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+As versões do GraalVM podem ter caminhos diferentes para estes arquivos, quer esteja a utilizar a versão Java 8 ou 11. Ajuste em conformidade.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cp $GRAALVM_HOME/lib/libsunec.so $PROJECT_DIR/src/main/zip.native/
+cp $GRAALVM_HOME/lib/security/cacerts $PROJECT_DIR/src/main/zip.native/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Agora, quando executar a compilação nativa, todos estes ficheiros serão incluídos no <code>function.zip</code></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Se estiver a utilizar uma imagem Docker para construir, então deve extrair estes arquivos desta imagem.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Para extrair o ssl necessário, você deve iniciar um contêiner Docker em segundo plano e anexar a esse contêiner para copiar os artefatos.</p>
+</div>
+<div class="paragraph">
+<p>Primeiro, vamos iniciar o contêiner GraalVM, observando a saída do id do contêiner.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker run -it -d --entrypoint bash quay.io/quarkus/ubi-quarkus-graalvmce-builder-image:22.3-java17
+
+# This will output a container id, like 6304eea6179522aff69acb38eca90bedfd4b970a5475aa37ccda3585bc2abdde
+# Note this value as we will need it for the commands below</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Em primeiro lugar, <code>libsunec.so</code>, a biblioteca C utilizada para a implementação do SSL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker cp {container-id-from-above}:/opt/graalvm/lib/libsunec.so src/main/zip.native/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Em segundo lugar, <code>cacerts</code>, o repositório de certificados. Poderá também ser necessário obter periodicamente uma cópia atualizada.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker cp {container-id-from-above}:/opt/graalvm/lib/security/cacerts src/main/zip.native/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>O seu arquivo final terá o seguinte formato:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">jar tvf target/function.zip
+
+    bootstrap
+    runner
+    cacerts
+    libsunec.so</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploy-to-aws-lambda-using-a-container-image"><a class="anchor" href="#deploy-to-aws-lambda-using-a-container-image"></a>Implantar no AWS Lambda usando uma imagem de contêiner</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>O AWS Lambda suporta a criação dos seus lambdas referenciando <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-images.html">imagens de contêineres</a> em vez de carregar arquivos ZIP. Isso pode ter alguns benefícios, como contornar o limite de tamanho dos arquivos ZIP carregados. É possível definir funções lambda tanto para compilações nativas quanto para compilações regulares da JVM.</p>
+</div>
+<div class="sect2">
+<h3 id="jvm-container-image"><a class="anchor" href="#jvm-container-image"></a>Imagem do contêiner JVM</h3>
+<div class="paragraph">
+<p>Para uma distribuição regular da JVM, é necessário basear sua imagem nas imagens base oficiais do AWS Java. Abaixo está um exemplo de um Dockerfile que criaria uma imagem de contêiner a partir do seu projeto Quarkus Lambda. Ele assume que <code>mvn package</code> foi executado e que os binários estão disponíveis no diretório <code>target/</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Dockerfile hljs" data-lang="Dockerfile">FROM  public.ecr.aws/lambda/java:11
+
+ADD target/my-service-0.0.1-SNAPSHOT-runner.jar /var/task/lib/my-service.jar
+ADD target/lib/  /var/task/lib/
+
+CMD ["io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest"]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="native-executable-container-image"><a class="anchor" href="#native-executable-container-image"></a>Imagem de contêiner com executável nativo</h3>
+<div class="paragraph">
+<p>Para criar uma imagem de contêiner lambda que use o executável nativo, precisaremos fazer as coisas de forma um pouco diferente. Nesse caso, não precisaremos usar a imagem base <code>java:11</code> da AWS, mas, em vez disso, usaremos uma imagem especial que assume que o ambiente runtime para o lambda é fornecido. O exemplo abaixo cria esse contêiner. Ele assume que uma compilação Maven foi executada (como <code>mvn package -Dnative=true</code>) e gerou o binário nativo no diretório <code>target/</code>. O binário precisa ser nomeado <code>bootstrap</code> e ser colocado em <code>/var/runtime/</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Dockerfile hljs" data-lang="Dockerfile">FROM  public.ecr.aws/lambda/provided
+
+ADD target/my-service-0.0.1-SNAPSHOT-runner /var/runtime/bootstrap
+RUN chmod ugo+x /var/runtime/bootstrap
+
+CMD ["io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest"]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="deploying-a-container-image-lambda"><a class="anchor" href="#deploying-a-container-image-lambda"></a>Implementar uma imagem de contêiner lambda</h3>
+<div class="paragraph">
+<p>Abaixo, você pode ver como as imagens de contêiner criadas acima podem ser criadas e implantadas na AWS usando as ferramentas de linha de comando <code>docker</code> e <code>aws</code>. Essas instruções funcionam para imagens de contêineres nativas e jvm e pressupõem que a ferramenta de linha de comando <code>aws</code> tenha sido conectada.</p>
+</div>
+<div class="sect3">
+<h4 id="build-the-docker-image"><a class="anchor" href="#build-the-docker-image"></a>Criar a imagem do Docker</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Assuming we are located in the root directory of the project and created a Dockerfile there
+docker build .
+   [output omitted]
+    =&gt; exporting to image                    0.0s
+    =&gt; =&gt; exporting layers                   0.0s
+    =&gt; =&gt; writing image sha256:[SOME SHA]    0.0s</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="create-an-ecr-repository-in-the-users-aws-account"><a class="anchor" href="#create-an-ecr-repository-in-the-users-aws-account"></a>Criar um repositório ECR na conta AWS do usuário</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">aws ecr create-repository --repository-name my/test/quarkus-lambda</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="tag-the-image-using-your-ecr-registry-information"><a class="anchor" href="#tag-the-image-using-your-ecr-registry-information"></a>Marque a imagem utilizando as suas informações de registro ECR</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker tag [SOME SHA] [YOUR AWS ACCOUNT ID].dkr.ecr.[YOUR AWS ACCOUNT REGION].amazonaws.com/my/test/quarkus-lambda:v1</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="log-docker-into-your-ecr-registry-and-push-the-docker-image-to-it"><a class="anchor" href="#log-docker-into-your-ecr-registry-and-push-the-docker-image-to-it"></a>Registar o Docker no seu registo ECR e enviar a imagem Docker para o mesmo</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">aws ecr get-login-password --region region | docker login --username AWS --password-stdin [YOUR AWS ACCOUNT ID].dkr.ecr.[YOUR AWS ACCOUNT REGION].amazonaws.com
+docker push [YOUR AWS ACCOUNT ID].dkr.ecr.[YOUR AWS ACCOUNT REGION].amazonaws.com/my/test/quarkus-lambda:v1</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="create-the-aws-lambda-function-with-the-aws-cli-tool"><a class="anchor" href="#create-the-aws-lambda-function-with-the-aws-cli-tool"></a>Criar a função lambda da AWS com a ferramenta CLI do AWS</h4>
+<div class="paragraph">
+<p>Certifique-se de que faz referência à imagem que carregou anteriormente (pressupõe que existe uma função que pode ser utilizada para executar o lambda). Observe que não é improvável que, para a função lambda da JVM, o limite de memória padrão de <code>128Mb</code> não seja suficiente para executar a mesma. Nesse caso, pode aumentar o limite de memória ao criar a função, fornecendo o parâmetro <code>--memory-size 256</code> ao seu comando <code>aws lambda create-function</code>. Também pode ajustar a função no console AWS depois de a ter criado.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">aws lambda create-function --function-name my-test-quarkus-lambda-function --package-type Image --code ImageUri=[YOUR AWS ACCOUNT ID].dkr.ecr.[YOUR AWS ACCOUNT REGION].amazonaws.com/my/test/quarkus-lambda:v1 --role arn:aws:iam::[YOUR AWS ACCOUNT ID]:role/[SOME ROLE]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Agora pode utilizar o console AWS para ver e testar a sua nova função lambda.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="amazon-alexa-integration"><a class="anchor" href="#amazon-alexa-integration"></a>Integração com o Amazon Alexa</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Para utilizar a Alexa com o Quarkus nativo, é necessário utilizar a <a href="https://github.com/quarkiverse/quarkus-amazon-alexa">extensão Quarkus Amazon Alexa do Quarkiverse Hub</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.quarkiverse.alexa&lt;/groupId&gt;
+    &lt;artifactId&gt;quarkus-amazon-alexa&lt;/artifactId&gt;
+    &lt;version&gt;${quarkus-amazon-alexa.version}&lt;/version&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Defina a versão mais recente da extensão no seu arquivo POM.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Crie o seu manipulador Alexa, como habitualmente, sub-classificando o abstrato <code>com.amazon.ask.SkillStreamHandler</code>, e adicione a implementação do seu manipulador de pedidos.</p>
+</div>
+<div class="paragraph">
+<p>É tudo o que há para fazer!</p>
+</div>
+</div>
+</div>
+        </div>
+        <div class="grid__item width-4-12 width-12-12-m tocwrapper">
+            <div class="hide-mobile toc"><ul class="sectlevel1">
+<li><a href="#prerequisites">Pré-requisitos</a></li>
+<li><a href="#getting-started">Primeiros passos</a></li>
+<li><a href="#installing-aws-bits">Instalando os componentes AWS</a></li>
+<li><a href="#creating-the-maven-deployment-project">Criando o Maven Deployment Project</a></li>
+<li><a href="#choose">Escolha o seu Lambda</a></li>
+<li><a href="#deploy-to-aws-lambda-java-runtime">Implantar no runtime Java da AWS Lambda</a></li>
+<li><a href="#build-and-deploy">Build e Deploy</a></li>
+<li><a href="#create-an-execution-role">Criar uma função de execução</a></li>
+<li><a href="#extra-build-generated-files">Arquivos extras gerados pela compilação</a></li>
+<li><a href="#create-the-function">Criar a função</a></li>
+<li><a href="#invoke-the-lambda">Invocar o Lambda</a></li>
+<li><a href="#update-the-lambda">Atualizar o Lambda</a></li>
+<li><a href="#deploy-to-aws-lambda-custom-native-runtime">Implantar no runtime personalizado (nativo) do AWS Lambda</a></li>
+<li><a href="#examine-the-pom-and-gradle-build">Examinar o POM e a compilação do Gradle</a></li>
+<li><a href="#gradle">Construção Gradle</a></li>
+<li><a href="#live-coding-and-unitintegration-testing">Live Coding e testes unitários/integração</a></li>
+<li><a href="#testing-with-the-sam-cli">Testes com a SAM CLI</a></li>
+<li><a href="#modifying-function-zip">Modificar <code>function.zip</code></a></li>
+<li><a href="#custom-bootstrap-script">Script personalizado <code>bootstrap</code></a></li>
+<li><a href="#tracing-with-aws-xray-and-graalvm">Tracing com AWS XRay e GraalVM</a></li>
+<li><a href="#https">Utilizar HTTPS ou SSL/TLS</a></li>
+<li><a href="#aws-sdk-v2">Utilizar o AWS Java SDK v2</a></li>
+<li><a href="#additional-requirements-for-client-ssl">Requisitos adicionais para o cliente SSL</a></li>
+<li><a href="#deploy-to-aws-lambda-using-a-container-image">Implantar no AWS Lambda usando uma imagem de contêiner</a>
+<ul class="sectlevel2">
+<li><a href="#jvm-container-image">Imagem do contêiner JVM</a></li>
+<li><a href="#native-executable-container-image">Imagem de contêiner com executável nativo</a></li>
+<li><a href="#deploying-a-container-image-lambda">Implementar uma imagem de contêiner lambda</a></li>
+</ul>
+</li>
+<li><a href="#amazon-alexa-integration">Integração com o Amazon Alexa</a></li>
+</ul></div>
+        </div>
+    </div>
+    </div>
+
+  </div>
+
+  <div class="content project-footer">
+  <div class="footer-section">
+    <div class="logo-wrapper">
+      <a href="/"><img src="/assets/images/quarkus_logo_horizontal_rgb_reverse.svg" class="project-logo" title="Quarkus"></a>
+    </div>
+  </div>
+  <div class="grid-wrapper">
+    <p class="grid__item width-3-12">Quarkus is open. All dependencies of this project are available under the <a href='https://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache Software License 2.0</a> or compatible license. <i class='fab fa-creative-commons'></i><i class='fab fa-creative-commons-by'></i> <a href='https://creativecommons.org/licenses/by/3.0/' target='_blank'>CC by 3.0</a><br /><br />This website was built with <a href='https://jekyllrb.com/' target='_blank'>Jekyll</a>, is hosted on <a href='https://pages.github.com/' target='_blank'>GitHub Pages</a> and is completely open source. If you want to make it better, <a href='https://github.com/quarkusio/quarkusio.github.io' target='_blank'>fork the website</a> and show us what you’ve got.</p>
+
+    
+      <div class="width-1-12 project-links">
+        <span>Navigation</span>
+        <ul class="footer-links">
+          
+          
+            <li><a href="/" target="_blank">Home</a></li>
+          
+          
+          
+            <li><a href="/about" target="_blank">About</a></li>
+          
+          
+          
+            <li><a href="/blog" target="_blank">Blog</a></li>
+          
+          
+          
+            <li><a href="/insights" target="_blank">Podcast</a></li>
+          
+          
+          
+            <li><a href="/events" target="_blank">Eventos</a></li>
+          
+          
+          
+            <li><a href="/newsletter" target="_blank">Newsletter</a></li>
+          
+          
+          
+            <li><a href="/userstories" target="_blank">User Stories</a></li>
+          
+          
+          
+            <li><a href="https://github.com/orgs/quarkusio/projects/13/views/1" target="_blank">Roadmap</a></li>
+          
+          
+          
+            <li><a href="/security" target="_blank">Security&nbsp;policy</a></li>
+          
+          
+          
+            <li><a href="/usage" target="_blank">Usage</a></li>
+          
+          
+          
+            <li><a href="https://github.com/commonhaus/artwork/tree/main/projects/quarkus" target="_blank">Brand</a></li>
+          
+          
+          
+            <li><a href="/desktopwallpapers" target="_blank">Wallpapers</a></li>
+          
+          
+          
+            <li><a href="https://www.redhat.com/en/about/privacy-policy" target="_blank">Privacy Policy</a></li>
+          
+          
+        </ul>
+      </div>
+    
+      <div class="width-1-12 project-links">
+        <span>Follow Us</span>
+        <ul class="footer-links">
+          
+          
+            <li><a href="https://x.com/quarkusio" target="_blank">X</a></li>
+          
+          
+          
+            <li><a href="https://bsky.app/profile/quarkus.io" target="_blank">Bluesky</a></li>
+          
+          
+          
+            <li><a rel="me" href="https://fosstodon.org/@quarkusio" target="_blank">Mastodon</a></li>
+            
+          
+          
+            <li><a href="https://www.threads.com/@quarkusio" target="_blank">Threads</a></li>
+          
+          
+          
+            <li><a href="https://www.facebook.com/quarkusio" target="_blank">Facebook</a></li>
+          
+          
+          
+            <li><a href="https://www.linkedin.com/company/quarkusio/" target="_blank">Linkedin</a></li>
+          
+          
+          
+            <li><a href="https://www.youtube.com/channel/UCaW8QG_QoIk_FnjLgr5eOqg" target="_blank">Youtube</a></li>
+          
+          
+          
+            <li><a href="https://github.com/quarkusio" target="_blank">GitHub</a></li>
+          
+          
+        </ul>
+      </div>
+    
+      <div class="width-2-12 project-links">
+        <span>Get Help</span>
+        <ul class="footer-links">
+          
+          
+            <li><a href="/support" target="_blank">Support</a></li>
+          
+          
+          
+            <li><a href="/guides" target="_blank">Guias</a></li>
+          
+          
+          
+            <li><a href="/faq" target="_blank">FAQ</a></li>
+          
+          
+          
+            <li><a href="/get-started" target="_blank">Get Started</a></li>
+          
+          
+          
+            <li><a href="https://stackoverflow.com/questions/tagged/quarkus" target="_blank">Stack Overflow</a></li>
+          
+          
+          
+            <li><a href="https://github.com/quarkusio/quarkus/discussions" target="_blank">Discussions</a></li>
+          
+          
+          
+            <li><a href="https://groups.google.com/forum/#!forum/quarkus-dev" target="_blank">Development mailing list</a></li>
+          
+          
+          
+            <li><a href="https://stats.uptimerobot.com/ze1PfweT2p" target="_blank">Quarkus Service Status</a></li>
+          
+          
+        </ul>
+      </div>
+    
+      <div class="width-1-12 project-links">
+        <span>Languages</span>
+        <ul class="footer-links">
+          
+          
+            <li><a href="https://quarkus.io/" target="_blank">English</a></li>
+          
+          
+          
+            <li><a href="https://pt.quarkus.io/" target="_blank">Português&nbsp;(Brasileiro)</a></li>
+          
+          
+          
+            <li><a href="https://es.quarkus.io/" target="_blank">Español</a></li>
+          
+          
+          
+            <li><a href="https://cn.quarkus.io/" target="_blank">简体中文</a></li>
+          
+          
+          
+            <li><a href="https://ja.quarkus.io/" target="_blank">日本語</a></li>
+          
+          
+        </ul>
+      </div>
+    
+
+    
+      <div class="width-4-12 more-links">
+        <span>Quarkus is made of community projects</span>
+        <ul class="footer-links">
+          
+            <li><a blah href="https://vertx.io/" target="_blank">Eclipse Vert.x</a></li>
+          
+            <li><a blah href="https://smallrye.io" target="_blank">SmallRye</a></li>
+          
+            <li><a blah href="https://hibernate.org" target="_blank">Hibernate</a></li>
+          
+            <li><a blah href="https://netty.io" target="_blank">Netty</a></li>
+          
+            <li><a blah href="https://resteasy.github.io" target="_blank">RESTEasy</a></li>
+          
+            <li><a blah href="https://camel.apache.org" target="_blank">Apache Camel</a></li>
+          
+            <li><a blah href="https://microprofile.io" target="_blank">Eclipse MicroProfile</a></li>
+          
+            <li><a blah href="https://code.quarkus.io/" target="_blank">And many more...</a></li>
+          
+        </ul>
+      </div>
+    
+  </div>
+</div>
+
+  <div class="content cf-footer">
+  <div class="flexcontainer">
+    <div class="cf-logo">
+      <a class="cf-logo" href="https://www.commonhaus.org/" target="_blank"><img src="https://raw.githubusercontent.com/commonhaus/artwork/main/foundation/brand/svg/CF_logo_horizontal_single_reverse.svg"/></a>
+    </div>
+    <div class="license">
+      Copyright © Quarkus. All rights reserved. For details on our trademarks, please visit our <a href="https://www.commonhaus.org/policies/trademark-policy/">Trademark Policy</a> and <a href="https://www.commonhaus.org/trademarks/">Trademark List</a>. Trademarks of third parties are owned by their respective holders and their mention here does not suggest any endorsement or association.
+    </div>
+  </div>
+</div>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="/assets/javascript/mobile-nav.js"></script>
+  <script type="text/javascript" src="/assets/javascript/scroll-down.js"></script>
+  <script src="/assets/javascript/satellite.js" type="text/javascript"></script>
+  <script src="/guides/javascript/config.js" type="text/javascript"></script>
+  <script src="/assets/javascript/guides-version-dropdown.js" type="text/javascript"></script>
+  <script src="/assets/javascript/back-to-top.js" type="text/javascript"></script>
+  <script src="/assets/javascript/clipboard.min.js" type="text/javascript"></script>
+  <script src="/assets/javascript/copy.js" type="text/javascript"></script>
+  <script src="/assets/javascript/asciidoc-tabs.js" type="text/javascript"></script>
+  <script src="/assets/javascript/future-date.js" type="text/javascript"></script>
+  <script src="/assets/javascript/randomize.js" type="text/javascript"></script>
+  <script src="/assets/javascript/time.js" type="text/javascript"></script>
+</body>
+
+</html>
