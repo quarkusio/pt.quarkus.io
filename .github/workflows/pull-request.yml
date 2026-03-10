@@ -39,7 +39,7 @@ jobs:
         # Deploy the site to surge.sh
         # We use surge.sh for pull-request preview because surge.sh supports custom sub-domain and it fits pull-request preview site.
         run: |
-          surge docs pr-preview-"${{ github.event.pull_request.number }}"-pt-quarkusio.surge.sh
+          npx surge docs --domain "pr-preview-${{ github.event.pull_request.number }}-pt-quarkusio.surge.sh"
         env:
           SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
           SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
@@ -49,8 +49,8 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            let body = `Site preview(pt): https://pr-preview-${{ github.event.pull_request.number }}-pt-quarkusio.surge.sh`
-            github.issues.createComment({
+            const body = `Site preview(pt): https://pr-preview-${context.issue.number}-pt-quarkusio.surge.sh`
+            github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
