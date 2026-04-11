@@ -13,13 +13,16 @@ O texto extraído é armazenado no [diretório l10n](l10n) como um arquivo .po, 
 ## Contribuindo com a tradução
 
 Se você quiser contribuir com a tradução, clone este repositório localmente, edite o arquivo .po no [diretório l10n](l10n) e envie um Pull-Request.
-Você pode verificar o status da tradução de cada arquivo [aqui](l10n/stats/translation.csv).
+Você pode verificar o status da tradução de cada arquivo nos seguintes relatórios:
+- **Guias principais**: [latest-guides-translation.csv](l10n/stats/latest-guides-translation.csv)
+- **Posts do blog**: [posts-translation.csv](l10n/stats/posts-translation.csv)
+- **Arquivos diversos**: [misc-translation.csv](l10n/stats/misc-translation.csv)
 
 ## Declaração para iniciar a tradução
 
 Para evitar inconvenientes, como vários membros trabalhando no mesmo arquivo ao mesmo tempo ou duplicação de trabalho.
-Indique em qual arquivo e intervalo você deseja começar a trabalhar com um problema do GitHub.
-Por outro lado, ao criar uma issue no GitHub, verifique se alguém já iniciou trabalho no destino de um problema existente no GitHub.
+Indique em qual arquivo e intervalo você deseja começar a trabalhar criando uma **issue** no GitHub.
+Por outro lado, ao criar uma issue no GitHub, verifique se alguém já iniciou o trabalho no destino de uma issue existente.
 
 ### Trabalho de tradução
 
