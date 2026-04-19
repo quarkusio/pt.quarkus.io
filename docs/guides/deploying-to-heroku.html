@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+
+
+
+
+
+
+<head>
+  <title>Publicando na Heroku - Quarkus</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="
+  connect-src 'self' https://dpm.demdex.net https://adobedc.demdex.net https://analytics.ossupstream.org/ https://search.quarkus.io https://smetrics.redhat.com https://ajax.googleapis.com; 
+  script-src 'self' 'unsafe-inline' 'unsafe-eval'
+      
+      https://assets.adobedtm.com
+      js.bizographics.com
+      https://www.redhat.com
+      https://static.redhat.com
+      https://app.requestly.io/
+      jsonip.com
+      https://ajax.googleapis.com
+      https://use.fontawesome.com
+      http://www.youtube.com
+      http://www.googleadservices.com
+      https://googleads.g.doubleclick.net
+      https://giscus.app
+      https://analytics.ossupstream.org/
+      https://app.mailjet.com;
+
+  style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com; 
+  img-src 'self' * data:; 
+  media-src 'self'; 
+  frame-src https://redhat.demdex.net https://www.youtube.com https://player.restream.io https://app.mailjet.com http://xy0p2.mjt.lu https://mj.quarkus.io https://giscus.app; 
+  base-uri 'none'; 
+  object-src 'none'; 
+  form-action 'none'; 
+  font-src 'self' https://use.fontawesome.com https://fonts.gstatic.com;" />
+
+  <script id="adobe_dtm" src="https://www.redhat.com/dtm.js" type="text/javascript"></script>
+  <script src="/assets/javascript/highlight.pack.js" type="text/javascript"></script>
+  <META HTTP-EQUIV='X-XSS-Protection' CONTENT="1; mode=block">
+  <META HTTP-EQUIV='X-Content-Type-Options' CONTENT="nosniff">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Quarkus: Supersonic Subatomic Java">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@QuarkusIO"> 
+  <meta name="twitter:creator" content="@QuarkusIO">
+  <meta property="og:url" content="https://quarkus.io/guides/deploying-to-heroku" />
+  <meta property="og:title" content="Publicando na Heroku" />
+  <meta property="og:description" content="Quarkus: Supersonic Subatomic Java" />
+  <meta property="og:image" content="https://quarkus.io/assets/images/quarkus_card.png" />
+  
+  <link rel="canonical" href="https://quarkus.io/guides/deploying-to-heroku">
+  <link rel="shortcut icon" type="image/png" href="/favicon.ico" >
+  <link rel="stylesheet" href="/guides/stylesheet/config.css" />
+  <link rel="stylesheet" href="/assets/css/main.css?2021-07-29" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" crossorigin="anonymous">
+  <link rel="alternate" type="application/rss+xml"  href="/feed.xml" title="Quarkus">
+  <script src="/assets/javascript/hl.js" type="text/javascript"></script>
+  
+  
+  
+  
+  <link rel="alternate" hreflang="en" href="https://quarkus.io/guides/deploying-to-heroku" />
+  
+  <link rel="alternate" hreflang="pt-br" href="https://pt.quarkus.io/guides/deploying-to-heroku" />
+  
+  <link rel="alternate" hreflang="es" href="https://es.quarkus.io/guides/deploying-to-heroku" />
+  
+  <link rel="alternate" hreflang="zh" href="https://cn.quarkus.io/guides/deploying-to-heroku" />
+  
+  <link rel="alternate" hreflang="ja" href="https://ja.quarkus.io/guides/deploying-to-heroku" />
+  
+  <link rel="alternate" hreflang="x-default" href="https://quarkus.io/" />  
+  <script src="/assets/javascript/tracking.js"></script>
+  
+  <script src="/assets/javascript/colormode.js" type="text/javascript"></script>
+
+</head>
+
+<body class="guides">
+
+  
+
+
+<div class="grid-wrapper communitysite">
+  <div class="grid__item width-12-12">The <a href="https://quarkus.io/guides/deploying-to-heroku">English version of quarkus.io</a> is the official project site. Translated sites are community supported on a best-effort basis.</div>
+</div>
+
+
+  <div class="nav-wrapper">
+  <div class="grid-wrapper">
+    <div class="width-12-12">
+      <input type="checkbox" id="checkbox" />
+      <nav id="main-nav" class="main-nav">
+        <div class="logo-wrapper">
+           <a href="/"><img src="/assets/images/quarkus_logo_horizontal_rgb_600px_reverse.png" class="project-logo" title="Quarkus"></a>
+        </div>
+    <label class="nav-toggle" for="checkbox"> <i class="fa fa-bars"></i>
+</label>
+    <ul id="menu" class="menu">
+      <li class="dropdown">
+        <span href="#">Why<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          <li><a href="/about" class="">O QUE É QUARKUS?</a></li>
+          <li><a href="/developer-joy" class="">ALEGRIA DO DESENVOLVEDOR</a></li>
+          <li><a href="/performance" class="">PERFORMANCE</a></li>
+          <li><a href="/kubernetes-native" class="">KUBERNETES NATIVO</a></li>
+          <li><a href="/standards" class="">PADRÕES</a></li>
+          <li><a href="/versatility" class="">VERSATILITY</a></li>
+          <li><a href="/container-first" class="">CONTAINER PRIMEIRO</a></li>
+          <li><a href="/spring" class="">USING SPRING?</a></li>
+          <li class="tertiarydropdown">
+            <span href="#">AI<i class="fas fa-chevron-down"></i></span>
+            <ul class="tertiarymenu">
+              <li><a href="/ai" class="">AI OVERVIEW</a></li>
+              <li><a href="/java-for-ai" class="">JAVA FOR AI</a></li>
+              <li><a href="/quarkus-for-ai" class="">WHY QUARKUS FOR AI</a></li>
+              <li><a href="/ai-blueprints" class="">AI BLUEPRINTS</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <span href="#">Learn<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          <li><a href="/get-started" class="">COMEÇAR</a></li>
+          <li><a href="/guides" class="active">DOCUMENTAÇÃO</a></li>
+          <li><a href="/userstories/" class="">USER STORIES</a></li>  
+          <li><a href="/qtips" class="">VÍDEOS "Q" TIP</a></li>          
+          <li><a href="/books" class="">LIVROS</a></li>
+          </ul>
+      </li>
+      <li class="dropdown">
+        <span href="#">Extensions<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          
+          <!-- Note that quarkus.io is hardcoded here, because it is the only url which supports extensions -->
+<li><a href="https://quarkus.io/extensions/" class="">PROCURAR EXTENSÕES</a></li>
+          <li><a href="/faq/#what-is-a-quarkus-extension" class="">USAR
+EXTENSÕES</a></li>
+          <li><a href="/guides/writing-extensions" class="">CRIAR
+EXTENSÕES</a></li>
+          <li><a href="https://hub.quarkiverse.io" class="">COMPARTILHE EXTENSÕES</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <span href="#">Community<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          <li><a href="/support/" class="">SUPORTE</a></li>
+          <li><a href="/blog" class="">BLOG</a></li>
+          <li><a href="/discussion" class="">DISCUSSÃO</a></li>
+          <li><a href="/working-groups" class="">WORKING GROUPS</a></li>
+          <li><a href="/insights" class="">PODCAST</a></li>
+          <li><a href="/events" class="">EVENTOS</a></li>
+          <li><a href="/newsletter" class="">BOLETIM INFORMATIVO</a></li>
+          <li><a href="https://github.com/orgs/quarkusio/projects/13/views/1" class="">ROADMAP</a></li>
+          <li><a href="/benefactors" class="">BENEFACTORS</a></li>
+          </ul>
+      </li>
+      <li>
+        <a href="https://code.quarkus.io" class="button-cta secondary white">COMECE
+A CODIFICAR</a>
+      </li>
+      <li class="dropdown">
+        <span href="/language/"><div class="fas fa-globe langicon"></div><i class="fas fa-chevron-down"></i></span>
+        <ul class="submenu">
+          <li><a href="https://quarkus.io/guides/deploying-to-heroku" >OFFICIAL (ENGLISH)</a></li>
+          <li><a href="https://pt.quarkus.io/guides/deploying-to-heroku">PORTUGUÊS (BR)</a></li>
+          <li><a href="https://es.quarkus.io/guides/deploying-to-heroku">ESPAÑOL</a></li>
+          <li><a href="https://cn.quarkus.io/guides/deploying-to-heroku">简体中文</a></li>
+          <li><a href="https://ja.quarkus.io/guides/deploying-to-heroku">日本語</a></li>
+          </ul>
+      </li>
+      <li>
+        <span href="#" class="modeswitcher" id='theme-toggle'><i class="fas
+fa-sun"></i><i class="fas fa-moon"></i><i class="fas fa-cog"></i></span>
+      </li>
+    </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+  <div class="content">
+    
+
+
+
+
+
+<section class="full-width-version-bg flexfilterbar guides">
+    <div class="guideflexcontainer">
+        <div class="docslink">
+            <a class="returnlink" href="/guides/"> Voltar aos Guias</a>
+        </div>
+        <div class="flexlabel">
+            <label>Por Versão</label>
+        </div>
+        <div class="guidepulldown version">
+            <select id="guide-version-dropdown">
+                
+                
+                
+                <option value="main" >Main - SNAPSHOT</option>
+                
+                
+                
+                <option value="latest" selected>3.34.5 - Latest</option>
+                
+                
+                
+                <option value="3.33" >3.33</option>
+                
+                
+                
+                <option value="3.27" >3.27</option>
+                
+                
+                
+                <option value="3.20" >3.20</option>
+                
+                
+                
+                <option value="3.15" >3.15</option>
+                
+                
+                
+                <option value="3.8" >3.8</option>
+                </select>
+        </div>
+    </div>
+</section>
+
+<div class="guide">
+    <div class="grid-wrapper">
+        <div class="grid__item width-8-12 width-12-12-m">
+            <h1 class="text-caps">Publicando na Heroku </h1>
+            <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Neste guia, você aprenderá a publicar uma Aplicação da Web baseado no Quarkus como um web-dyno no Heroku.</p>
+</div>
+<div class="paragraph">
+<p>Este guia inclui:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Atualizar a porta HTTP do Quarkus</p>
+</li>
+<li>
+<p>Instalar a CLI do Heroku</p>
+</li>
+<li>
+<p>Publicar a aplicação no Heroku</p>
+</li>
+<li>
+<p>Publique a aplicação como imagem de container no Heroku</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Usando o Docker</p>
+</li>
+<li>
+<p>Usando o Podman</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Publique a aplicação nativa como imagem de container no Heroku</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="prerequisites"><a class="anchor" href="#prerequisites"></a>Pré-requisitos</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Para concluir este guia, você precisa:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Mais ou menos 1 hour for all modalities</p>
+</li>
+<li>
+<p>Um IDE</p>
+</li>
+<li>
+<p>JDK 17+ instalado com <code>JAVA_HOME</code> configurado corretamente</p>
+</li>
+<li>
+<p>Apache Maven 3.9.12</p>
+</li>
+<li>
+<p>Opcionalmente, o <a href="cli-tooling">Quarkus CLI</a> se você quiser usá-lo</p>
+</li>
+<li>
+<p><a href="https://www.heroku.com/">Uma conta do Heroku</a> . Você precisa de pelo menos uma conta Eco para implantar uma aplicação.</p>
+</li>
+<li>
+<p><a href="https://devcenter.heroku.com/articles/heroku-cli">CLI do Heroku instalada</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introdução</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>O Heroku é uma plataforma como serviço (PaaS) que permite que os desenvolvedores criem, executem e operem aplicações inteiramente na nuvem.
+Ele oferece suporte a várias linguagens, como Java, Ruby, Node.js, Scala, Clojure, Python, PHP e Go.
+Além disso, oferece um registro de containers que pode ser usado para publicar imagens de containers pré-construídas.</p>
+</div>
+<div class="paragraph">
+<p>O Heroku pode ser usado de diferentes maneiras para executar uma Aplicação Quarkus:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Como um programa Java simples executado em um container definido pelo ambiente do Heroku</p>
+</li>
+<li>
+<p>Como um programa Java em container executado em um container definido pelo processo de compilação do Quarkus</p>
+</li>
+<li>
+<p>Como um programa nativo containerizado executado em um container definido pelo processo de compilação do Quarkus</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Todas as três abordagens precisam estar cientes da porta que o Heroku atribui a ele para lidar com o tráfego.
+Felizmente, há uma propriedade de configuração dinâmica para isso.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="common-project-setup"><a class="anchor" href="#common-project-setup"></a>Configuração comum do projeto</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Este guia utilizará como entrada uma aplicação simples criada com as ferramentas do Quarkus:</p>
+</div>
+<div class="sidebarblock primary asciidoc-tabs-sync-cli">
+<div class="content">
+<div class="title">CLI</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">quarkus create app org.acme:getting-started-with-heroku
+cd getting-started-with-heroku</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Para criar um projeto Gradle, adicione a opção <code>--gradle</code> ou <code>--gradle-kotlin-dsl</code>.</p>
+</div>
+<div class="paragraph">
+<p>Para obter mais informações sobre como instalar e usar a CLI do Quarkus, consulte o guia <a href="cli-tooling">Quarkus CLI</a>.</p>
+</div>
+</div>
+</div>
+<div class="sidebarblock secondary asciidoc-tabs-sync-maven">
+<div class="content">
+<div class="title">Maven</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn io.quarkus.platform:quarkus-maven-plugin:3.34.5:create \
+    -DprojectGroupId=org.acme \
+    -DprojectArtifactId=getting-started-with-heroku
+cd getting-started-with-heroku</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Para criar um projeto Gradle, adicione a opção '-DbuildTool=gradle' ou '-DbuildTool=gradle-kotlin-dsl'.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Para usuários do Windows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Se estiver usando cmd, (não use barra invertida '\' e coloque tudo na mesma linha)</p>
+</li>
+<li>
+<p>Se estiver usando o Powershell, envolva os parâmetros '-D' entre aspas duplas, por exemplo, '"-DprojectArtifactId=getting-started-with-heroku"'</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Esse comando criará uma nova aplicação REST no diretório <code>getting-started-with-heroku</code> .</p>
+</div>
+<div class="paragraph">
+<p>Vamos transformar essa aplicação em um repositório Git:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Mude para o diretório da aplicação: <code>cd getting-started-with-heroku</code> .</p>
+</li>
+<li>
+<p>Inicialize um novo repositório Git: <code>git init -b main</code> .</p>
+</li>
+<li>
+<p>Adicione todos os arquivos ao repositório: <code>git add .</code> .</p>
+</li>
+<li>
+<p>Faça o commit dos arquivos: <code>git commit -a -m 'Initial copy of getting-started'</code> .</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>O Heroku pode reagir às alterações no seu repositório, executar a CI e republicar a aplicação quando o código for alterado. 
+Portanto, já começamos com um repositório válido.</p>
+</div>
+<div class="paragraph">
+<p>Além disso, verifique se a CLI do Heroku está funcionando:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">heroku --version
+heroku login</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="prepare-the-quarkus-http-port"><a class="anchor" href="#prepare-the-quarkus-http-port"></a>Preparar a porta HTTP do Quarkus</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>O Heroku escolhe uma porta aleatória e a atribui ao container que eventualmente executará seu aplicativo Quarkus.
+Essa porta está disponível como uma variável de ambiente em <code>$PORT</code> . 
+A maneira mais fácil de fazer com que o Quarkus esteja ciente disso em todos os cenários de publicação é usar a seguinte configuração:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.http.port=${PORT:8080}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Isso é o seguinte: "Ouça em <code>$PORT</code> se essa for uma variável definida, caso contrário, ouça em 8080 como de costume." 
+Execute o seguinte para adicionar isso ao seu <code>application.properties</code> :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo "quarkus.http.port=\${PORT:8080}" &gt;&gt; src/main/resources/application.properties
+git commit -am "Configure the HTTP Port."</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploy-the-repository-and-build-on-heroku"><a class="anchor" href="#deploy-the-repository-and-build-on-heroku"></a>Publicar o repositório e buildar no Heroku</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A primeira variante usa a compilação do Quarkus Maven para criar a estrutura da aplicação <em>quarkus-app</em> que contém o "fast-jar" executável, bem como todas as bibliotecas necessárias dentro da infraestrutura de compilação do Heroku e, em seguida, publica esse resultado; a outra usa um processo de compilação local para criar um container otimizado.</p>
+</div>
+<div class="paragraph">
+<p>Para a primeira variante, são necessários dois arquivos adicionais no diretório raiz da sua aplicação:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>system.properties</code> para configurar a versão do Java</p>
+</li>
+<li>
+<p><code>Procfile</code> para configurar como o Heroku inicia seu aplicativo</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>O Quarkus precisa do JDK 17, portanto, especificamos isso primeiro:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo "java.runtime.version=17" &gt;&gt; system.properties
+git add system.properties
+git commit -am "Configure the Java version for Heroku."</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Vamos publicar uma aplicação da Web, portanto, precisamos configurar o tipo <code>web</code> no Heroku <code>Procfile</code> da seguinte forma:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">echo "web: java \$JAVA_OPTS -jar target/quarkus-app/quarkus-run.jar" &gt;&gt; Procfile
+git add Procfile
+git commit -am "Add a Procfile."</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Sua aplicação já deve ser executável via <code>heroku local web</code> a partir do diretório raiz do repositório. Você precisa ter executado o <code>mvn package</code> antes para criar o jar executável para que isso seja bem-sucedido.</p>
+</div>
+<div class="paragraph">
+<p>Agora, vamos criar uma aplicação em sua conta e publicar esse repositório nele:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">heroku create</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Isso criará um repositório remoto na sua conta do Heroku e também deverá ter adicionado uma url remota do heroku ao seu repositório local, que poderá ser visualizado usando <code>git remote -v</code> :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">starksm@Scotts-Mac-Studio getting-started % git remote -v
+heroku	https://git.heroku.com/young-shelf-58876.git (fetch)
+heroku	https://git.heroku.com/young-shelf-58876.git (push)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Agora, você pode publicar seu aplicativo para o Heroku e abri-lo no navegador.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push heroku main
+heroku open hello</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>O aplicativo terá um URL gerado e o terminal deverá exibi-lo. O site <code>heroku open hello</code> abre o navegador padrão para acessar o novo aplicativo usando o contexto '/hello'. Essa página deve exibir o texto "hello".</p>
+</div>
+<div class="paragraph">
+<p>Para acessar o endpoint REST via curl, obtenha o URL do aplicativo no comando heroku info:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">heroku info | grep  "Web URL:"
+APP_NAME=&lt;https url info&gt;
+curl $APP_NAME/hello</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>É claro que você também pode usar a CLI do Heroku para conectar esse repositório à sua conta do GitHub, mas isso está fora do escopo deste guia.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploy-as-container"><a class="anchor" href="#deploy-as-container"></a>Publicar como container</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A vantagem de enviar um container inteiro é que temos controle total sobre seu conteúdo e talvez até mesmo optar por publicar um container com um executável nativo em execução no GraalVM.</p>
+</div>
+<div class="paragraph">
+<p>Primeiro, faça login no registro de containers do Heroku:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">heroku container:login</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Precisamos adicionar uma extensão ao nosso projeto para adicionar a capacidade de criar imagens de contêineres:</p>
+</div>
+<div class="listingblock primary asciidoc-tabs-sync-cli">
+<div class="title">CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">quarkus extension add container-image-docker</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-maven">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw quarkus:add-extension -Dextensions='container-image-docker'</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-gradle">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./gradlew addExtension --extensions='container-image-docker'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Em seguida, vamos confirmar essa alteração:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git add pom.xml
+git commit -am "Add container-image-docker extension."</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A imagem que vamos construir precisa ser nomeada adequadamente para funcionar com o registro e a publicação do Heroku. 
+Obtemos o nome gerado por meio do site <code>heroku info</code> e o passamos para a compilação (local):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">APP_NAME=`heroku info | grep  "=== .*" |sed "s/=== //"`
+./mvnw clean package\
+  -Dquarkus.container-image.build=true\
+  -Dquarkus.container-image.group=registry.heroku.com/$APP_NAME\
+  -Dquarkus.container-image.name=web\
+  -Dquarkus.container-image.tag=latest</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="push-and-release-the-image"><a class="anchor" href="#push-and-release-the-image"></a>Fazer o push e o release da imagem</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Agora você pode fazer o push da imagem e o realease.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>O push inicial é bastante grande, pois todas as camadas da imagem precisam ser transferidas.
+Os próximos envios serão menores.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="pushing-through-docker"><a class="anchor" href="#pushing-through-docker"></a>Fazendo push pelo Docker</h3>
+<div class="paragraph">
+<p>Com o Docker instalado, essas etapas são simples:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker push registry.heroku.com/$APP_NAME/web
+heroku stack:set container
+heroku container:release web --app $APP_NAME</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="pushing-through-podman"><a class="anchor" href="#pushing-through-podman"></a>Fazendo push através do Podman</h3>
+<div class="paragraph">
+<p>Quando você quiser usar o Podman como substituto do Docker, terá alguns problemas porque a CLI do Heroku depende do Docker e não é compatível com o formato OCI. Mas há possíveis soluções para esses problemas.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Não é possível encontrar o docker, verifique se o docker está instalado.</div>
+<div class="paragraph">
+<p>Obviamente, o problema é que o heroku-cli não consegue encontrar o docker. Isso é muito fácil de resolver, pois a cli do podman é compatível com o docker. Só precisamos criar um link simbólico do podman para o docker:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo ln -s $(which podman) /usr/local/bin/docker</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Erro ao escrever o manifesto: Error uploading manifest latest to registry.heroku.com/$APP_NAME/web: unsupported</div>
+<div class="paragraph">
+<p>Em vez de fazer um podman push normal (formato OCI), precisamos usar uma solução alternativa para fazer push e fazer release do nosso aplicativo por meio do Podman e da CLI do Heroku no formato desejado (v2s2 - Docker Image Manifest Version 2, Schema 2). O <a href="https://github.com/containers/skopeo">skopeo</a> também é necessário.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">CONTAINER_DIR="target/container-dir"
+mkdir $CONTAINER_DIR
+podman push --format=v2s2 "registry.heroku.com/$APP_NAME/web" dir:$CONTAINER_DIR
+skopeo --debug copy dir:$CONTAINER_DIR "docker://registry.heroku.com/$APP_NAME/web:latest"
+heroku container:release web --app "$APP_NAME"
+rm -rf $CONTAINER_DIR</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://urhengulas.github.io/blog/podman_heroku.html">Fonte de soluções e soluções alternativas</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="check-the-logs"><a class="anchor" href="#check-the-logs"></a>Verifique os logs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Você pode e deve verificar os logs para ver se o aplicativo está realmente sendo executado a partir do contêiner:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">heroku logs --app $APP_NAME --tail</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploy-as-native-application-inside-a-container"><a class="anchor" href="#deploy-as-native-application-inside-a-container"></a>Publicar como aplicação nativa dentro de um container</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A maior vantagem que temos ao publicar nosso aplicativo como um container é implantar um container com uma aplicação compilada nativamente. 
+Por quê? Porque o Heroku interromperá ou colocará a aplicação em sleep quando não houver tráfego de entrada. 
+Uma aplicação nativa iniciará muito mais rapidamente de sua suspensão.</p>
+</div>
+<div class="paragraph">
+<p>O processo é praticamente o mesmo. 
+Optamos por compilar uma imagem nativa dentro de um container local, para que não tenhamos que lidar com a instalação do GraalVM localmente:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">APP_NAME=`heroku info | grep  "=== .*" |sed "s/=== //"`
+./mvnw clean package \
+  -Dquarkus.container-image.build=true \
+  -Dquarkus.container-image.group=registry.heroku.com/$APP_NAME \
+  -Dquarkus.container-image.name=web \
+  -Dquarkus.container-image.tag=latest \
+  -Dnative \
+  -Dquarkus.native.container-build=true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Depois disso, faça push e release novamente usando o Docker ou o Podman (veja acima) e verifique os registros.</p>
+</div>
+</div>
+</div>
+        </div>
+        <div class="grid__item width-4-12 width-12-12-m tocwrapper">
+            <div class="hide-mobile toc"><ul class="sectlevel1">
+<li><a href="#prerequisites">Pré-requisitos</a></li>
+<li><a href="#introduction">Introdução</a></li>
+<li><a href="#common-project-setup">Configuração comum do projeto</a></li>
+<li><a href="#prepare-the-quarkus-http-port">Preparar a porta HTTP do Quarkus</a></li>
+<li><a href="#deploy-the-repository-and-build-on-heroku">Publicar o repositório e buildar no Heroku</a></li>
+<li><a href="#deploy-as-container">Publicar como container</a></li>
+<li><a href="#push-and-release-the-image">Fazer o push e o release da imagem</a>
+<ul class="sectlevel2">
+<li><a href="#pushing-through-docker">Fazendo push pelo Docker</a></li>
+<li><a href="#pushing-through-podman">Fazendo push através do Podman</a></li>
+</ul>
+</li>
+<li><a href="#check-the-logs">Verifique os logs</a></li>
+<li><a href="#deploy-as-native-application-inside-a-container">Publicar como aplicação nativa dentro de um container</a></li>
+</ul></div>
+        </div>
+    </div>
+    <h2>Conteúdo Relacionado</h2>
+    <div class="grid-wrapper relations">
+        <div class="grid__item width-6-12 width-12-12-m">
+            <h3>Nos mesmos tópicos</h3>
+            <ul class="related-content">
+                
+                
+                <li class="howto"><a href="/guides/deploying-to-openshift-native-howto">Deploying Quarkus applications compiled to native executables</a></li>
+                
+                
+                <li class="guide"><a href="/guides/deploying-to-openshift">Deploying Quarkus applications to OpenShift</a></li>
+                
+                
+                <li class="howto"><a href="/guides/deploying-to-openshift-howto">Deploying Quarkus applications to OpenShift in a single step</a></li>
+                
+                
+                <li class="howto"><a href="/guides/deploying-to-openshift-docker-howto">Deploying Quarkus Java applications to OpenShift by using a Docker build strategy</a></li>
+                
+                
+                <li class="guide"><a href="/guides/deploying-to-google-cloud">Deploying to Google Cloud Platform (GCP)</a></li>
+                
+                
+                <li class="guide"><a href="/guides/deploying-to-azure-cloud">Implantando na nuvem do Microsoft Azure</a></li>
+                
+                
+                <li class="guide"><a href="/guides/deploying-to-kubernetes">Kubernetes extension</a></li>
+                
+                
+                <li class="howto"><a href="/guides/deploying-to-openshift-s2i-howto">Using S2I to deploy Quarkus applications to OpenShift</a></li>
+                
+                
+                <li class="guide"><a href="/guides/container-image">Container Images</a></li>
+                
+                
+                <li class="guide"><a href="/guides/quarkus-runtime-base-image">Imagem de Tempo de Execução de Base do Quarkus</a></li>
+                
+                
+                <li class="guide"><a href="/guides/podman">Usando o Podman com o Quarkus</a></li>
+                
+                
+                <li class="guide"><a href="/guides/ansible">Automate Quarkus deployment with Ansible</a></li>
+                
+                
+                <li class="guide"><a href="/guides/aws-lambda">AWS Lambda</a></li>
+                
+                
+                <li class="guide"><a href="/guides/aws-lambda-snapstart">Configuração do AWS Lambda SnapStart</a></li>
+                
+                
+                <li class="guide"><a href="/guides/aws-lambda-http">AWS Lambda with Quarkus REST, Undertow, or Reactive Routes</a></li>
+                
+                
+                <li class="guide"><a href="/guides/azure-functions">Azure Functions</a></li>
+                
+                
+                <li class="guide"><a href="/guides/azure-functions-http">Azure Functions with Quarkus REST, Undertow, or Reactive Routes</a></li>
+                
+                
+                <li class="guide"><a href="/guides/funqy">Funqy</a></li>
+                
+                
+                <li class="guide"><a href="/guides/funqy-aws-lambda">Funqy AWS Lambda Binding</a></li>
+                
+                
+                <li class="guide"><a href="/guides/funqy-gcp-functions">Funqy Google Cloud Functions</a></li>
+                </ul>
+        </div>
+        </div>
+    </div>
+
+  </div>
+
+  <div class="content project-footer">
+  <div class="footer-section">
+    <div class="logo-wrapper">
+      <a href="/"><img src="/assets/images/quarkus_logo_horizontal_rgb_reverse.svg" class="project-logo" title="Quarkus"></a>
+    </div>
+  </div>
+  <div class="grid-wrapper">
+    <p class="grid__item width-3-12">Quarkus is open. All dependencies of this project are available under the <a href='https://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache Software License 2.0</a> or compatible license. <i class='fab fa-creative-commons'></i><i class='fab fa-creative-commons-by'></i> <a href='https://creativecommons.org/licenses/by/3.0/' target='_blank'>CC by 3.0</a><br /><br />This website was built with <a href='https://jekyllrb.com/' target='_blank'>Jekyll</a>, is hosted on <a href='https://pages.github.com/' target='_blank'>GitHub Pages</a> and is completely open source. If you want to make it better, <a href='https://github.com/quarkusio/quarkusio.github.io' target='_blank'>fork the website</a> and show us what you’ve got.</p>
+
+    
+      <div class="width-1-12 project-links">
+        <span>Navigation</span>
+        <ul class="footer-links">
+          
+          
+            <li><a href="/" target="_blank">Home</a></li>
+          
+          
+          
+            <li><a href="/about" target="_blank">About</a></li>
+          
+          
+          
+            <li><a href="/blog" target="_blank">Blog</a></li>
+          
+          
+          
+            <li><a href="/insights" target="_blank">Podcast</a></li>
+          
+          
+          
+            <li><a href="/events" target="_blank">Eventos</a></li>
+          
+          
+          
+            <li><a href="/newsletter" target="_blank">Newsletter</a></li>
+          
+          
+          
+            <li><a href="/userstories" target="_blank">User Stories</a></li>
+          
+          
+          
+            <li><a href="https://github.com/orgs/quarkusio/projects/13/views/1" target="_blank">Roadmap</a></li>
+          
+          
+          
+            <li><a href="/security" target="_blank">Security&nbsp;policy</a></li>
+          
+          
+          
+            <li><a href="/usage" target="_blank">Usage</a></li>
+          
+          
+          
+            <li><a href="https://github.com/commonhaus/artwork/tree/main/projects/quarkus" target="_blank">Brand</a></li>
+          
+          
+          
+            <li><a href="/desktopwallpapers" target="_blank">Wallpapers</a></li>
+          
+          
+          
+            <li><a href="https://www.redhat.com/en/about/privacy-policy" target="_blank">Privacy Policy</a></li>
+          
+          
+        </ul>
+      </div>
+    
+      <div class="width-1-12 project-links">
+        <span>Follow Us</span>
+        <ul class="footer-links">
+          
+          
+            <li><a href="https://x.com/quarkusio" target="_blank">X</a></li>
+          
+          
+          
+            <li><a href="https://bsky.app/profile/quarkus.io" target="_blank">Bluesky</a></li>
+          
+          
+          
+            <li><a rel="me" href="https://fosstodon.org/@quarkusio" target="_blank">Mastodon</a></li>
+            
+          
+          
+            <li><a href="https://www.threads.com/@quarkusio" target="_blank">Threads</a></li>
+          
+          
+          
+            <li><a href="https://www.facebook.com/quarkusio" target="_blank">Facebook</a></li>
+          
+          
+          
+            <li><a href="https://www.linkedin.com/company/quarkusio/" target="_blank">Linkedin</a></li>
+          
+          
+          
+            <li><a href="https://www.youtube.com/channel/UCaW8QG_QoIk_FnjLgr5eOqg" target="_blank">Youtube</a></li>
+          
+          
+          
+            <li><a href="https://github.com/quarkusio" target="_blank">GitHub</a></li>
+          
+          
+        </ul>
+      </div>
+    
+      <div class="width-2-12 project-links">
+        <span>Get Help</span>
+        <ul class="footer-links">
+          
+          
+            <li><a href="/support" target="_blank">Support</a></li>
+          
+          
+          
+            <li><a href="/guides" target="_blank">Guias</a></li>
+          
+          
+          
+            <li><a href="/faq" target="_blank">FAQ</a></li>
+          
+          
+          
+            <li><a href="/get-started" target="_blank">Get Started</a></li>
+          
+          
+          
+            <li><a href="https://stackoverflow.com/questions/tagged/quarkus" target="_blank">Stack Overflow</a></li>
+          
+          
+          
+            <li><a href="https://github.com/quarkusio/quarkus/discussions" target="_blank">Discussions</a></li>
+          
+          
+          
+            <li><a href="https://groups.google.com/forum/#!forum/quarkus-dev" target="_blank">Development mailing list</a></li>
+          
+          
+          
+            <li><a href="https://stats.uptimerobot.com/ze1PfweT2p" target="_blank">Quarkus Service Status</a></li>
+          
+          
+        </ul>
+      </div>
+    
+      <div class="width-1-12 project-links">
+        <span>Languages</span>
+        <ul class="footer-links">
+          
+          
+            <li><a href="https://quarkus.io/" target="_blank">English</a></li>
+          
+          
+          
+            <li><a href="https://pt.quarkus.io/" target="_blank">Português&nbsp;(Brasileiro)</a></li>
+          
+          
+          
+            <li><a href="https://es.quarkus.io/" target="_blank">Español</a></li>
+          
+          
+          
+            <li><a href="https://cn.quarkus.io/" target="_blank">简体中文</a></li>
+          
+          
+          
+            <li><a href="https://ja.quarkus.io/" target="_blank">日本語</a></li>
+          
+          
+        </ul>
+      </div>
+    
+
+    
+      <div class="width-4-12 more-links">
+        <span>Quarkus is made of community projects</span>
+        <ul class="footer-links">
+          
+            <li><a blah href="https://vertx.io/" target="_blank">Eclipse Vert.x</a></li>
+          
+            <li><a blah href="https://smallrye.io" target="_blank">SmallRye</a></li>
+          
+            <li><a blah href="https://hibernate.org" target="_blank">Hibernate</a></li>
+          
+            <li><a blah href="https://netty.io" target="_blank">Netty</a></li>
+          
+            <li><a blah href="https://resteasy.github.io" target="_blank">RESTEasy</a></li>
+          
+            <li><a blah href="https://camel.apache.org" target="_blank">Apache Camel</a></li>
+          
+            <li><a blah href="https://microprofile.io" target="_blank">Eclipse MicroProfile</a></li>
+          
+            <li><a blah href="https://code.quarkus.io/" target="_blank">And many more...</a></li>
+          
+        </ul>
+      </div>
+    
+  </div>
+</div>
+
+  <div class="content cf-footer">
+  <div class="flexcontainer">
+    <div class="cf-logo">
+      <a class="cf-logo" href="https://www.commonhaus.org/" target="_blank"><img src="https://raw.githubusercontent.com/commonhaus/artwork/main/foundation/brand/svg/CF_logo_horizontal_single_reverse.svg"/></a>
+    </div>
+    <div class="license">
+      Copyright © Quarkus. All rights reserved. For details on our trademarks, please visit our <a href="https://www.commonhaus.org/policies/trademark-policy/">Trademark Policy</a> and <a href="https://www.commonhaus.org/trademarks/">Trademark List</a>. Trademarks of third parties are owned by their respective holders and their mention here does not suggest any endorsement or association.
+    </div>
+  </div>
+</div>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="/assets/javascript/mobile-nav.js"></script>
+  <script type="text/javascript" src="/assets/javascript/scroll-down.js"></script>
+  <script src="/assets/javascript/satellite.js" type="text/javascript"></script>
+  <script src="/guides/javascript/config.js" type="text/javascript"></script>
+  <script src="/assets/javascript/guides-version-dropdown.js" type="text/javascript"></script>
+  <script src="/assets/javascript/back-to-top.js" type="text/javascript"></script>
+  <script src="/assets/javascript/clipboard.min.js" type="text/javascript"></script>
+  <script src="/assets/javascript/copy.js" type="text/javascript"></script>
+  <script src="/assets/javascript/asciidoc-tabs.js" type="text/javascript"></script>
+  <script src="/assets/javascript/future-date.js" type="text/javascript"></script>
+  <script src="/assets/javascript/randomize.js" type="text/javascript"></script>
+  <script src="/assets/javascript/time.js" type="text/javascript"></script>
+</body>
+
+</html>
