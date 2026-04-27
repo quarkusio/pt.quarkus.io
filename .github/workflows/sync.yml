@@ -6,9 +6,6 @@ on:
     - cron: '0 8 * * 0'
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -17,68 +14,91 @@ jobs:
   build:
     name: Sync
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
-        # Checkout target revision from git repository
-        uses: actions/checkout@v4
-      - name: Setup build env
-        # Setup build environment(install runtime, library, etc.)
-        run: |
-          bin/setup-build-env-on-ubuntu
-      - name: Set up JDK 17
-        # Setup JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 50
+          submodules: recursive
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: 17
+          java-version: '21'
+
+      - name: Setup build env
+        run: bin/setup-build-env-on-ubuntu
 
       - name: Sync submodule
-        # Sync submodule, which points the upstream repository to a latest revision
-        run: vendor/quarkus-l10n-utils/bin/sync-submodule
-      - name: Push changes
-        # Commit and Push the upstream submodule change
-        run: vendor/quarkus-l10n-utils/bin/push-changes "Update upstream"
+        run: |
+          cd upstream
+          git fetch origin main
+          git reset --hard origin/main
+          cd ..
+
+      - name: Commit changes (upstream)
+        uses: ./.github/actions/commit-changes
+        with:
+          message: "Update upstream"
 
       - name: Update po files
-        # Extract texts from the original source files and update .po files
-        run: |
-          vendor/quarkus-l10n-utils/bin/update-po-files
+        run: ./tsujiw jekyll extract
 
-      - name: Push changes
-        # Commit and Push the updated .po files
-        run: vendor/quarkus-l10n-utils/bin/push-changes "Update .po files"
+      - name: Commit changes (po files)
+        uses: ./.github/actions/commit-changes
+        with:
+          message: "Update .po files"
 
-      - name: Update translation stats
-        # Update the translation stats .csv file, which is used as an simplified dashboard ( <L10N_HOME>/l10n/stats/translation.csv )
-        run: vendor/quarkus-l10n-utils/bin/update-translation-stats
+      - name: Update all stats
+        run: ./tsujiw jekyll update-stats
 
-      - name: Push changes
-        # Commit and Push the translation stats .csv file
-        run: vendor/quarkus-l10n-utils/bin/push-changes "Update translation stats"
-
-      - name: Apply fuzzy tmx
-        # Apply fuzzy tmx to .po files to fill fuzzy translation candidates
-        run: vendor/quarkus-l10n-utils/bin/translate-po-files-with-fuzzy-tmx
-
-      - name: Push changes
-        # Commit and Push the .po files updated by fuzzy tmx
-        run: vendor/quarkus-l10n-utils/bin/push-changes "Apply fuzzy translation memory"
+      - name: Commit changes (translation stats)
+        uses: ./.github/actions/commit-changes
+        with:
+          message: "Update translation stats"
 
       - name: Apply tmx
-        # Apply tmx file to .po files to fill known translations
-        run: vendor/quarkus-l10n-utils/bin/translate-po-files-with-tmx
+        run: ./tsujiw po apply-tmx --tmx=l10n/tmx/quarkus.tmx
 
-      - name: Push changes
-        # Commit and Push the .po files updated by tmx
-        run: vendor/quarkus-l10n-utils/bin/push-changes "Apply translation memory"
+      - name: Commit changes (translation memory)
+        uses: ./.github/actions/commit-changes
+        with:
+          message: "Apply translation memory"
 
+      - name: Apply fuzzy tmx
+        run: ./tsujiw po apply-fuzzy-tmx --tmx=l10n/tmx/fuzzy.tmx
+
+      - name: Commit changes (fuzzy translation memory)
+        uses: ./.github/actions/commit-changes
+        with:
+          message: "Apply fuzzy translation memory"
+
+      # Machine translation with DeepL API
+      # Note: continue-on-error allows pushing partial results to reduce DeepL costs,
+      # but we still check the result at the end to fail the workflow if errors occurred.
       - name: Machine translate
-        # Machine translate with DeepL API
-        run: vendor/quarkus-l10n-utils/bin/translate-po-files-with-deepl
-        continue-on-error: true # The translated files need to be pushed even if the process ends with an error to reduce DeepL costs even in a situation where repeated failures occur
+        id: machine-translate
+        run: ./tsujiw po machine-translate --no-rag
+        continue-on-error: true
         env:
-          TRANSLATOR_DEEPL_APIKEY: ${{ secrets.TRANSLATOR_DEEPL_APIKEY }}
+          TSUJI_TRANSLATOR_DEEPL_KEY: ${{ secrets.TRANSLATOR_DEEPL_APIKEY }}
 
-      - name: Push changes
-        # Commit and Push the .po files updated by DeepL machine-translation
-        run: vendor/quarkus-l10n-utils/bin/push-changes "Add machine translation"
+      - name: Commit changes (machine translation)
+        if: always()
+        uses: ./.github/actions/commit-changes
+        with:
+          message: "Add machine translation"
+
+      - name: Push all changes
+        if: always()
+        uses: ./.github/actions/push-changes
+
+      # Fail the workflow if machine translation had errors
+      - name: Check machine translation result
+        if: steps.machine-translate.outcome == 'failure'
+        run: |
+          echo "Machine translation failed. Please check the logs above."
+          exit 1
