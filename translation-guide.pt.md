@@ -31,7 +31,7 @@ Ele suporta execução em Windows/Mac/Linux e possui inúmeras teclas de atalho,
 
 ### Importação e tradução automática de destinos de tradução
 
-Quando [quarkus.io](https://quarkus.io) é atualizado, os arquivos a serem traduzidos são importados automaticamente para este repositório usando o fluxo de trabalho GitHub Actions e um arquivo .po será criado. O arquivo .po contém traduções existentes armazenadas na memória de tradução e usar [quarkus-adoc-po-translator](https://github.com/doc-l10n-kit/quarkus-adoc-po-translator) irá inserir o texto traduzido automaticamente pela API DeepL, então use-o como uma tradução aproximada.
+Quando [quarkus.io](https://quarkus.io) é atualizado, os arquivos a serem traduzidos são importados automaticamente para este repositório usando o fluxo de trabalho GitHub Actions e um arquivo .po será criado. O arquivo .po contém traduções existentes armazenadas na memória de tradução e o texto será traduzido automaticamente pela API DeepL, então use-o como uma tradução aproximada.
 
 No entanto, por se tratar de uma tradução automática, há muitas partes erradas e está marcada como "confirmação necessária" (fuzzy), e a tradução não será refletida a menos que a marca "fuzzy" seja removida...
 Revise e corrija a tradução e remova a marca "difusa".
