@@ -8,8 +8,8 @@ Localized site: [https://pt.quarkus.io/](https://pt.quarkus.io)
 
 Original [quarkusio.github.io](https://github.com/quarkusio/quarkusio.github.io) is built with Jekyll, 
 and most of its contents are written in asciidoctor (.adoc) files.
-pt.quarkus.io extracts texts to po files with [po4a](https://po4a.org/) utility, translates, 
-write back to asciidoctor files, and build a localized site.
+pt.quarkus.io uses [tsuji](https://github.com/doc-l10n-kit/tsuji) to extract texts to po files,
+translate, write back to asciidoctor files, and build a localized site.
 Most workflow including pre-translation by DeepL API are automated by GitHub Actions. 
 Translators can focus on post-editing to improve fluency.
 If you are interested in contributing localization, please edit .po files, and submit a pull request.
@@ -21,7 +21,7 @@ If you are interested in contributing localization, please edit .po files, and s
 #### sync workflow
 
 The `pt.quarkus.io` GitHub repository has a GitHub Actions workflow which checks upstream repository(submodule) update, 
-extracts texts from upstream .adoc files to [.adoc.po files](l10n/po), pre-translate with a translation memory 
+extracts texts from upstream .adoc files to [.adoc.po files](l10n/po), pre-translates with a translation memory 
 and the DeepL API.
 
 #### Translating .po files
@@ -37,7 +37,7 @@ please remove "fuzzy" mark and correct inappropriate sentences if needed.
 When you send a pull-request, GitHub Actions workflow automatically apply translations in .po files to .adoc files,
 build a localized site and deploy it to surge.sh with preview domain. When the deploy finish, GitHub Actions comment 
 the URL to the pull-request. Reviewers can check the deployed site for review.
-When the pull-request is merged into `master`, it is automatically deployed to the production site (https://pt.quarkus.io).
+When the pull-request is merged into `main`, it is automatically deployed to the production site (https://pt.quarkus.io).
 
 ### Local build
 
@@ -47,15 +47,17 @@ Please install tools by just executing it, or execute equivalent your package ma
 ```
 bin/setup-build-env-on-ubuntu
 ```
+You also need JDK 21 installed.
+
 After that, run the following command to build the site.
 ```
-vendor/quarkus-l10n-utils/bin/build
+./tsujiw jekyll build
 ```
-The site is built in `doc` directory.
+The site is built in `docs` directory.
 
 You can start local server to preview the site.
 ```
-vendor/quarkus-l10n-utils/bin/exec-jekyll-serve
+./tsujiw jekyll serve
 ```
 
 ### HTML templates localization
