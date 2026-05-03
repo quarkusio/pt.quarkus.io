@@ -1,13 +1,6 @@
-# SOME DESCRIPTIVE TITLE
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-09-21 08:08+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,6 +21,7 @@ msgstr "Fila de trabalhos Redis - Recarregado"
 msgid "How to implement a more reliable job queue with Redis, including fault tolerance, de-duplication, and poison pill."
 msgstr "Como implementar uma fila de trabalho mais fiável com o Redis, incluindo tolerância a falhas, desduplicação e poison pill."
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -41,6 +35,7 @@ msgstr "Em link:https://quarkus.io/blog/redis-job-queue/[Como implementar uma fi
 msgid "In this post, we explain how to improve the reliability of the job queue to handle failures, enable retry and use a _dead-letter queue_ to avoid poison pills."
 msgstr "Neste post, explicamos como melhorar a fiabilidade da fila de trabalhos para lidar com falhas, ativar a repetição e utilizar uma _fila de cartas mortas_ para evitar poison pills."
 
+#. type: Title =
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid "Recap & Problem"
@@ -52,6 +47,7 @@ msgstr "Recapitulação e problema"
 msgid "In the https://quarkus.io/blog/redis-job-queue/[previous blog post], we implemented the following system."
 msgstr "Na  link:https://quarkus.io/blog/redis-job-queue/[publicação anterior do blogue], implementámos o seguinte sistema."
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -60,6 +56,7 @@ msgid ""
 "The outcomes of the _fights_ were communicated using Redis Pub/Sub."
 msgstr "Um aplicativo recebe _solicitações de luta_ e grava essas solicitações em uma lista do Redis. Vários simuladores processaram essa lista. Os resultados das _lutas_ foram comunicados usando o Redis Pub/Sub."
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -67,6 +64,7 @@ msgid ""
 "This command pops the item from the queue in an atomic manner and ensure that the other simulators can't process it too."
 msgstr "A arquitetura funciona e garante que uma luta só possa ser executada uma vez, graças ao comando `brpop` usado pelo código do simulador. Esse comando retira o item da fila de forma atômica e garante que os outros simuladores não possam processá-lo também."
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -75,11 +73,13 @@ msgid ""
 "No other simulator would be able to process it, and if the simulator that failed restarts, it will not reprocess the same request."
 msgstr "No entanto, essa arquitetura tem uma desvantagem. Se o processamento da solicitação de luta estourada falhar, a solicitação será perdida. Nenhum outro simulador poderá processá-la e, se o simulador que falhou for reiniciado, ele não reprocessará a mesma solicitação."
 
+#. type: Title =
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid "Introducing more queues"
 msgstr "Introdução de mais filas"
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -100,6 +100,7 @@ msgstr "Estas filas de espera privadas constituem uma rede de segurança."
 msgid "So, the simulator does use not only the _main queue_ but also its private queue:"
 msgstr "Assim, o simulador utiliza não só a _fila principal_, mas também a sua fila privada:"
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -121,6 +122,7 @@ msgstr "Assim, utilizamos o seguinte código para mover o pedido da fila princip
 msgid "Now, the simulator does not simulate the requests from the main queue but needs to process the ones added to its private queue."
 msgstr "Agora, o simulador não simula os pedidos da fila principal, mas precisa de processar os pedidos adicionados à sua fila privada."
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -130,6 +132,7 @@ msgid ""
 "We do this until the queue is empty."
 msgstr "Esse código é um pouco diferente do código do blog anterior. Desta vez, não fazemos pop. Obtemos o último item da fila (o índice `-1` é o último), o processamos e o removemos da fila. Fazemos isso até que a fila esteja vazia."
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -138,11 +141,13 @@ msgid ""
 "2. once the private queue is empty, it gets new requests from the main queue. It will not process them directly but re-trigger the processing of the private queue until the queue is empty."
 msgstr "Vamos juntar tudo: 1. quando o simulador é iniciado, ele deve processar os itens de sua fila particular. Portanto, se houver uma falha, ele tentará processar o item novamente. 2. quando a fila privada estiver vazia, ele recebe novas solicitações da fila principal. Ele não as processará diretamente, mas acionará novamente o processamento da fila privada até que a fila esteja vazia."
 
+#. type: Title =
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid "New architecture, new problems"
 msgstr "Nova arquitetura, novos problemas"
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -169,11 +174,13 @@ msgstr "_Duplicados_: se o processamento for bem sucedido, mas o `lrem` falhar p
 msgid "_Poison pill_: if a request cannot be processed successfully, it will retry to process it forever."
 msgstr "_Pílula venenosa_: se um pedido não puder ser processado com êxito, tentará novamente processá-lo para sempre."
 
+#. type: Title ==
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid "De-duplication"
 msgstr "Desduplicação"
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -181,11 +188,13 @@ msgid ""
 "In other words, if all our requests have a unique id, we can check if that id has already been processed (for example, by storing the processed ids in another list or a hash). If the item has already been processed, ignore it (remove it from the queue) and process it to the next one:"
 msgstr "Para lidar com _duplicatas_ , é necessário ter uma maneira de identificar as solicitações de forma exclusiva e deduplicá-las manualmente. Em outras palavras, se todas as nossas solicitações tiverem um ID exclusivo, poderemos verificar se esse ID já foi processado (por exemplo, armazenando os IDs processados em outra lista ou em um hash). Se o item já tiver sido processado, ignore-o (remova-o da fila) e processe-o para o próximo:"
 
+#. type: Title ==
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid "Avoiding swallowing the poison pill"
 msgstr "Evitar engolir a pílula de veneno"
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -195,6 +204,7 @@ msgid ""
 "Retrying, in this case, will not help; we are not facing a transient issue."
 msgstr "O tratamento de _poison pills_ é mais complexo. Uma _poison pill_ é uma solicitação que sempre fará com que o processamento falhe. Pode ser devido a um bug no código de processamento ou a algo inesperado; ela sempre falhará. Tentar novamente, nesse caso, não ajudará; não estamos enfrentando um problema transitório."
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -209,6 +219,7 @@ msgstr "Então, o que podemos fazer? Precisamos rastrear o número de tentativas
 msgid "The counter is a specific Redis integer value that we increment and reset once we succeed or give up."
 msgstr "O contador é um valor inteiro específico do Redis que incrementamos e redefinimos quando temos sucesso ou desistimos."
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -217,11 +228,13 @@ msgid ""
 "Another approach requires that a human administrator looks at these requests before re-injecting them into the system; maybe it was just a formatting issue..."
 msgstr "Os itens do DLQ não são perdidos; eles são salvos para processamento futuro. Esses itens podem ser adicionados novamente à fila principal (para verificar se não foi um problema transitório ou se o bug foi corrigido). Outra abordagem exige que um administrador humano examine essas solicitações antes de reinjetá-las no sistema; talvez tenha sido apenas um problema de formatação..."
 
+#. type: Title =
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid "Summary"
 msgstr "Resumo"
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
@@ -231,6 +244,7 @@ msgid ""
 "But, nothing comes for free, and the resulting code is slightly more complex."
 msgstr "Esta postagem explora como melhorar a fila de trabalho que implementamos em link:https://quarkus.io/blog/redis-job-queue/[Como implementar uma fila de trabalho com o Redis] . Essa implementação inicial, embora simples, perderia solicitações se o processamento falhasse. Esta publicação propõe outra arquitetura, mais complexa, para lidar com esse caso, mas também com duplicatas e poison pills. Porém, nada vem de graça, e o código resultante é um pouco mais complexo."
 
+#. type: Plain text
 #: _posts/2022-11-22-redis-job-queue-reloaded.adoc
 #, fuzzy
 msgid ""
