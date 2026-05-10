@@ -560,7 +560,7 @@ msgstr "Armazéns de chaves fornecidos"
 
 #. type: Plain text
 #: _versions/main/guides/tls-registry-reference.adoc
-msgid "If you need more control over the keystore used in a TLS configuration, you can provide a CDI bean implementing the `io.quarkus.tls.runtime.KeyStoreProvider` interface."
+msgid "If you need more control over the keystore used in a TLS configuration, you can provide a CDI bean implementing the `io.quarkus.tls.KeyStoreProvider` interface."
 msgstr ""
 
 #. type: Plain text
@@ -593,6 +593,74 @@ msgstr ""
 #. type: Plain text
 #: _versions/main/guides/tls-registry-reference.adoc
 msgid "You can inject other CDI beans to access keystore material at runtime."
+msgstr ""
+
+#. type: Title ===
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid "Other keystore types"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid "If you need to use a keystore type other than PEM, PKCS12, or JKS (for example, Bouncy Castle FIPS `BCFKS`), use the `other` configuration:"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid ""
+"The `type` property is required and corresponds to the type passed to `java.security.KeyStore.getInstance(type)`.\n"
+"The optional `provider` property specifies the Java security provider name.\n"
+"All other properties (`path`, `password`, `alias`, `alias-password`) work identically to the JKS and PKCS12 configurations.\n"
+"The `other` option is mutually exclusive with `pem`, `p12`, `jks`, and `KeyStoreProvider` beans."
+msgstr ""
+
+#. type: Title ====
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid "Custom keystore factory"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid "For keystore types that require custom loading logic beyond `KeyStore.getInstance()`, implement a `KeyStoreFactory` CDI bean annotated with `@Identifier` matching the `type` value:"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid ""
+"The factory receives the full `OtherKeyStoreConfiguration`, including arbitrary parameters set via `quarkus.tls.key-store.other.params.<key>=<value>`.\n"
+"If no factory bean is found for the given type, the standard `KeyStore.getInstance(type, provider)` loading is used as a fallback."
+msgstr ""
+
+#. type: Title ====
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid "PKCS#11 example"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid ""
+"PKCS#11 keystores are provider-managed (backed by a hardware security module or software token) and cannot be loaded from a file.\n"
+"Use a `KeyStoreFactory` to integrate a PKCS#11 keystore with the TLS registry:"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid "The `@Identifier` value must match the `type` in the configuration."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid "Arbitrary parameters from `quarkus.tls.key-store.other.params.*` are available via `config.params()`."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid "PKCS#11 keystores are loaded with `null` — the provider manages the underlying storage."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid "Use `KeyStoreOptionsBase` to let Vert.x create a `KeyManagerFactory` from the provider-backed keystore."
 msgstr ""
 
 #. type: Title ===
@@ -766,9 +834,8 @@ msgstr "Lojas de confiança fornecidas"
 
 #. type: Plain text
 #: _versions/main/guides/tls-registry-reference.adoc
-#, fuzzy
-msgid "If you need more control over the truststore used in a TLS configuration, you can provide a CDI bean implementing the `io.quarkus.tls.runtime.TrustStoreProvider` interface. Quarkus calls `TrustStoreProvider::getTrustStore` when the TLS configuration is <<startup-checks,initially created>> and any time the configuration is <<reloading-certificates,reloaded>>. The resulting truststore and options are then made available via `TlsConfiguration::getTrustStore` and `TlsConfiguration::getTrustStoreOptions`."
-msgstr "Se precisar de mais controle sobre o truststore usado em uma configuração TLS, o usuário pode fornecer um bean CDI que implemente a interface `io.quarkus.tls.runtime.TrustStoreProvider` . O Quarkus chama `TrustStoreProvider::getTrustStore` quando a configuração TLS é xref:startup-checks[criada inicialmente] e sempre que a configuração é xref:reloading-certificates[recarregada] . O truststore e as opções resultantes são então disponibilizados por meio de `TlsConfiguration::getTrustStore` e `TlsConfiguration::getTrustStoreOptions` ."
+msgid "If you need more control over the truststore used in a TLS configuration, you can provide a CDI bean implementing the `io.quarkus.tls.TrustStoreProvider` interface. Quarkus calls `TrustStoreProvider::getTrustStore` when the TLS configuration is <<startup-checks,initially created>> and any time the configuration is <<reloading-certificates,reloaded>>. The resulting truststore and options are then made available via `TlsConfiguration::getTrustStore` and `TlsConfiguration::getTrustStoreOptions`."
+msgstr ""
 
 #. type: Block title
 #: _versions/main/guides/tls-registry-reference.adoc
@@ -793,6 +860,23 @@ msgstr ""
 #. type: Plain text
 #: _versions/main/guides/tls-registry-reference.adoc
 msgid "You can inject other CDI beans to access truststore material at runtime."
+msgstr ""
+
+#. type: Title ===
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid "Other truststore types"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid "If you need to use a truststore type other than PEM, PKCS12, or JKS, use the `other` configuration:"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/tls-registry-reference.adoc
+msgid ""
+"This works the same as the <<Other keystore types>> configuration described above.\n"
+"For custom loading logic, implement a `TrustStoreFactory` CDI bean annotated with `@Identifier` matching the `type` value."
 msgstr ""
 
 #. type: Plain text
