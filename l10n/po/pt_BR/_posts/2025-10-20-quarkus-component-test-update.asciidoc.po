@@ -7,29 +7,39 @@ msgstr ""
 "X-Generator: jekyll-l10n\n"
 
 #. type: YAML Front Matter: title
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Quarkus - a component testing update"
-msgstr ""
+msgstr "Quarkus - uma atualização do teste de componentes"
 
 #. type: YAML Front Matter: synopsis
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "It has been a while since we introduced the component testing in Quarkus. What’s new? What new functionalities are available?"
-msgstr ""
+msgstr "Já faz algum tempo que introduzimos o teste de componentes no Quarkus. O que há de novo? Quais são as novas funcionalidades disponíveis?"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid ""
 "It's been a while since we https://quarkus.io/blog/quarkus-component-test/[introduced the component testing] in Quarkus.\n"
 "In this blogpost, we will first quickly summarize the basic principles and then describe some of the new interesting features."
-msgstr ""
+msgstr "Já faz algum tempo que https://quarkus.io/blog/quarkus-component-test/[introduzimos o teste de componentes] no Quarkus. Neste post do blog, primeiro faremos um resumo rápido dos princípios básicos e, em seguida, descreveremos alguns dos novos recursos interessantes."
 
 #. type: Title =
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Quick summary"
-msgstr ""
+msgstr "Resumo rápido"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid ""
 "First, just a quick summary.\n"
 "The component model of Quarkus is built on top of CDI.\n"
@@ -44,43 +54,61 @@ msgid ""
 "In Quarkus 3.2, we introduced an experimental feature to ease the testing of CDI components and mocking of their dependencies.\n"
 "It's a JUnit 5 extension that does not start a full Quarkus application but merely the CDI container and the Configuration service."
 msgstr ""
+"Uma maneira idiomática de testar um aplicativo Quarkus é usar o módulo `quarkus-junit5` e o `@QuarkusTest`. No entanto, nesse caso, um aplicativo Quarkus completo precisa ser construído e iniciado.\n"
+"Para evitar reconstruções e reinicializações desnecessárias, o aplicativo é compartilhado para vários testes, a menos que um https://quarkus.io/guides/getting-started-testing#testing_different_profiles[different test profile] seja usado. Uma das consequências é que alguns componentes (normalmente os beans CDI `@ApplicationScoped` e `@Singleton`) também são compartilhados.\n"
+"E se você precisar testar a lógica comercial de um componente isoladamente, com diferentes estados e entradas? Para esse caso de uso, um teste de unidade simples faria muito sentido. No entanto, escrever testes de unidade para beans CDI sem um contêiner CDI em execução costuma ser um trabalho tedioso.\n"
+"Injeção de dependência, eventos, interceptores - todo o trabalho tem de ser feito manualmente e tudo precisa ser conectado manualmente. No Quarkus 3.2, introduzimos um recurso experimental para facilitar o teste de componentes CDI e a simulação de suas dependências. É uma extensão do JUnit 5 que não inicia um aplicativo Quarkus completo, mas apenas o contêiner CDI e o serviço de configuração."
 
 #. type: Title ==
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "The lifecycle"
-msgstr ""
+msgstr "O ciclo de vida"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid ""
 "So when exactly does the `QuarkusComponentTest` start the CDI container?\n"
 "It depends on the value of `@org.junit.jupiter.api.TestInstance#lifecycle`.\n"
 "If the test instance lifecycle is `Lifecycle#PER_METHOD` (default) then the container is started during the _before each_ test phase and stopped during the _after each_ test phase.\n"
 "If the test instance lifecycle is `Lifecycle#PER_CLASS`` then the container is started during the _before all_ test phase and stopped during the _after all_ test phase."
 msgstr ""
+"Então, quando exatamente o `QuarkusComponentTest` inicia o contêiner CDI? Isso depende do valor de `@org.junit.jupiter.api.TestInstance#lifecycle`. Se o ciclo de vida da instância de teste for `Lifecycle#PER_METHOD` (padrão), o contêiner será iniciado durante a fase _antes de cada teste_ e interrompido durante a fase _depois de cada teste_.\n"
+"Se o ciclo de vida da instância de teste for `Lifecycle#PER_CLASS``, o contêiner será iniciado durante a fase de teste _before all_ e interrompido durante a fase de teste _after all_."
 
 #. type: Title ==
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Components under test"
-msgstr ""
+msgstr "Componentes em teste"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid ""
 "When writing a component test, it's essential to understand how the set of _tested components_ is built.\n"
 "It's because the _tested components_ are treated as real beans, but all _unsatisfied dependencies_ are mocked automatically.\n"
 "What does it mean?\n"
 "Imagine that we have a bean `Foo` like this:"
-msgstr ""
+msgstr "Ao escrever um teste de componente, é essencial entender como o conjunto de _componentes testados_ é construído. Isso ocorre porque os _componentes testados_ são tratados como beans reais, mas todas as _dependências não satisfeitas_ são simuladas automaticamente. O que isso significa? Imagine que temos um bean `Foo` como este:"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid ""
 "It has one dependency - a bean `Charlie`.\n"
 "Now if you want to write a unit test for `Foo` you need to make sure the `Charlie` dependency is injected and functional.\n"
 "In `QuarkusComponentTest`, if you include `Foo` in the set of tested components but `Charlie` is not included, then a mock is automatically injected into `Foo.charlie`.\n"
 "What's also important is that you can inject the mock directly in the test using the `@InjectMock` annotation and configure the mock in a test method:"
 msgstr ""
+"Agora, se o senhor quiser escrever um teste de unidade para o `Foo`, precisará garantir que a dependência do `Charlie` seja injetada e funcional.\n"
+"No `QuarkusComponentTest`, se o usuário incluir o `Foo` no conjunto de componentes testados, mas o `Charlie` não estiver incluído, um mock será automaticamente injetado no `Foo.charlie`. O que também é importante é que o usuário pode injetar o mock diretamente no teste usando a anotação `@InjectMock` e configurar o mock em um método de teste:"
 
 #. type: Plain text
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
@@ -89,9 +117,11 @@ msgid "The `QuarkusComponentTest` annotation registers the JUnit extension."
 msgstr "A anotação `QuarkusComponentTest` registra a extensão JUnit."
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "The test injects `Foo` - it's included in the set of tested components. In other words, it's treated as a real CDI bean."
-msgstr ""
+msgstr "O teste injeta o `Foo` - ele é incluído no conjunto de componentes testados. Em outras palavras, ele é tratado como um bean CDI real."
 
 #. type: Plain text
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
@@ -112,9 +142,11 @@ msgid "The initial set of tested components is derived from the test class:"
 msgstr "O conjunto inicial de componentes testados é derivado da classe de teste:"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "First, the types of all fields annotated with `@jakarta.inject.Inject` are considered the component types."
-msgstr ""
+msgstr "Primeiro, os tipos de todos os campos anotados com `@jakarta.inject.Inject` são considerados os tipos de componentes."
 
 #. type: Plain text
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
@@ -123,9 +155,11 @@ msgid "The types of test methods parameters that are not annotated with `@Inject
 msgstr "Os tipos de parâmetros de métodos de teste que não são anotados com `@InjectMock` , `@SkipInject` , ou `@org.mockito.Mock` também são considerados tipos de componentes."
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Finally, if `@QuarkusComponentTest#addNestedClassesAsComponents()` is set to `true` (it is by default) then all static nested classes declared on the test class are components too."
-msgstr ""
+msgstr "Por fim, se `@QuarkusComponentTest#addNestedClassesAsComponents()` for definido como `true` (por padrão), todas as classes estáticas aninhadas declaradas na classe de teste também serão componentes."
 
 #. type: Plain text
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
@@ -146,9 +180,11 @@ msgid "Quarkus 3.13"
 msgstr "Quarkus 3.13"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Removed the experimental status"
-msgstr ""
+msgstr "Removido o status experimental"
 
 #. type: Plain text
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
@@ -157,67 +193,87 @@ msgid "Quarkus 3.21"
 msgstr "Quarkus 3.21"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Basic support for nested tests"
-msgstr ""
+msgstr "Suporte básico para testes aninhados"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Quarkus 3.29"
-msgstr ""
+msgstr "Quarkus 3.29"
 
 #. type: Title ==
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Class loading refactoring"
-msgstr ""
+msgstr "Refatoração do carregamento de classes"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "`QuarkusComponentTestCallbacks`"
-msgstr ""
+msgstr "`QuarkusComponentTestCallbacks`"
 
 #. type: Title ==
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Integration with `quarkus-panache-mock`"
-msgstr ""
+msgstr "Integração com o `quarkus-panache-mock"
 
 #. type: Title ==
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Support `@InjectMock` for built-in `Event`"
-msgstr ""
+msgstr "Suporte a `@InjectMock` para `Event` incorporado"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid ""
 "In the previous versions of `QuarkusComponentTest` it wasn't possible to perform bytecode transformations.\n"
 "As a result, features like https://quarkus.io/guides/cdi-reference#simplified-constructor-injection[simplified constructor injection] or ability to https://quarkus.io/guides/cdi-reference#unproxyable_classes_transformation[handle final classes and methods] were not supported.\n"
 "That wasn't ideal because the tested CDI beans may have required changes before being used in a `QuarkusComponentTest`.\n"
 "This limitation is gone!\n"
 "The class loading is now more similar to a real Quarkus application."
-msgstr ""
+msgstr "Nas versões anteriores do `QuarkusComponentTest` não era possível realizar transformações de bytecode. Como resultado, recursos como https://quarkus.io/guides/cdi-reference#simplified-constructor-injection[simplified constructor injection] ou a capacidade de https://quarkus.io/guides/cdi-reference#unproxyable_classes_transformation[handle final classes and methods] não eram suportados. Isso não era ideal porque os beans CDI testados poderiam precisar de alterações antes de serem usados em um `QuarkusComponentTest`. Essa limitação desapareceu! O carregamento de classes agora é mais semelhante a um aplicativo Quarkus real."
 
 #. type: Title ==
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "QuarkusComponentTestCallbacks"
-msgstr ""
+msgstr "QuarkusComponentTestCallbacks"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid ""
 "We also introduced a new SPI - `QuarkusComponentTestCallbacks` - that can be used to contribute additional logic to the `QuarkusComponentTest` extension.\n"
 "There are several callbacks that can be used to modify the behavior before the container is built, after the container is started, etc.\n"
 "It is a service provider, so all you have to do is to create a file located in `META-INF/services/io.quarkus.test.component.QuarkusComponentTestCallbacks` that contains the fully qualified name of your implementation class."
-msgstr ""
+msgstr "Também introduzimos um novo SPI - `QuarkusComponentTestCallbacks` - que pode ser usado para contribuir com lógica adicional para a extensão `QuarkusComponentTest`. Há vários retornos de chamada que podem ser usados para modificar o comportamento antes de o contêiner ser construído, depois de o contêiner ser iniciado etc. É um provedor de serviços, portanto, tudo o que o senhor precisa fazer é criar um arquivo localizado em `META-INF/services/io.quarkus.test.component.QuarkusComponentTestCallbacks` que contenha o nome totalmente qualificado de sua classe de implementação."
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid ""
 "Thanks to class loading refactoring and `QuarkusComponentTestCallbacks` SPI, we're now able to do interesting stuff.\n"
 "Previously, whenever we got a question like:\n"
 "_\"What if I use Panache entities with the active record pattern? How I do write a test for a component that is using such entities?\"_, we had to admit that it wasn't possible.\n"
 "But it's no longer true.\n"
 "Once you add the `quarkus-panache-mock` module in your application you can write the component test in a similar way as with the https://quarkus.io/guides/hibernate-orm-panache#using-the-active-record-pattern[`PanacheMock` API]."
-msgstr ""
+msgstr "Graças à refatoração do carregamento de classes e à SPI `QuarkusComponentTestCallbacks`, agora podemos fazer coisas interessantes. Anteriormente, sempre que recebíamos uma pergunta como: _\"E se eu usar entidades Panache com o padrão de registro ativo? Como faço para escrever um teste para um componente que usa essas entidades?\"_, tínhamos de admitir que não era possível. Mas isso não é mais verdade. Depois de adicionar o módulo `quarkus-panache-mock` ao seu aplicativo, o senhor pode escrever o teste do componente de forma semelhante à da API https://quarkus.io/guides/hibernate-orm-panache#using-the-active-record-pattern[`PanacheMock`]."
 
 #. type: Plain text
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
@@ -232,9 +288,11 @@ msgid "That is used in a simple bean:"
 msgstr "Isso é usado em um feijão simples:"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "You can write a component test like:"
-msgstr ""
+msgstr "O senhor pode escrever um teste de componente como:"
 
 #. type: Plain text
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
@@ -249,42 +307,56 @@ msgid "The test injects the component under the test - `PersonService`."
 msgstr "O teste injeta o componente sob teste - `PersonService` ."
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "It is now possible to mock the built-in bean for `jakarta.enterprise.event.Event`."
-msgstr ""
+msgstr "Agora é possível simular o bean incorporado para `jakarta.enterprise.event.Event`."
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Given this simple CDI bean:"
-msgstr ""
+msgstr "Dado esse bean CDI simples:"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Install the mock for the built-in `Event`."
-msgstr ""
+msgstr "Instale o mock para o `Event` incorporado."
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Call the `register()` method that should trigger an event."
-msgstr ""
+msgstr "Chame o método `register()` que deve acionar um evento."
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Verify that the `Event#fire()` method was called exactly once."
-msgstr ""
+msgstr "Verifique se o método `Event#fire()` foi chamado exatamente uma vez."
 
 #. type: Title ==
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid "Nested tests"
-msgstr ""
+msgstr "Testes aninhados"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid ""
 "JUnit `@Nested` tests may help to structure more complex test scenarios.\n"
 "However, its support has proven more troublesome than we expected.\n"
 "Still, we do support and test the basic use cases like this:"
-msgstr ""
+msgstr "Os testes JUnit `@Nested` podem ajudar a estruturar cenários de teste mais complexos. No entanto, seu suporte se mostrou mais problemático do que esperávamos. Ainda assim, oferecemos suporte e testamos os casos de uso básicos como este:"
 
 #. type: Plain text
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
@@ -305,9 +377,11 @@ msgid "Conclusion"
 msgstr "Conclusão"
 
 #. type: Plain text
+#. mt: deepl
 #: _posts/2025-10-20-quarkus-component-test-update.asciidoc
+#, fuzzy
 msgid ""
 "If you want to test the business logic of your components in isolation, with different configurations and inputs, then `QuarkusComponentTest` is a good choice.\n"
 "It's fast, integrated with continuous testing, and extensible.\n"
 "As always, we are looking forward to your feedback!"
-msgstr ""
+msgstr "Se o senhor quiser testar a lógica comercial de seus componentes isoladamente, com diferentes configurações e entradas, o `QuarkusComponentTest` é uma boa opção. Ele é rápido, integrado a testes contínuos e extensível. Como sempre, aguardamos seu feedback!"
