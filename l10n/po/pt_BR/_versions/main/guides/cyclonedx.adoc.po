@@ -50,6 +50,11 @@ msgstr ""
 
 #. type: Plain text
 #: _versions/main/guides/cyclonedx.adoc
+msgid "<<extension-sbom-contributions,Extension SBOM contributions>> — contributing additional components to the application SBOM from Quarkus extensions"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
 msgid "All SBOM generation in this guide follows the https://cyclonedx.org/[CycloneDX] specification."
 msgstr ""
 
@@ -661,3 +666,102 @@ msgstr "String que representa um caminho de sistema de arquivos usando `/` como 
 #, fuzzy
 msgid "Used in SBOMs with schema versions 1.4 or older. Starting from schema 1.5, `evidence.occurrences.location` is used instead. This property is used only if a component is found in the distribution. The value is a relative path to a file pointing to the location of a component in a distribution using `/` as a path element separator."
 msgstr "Usado em SBOMs com versões de esquema 1.4 ou anteriores. A partir do esquema 1.5, `evidence.occurrences.location` é usado em seu lugar. Essa propriedade é usada somente se um componente for encontrado na distribuição. O valor é um caminho relativo para um arquivo que aponta para o local de um componente em uma distribuição usando `/` como separador de elementos de caminho."
+
+#. type: Title =
+#: _versions/main/guides/cyclonedx.adoc
+msgid "Extension SBOM Contributions"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid ""
+"By default, Quarkus generates SBOMs from the application's Maven dependency model and the packaging output.\n"
+"Extensions that manage additional software components — for example, npm packages or other non-Maven artifacts — can contribute those components to the application SBOM by producing `SbomContributionBuildItem` instances from their `@BuildStep` methods."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid ""
+"Extension contributions are merged with the core application contribution by the SBOM generator.\n"
+"Components marked as top-level will appear as direct dependencies of the main application component in the generated SBOM."
+msgstr ""
+
+#. type: Title ==
+#: _versions/main/guides/cyclonedx.adoc
+msgid "API Overview"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "Extension SBOM contributions are built from the following classes:"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "`io.quarkus.sbom.Purl` — identifies a software component using the https://github.com/package-url/purl-spec[Package URL] specification. Factory methods are provided for Maven, npm, and generic component types."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "`io.quarkus.sbom.ComponentDescriptor` — describes a software component with its PURL, scope, integrity hash, and other metadata."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "`io.quarkus.sbom.ComponentDependencies` — describes the dependency relationships of a component, referencing other components by their bom-ref."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "`io.quarkus.sbom.SbomContribution` — groups component descriptors and their dependency relationships into a single contribution."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "`io.quarkus.deployment.sbom.SbomContributionBuildItem` — a `MultiBuildItem` that carries an `SbomContribution` to the SBOM generator."
+msgstr ""
+
+#. type: Title ==
+#: _versions/main/guides/cyclonedx.adoc
+msgid "Example"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "The following example shows a `@BuildStep` method that contributes npm packages to the application SBOM:"
+msgstr ""
+
+#. type: Title ==
+#: _versions/main/guides/cyclonedx.adoc
+msgid "Key Points"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "Extensions must not designate a main component — only the core application contribution does that."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "Components from any package ecosystem can be contributed using the appropriate `Purl` type (e.g., `Purl.npm(...)`, `Purl.maven(...)`, `Purl.generic(...)`, or `Purl.of(type, ...)` for other ecosystems)."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "Set `topLevel(true)` on components that are direct dependencies of the application (e.g., packages declared in `package.json`). Transitive dependencies should not be marked as top-level."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "The `scope` field classifies components as `runtime` or `development` dependencies, which is recorded in the SBOM as the `quarkus:component:scope` property."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "The `integrity` field can carry an SRI-format hash (e.g., from lock files) for component verification."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "Dependency relationships are optional. If you only need to list components without expressing their dependency graph, use `SbomContribution.ofComponents(...)`."
+msgstr ""
