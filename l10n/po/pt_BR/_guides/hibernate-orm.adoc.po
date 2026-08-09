@@ -177,22 +177,20 @@ msgstr "Exemplo `{config-file}`"
 
 #. type: Plain text
 #: _guides/hibernate-orm.adoc
-msgid "xref:datasource.adoc[Configure the datasource]."
-msgstr "xref:datasource.adoc[Configure a fonte de dados]."
+msgid "xref:datasource.adoc[Configure the datasource] for production, relying on xref:datasource#dev-services[Dev Services] for connection information in tests / dev mode."
+msgstr ""
 
 #. type: Plain text
 #: _guides/hibernate-orm.adoc
-msgid "Drop and create the database at startup (use `update` to only update the schema)."
-msgstr "Remove e crie o banco de dados na inicialização (use `update` para atualizar apenas o schema)."
+msgid "Configure Hibernate ORM to create the schema on startup in production, which is useful for experimentation, but rely on <<dev-mode,convenient defaults in tests / dev mode>>."
+msgstr ""
 
 #. type: Plain text
 #: _guides/hibernate-orm.adoc
 msgid ""
-"Note that these configuration properties are not the same ones as in your typical Hibernate ORM configuration file.\n"
+"Note that configuration properties for the Hibernate ORM Quarkus extension are not the same ones as in your typical Hibernate ORM configuration file.\n"
 "They will often map to Hibernate ORM configuration properties but could have different names and don't necessarily map 1:1 to each other."
 msgstr ""
-"Observe que essas propriedades de configuração não são as mesmas do arquivo de configuração típico do Hibernate ORM.\n"
-"Elas geralmente correspondem às propriedades de configuração do Hibernate ORM, mas podem ter nomes diferentes e não necessariamente possuem uma correspondência de 1:1 entre si."
 
 #. type: Plain text
 #: _guides/hibernate-orm.adoc
@@ -360,12 +358,16 @@ msgstr ""
 #: _guides/hibernate-orm.adoc
 msgid ""
 "If the database cannot be reached, a warning will be logged but startup will proceed.\n"
-"You can optionally disable the version check if you know the database won't be reachable on startup\n"
+"If you know the database won't be reachable on startup, consider configuring <<offline,offline startup>>,\n"
+"which will automatically disable the check and warning."
+msgstr ""
+
+#. type: Plain text
+#: _guides/hibernate-orm.adoc
+msgid ""
+"As a last resort, you can disable the version check completely\n"
 "using <<quarkus-hibernate-orm_quarkus-hibernate-orm-database-version-check-enabled,`quarkus.hibernate-orm.database.version-check.enabled=false`>>."
 msgstr ""
-"Se o banco de dados não puder ser acessado, será registrado um aviso, mas a inicialização continuará.\n"
-"Opcionalmente, você pode desativar a verificação de versão se souber que o banco de dados não poderá ser acessado na inicialização\n"
-"usando <<quarkus-hibernate-orm_quarkus-hibernate-orm-database-version-check-enabled,`quarkus.hibernate-orm.database.version-check.enabled=false`>>."
 
 #. type: Title ===
 #: _guides/hibernate-orm.adoc
@@ -584,13 +586,8 @@ msgstr "Defina uma fonte de dados chamada `inventory`."
 
 #. type: Plain text
 #: _guides/hibernate-orm.adoc
-msgid "Define a persistence unit called `users`."
-msgstr "Defina uma unidade de persistência chamada `users`."
-
-#. type: Plain text
-#: _guides/hibernate-orm.adoc
-msgid "Define the datasource used by the persistence unit."
-msgstr "Definir a fonte de dados usada pela unidade de persistência."
+msgid "Define a persistence unit called `users` pointing to the `users` datasource."
+msgstr ""
 
 #. type: Plain text
 #: _guides/hibernate-orm.adoc
@@ -1337,13 +1334,15 @@ msgstr "Hibernate ORM no modo de desenvolvimento"
 
 #. type: Plain text
 #: _guides/hibernate-orm.adoc
-msgid "Quarkus development mode is really useful for applications that mix front end or services and database access."
-msgstr "O modo de desenvolvimento do Quarkus é muito útil para aplicações que combinam frontend ou serviços com acesso a banco de dados."
+msgid ""
+"During tests and in xref:dev-mode-differences.adoc[development mode], Hibernate ORM benefits from xref:datasource.adoc#dev-services[datasource Dev Services],\n"
+"making configuration of database connections unnecessary."
+msgstr ""
 
 #. type: Plain text
 #: _guides/hibernate-orm.adoc
-msgid "There are a few common approaches to make the best of it."
-msgstr "Há algumas abordagens comuns para tirar o melhor proveito disso."
+msgid "The main remaining question is how to initialize that database."
+msgstr ""
 
 #. type: Plain text
 #. mt: deepl
@@ -1356,34 +1355,32 @@ msgstr "A primeira opção é utilizar `quarkus.hibernate-orm.schema-management.
 #: _guides/hibernate-orm.adoc
 msgid ""
 "That way for every change to your app and in particular to your entities, the database schema will be properly recreated\n"
-"and your data fixture (stored in `import.sql`) will be used to repopulate it from scratch.\n"
-"This is best to perfectly control your environment and works magic with Quarkus live reload mode:\n"
-"your entity changes or any change to your `import.sql` is immediately picked up and the schema updated without restarting the application!"
+"and your data fixture (stored in `import.sql`) will be used to repopulate it from scratch."
 msgstr ""
-"Dessa forma, a cada alteração na sua aplicação e, em particular, nas suas entidades, o schema do banco de dados será recriado corretamente\n"
-"e seus dados de fixture (armazenados em `import.sql`) serão usados para repopulá-lo do zero.\n"
-"Isso é ideal para ter controle total sobre seu ambiente e funciona perfeitamente com o modo de live reload do Quarkus:\n"
-"qualquer alteração nas suas entidades ou no `import.sql` é imediatamente detectada e o schema é atualizado sem reiniciar a aplicação!"
 
 #. type: Plain text
-#. mt: deepl
 #: _guides/hibernate-orm.adoc
-#, fuzzy
 msgid ""
-"By default, in `dev` and `test` modes, Hibernate ORM, upon boot, will read and execute the SQL statements in the `/import.sql` file (if present).\n"
-"You can change the file name by changing the property `quarkus.hibernate-orm.sql-load-script` in `application.properties`.\n"
+"This is best to perfectly control your environment and works magic with Quarkus live reload mode:\n"
+"your entity changes or any change to your `import.sql` is immediately picked up and the schema updated without restarting the application!\n"
+"In fact, this is the default when using xref:dev-services.adoc[Dev Services]."
+msgstr ""
+
+#. type: Plain text
+#: _guides/hibernate-orm.adoc
+msgid ""
+"You can use a file with a different name than `import.sql` by setting the property `quarkus.hibernate-orm.sql-load-script` in `application.properties`.\n"
 "You can also provide a `.zip` file in the same way which should contain only the files containing the SQL statements to be executed."
 msgstr ""
-"Por padrão, nos modos `dev` e `test`, o Hibernate ORM, ao inicializar, lerá e executará as instruções SQL no arquivo `/import.sql` (se presente).\n"
-"Você pode alterar o nome do arquivo modificando a propriedade `quarkus.hibernate-orm.sql-load-script` em `application.properties`.\n"
-"Também é possível fornecer um arquivo `.zip` da mesma forma, que deve conter apenas os arquivos com as instruções SQL a serem executadas."
 
 #. type: Plain text
-#. mt: deepl
 #: _guides/hibernate-orm.adoc
-#, fuzzy
+msgid "The second approach is to use `quarkus.hibernate-orm.schema-management.strategy=update`."
+msgstr ""
+
+#. type: Plain text
+#: _guides/hibernate-orm.adoc
 msgid ""
-"The second approach is to use `quarkus.hibernate-orm.schema-management.strategy=update`.\n"
 "This approach is best when you do many entity changes but\n"
 "still need to work on a copy of the production data\n"
 "or if you want to reproduce a bug that is based on specific database entries.\n"
@@ -1392,27 +1389,18 @@ msgid ""
 "For example if you change structures which violate a foreign key constraint, Hibernate ORM might have to bail out.\n"
 "But for development, these limitations are acceptable."
 msgstr ""
-"A segunda abordagem é utilizar `quarkus.hibernate-orm.schema-management.strategy=update`.\n"
-"Essa abordagem é mais indicada quando você realiza muitas alterações nas entidades, mas\n"
-"ainda precisa trabalhar com uma cópia dos dados de produção\n"
-"ou quando deseja reproduzir um bug baseado em entradas específicas do banco de dados.\n"
-"O `update` é o melhor esforço do Hibernate ORM e falhará em situações específicas,\n"
-"incluindo alterações na estrutura do banco de dados que possam levar à perda de dados.\n"
-"Por exemplo, se você alterar estruturas que violem uma restrição de chave estrangeira, o Hibernate ORM poderá ser forçado a interromper a operação.\n"
-"Mas para desenvolvimento, essas limitações são aceitáveis."
 
 #. type: Plain text
-#. mt: deepl
 #: _guides/hibernate-orm.adoc
-#, fuzzy
+msgid "The third approach is to use `quarkus.hibernate-orm.schema-management.strategy=none`."
+msgstr ""
+
+#. type: Plain text
+#: _guides/hibernate-orm.adoc
 msgid ""
-"The third approach is to use `quarkus.hibernate-orm.schema-management.strategy=none`.\n"
 "This approach is best when you are working on a copy of the production data but want to fully control the schema evolution.\n"
 "Or if you use a database schema migration tool like xref:flyway.adoc[Flyway] or xref:liquibase.adoc[Liquibase]."
 msgstr ""
-"A terceira abordagem é utilizar `quarkus.hibernate-orm.schema-management.strategy=none`.\n"
-"Essa abordagem é mais indicada quando você está trabalhando com uma cópia dos dados de produção, mas deseja ter controle total sobre a evolução do schema.\n"
-"Ou se você utiliza uma ferramenta de migração de schema de banco de dados como xref:flyway.adoc[Flyway] ou xref:liquibase.adoc[Liquibase]."
 
 #. type: Plain text
 #: _guides/hibernate-orm.adoc
@@ -1424,11 +1412,9 @@ msgstr ""
 "você também pode usar `validate` para que o Hibernate verifique se o schema corresponde às suas expectativas."
 
 #. type: Plain text
-#. mt: deepl
 #: _guides/hibernate-orm.adoc
-#, fuzzy
-msgid "Do not use `quarkus.hibernate-orm.schema-management.strategy` `drop-and-create` and `update` in your production environment."
-msgstr "Não utilize `quarkus.hibernate-orm.schema-management.strategy`, `drop-and-create` ou `update` em seu ambiente de produção."
+msgid "Do not set `quarkus.hibernate-orm.schema-management.strategy` to `drop-and-create` or `update` in your production environment."
+msgstr ""
 
 #. type: Plain text
 #: _guides/hibernate-orm.adoc
@@ -1823,6 +1809,34 @@ msgstr "Para definir o tempo ocioso máximo, forneça a duração (consulte a no
 msgid "The double quotes are mandatory if your region name contains a dot. For instance:"
 msgstr "As aspas duplas são obrigatórias se o nome da região contiver um ponto. Por exemplo:"
 
+#. type: Title ===
+#: _guides/hibernate-orm.adoc
+msgid "Weight-based eviction"
+msgstr ""
+
+#. type: Plain text
+#: _guides/hibernate-orm.adoc
+msgid ""
+"For entities with highly variable sizes (e.g., storing JSON data that ranges from a few bytes to\n"
+"megabytes), count-based eviction cannot reliably bound memory usage. In these cases, use weight-based\n"
+"eviction instead:"
+msgstr ""
+
+#. type: Plain text
+#: _guides/hibernate-orm.adoc
+msgid ""
+"The `maximum-weight` property sets the total weight limit for the cache region. The `weigher-class`\n"
+"property specifies a `com.github.benmanes.caffeine.cache.Weigher` implementation that assigns a\n"
+"weight to each cache entry:"
+msgstr ""
+
+#. type: Plain text
+#: _guides/hibernate-orm.adoc
+msgid ""
+"`object-count` and `maximum-weight` are mutually exclusive per cache region.\n"
+"If `maximum-weight` is set without `weigher-class`, each entry has a default weight of 1."
+msgstr ""
+
 #. type: Title ==
 #: _guides/hibernate-orm.adoc
 #, no-wrap
@@ -2148,10 +2162,8 @@ msgstr "Cache de segundo nível"
 #: _guides/hibernate-orm.adoc
 msgid ""
 "As explained earlier in the <<caching,Caching section>>, you don't need to pick an implementation.\n"
-"A suitable implementation based on technologies from link:https://infinispan.org/[Infinispan] and link:https://github.com/ben-manes/caffeine[Caffeine] is included as a transitive dependency of the Hibernate ORM extension, and automatically integrated during the build."
+"A suitable implementation based on link:https://jcp.org/en/jsr/detail?id=107[JCache] and link:https://github.com/ben-manes/caffeine[Caffeine] is included as a transitive dependency of the Hibernate ORM extension, and automatically integrated during the build."
 msgstr ""
-"Conforme explicado anteriormente na <<caching,seção de Cache>>, você não precisa escolher uma implementação.\n"
-"Uma implementação adequada baseada nas tecnologias do link:https://infinispan.org/[Infinispan] e do link:https://github.com/ben-manes/caffeine[Caffeine] é incluída como uma dependência transitiva da extensão do Hibernate ORM e integrada automaticamente durante a compilação."
 
 #. type: Title ==
 #: _guides/hibernate-orm.adoc
@@ -2476,6 +2488,11 @@ msgid ""
 msgstr ""
 "Usamos a fonte de dados padrão aqui, mas poderíamos usar uma fonte de dados nomeada, se quiséssemos,\n"
 "seguindo <<multiple-persistence-units,aqui>> instruções."
+
+#. type: Plain text
+#: _guides/hibernate-orm.adoc
+msgid "xref:datasource.adoc[Configure the datasource]."
+msgstr "xref:datasource.adoc[Configure a fonte de dados]."
 
 #. type: Plain text
 #: _guides/hibernate-orm.adoc
