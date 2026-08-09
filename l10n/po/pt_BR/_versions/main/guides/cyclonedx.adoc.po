@@ -135,9 +135,13 @@ msgstr "O formato `XML` pode ser solicitado definindo o parâmetro de meta de `f
 
 #. type: Plain text
 #: _versions/main/guides/cyclonedx.adoc
-#, fuzzy
-msgid "Each component in the generated SBOM will include the `quarkus:component:scope` property indicating whether the component is used at runtime or only at development/build time."
-msgstr "Cada componente no SBOM gerado incluirá a propriedade `quarkus:component:scope` indicando se o componente é usado em tempo de execução ou somente em tempo de desenvolvimento/construção."
+msgid "Development/build-time dependencies will have their CycloneDX `scope` set to `excluded` (see <<build-time-dependencies>>), while runtime dependencies omit the `scope` field (defaulting to `required` per the specification)."
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "Optionally, the `quarkus:component:scope` custom property can be included on each component by setting `includeQuarkusComponentScope` to `true` (or `-Dquarkus.dependency.sbom.include-quarkus-component-scope=true`). When enabled, each component will carry a property indicating whether it is a `runtime` or `development` dependency:"
+msgstr ""
 
 #. type: Plain text
 #: _versions/main/guides/cyclonedx.adoc
@@ -225,9 +229,8 @@ msgstr "Por exemplo, para gerar um SBOM apenas para as dependências de tempo de
 
 #. type: Plain text
 #: _versions/main/guides/cyclonedx.adoc
-#, fuzzy
-msgid "Given that the plugin is not aware of how Quarkus uses these dependencies, it will not be able to set the `quarkus:component:scope` property for components. On the other hand, the requested configuration name can be used to indicate which scope to target."
-msgstr "Como o plug-in não está ciente de como o Quarkus usa essas dependências, ele não poderá definir a propriedade `quarkus:component:scope` para os componentes. Por outro lado, o nome da configuração solicitada pode ser usado para indicar qual escopo deve ser direcionado."
+msgid "Given that the plugin is not aware of how Quarkus uses these dependencies, it will not be able to set the CycloneDX `scope` field or the `quarkus:component:scope` property for components. On the other hand, the requested configuration name can be used to indicate which scope to target."
+msgstr ""
 
 #. type: Title =
 #: _versions/main/guides/cyclonedx.adoc
@@ -408,6 +411,21 @@ msgid "When enabled, components that would be classified as `file` type in Cyclo
 msgstr "Quando ativada, os componentes que seriam classificados como “tipo `de arquivo”` no CycloneDX (componentes PURL genéricos com um caminho do sistema de arquivos ou um caminho de distribuição) são excluídos da SBOM gerada, juntamente com suas relações de dependência."
 
 #. type: Title ==
+#: _versions/main/guides/cyclonedx.adoc
+msgid "Runtime-only mode"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "By default, the generated SBOM includes both runtime and development/build-time dependencies. To include only runtime dependencies, use:"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "When enabled, development/build-time dependencies (those with CycloneDX `scope` set to `excluded`) are excluded entirely from the generated SBOM along with their dependency relationships. This can be useful when the SBOM is intended for runtime vulnerability scanning and build-time components are not relevant."
+msgstr ""
+
+#. type: Title ==
 #. mt: deepl
 #: _versions/main/guides/cyclonedx.adoc
 #, fuzzy
@@ -497,9 +515,8 @@ msgstr "Componentes de tempo de execução"
 
 #. type: Plain text
 #: _versions/main/guides/cyclonedx.adoc
-#, fuzzy
-msgid "Every file in the resulting Fast JAR distribution will appear in the SBOM with the `quarkus:component:scope` property set to `runtime` and `evidence.occurrences.location` field pointing to the location of the component in the application distribution directory, for example:"
-msgstr "Cada arquivo na distribuição Fast JAR resultante aparecerá no SBOM com a propriedade `quarkus:component:scope` definida como `runtime` e o campo `evidence.occurrences.location` apontando para o local do componente no diretório de distribuição do aplicativo, por exemplo:"
+msgid "Every file in the resulting Fast JAR distribution will appear in the SBOM with an `evidence.occurrences.location` field pointing to the location of the component in the application distribution directory. Runtime components do not set the CycloneDX `scope` field, which defaults to `required` per the specification. For example:"
+msgstr ""
 
 #. type: Plain text
 #: _versions/main/guides/cyclonedx.adoc
@@ -515,9 +532,13 @@ msgstr "Dependências de tempo de construção"
 
 #. type: Plain text
 #: _versions/main/guides/cyclonedx.adoc
-#, fuzzy
-msgid "Build time dependencies will be recorded with the `quarkus:component:scope` property set to `development`:"
-msgstr "As dependências de tempo de compilação serão registradas com a propriedade `quarkus:component:scope` definida como `development` :"
+msgid "Build time dependencies will have their CycloneDX `scope` set to `excluded`:"
+msgstr ""
+
+#. type: Plain text
+#: _versions/main/guides/cyclonedx.adoc
+msgid "The `excluded` scope indicates that these components are not reachable within a call graph at runtime, as defined by the CycloneDX specification. Runtime components omit the `scope` field, which defaults to `required` per the specification."
+msgstr ""
 
 #. type: Plain text
 #: _versions/main/guides/cyclonedx.adoc
@@ -611,9 +632,8 @@ msgstr "A distribuição do Mutable JAR é semelhante à do Fast JAR, mas també
 
 #. type: Plain text
 #: _versions/main/guides/cyclonedx.adoc
-#, fuzzy
-msgid "SBOMs generated for Mutable JAR distributions will also record locations of components that will be used during re-augmentation process using `evidence.occurrences.location` but keeping their `quarkus:component:scope` property set to `development`. For example:"
-msgstr "Os SBOMs gerados para distribuições JAR mutáveis também registrarão os locais dos componentes que serão usados durante o processo de re-augmentação usando `evidence.occurrences.location` , mas mantendo a propriedade `quarkus:component:scope` definida como `development` . Por exemplo:"
+msgid "SBOMs generated for Mutable JAR distributions will also record locations of components that will be used during re-augmentation process using `evidence.occurrences.location` but keeping their CycloneDX `scope` set to `excluded`. For example:"
+msgstr ""
 
 #. type: Title =
 #: _versions/main/guides/cyclonedx.adoc
@@ -793,9 +813,8 @@ msgstr "`runtime` ou `development`"
 
 #. type: Table
 #: _versions/main/guides/cyclonedx.adoc
-#, fuzzy
-msgid "Indicates whether a component is a runtime or a build/development time dependency of an application."
-msgstr "Indica se um componente é uma dependência de tempo de execução ou de tempo de construção/desenvolvimento de um aplicativo."
+msgid "Indicates whether a component is a runtime or a build/development time dependency of an application. Disabled by default; enable with `quarkus.cyclonedx.include-quarkus-component-scope=true`. Development components always have their CycloneDX `scope` set to `excluded` regardless of this setting."
+msgstr ""
 
 #. type: Table
 #: _versions/main/guides/cyclonedx.adoc
@@ -916,9 +935,8 @@ msgstr "Defina `topLevel(true)` nos componentes que são dependências diretas d
 
 #. type: Plain text
 #: _versions/main/guides/cyclonedx.adoc
-#, fuzzy
-msgid "The `scope` field classifies components as `runtime` or `development` dependencies, which is recorded in the SBOM as the `quarkus:component:scope` property."
-msgstr "O campo `de escopo` classifica os componentes como dependências de `tempo de execução` ou `de desenvolvimento` , o que é registrado no SBOM como a propriedade `quarkus:component:scope` ."
+msgid "The `scope` field classifies components as `runtime` or `development` dependencies. Development components have their CycloneDX `scope` set to `excluded`. When `quarkus.cyclonedx.include-quarkus-component-scope` is enabled, the scope is also recorded as the `quarkus:component:scope` custom property."
+msgstr ""
 
 #. type: Plain text
 #: _versions/main/guides/cyclonedx.adoc
