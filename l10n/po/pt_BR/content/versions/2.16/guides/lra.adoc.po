@@ -24,6 +24,7 @@ msgid ""
 "such as JTA/XA and \"home-grown\" ad hoc consistency solutions."
 msgstr "A ideia é que vários serviços executem diferentes cálculos/ações em conjunto, mantendo a opção de compensar quaisquer ações executadas durante o cálculo. Esse tipo de acoplamento frouxo de serviços preenche a lacuna entre modelos de consistência fortes, como JTA/XA, e soluções de consistência ad hoc \"caseiras\"."
 
+#, fuzzy
 msgid ""
 "The model is based on the https://github.com/eclipse/microprofile-lra/blob/master/spec/src/main/asciidoc/microprofile-lra-spec.asciidoc[Eclipse MicroProfile LRA specification].\n"
 "The approach is for the developer to annotate a business method with a Java annotation\n"
@@ -47,7 +48,7 @@ msgid ""
 "and closing an LRA causes all participants to be notified via their Complete callback (if they have one).\n"
 "Other annotations for controlling participants are documented in the\n"
 "https://download.eclipse.org/microprofile/microprofile-lra-1.0/apidocs/[MicroProfile LRA API v1.0 javadoc]."
-msgstr ""
+msgstr "O modelo baseia-se na link:https://github.com/eclipse/microprofile-lra/blob/master/spec/src/main/asciidoc/microprofile-lra-spec.asciidoc[especificação do Eclipse MicroProfile LRA] . A abordagem é que o desenvolvedor anote um método de negócios com uma anotação Java ( link:https://download.eclipse.org/microprofile/microprofile-lra-1.0/apidocs/[@LRA] ). Quando esse método é chamado, é criado um contexto de LRA (se ainda não houver um), que é transmitido com as invocações JAX-RS subsequentes até que seja alcançado um método que também contenha uma anotação `@LRA` com um atributo que indique que o LRA deve ser fechado ou cancelado. O padrão é que o LRA seja fechado no mesmo método que iniciou o LRA (que pode ter propagado o contexto durante a execução do método). O recurso JAX-RS indica que deseja participar da interação, no mínimo, marcando um dos métodos com uma anotação link:https://download.eclipse.org/microprofile/microprofile-lra-1.0/apidocs/[@Compensate] . Se o contexto for cancelado posteriormente, então essa ação `@Compensate` tem a garantia de ser chamada mesmo na presença de falhas e é o gatilho para o recurso compensar quaisquer atividades que tenha realizado no contexto do LRA. Essa garantia permite que os serviços operem de forma confiável com a garantia de consistência eventual (quando todas as atividades de compensação tiverem sido concluídas). O participante pode pedir para ser notificado de forma confiável quando o LRA do qual está participando for encerrado, marcando um dos métodos com uma anotação link:https://download.eclipse.org/microprofile/microprofile-lra-1.0/apidocs/[@Complete] . Dessa forma, o cancelamento de um LRA faz com que todos os participantes sejam notificados por meio de sua chamada de retorno Compensar e o fechamento de um LRA faz com que todos os participantes sejam notificados por meio de sua chamada de retorno Concluir (se houver). Outras anotações para controle de participantes estão documentadas no link:https://download.eclipse.org/microprofile/microprofile-lra-1.0/apidocs/[javadoc da API MicroProfile LRA v1.0] ."
 
 msgid "Configuration"
 msgstr "Configuração"
@@ -60,10 +61,11 @@ msgstr "Depois de configurar o seu projeto Quarkus Maven, é possível adicionar
 msgid "This will add the following to your build file:"
 msgstr "Isto irá adicionar o seguinte trecho no seu arquivo de build:"
 
+#, fuzzy
 msgid ""
 "`quarkus-narayana-lra` needs to be complemented with a server JAX-RS implementation and a REST Client implementation in order to work.\n"
 "This means that users should also have either `quarkus-resteasy-jackson` and `quarkus-rest-client-jackson` or `quarkus-resteasy-reactive-jackson` and `quarkus-rest-client-reactive-jackson` dependencies in their application."
-msgstr ""
+msgstr "`quarkus-narayana-lra` precisa ser complementado com uma implementação de servidor JAX-RS e uma implementação de cliente REST para funcionar. Isso significa que os usuários também devem ter dependências de `quarkus-resteasy-jackson` e `quarkus-rest-client-jackson` ou `quarkus-resteasy-reactive-jackson` e `quarkus-rest-client-reactive-jackson` em seus aplicativos."
 
 msgid ""
 "If there is a running coordinator then this is all you need in order to create\n"
@@ -118,10 +120,11 @@ msgid ""
 "(`@Complete` is called):"
 msgstr "A seguir, um exemplo simples de como iniciar um LRA e como receber uma notificação quando o LRA for cancelado posteriormente (o método anotado `@Compensate` é chamado) ou fechado ( `@Complete` é chamado):"
 
+#, fuzzy
 msgid ""
 "The example also shows that when an LRA is present its identifier can be obtained\n"
 "by reading the request headers via the `@HeaderParam` JAX-RS annotation type."
-msgstr ""
+msgstr "O exemplo também mostra que, quando um LRA está presente, seu identificador pode ser obtido pela leitura dos cabeçalhos da solicitação por meio do tipo de anotação `@HeaderParam` JAX-RS."
 
 msgid ""
 "And here's an example of how to start an LRA in one resource method and close it in\n"
@@ -131,6 +134,7 @@ msgid ""
 "`cancelOnFamily` elements:"
 msgstr "E aqui está um exemplo de como iniciar um LRA em um método de recurso e fechá-lo em um método de recurso diferente usando o elemento `end` da anotação `LRA` . Ele também mostra como configurar o LRA para ser cancelado automaticamente se o método de negócios retornar os códigos de status HTTP específicos identificados nos elementos `cancelOn` e `cancelOnFamily` :"
 
+#, fuzzy
 msgid ""
 "The `end = false` element on the bookTrip method forces the LRA to continue running when\n"
 "the method finishes and the `end = true` element on the confirmTrip method forces the LRA\n"
@@ -138,4 +142,4 @@ msgid ""
 "end element can be placed on any JAX-RS resource (ie one service can start the LRA whilst\n"
 "a different service ends it). There are many more examples in the\n"
 "https://github.com/eclipse/microprofile-lra/blob/master/spec/src/main/asciidoc/microprofile-lra-spec.asciidoc#java-annotations-for-lras[Microprofile LRA specification document] and in the https://github.com/eclipse/microprofile-lra/tree/master/tck/src/main/java/org/eclipse/microprofile/lra/tck[Microprofile LRA TCK]."
-msgstr ""
+msgstr "O elemento `end = false` no método bookTrip força o LRA a continuar em execução quando o método termina e o elemento `end = true` no método confirmTrip força o LRA (iniciado pelo método bookTrip) a ser fechado quando o método termina. Observe que esse elemento de fim pode ser colocado em qualquer recurso JAX-RS (ou seja, um serviço pode iniciar o LRA enquanto outro serviço o encerra). Há muitos outros exemplos no link:https://github.com/eclipse/microprofile-lra/blob/master/spec/src/main/asciidoc/microprofile-lra-spec.asciidoc#java-annotations-for-lras[documento de especificação do Microprofile LRA] e no link:https://github.com/eclipse/microprofile-lra/tree/master/tck/src/main/java/org/eclipse/microprofile/lra/tck[Microprofile LRA TCK] ."
