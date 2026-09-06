@@ -1,0 +1,855 @@
+msgid ""
+msgstr ""
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: roq-plugin-l10n-adoc\n"
+
+msgid "Using OpenTracing"
+msgstr "Usando o OpenTracing"
+
+msgid ""
+"This guide explains how your Quarkus application can utilize OpenTracing to provide distributed tracing for\n"
+"interactive web applications."
+msgstr "Este guia explica como sua aplicação Quarkus pode utilizar o OpenTracing para fornecer rastreamento distribuído para aplicativos Web interativos."
+
+#, fuzzy
+msgid "xref:opentelemetry.adoc[OpenTelemetry] is the recommended approach to tracing and telemetry for Quarkus."
+msgstr "xref:opentelemetry.adoc[O OpenTelemetry] é a abordagem recomendada para rastreamento e telemetria para o Quarkus."
+
+#, fuzzy
+msgid "When Quarkus will upgrade to Eclipse MicroProfile 6, the SmallRye OpenTracing support will be discontinued."
+msgstr "Quando o Quarkus for atualizado para o Eclipse MicroProfile 6, o suporte ao SmallRye OpenTracing será descontinuado."
+
+msgid "This technology is considered {extension-status}."
+msgstr "Essa tecnologia é considerada {extension-status}."
+
+msgid "Being _deprecated_ means that this extension is likely to be replaced or removed in a future version of Quarkus."
+msgstr "Ser _deprecated_ significa que essa extensão provavelmente será substituída ou removida em uma versão futura do Quarkus."
+
+msgid "For a full list of possible statuses, check our https://quarkus.io/faq/#what-are-the-extension-statuses[FAQ entry]."
+msgstr "Para obter uma lista completa de possíveis status, consulte nosso https://quarkus.io/faq/#what-are-the-extension-statuses[FAQ]."
+
+msgid "Prerequisites"
+msgstr "Pré-requisitos"
+
+msgid "To complete this guide, you need:"
+msgstr "Para concluir este guia, você precisa:"
+
+msgid "Roughly 15 minutes"
+msgstr "Cerca de 15 minutos"
+
+msgid "An IDE"
+msgstr "Um IDE"
+
+msgid "JDK 11+ installed with `JAVA_HOME` configured appropriately"
+msgstr "JDK 11+ instalado com 'JAVA_HOME' configurado adequadamente"
+
+msgid "Apache Maven {maven-version}"
+msgstr "Apache Maven {maven-version}"
+
+msgid "A working container runtime (Docker or xref:podman.adoc[Podman])"
+msgstr "Um container runtime instalado (Docker ou xref:podman.adoc[Podman])"
+
+msgid "Optionally the xref:cli-tooling.adoc[Quarkus CLI] if you want to use it"
+msgstr "Opcionalmente, o xref:cli-tooling.adoc[Quarkus CLI] se você quiser usá-lo"
+
+msgid "Optionally Mandrel or GraalVM installed and xref:building-native-image.adoc#configuring-graalvm[configured appropriately] if you want to build a native executable (or Docker if you use a native container build)"
+msgstr "Opcionalmente, Mandrel ou GraalVM instalado e xref:building-native-image.adoc#configuring-graalvm[configurado apropriadamente] se você quiser criar um executável nativo (ou Docker se você usar uma compilação de contêiner nativo)"
+
+msgid "Architecture"
+msgstr "Arquitetura"
+
+#, fuzzy
+msgid "In this guide, we create a straightforward REST application to demonstrate distributed tracing."
+msgstr "Neste guia, criamos um aplicativo REST simples para demonstrar o rastreamento distribuído."
+
+msgid "Solution"
+msgstr "Solução"
+
+msgid ""
+"We recommend that you follow the instructions in the next sections and create the application step by step.\n"
+"However, you can skip right to the completed example."
+msgstr "Recomendamos que você siga as instruções nas próximas seções e crie o aplicativo passo a passo. No entanto, você pode pular diretamente para o exemplo completo."
+
+msgid "Clone the Git repository: `git clone {quickstarts-clone-url}`, or download an {quickstarts-archive-url}[archive]."
+msgstr "Clone o repositório Git: `git clone {quickstarts-clone-url}`, ou baixe um {quickstarts-archive-url}[arquivo]."
+
+#, fuzzy
+msgid "The solution is located in the `opentracing-quickstart` link:{quickstarts-tree-url}/opentracing-quickstart[directory]."
+msgstr "A solução está localizada no link:{quickstarts-tree-url}/opentracing-quickstart[diretório] `opentracing-quickstart` ."
+
+msgid "Creating the Maven project"
+msgstr "Criar o projeto Maven"
+
+msgid "First, we need a new project. Create a new project with the following command:"
+msgstr "Primeiro, precisamos de um novo projeto. Crie um novo projeto com o seguinte comando:"
+
+msgid "CLI"
+msgstr "CLI"
+
+msgid "To create a Gradle project, add the `--gradle` or `--gradle-kotlin-dsl` option."
+msgstr "Para criar um projeto Gradle, adicione a opção `--gradle` ou `--gradle-kotlin-dsl`."
+
+msgid "For more information about how to install and use the Quarkus CLI, see the xref:cli-tooling.adoc[Quarkus CLI] guide."
+msgstr "Para obter mais informações sobre como instalar e usar a CLI do Quarkus, consulte o guia xref:cli-tooling.adoc[Quarkus CLI]."
+
+msgid "Maven"
+msgstr "Maven"
+
+msgid "To create a Gradle project, add the `-DbuildTool=gradle` or `-DbuildTool=gradle-kotlin-dsl` option."
+msgstr "Para criar um projeto Gradle, adicione a opção '-DbuildTool=gradle' ou '-DbuildTool=gradle-kotlin-dsl'."
+
+#, fuzzy
+msgid ""
+"This command generates the Maven project and imports the `smallrye-opentracing` extension, which\n"
+"includes the OpenTracing support and the default https://www.jaegertracing.io/[Jaeger] tracer."
+msgstr "Esse comando gera o projeto Maven e importa a extensão `smallrye-opentracing` , que inclui o suporte ao OpenTracing e o rastreador link:https://www.jaegertracing.io/[Jaeger] padrão."
+
+#, fuzzy
+msgid ""
+"If you already have your Quarkus project configured, you can add the `smallrye-opentracing` extension\n"
+"to your project by running the following command in your project base directory:"
+msgstr "Se já tiver o projeto Quarkus configurado, o senhor pode adicionar a extensão `smallrye-opentracing` ao projeto executando o seguinte comando no diretório base do projeto:"
+
+msgid "This will add the following to your build file:"
+msgstr "Isto irá adicionar o seguinte trecho no seu arquivo de build:"
+
+#, fuzzy
+msgid "Examine the Jakarta REST resource"
+msgstr "Examinar o recurso Jakarta REST"
+
+#, fuzzy
+msgid "Create the `src/main/java/org/acme/opentracing/TracedResource.java` file with the following content:"
+msgstr "Crie o arquivo `src/main/java/org/acme/opentracing/TracedResource.java` com o seguinte conteúdo:"
+
+#, fuzzy
+msgid "The log event carries OpenTracing information as well. In order to print OpenTracing information to the console output, the console log handler with the required OpenTracing event's keys needs to be defined in the `application.properties` file."
+msgstr "O evento de registro também contém informações do OpenTracing. Para imprimir as informações do OpenTracing na saída do console, o manipulador do log do console com as chaves necessárias do evento OpenTracing precisa ser definido no arquivo `application.properties` ."
+
+#, fuzzy
+msgid ""
+"Notice that there is no tracing specific code included in the application. By default, requests sent to this\n"
+"endpoint will be traced without any code changes being required. It is also possible to enhance the tracing information.\n"
+"This can be achieved by https://github.com/smallrye/smallrye-opentracing/[SmallRye OpenTracing] an implementation of\n"
+"https://github.com/eclipse/microprofile-opentracing/[MicroProfile OpenTracing]."
+msgstr "Observe que não há código específico de rastreamento incluído no aplicativo. Por padrão, as solicitações enviadas a esse endpoint serão rastreadas sem a necessidade de nenhuma alteração no código. Também é possível aprimorar as informações de rastreamento. Isso pode ser feito com o link:https://github.com/smallrye/smallrye-opentracing/[SmallRye OpenTracing] , uma implementação do link:https://github.com/eclipse/microprofile-opentracing/[MicroProfile OpenTracing] ."
+
+msgid "Create the configuration"
+msgstr "Crie a configuração"
+
+#, fuzzy
+msgid "There are two ways to configure the Jaeger tracer within the application."
+msgstr "Há duas maneiras de configurar o rastreador Jaeger no aplicativo."
+
+#, fuzzy
+msgid "The first approach is by providing the properties within the `src/main/resources/application.properties` file:"
+msgstr "A primeira abordagem é fornecer as propriedades no arquivo `src/main/resources/application.properties` :"
+
+#, fuzzy
+msgid "If the `quarkus.jaeger.service-name` property (or `JAEGER_SERVICE_NAME` environment variable) is not provided then a \"no-op\" tracer will be configured, resulting in no tracing data being reported to the backend."
+msgstr "Se a propriedade `quarkus.jaeger.service-name` (ou a variável de ambiente `JAEGER_SERVICE_NAME` ) não for fornecida, um rastreador \"no-op\" será configurado, resultando em nenhum dado de rastreamento sendo relatado ao backend."
+
+#, fuzzy
+msgid "Set up a sampler that uses a constant sampling strategy."
+msgstr "Configure um amostrador que use uma estratégia de amostragem constante."
+
+#, fuzzy
+msgid "Sample all requests. Set sampler-param to somewhere between 0 and 1, e.g. 0.50, if you do not wish to sample all requests."
+msgstr "Amostrar todas as solicitações. Defina o sampler-param como algo entre 0 e 1, por exemplo, 0,50, se o senhor não quiser fazer a amostragem de todas as solicitações."
+
+#, fuzzy
+msgid "Add trace IDs into log message."
+msgstr "Adicione IDs de rastreamento à mensagem de registro."
+
+#, fuzzy
+msgid "The second approach is to supply the properties as https://www.jaegertracing.io/docs/latest/client-features/[environment variables]. These can be specified using `jvm.args` as shown in the following section."
+msgstr "A segunda abordagem é fornecer as propriedades como link:https://www.jaegertracing.io/docs/latest/client-features/[variáveis de ambiente] . Elas podem ser especificadas usando `jvm.args` , conforme mostrado na seção a seguir."
+
+msgid "Run the application"
+msgstr "Executar o aplicativo"
+
+#, fuzzy
+msgid "The first step is to start the tracing system to collect and display the captured traces:"
+msgstr "A primeira etapa é iniciar o sistema de rastreamento para coletar e exibir os traços capturados:"
+
+#, fuzzy
+msgid "Now we are ready to run our application. If using `application.properties` to configure the tracer:"
+msgstr "Agora estamos prontos para executar nosso aplicativo. Se estiver usando o site `application.properties` para configurar o rastreador:"
+
+#, fuzzy
+msgid "or if configuring the tracer via environment variables:"
+msgstr "ou se estiver configurando o rastreador por meio de variáveis de ambiente:"
+
+#, fuzzy
+msgid "Once both the application and tracing system are started, you can make a request to the provided endpoint:"
+msgstr "Quando o aplicativo e o sistema de rastreamento forem iniciados, o senhor poderá fazer uma solicitação ao endpoint fornecido:"
+
+#, fuzzy
+msgid "When the first request has been submitted, the Jaeger tracer within the app will be initialized:"
+msgstr "Quando a primeira solicitação for enviada, o rastreador Jaeger dentro do aplicativo será inicializado:"
+
+#, fuzzy
+msgid "Then visit the http://localhost:16686[Jaeger UI] to see the tracing information."
+msgstr "Em seguida, visite a link:http://localhost:16686[interface do usuário do Jaeger] para ver as informações de rastreamento."
+
+#, fuzzy
+msgid "Hit `CTRL+C` to stop the application."
+msgstr "Pressione `CTRL+C` para interromper o aplicativo."
+
+#, fuzzy
+msgid "Tracing additional methods"
+msgstr "Rastreamento de métodos adicionais"
+
+#, fuzzy
+msgid ""
+"REST endpoints are automatically traced.\n"
+"If you need to trace additional methods, you can add the `org.eclipse.microprofile.opentracing.Traced` annotation to CDI bean classes or their non-private methods."
+msgstr "Os pontos de extremidade REST são rastreados automaticamente. Se precisar rastrear métodos adicionais, o senhor pode adicionar a anotação `org.eclipse.microprofile.opentracing.Traced` às classes de feijão CDI ou a seus métodos não privados."
+
+#, fuzzy
+msgid "This can be useful to trace incoming requests from non-REST calls (like request coming from a message) or to create spans inside a trace."
+msgstr "Isso pode ser útil para rastrear solicitações de entrada de chamadas não REST (como solicitações provenientes de uma mensagem) ou para criar intervalos dentro de um rastreamento."
+
+#, fuzzy
+msgid "Here is an example of a `FrancophoneService` which methods are traced."
+msgstr "Aqui está um exemplo de um `FrancophoneService` cujos métodos são rastreados."
+
+#, fuzzy
+msgid "Additional instrumentation"
+msgstr "Instrumentação adicional"
+
+#, fuzzy
+msgid "The https://github.com/opentracing-contrib[OpenTracing API Contributions project] offers additional instrumentation that can be used to add tracing to a large variety of technologies/components."
+msgstr "O link:https://github.com/opentracing-contrib[projeto OpenTracing API Contributions] oferece instrumentação adicional que pode ser usada para adicionar rastreamento a uma grande variedade de tecnologias/componentes."
+
+#, fuzzy
+msgid "The instrumentation documented in this section has been tested with Quarkus and works in both standard and native mode."
+msgstr "A instrumentação documentada nesta seção foi testada com o Quarkus e funciona tanto no modo padrão quanto no nativo."
+
+#, fuzzy
+msgid "JDBC"
+msgstr "JDBC"
+
+#, fuzzy
+msgid "The https://github.com/opentracing-contrib/java-jdbc[JDBC instrumentation] will add a span for each JDBC queries done by your application, to enable it, add the following dependency to your build file:"
+msgstr "A link:https://github.com/opentracing-contrib/java-jdbc[instrumentação JDBC] adicionará um intervalo para cada consulta JDBC feita pelo aplicativo. Para ativá-la, adicione a seguinte dependência ao seu arquivo de compilação:"
+
+#, fuzzy
+msgid "Then, you need to enable it in the configuration:"
+msgstr "Em seguida, o senhor precisa habilitá-lo na configuração:"
+
+#, fuzzy
+msgid ""
+"`quarkus.datasource.jdbc.tracing` is a build time configuration property:\n"
+"it makes sure all the tracing infrastructure is included in your application."
+msgstr "`quarkus.datasource.jdbc.tracing` é uma propriedade de configuração em tempo de compilação: ela garante que toda a infraestrutura de rastreamento seja incluída em seu aplicativo."
+
+#, fuzzy
+msgid ""
+"This is especially important when building a native executable as we need to\n"
+"make sure the OpenTracing JDBC driver has been registered for reflection,\n"
+"together with the underlying JDBC driver."
+msgstr "Isso é especialmente importante ao criar um executável nativo, pois precisamos garantir que o driver JDBC do OpenTracing tenha sido registrado para reflexão, juntamente com o driver JDBC subjacente."
+
+#, fuzzy
+msgid ""
+"The Agroal extension will take care of adjusting the JDBC URL with the `tracing` prefix\n"
+"when tracing is enabled,\n"
+"so you do not have to adjust the JDBC URL yourself."
+msgstr "A extensão Agroal se encarregará de ajustar o URL do JDBC com o prefixo `tracing` quando o rastreamento estiver ativado, para que o senhor não precise ajustar o URL do JDBC."
+
+#, fuzzy
+msgid ""
+"By default, when `quarkus.datasource.jdbc.tracing` is true, tracing is enabled at runtime\n"
+"but you can explicitly disable it by setting the following property:"
+msgstr "Por padrão, quando `quarkus.datasource.jdbc.tracing` é verdadeiro, o rastreamento é ativado no tempo de execução, mas o senhor pode desativá-lo explicitamente definindo a seguinte propriedade:"
+
+#, fuzzy
+msgid "This way, you can have your Quarkus application ready for tracing and toggle JDBC tracing at runtime."
+msgstr "Dessa forma, o senhor pode ter o aplicativo Quarkus pronto para rastreamento e alternar o rastreamento de JDBC no tempo de execução."
+
+msgid "Kafka"
+msgstr "Kafka"
+
+#, fuzzy
+msgid "The https://github.com/opentracing-contrib/java-kafka-client[Kafka instrumentation] will add a span for each message sent to or received from a Kafka topic. To enable it, add the following dependency to your build file:"
+msgstr "A link:https://github.com/opentracing-contrib/java-kafka-client[instrumentação do Kafka] adicionará uma extensão para cada mensagem enviada ou recebida de um tópico do Kafka. Para habilitá-la, adicione a seguinte dependência ao seu arquivo de compilação:"
+
+#, fuzzy
+msgid "It contains OpenTracing interceptors that must be registered on Kafka producers and consumers."
+msgstr "Ele contém interceptores do OpenTracing que devem ser registrados nos produtores e consumidores do Kafka."
+
+#, fuzzy
+msgid "If you followed the xref:kafka.adoc[Kafka guide], the interceptors can be added on the `generated-price` and the `prices` channels as follows:"
+msgstr "Se o senhor seguiu o xref:kafka.adoc[guia do Kafka] , os interceptadores podem ser adicionados aos canais `generated-price` e `prices` da seguinte forma:"
+
+#, fuzzy
+msgid "MongoDB client"
+msgstr "Cliente MongoDB"
+
+#, fuzzy
+msgid "The https://github.com/opentracing-contrib/java-mongo-driver[Mongo Driver instrumentation] will add a span for each command executed by your application. To enable it, add the following dependency to your build file:"
+msgstr "A link:https://github.com/opentracing-contrib/java-mongo-driver[instrumentação do Mongo Driver] adicionará um intervalo para cada comando executado pelo seu aplicativo. Para habilitá-la, adicione a seguinte dependência ao seu arquivo de compilação:"
+
+#, fuzzy
+msgid ""
+"It contains the OpenTracing CommandListener that will be registered on the configuration of the mongo client.\n"
+"Following the xref:mongodb.adoc[MongoDB guide], the command listener will be registered defining the config property as follows:"
+msgstr "Ele contém o OpenTracing CommandListener que será registrado na configuração do cliente Mongo. Seguindo o xref:mongodb.adoc[guia do MongoDB] , o ouvinte de comando será registrado definindo a propriedade config da seguinte forma:"
+
+#, fuzzy
+msgid "Zipkin compatibility mode"
+msgstr "Modo de compatibilidade Zipkin"
+
+#, fuzzy
+msgid "To enable it, add the following dependency to your build file:"
+msgstr "Para habilitá-lo, adicione a seguinte dependência ao seu arquivo de compilação:"
+
+#, fuzzy
+msgid ""
+"It contains the dependencies to convert the request to zipkin format.\n"
+"The zipkin compatibility mode will be activated after defining the config property as follows:"
+msgstr "Ele contém as dependências para converter a solicitação para o formato zipkin. O modo de compatibilidade com o zipkin será ativado após a definição da propriedade config da seguinte forma:"
+
+#, fuzzy
+msgid "Jaeger Configuration Reference"
+msgstr "Referência de configuração do Jaeger"
+
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-1\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de configuração fixada no momento da construção - Todas as outras propriedades de configuração podem ser substituídas no momento da execução <input type=\"search\" id=\"config-search-1\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#, fuzzy
+msgid "[[quarkus-jaeger_configuration]]link:#quarkus-jaeger_configuration[Configuration property]"
+msgstr "link:#quarkus-jaeger_configuration[Propriedade de configuração]"
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid "Default"
+msgstr "Padrão"
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-jaeger_quarkus-jaeger-enabled]]`link:#quarkus-jaeger_quarkus-jaeger-enabled[quarkus.jaeger.enabled]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Defines if the Jaeger extension is enabled.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_ENABLED+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-jaeger_quarkus-jaeger-enabled]]`link:#quarkus-jaeger_quarkus-jaeger-enabled[quarkus.jaeger.enabled]`"
+msgstr ""
+
+#, fuzzy
+msgid "Defines if the Jaeger extension is enabled."
+msgstr "Define se a extensão Jaeger está ativada."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_ENABLED[]"
+
+#, fuzzy
+msgid "<i class=\"fa fa-chevron-down\"></i><span>Show more</span>"
+msgstr "<i class=\"fa fa-chevron-down\"></i><span>Mostrar mais</span>"
+
+msgid "boolean"
+msgstr "booleano"
+
+msgid "`true`"
+msgstr "`true`"
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-jaeger_quarkus-jaeger-metrics-enabled]]`link:#quarkus-jaeger_quarkus-jaeger-metrics-enabled[quarkus.jaeger.metrics.enabled]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether metrics are published in case a metrics extension is present.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_METRICS_ENABLED+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-jaeger_quarkus-jaeger-metrics-enabled]]`link:#quarkus-jaeger_quarkus-jaeger-metrics-enabled[quarkus.jaeger.metrics.enabled]`"
+msgstr ""
+
+#, fuzzy
+msgid "Whether metrics are published in case a metrics extension is present."
+msgstr "Se as métricas são publicadas, caso haja uma extensão de métricas."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_METRICS_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_METRICS_ENABLED[]"
+
+#, fuzzy
+msgid "`false`"
+msgstr "`false`"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-endpoint]]`link:#quarkus-jaeger_quarkus-jaeger-endpoint[quarkus.jaeger.endpoint]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The traces endpoint, in case the client should connect directly to the Collector, like http://jaeger-collector:14268/api/traces\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_ENDPOINT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-endpoint]]`link:#quarkus-jaeger_quarkus-jaeger-endpoint[quarkus.jaeger.endpoint]`"
+msgstr ""
+
+#, fuzzy
+msgid "The traces endpoint, in case the client should connect directly to the Collector, like http://jaeger-collector:14268/api/traces"
+msgstr "O endpoint “traces”, caso o cliente precise se conectar diretamente ao Collector, como http://jaeger-collector:14268/api/traces"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_ENDPOINT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_ENDPOINT[]"
+
+#, fuzzy
+msgid "link:https://docs.oracle.com/javase/8/docs/api/java/net/URI.html[URI]"
+msgstr "link:https://docs.oracle.com/javase/8/docs/api/java/net/URI.html[URI]"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-auth-token]]`link:#quarkus-jaeger_quarkus-jaeger-auth-token[quarkus.jaeger.auth-token]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Authentication Token to send as \"Bearer\" to the endpoint\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_AUTH_TOKEN+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-auth-token]]`link:#quarkus-jaeger_quarkus-jaeger-auth-token[quarkus.jaeger.auth-token]`"
+msgstr ""
+
+#, fuzzy
+msgid "Authentication Token to send as \"Bearer\" to the endpoint"
+msgstr "Token de autenticação a ser enviado como “Bearer” para o endpoint"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_AUTH_TOKEN+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_AUTH_TOKEN[]"
+
+msgid "string"
+msgstr "string"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-user]]`link:#quarkus-jaeger_quarkus-jaeger-user[quarkus.jaeger.user]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Username to send as part of \"Basic\" authentication to the endpoint\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_USER+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-user]]`link:#quarkus-jaeger_quarkus-jaeger-user[quarkus.jaeger.user]`"
+msgstr ""
+
+#, fuzzy
+msgid "Username to send as part of \"Basic\" authentication to the endpoint"
+msgstr "Nome de usuário a ser enviado como parte da autenticação “Basic” para o endpoint"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_USER+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_USER[]"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-password]]`link:#quarkus-jaeger_quarkus-jaeger-password[quarkus.jaeger.password]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Password to send as part of \"Basic\" authentication to the endpoint\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_PASSWORD+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-password]]`link:#quarkus-jaeger_quarkus-jaeger-password[quarkus.jaeger.password]`"
+msgstr ""
+
+#, fuzzy
+msgid "Password to send as part of \"Basic\" authentication to the endpoint"
+msgstr "Senha a ser enviada como parte da autenticação “Básica” para o endpoint"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_PASSWORD+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_PASSWORD[]"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-agent-host-port]]`link:#quarkus-jaeger_quarkus-jaeger-agent-host-port[quarkus.jaeger.agent-host-port]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The hostname and port for communicating with agent via UDP\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_AGENT_HOST_PORT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-agent-host-port]]`link:#quarkus-jaeger_quarkus-jaeger-agent-host-port[quarkus.jaeger.agent-host-port]`"
+msgstr ""
+
+#, fuzzy
+msgid "The hostname and port for communicating with agent via UDP"
+msgstr "O nome do host e a porta para comunicação com o agente via UDP"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_AGENT_HOST_PORT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_AGENT_HOST_PORT[]"
+
+#, fuzzy
+msgid "host:port"
+msgstr "servidor:porta"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-reporter-log-spans]]`link:#quarkus-jaeger_quarkus-jaeger-reporter-log-spans[quarkus.jaeger.reporter-log-spans]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the reporter should also log the spans\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_REPORTER_LOG_SPANS+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-reporter-log-spans]]`link:#quarkus-jaeger_quarkus-jaeger-reporter-log-spans[quarkus.jaeger.reporter-log-spans]`"
+msgstr ""
+
+#, fuzzy
+msgid "Whether the reporter should also log the spans"
+msgstr "Se o repórter também deve registrar os intervalos"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_REPORTER_LOG_SPANS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_REPORTER_LOG_SPANS[]"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-reporter-max-queue-size]]`link:#quarkus-jaeger_quarkus-jaeger-reporter-max-queue-size[quarkus.jaeger.reporter-max-queue-size]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The reporter's maximum queue size\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_REPORTER_MAX_QUEUE_SIZE+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-reporter-max-queue-size]]`link:#quarkus-jaeger_quarkus-jaeger-reporter-max-queue-size[quarkus.jaeger.reporter-max-queue-size]`"
+msgstr ""
+
+#, fuzzy
+msgid "The reporter's maximum queue size"
+msgstr "O tamanho máximo da fila do repórter"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_REPORTER_MAX_QUEUE_SIZE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_REPORTER_MAX_QUEUE_SIZE[]"
+
+msgid "int"
+msgstr "int"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-reporter-flush-interval]]`link:#quarkus-jaeger_quarkus-jaeger-reporter-flush-interval[quarkus.jaeger.reporter-flush-interval]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The reporter's flush interval\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_REPORTER_FLUSH_INTERVAL+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-reporter-flush-interval]]`link:#quarkus-jaeger_quarkus-jaeger-reporter-flush-interval[quarkus.jaeger.reporter-flush-interval]`"
+msgstr ""
+
+#, fuzzy
+msgid "The reporter's flush interval"
+msgstr "O intervalo de atualização do repórter"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_REPORTER_FLUSH_INTERVAL+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_REPORTER_FLUSH_INTERVAL[]"
+
+msgid ""
+"link:https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html[Duration]\n"
+"  link:#duration-note-anchor-{summaryTableId}[icon:question-circle[title=More information about the Duration format]]"
+msgstr ""
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-sampler-type]]`link:#quarkus-jaeger_quarkus-jaeger-sampler-type[quarkus.jaeger.sampler-type]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The sampler type (const, probabilistic, ratelimiting or remote)\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_SAMPLER_TYPE+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-sampler-type]]`link:#quarkus-jaeger_quarkus-jaeger-sampler-type[quarkus.jaeger.sampler-type]`"
+msgstr ""
+
+#, fuzzy
+msgid "The sampler type (const, probabilistic, ratelimiting or remote)"
+msgstr "O tipo de amostrador (constante, probabilístico, com limitação de taxa ou remoto)"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_SAMPLER_TYPE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_SAMPLER_TYPE[]"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-sampler-param]]`link:#quarkus-jaeger_quarkus-jaeger-sampler-param[quarkus.jaeger.sampler-param]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The sampler parameter (number)\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_SAMPLER_PARAM+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-sampler-param]]`link:#quarkus-jaeger_quarkus-jaeger-sampler-param[quarkus.jaeger.sampler-param]`"
+msgstr ""
+
+#, fuzzy
+msgid "The sampler parameter (number)"
+msgstr "O parâmetro do amostrador (número)"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_SAMPLER_PARAM+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_SAMPLER_PARAM[]"
+
+#, fuzzy
+msgid "link:https://docs.oracle.com/javase/8/docs/api/java/math/BigDecimal.html[BigDecimal]"
+msgstr "link:https://docs.oracle.com/javase/8/docs/api/java/math/BigDecimal.html[BigDecimal]"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-sampler-manager-host-port]]`link:#quarkus-jaeger_quarkus-jaeger-sampler-manager-host-port[quarkus.jaeger.sampler-manager-host-port]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The host name and port when using the remote controlled sampler\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_SAMPLER_MANAGER_HOST_PORT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-sampler-manager-host-port]]`link:#quarkus-jaeger_quarkus-jaeger-sampler-manager-host-port[quarkus.jaeger.sampler-manager-host-port]`"
+msgstr ""
+
+#, fuzzy
+msgid "The host name and port when using the remote controlled sampler"
+msgstr "O nome do servidor e a porta ao utilizar o amostrador controlado remotamente"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_SAMPLER_MANAGER_HOST_PORT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_SAMPLER_MANAGER_HOST_PORT[]"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-service-name]]`link:#quarkus-jaeger_quarkus-jaeger-service-name[quarkus.jaeger.service-name]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The service name\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_SERVICE_NAME+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-service-name]]`link:#quarkus-jaeger_quarkus-jaeger-service-name[quarkus.jaeger.service-name]`"
+msgstr ""
+
+#, fuzzy
+msgid "The service name"
+msgstr "O nome do serviço"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_SERVICE_NAME+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_SERVICE_NAME[]"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-tags]]`link:#quarkus-jaeger_quarkus-jaeger-tags[quarkus.jaeger.tags]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"A comma separated list of name = value tracer level tags, which get added to all reported spans. The value can also refer to an environment variable using the format $++{++envVarName:default++}++, where the :default is optional, and identifies a value to be used if the environment variable cannot be found\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_TAGS+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-tags]]`link:#quarkus-jaeger_quarkus-jaeger-tags[quarkus.jaeger.tags]`"
+msgstr ""
+
+#, fuzzy
+msgid "A comma separated list of name = value tracer level tags, which get added to all reported spans. The value can also refer to an environment variable using the format $++{++envVarName:default++}++, where the :default is optional, and identifies a value to be used if the environment variable cannot be found"
+msgstr "Uma lista separada por vírgulas de tags de nível de rastreamento no formato nome = valor, que são adicionadas a todos os spans relatados. O valor também pode se referir a uma variável de ambiente utilizando o formato ${nomeDaVariável:padrão}, em que “:padrão” é opcional e identifica um valor a ser utilizado caso a variável de ambiente não seja encontrada"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_TAGS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_TAGS[]"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-propagation]]`link:#quarkus-jaeger_quarkus-jaeger-propagation[quarkus.jaeger.propagation]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Comma separated list of formats to use for propagating the trace context. Defaults to the standard Jaeger format. Valid values are jaeger and b3\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_PROPAGATION+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-propagation]]`link:#quarkus-jaeger_quarkus-jaeger-propagation[quarkus.jaeger.propagation]`"
+msgstr ""
+
+#, fuzzy
+msgid "Comma separated list of formats to use for propagating the trace context. Defaults to the standard Jaeger format. Valid values are jaeger and b3"
+msgstr "Lista separada por vírgulas dos formatos a serem utilizados para propagar o contexto do rastreamento. O padrão é o formato padrão do Jaeger. Os valores válidos são jaeger e b3"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_PROPAGATION+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_PROPAGATION[]"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-sender-factory]]`link:#quarkus-jaeger_quarkus-jaeger-sender-factory[quarkus.jaeger.sender-factory]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The sender factory class name\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_SENDER_FACTORY+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-sender-factory]]`link:#quarkus-jaeger_quarkus-jaeger-sender-factory[quarkus.jaeger.sender-factory]`"
+msgstr ""
+
+#, fuzzy
+msgid "The sender factory class name"
+msgstr "O nome da classe de fábrica do remetente"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_SENDER_FACTORY+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_SENDER_FACTORY[]"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-log-trace-context]]`link:#quarkus-jaeger_quarkus-jaeger-log-trace-context[quarkus.jaeger.log-trace-context]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the trace context should be logged.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_LOG_TRACE_CONTEXT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-log-trace-context]]`link:#quarkus-jaeger_quarkus-jaeger-log-trace-context[quarkus.jaeger.log-trace-context]`"
+msgstr ""
+
+#, fuzzy
+msgid "Whether the trace context should be logged."
+msgstr "Se o contexto de rastreamento deve ser registrado."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_LOG_TRACE_CONTEXT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_LOG_TRACE_CONTEXT[]"
+
+msgid ""
+"[[quarkus-jaeger_quarkus-jaeger-disable-tracer-registration]]`link:#quarkus-jaeger_quarkus-jaeger-disable-tracer-registration[quarkus.jaeger.disable-tracer-registration]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the registration of tracer as the global tracer should be disabled. This setting should only be turned on in tests that need to install a mock tracer.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_DISABLE_TRACER_REGISTRATION+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-jaeger_quarkus-jaeger-disable-tracer-registration]]`link:#quarkus-jaeger_quarkus-jaeger-disable-tracer-registration[quarkus.jaeger.disable-tracer-registration]`"
+msgstr ""
+
+#, fuzzy
+msgid "Whether the registration of tracer as the global tracer should be disabled. This setting should only be turned on in tests that need to install a mock tracer."
+msgstr "Se o registro do tracer como tracer global deve ser desativado. Essa configuração só deve ser ativada em testes que exijam a instalação de um tracer simulado."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_DISABLE_TRACER_REGISTRATION+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_DISABLE_TRACER_REGISTRATION[]"
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-jaeger_quarkus-jaeger-zipkin-compatibility-mode]]`link:#quarkus-jaeger_quarkus-jaeger-zipkin-compatibility-mode[quarkus.jaeger.zipkin.compatibility-mode]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether jaeger should run in zipkin compatibility mode\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_ZIPKIN_COMPATIBILITY_MODE+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-jaeger_quarkus-jaeger-zipkin-compatibility-mode]]`link:#quarkus-jaeger_quarkus-jaeger-zipkin-compatibility-mode[quarkus.jaeger.zipkin.compatibility-mode]`"
+msgstr ""
+
+#, fuzzy
+msgid "Whether jaeger should run in zipkin compatibility mode"
+msgstr "Se o Jaeger deve ser executado no modo de compatibilidade com o Zipkin"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_JAEGER_ZIPKIN_COMPATIBILITY_MODE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_JAEGER_ZIPKIN_COMPATIBILITY_MODE[]"
+
+#, fuzzy
+msgid "About the Duration format"
+msgstr "Sobre o formato de duração"
+
+msgid ""
+"To write duration values, use the standard `java.time.Duration` format.\n"
+"See the link:https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)[Duration#parse() javadoc] for more information."
+msgstr "Para valores de duração, use o formato padrão 'java.time.Duration'.  Consulte o link:https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)[Duration#parse() javadoc] para obter mais informações."
+
+msgid "You can also use a simplified format, starting with a number:"
+msgstr "Você também pode usar um formato simplificado, começando com um número:"
+
+msgid "If the value is only a number, it represents time in seconds."
+msgstr "Se o valor for apenas um número, ele representará o tempo em segundos."
+
+msgid "If the value is a number followed by `ms`, it represents time in milliseconds."
+msgstr "Se o valor for um número seguido de 'ms', ele representa o tempo em milissegundos."
+
+msgid "In other cases, the simplified format is translated to the `java.time.Duration` format for parsing:"
+msgstr "Em outros casos, o formato simplificado é traduzido para o formato 'java.time.Duration' para análise:"
+
+msgid "If the value is a number followed by `h`, `m`, or `s`, it is prefixed with `PT`."
+msgstr "Se o valor for um número seguido de 'h', 'm' ou 's', ele é prefixado com 'PT'."
+
+msgid "If the value is a number followed by `d`, it is prefixed with `P`."
+msgstr "Se o valor for um número seguido de 'd', ele é prefixado com 'P'."

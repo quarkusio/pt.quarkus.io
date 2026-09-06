@@ -1,0 +1,914 @@
+msgid ""
+msgstr ""
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: roq-plugin-l10n-adoc\n"
+
+#, fuzzy
+msgid "Scheduling Periodic Tasks with Quartz"
+msgstr "Agendamento de tarefas periódicas com o Quartz"
+
+#, fuzzy
+msgid ""
+"Modern applications often need to run specific tasks periodically.\n"
+"In this guide, you learn how to schedule periodic clustered tasks using the http://www.quartz-scheduler.org/[Quartz] extension."
+msgstr "Os aplicativos modernos geralmente precisam executar tarefas específicas periodicamente. Neste guia, o senhor aprenderá a agendar tarefas periódicas em cluster usando a extensão link:http://www.quartz-scheduler.org/[Quartz] ."
+
+msgid "This technology is considered {extension-status}."
+msgstr "Essa tecnologia é considerada {extension-status}."
+
+#, fuzzy
+msgid ""
+"In _preview_, backward compatibility and presence in the ecosystem is not guaranteed.\n"
+"Specific improvements might require changing configuration or APIs, and plans to become _stable_ are under way.\n"
+"Feedback is welcome on our https://groups.google.com/d/forum/quarkus-dev[mailing list] or as issues in our https://github.com/quarkusio/quarkus/issues[GitHub issue tracker]."
+msgstr "Na _visualização_ , a compatibilidade com versões anteriores e a presença no ecossistema não são garantidas. Melhorias específicas podem exigir a alteração da configuração ou das APIs, e os planos para se tornar _estável_ estão em andamento. Comentários são bem-vindos em nossa link:https://groups.google.com/d/forum/quarkus-dev[lista de discussão] ou como problemas em nosso link:https://github.com/quarkusio/quarkus/issues[rastreador de problemas do GitHub] ."
+
+msgid "For a full list of possible statuses, check our https://quarkus.io/faq/#what-are-the-extension-statuses[FAQ entry]."
+msgstr "Para obter uma lista completa de possíveis status, consulte nosso https://quarkus.io/faq/#what-are-the-extension-statuses[FAQ]."
+
+msgid "Prerequisites"
+msgstr "Pré-requisitos"
+
+msgid "To complete this guide, you need:"
+msgstr "Para concluir este guia, você precisa:"
+
+msgid "Roughly 15 minutes"
+msgstr "Cerca de 15 minutos"
+
+msgid "An IDE"
+msgstr "Um IDE"
+
+msgid "JDK 11+ installed with `JAVA_HOME` configured appropriately"
+msgstr "JDK 11+ instalado com 'JAVA_HOME' configurado adequadamente"
+
+msgid "Apache Maven {maven-version}"
+msgstr "Apache Maven {maven-version}"
+
+msgid "Docker and Docker Compose or xref:podman.adoc[Podman], and Docker Compose"
+msgstr "Docker e Docker Compose ou xref:podman.adoc[Podman] e Docker Compose"
+
+msgid "Optionally the xref:cli-tooling.adoc[Quarkus CLI] if you want to use it"
+msgstr "Opcionalmente, o xref:cli-tooling.adoc[Quarkus CLI] se você quiser usá-lo"
+
+msgid "Optionally Mandrel or GraalVM installed and xref:building-native-image.adoc#configuring-graalvm[configured appropriately] if you want to build a native executable (or Docker if you use a native container build)"
+msgstr "Opcionalmente, Mandrel ou GraalVM instalado e xref:building-native-image.adoc#configuring-graalvm[configurado apropriadamente] se você quiser criar um executável nativo (ou Docker se você usar uma compilação de contêiner nativo)"
+
+msgid "Architecture"
+msgstr "Arquitetura"
+
+#, fuzzy
+msgid "In this guide, we are going to expose one Rest API `tasks` to visualise the list of tasks created by a Quartz job running every 10 seconds."
+msgstr "Neste guia, vamos expor uma API Rest `tasks` para visualizar a lista de tarefas criadas por um trabalho do Quartz executado a cada 10 segundos."
+
+msgid "Solution"
+msgstr "Solução"
+
+msgid ""
+"We recommend that you follow the instructions in the next sections and create the application step by step.\n"
+"However, you can go right to the completed example."
+msgstr "Recomendamos que siga as instruções nas seções seguintes e crie a aplicação passo a passo. No entanto, você pode ir diretamente para o exemplo completo."
+
+msgid "Clone the Git repository: `git clone {quickstarts-clone-url}`, or download an {quickstarts-archive-url}[archive]."
+msgstr "Clone o repositório Git: `git clone {quickstarts-clone-url}`, ou baixe um {quickstarts-archive-url}[arquivo]."
+
+#, fuzzy
+msgid "The solution is located in the `quartz-quickstart` {quickstarts-tree-url}/quartz-quickstart[directory]."
+msgstr "A solução está localizada em `quartz-quickstart` {quickstarts-tree-url}/quartz-quickstart[directory]."
+
+msgid "Creating the Maven project"
+msgstr "Criar o projeto Maven"
+
+msgid "First, we need a new project. Create a new project with the following command:"
+msgstr "Primeiro, precisamos de um novo projeto. Crie um novo projeto com o seguinte comando:"
+
+msgid "CLI"
+msgstr "CLI"
+
+msgid "To create a Gradle project, add the `--gradle` or `--gradle-kotlin-dsl` option."
+msgstr "Para criar um projeto Gradle, adicione a opção `--gradle` ou `--gradle-kotlin-dsl`."
+
+#, fuzzy
+msgid "_For more information about how to install the Quarkus CLI and use it, please refer to xref:cli-tooling.adoc[the Quarkus CLI guide]._"
+msgstr "_Para obter mais informações sobre como instalar o Quarkus CLI e usá-lo, consulte xref:cli-tooling.adoc[o guia do Quarkus CLI] ._"
+
+msgid "Maven"
+msgstr "Maven"
+
+msgid "To create a Gradle project, add the `-DbuildTool=gradle` or `-DbuildTool=gradle-kotlin-dsl` option."
+msgstr "Para criar um projeto Gradle, adicione a opção '-DbuildTool=gradle' ou '-DbuildTool=gradle-kotlin-dsl'."
+
+#, fuzzy
+msgid "It generates:"
+msgstr "Isso gera:"
+
+msgid "the Maven structure"
+msgstr "a estrutura Maven"
+
+msgid "a landing page accessible on `http://localhost:8080`"
+msgstr "uma página acessível em `http://localhost:8080`"
+
+msgid "example `Dockerfile` files for both `native` and `jvm` modes"
+msgstr "exemplo de arquivos `Dockerfile` para os modos `nativo` e `jvm`"
+
+msgid "the application configuration file"
+msgstr "o arquivo de configuração da aplicação"
+
+#, fuzzy
+msgid "The Maven project also imports the Quarkus Quartz extension."
+msgstr "O projeto Maven também importa a extensão Quarkus Quartz."
+
+#, fuzzy
+msgid ""
+"If you already have your Quarkus project configured, you can add the `quartz` extension\n"
+"to your project by running the following command in your project base directory:"
+msgstr "Se já tiver o projeto Quarkus configurado, o senhor pode adicionar a extensão `quartz` ao projeto executando o seguinte comando no diretório base do projeto:"
+
+msgid "This will add the following to your build file:"
+msgstr "Isto irá adicionar o seguinte trecho no seu arquivo de build:"
+
+#, fuzzy
+msgid "To use a JDBC store, the `quarkus-agroal` extension, which provides the datasource support, is also required."
+msgstr "Para usar um armazenamento JDBC, a extensão `quarkus-agroal` , que oferece suporte a fontes de dados, também é necessária."
+
+#, fuzzy
+msgid "Creating the Task Entity"
+msgstr "Criação da entidade de tarefa"
+
+#, fuzzy
+msgid "In the `org.acme.quartz` package, create the `Task` class, with the following content:"
+msgstr "No pacote `org.acme.quartz` , crie a classe `Task` , com o seguinte conteúdo:"
+
+#, fuzzy
+msgid "Declare the entity using xref:hibernate-orm-panache.adoc[Panache]"
+msgstr "Declarar a entidade usando xref:hibernate-orm-panache.adoc[o Panache]"
+
+msgid "Creating a scheduled job"
+msgstr "Criando um trabalho agendado"
+
+#, fuzzy
+msgid "In the `org.acme.quartz` package, create the `TaskBean` class, with the following content:"
+msgstr "No pacote `org.acme.quartz` , crie a classe `TaskBean` , com o seguinte conteúdo:"
+
+msgid "Declare the bean in the _application_ scope"
+msgstr "Declare o bean no escopo da _aplicação_"
+
+#, fuzzy
+msgid "Use the `@Scheduled` annotation to instruct Quarkus to run this method every 10 seconds and set the unique identifier for this job."
+msgstr "Use a anotação `@Scheduled` para instruir o Quarkus a executar esse método a cada 10 segundos e definir o identificador exclusivo para esse trabalho."
+
+#, fuzzy
+msgid "Create a new `Task` with the current start time."
+msgstr "Criar um novo `Task` com a hora de início atual."
+
+#, fuzzy
+msgid "Persist the task in database using xref:hibernate-orm-panache.adoc[Panache]."
+msgstr "Persista a tarefa no banco de dados usando xref:hibernate-orm-panache.adoc[o Panache] ."
+
+#, fuzzy
+msgid "Scheduling Jobs Programmatically"
+msgstr "Agendamento de trabalhos de forma programática"
+
+#, fuzzy
+msgid ""
+"It is also possible to leverage the Quartz API directly.\n"
+"You can inject the underlying `org.quartz.Scheduler` in any bean:"
+msgstr "Também é possível aproveitar diretamente a API do Quartz. O senhor pode injetar o `org.quartz.Scheduler` subjacente em qualquer bean:"
+
+#, fuzzy
+msgid "Inject the underlying `org.quartz.Scheduler` instance."
+msgstr "Injetar a instância subjacente do `org.quartz.Scheduler` ."
+
+#, fuzzy
+msgid "Schedule a new job using the Quartz API."
+msgstr "Agendar um novo trabalho usando a API do Quartz."
+
+#, fuzzy
+msgid "Invoke the `TaskBean#performTask()` method from the job. Jobs are also xref:cdi.adoc[container-managed] beans if they belong to a xref:cdi-reference.adoc[bean archive]."
+msgstr "Chame o método `TaskBean#performTask()` a partir do trabalho. Os trabalhos também são beans xref:cdi.adoc[gerenciados pelo contêiner] , caso pertençam a um xref:cdi-reference.adoc[arquivo de beans] ."
+
+msgid "Updating the application configuration file"
+msgstr "Atualizando o arquivo de configuração da aplicação"
+
+#, fuzzy
+msgid "Edit the `application.properties` file and add the below configuration:"
+msgstr "Edite o arquivo `application.properties` e adicione a configuração abaixo:"
+
+#, fuzzy
+msgid "Indicate that the scheduler will be run in clustered mode"
+msgstr "Indicar que o agendador será executado em modo de cluster"
+
+#, fuzzy
+msgid "Use the database store to persist job related information so that they can be shared between nodes"
+msgstr "Use o armazenamento do banco de dados para manter as informações relacionadas ao trabalho, de modo que elas possam ser compartilhadas entre os nós"
+
+#, fuzzy
+msgid "The misfire policy can be configured for each job. `task-job` is the identity of the job."
+msgstr "A política de falha de ignição pode ser configurada para cada trabalho. `task-job` é a identidade do trabalho."
+
+#, fuzzy
+msgid ""
+"Valid misfire policy for cron jobs are: `smart-policy`, `ignore-misfire-policy`, `fire-now` and `cron-trigger-do-nothing`.\n"
+"Valid misfire policy for interval jobs are: `smart-policy`, `ignore-misfire-policy`, `fire-now`, `simple-trigger-reschedule-now-with-existing-repeat-count`, `simple-trigger-reschedule-now-with-remaining-repeat-count`, `simple-trigger-reschedule-next-with-existing-count` and `simple-trigger-reschedule-next-with-remaining-count`."
+msgstr "A política de falha de ignição válida para trabalhos cron é: `smart-policy` , `ignore-misfire-policy` , `fire-now` e `cron-trigger-do-nothing` . As políticas válidas de falha de ignição para trabalhos de intervalo são: `smart-policy` , `ignore-misfire-policy` , `fire-now` , `simple-trigger-reschedule-now-with-existing-repeat-count` , `simple-trigger-reschedule-now-with-remaining-repeat-count` , `simple-trigger-reschedule-next-with-existing-count` e `simple-trigger-reschedule-next-with-remaining-count` ."
+
+#, fuzzy
+msgid "Creating a REST resource and a test"
+msgstr "Criar um recurso REST e um teste"
+
+#, fuzzy
+msgid "Create the `org.acme.quartz.TaskResource` class with the following content:"
+msgstr "Crie a classe `org.acme.quartz.TaskResource` com o seguinte conteúdo:"
+
+#, fuzzy
+msgid "Retrieve the list of created tasks from the database"
+msgstr "Recuperar a lista de tarefas criadas do banco de dados"
+
+#, fuzzy
+msgid "You also have the option to create a `org.acme.quartz.TaskResourceTest` test with the following content:"
+msgstr "O senhor também tem a opção de criar um teste `org.acme.quartz.TaskResourceTest` com o seguinte conteúdo:"
+
+#, fuzzy
+msgid "Ensure that we have a `200` response and at least one task created"
+msgstr "Assegurar que temos uma resposta `200` e pelo menos uma tarefa criada"
+
+#, fuzzy
+msgid "Creating Quartz Tables"
+msgstr "Criação de tabelas de quartzo"
+
+#, fuzzy
+msgid ""
+"Add a SQL migration file named `src/main/resources/db/migration/V2.0.0\\__QuarkusQuartzTasks.sql` with the content copied from\n"
+"file with the content from link:{quickstarts-blob-url}/quartz-quickstart/src/main/resources/db/migration/V2.0.0__QuarkusQuartzTasks.sql[V2.0.0__QuarkusQuartzTasks.sql]."
+msgstr "Adicione um arquivo de migração SQL chamado `src/main/resources/db/migration/V2.0.0__QuarkusQuartzTasks.sql` com o conteúdo copiado do arquivo com o conteúdo do link:{quickstarts-blob-url}/quartz-quickstart/src/main/resources/db/migration/V2.0.0__QuarkusQuartzTasks.sql[V2.0.0__QuarkusQuartzTasks.sql] ."
+
+#, fuzzy
+msgid "Configuring the load balancer"
+msgstr "Configuração do balanceador de carga"
+
+#, fuzzy
+msgid "In the root directory, create a `nginx.conf` file with the following content:"
+msgstr "No diretório raiz, crie um arquivo `nginx.conf` com o seguinte conteúdo:"
+
+#, fuzzy
+msgid "Route all traffic to our tasks application"
+msgstr "Encaminhar todo o tráfego para nosso aplicativo de tarefas"
+
+#, fuzzy
+msgid "Setting Application Deployment"
+msgstr "Configuração da implantação de aplicativos"
+
+#, fuzzy
+msgid "In the root directory, create a `docker-compose.yml` file with the following content:"
+msgstr "No diretório raiz, crie um arquivo `docker-compose.yml` com o seguinte conteúdo:"
+
+#, fuzzy
+msgid "Define the tasks service"
+msgstr "Definir o serviço de tarefas"
+
+#, fuzzy
+msgid "Define the nginx load balancer to route incoming traffic to an appropriate node"
+msgstr "Definir o balanceador de carga nginx para rotear o tráfego de entrada para um nó apropriado"
+
+#, fuzzy
+msgid "Define the configuration to run the database"
+msgstr "Definir a configuração para executar o banco de dados"
+
+#, fuzzy
+msgid "Running the database"
+msgstr "Executar o banco de dados"
+
+#, fuzzy
+msgid "In a separate terminal, run the below command:"
+msgstr "Em um terminal separado, execute o comando abaixo:"
+
+#, fuzzy
+msgid "Start the database instance using the configuration options supplied in the `docker-compose.yml` file"
+msgstr "Inicie a instância do banco de dados usando as opções de configuração fornecidas no arquivo `docker-compose.yml` ."
+
+#, fuzzy
+msgid "Run the application in Dev Mode"
+msgstr "Execute o aplicativo no modo de desenvolvimento"
+
+msgid "Run the application with:"
+msgstr "Execute a aplicação com:"
+
+#, fuzzy
+msgid "After a few seconds, open another terminal and run `curl localhost:8080/tasks` to verify that we have at least one task created."
+msgstr "Após alguns segundos, abra outro terminal e execute `curl localhost:8080/tasks` para verificar se temos pelo menos uma tarefa criada."
+
+msgid "As usual, the application can be packaged using:"
+msgstr "Como de costume, a aplicação pode ser empacotada utilizando:"
+
+#, fuzzy
+msgid "and executed with `java -jar target/quarkus-app/quarkus-run.jar`."
+msgstr "e executado com `java -jar target/quarkus-app/quarkus-run.jar` ."
+
+msgid "You can also generate the native executable with:"
+msgstr "Também é possível gerar o executável nativo com:"
+
+#, fuzzy
+msgid "Packaging the application and run several instances"
+msgstr "Empacotar o aplicativo e executar várias instâncias"
+
+#, fuzzy
+msgid "The application can be packaged using:"
+msgstr "O aplicativo pode ser empacotado usando:"
+
+#, fuzzy
+msgid "Once the build is successful, run the below command:"
+msgstr "Quando a compilação for bem-sucedida, execute o comando abaixo:"
+
+#, fuzzy
+msgid "Start two instances of the application and a load balancer"
+msgstr "Inicie duas instâncias do aplicativo e um balanceador de carga"
+
+#, fuzzy
+msgid "After a few seconds, in another terminal, run `curl localhost:8080/tasks` to verify that tasks were only created at different instants and in an interval of 10 seconds."
+msgstr "Após alguns segundos, em outro terminal, execute `curl localhost:8080/tasks` para verificar se as tarefas foram criadas apenas em instantes diferentes e em um intervalo de 10 segundos."
+
+#, fuzzy
+msgid "Registering Plugin and Listeners"
+msgstr "Registro de plug-ins e ouvintes"
+
+#, fuzzy
+msgid "You can register `plugins`, `job-listeners` and `trigger-listeners` through Quarkus configuration."
+msgstr "O senhor pode registrar `plugins` , `job-listeners` e `trigger-listeners` por meio da configuração do Quarkus."
+
+#, fuzzy
+msgid "The example below registers the plugin `org.quartz.plugins.history.LoggingJobHistoryPlugin` named as `jobHistory` with the property `jobSuccessMessage` defined as `Job [{1}.{0}] execution complete and reports: {8}`"
+msgstr "O exemplo abaixo registra o plug-in `org.quartz.plugins.history.LoggingJobHistoryPlugin` denominado `jobHistory` com a propriedade `jobSuccessMessage` definida como `Job [{1}.{0}] execution complete and reports: {8}`"
+
+#, fuzzy
+msgid "You can also register a listener programmatically with an injected `org.quartz.Scheduler`:"
+msgstr "O senhor também pode registrar um ouvinte de forma programática com um `org.quartz.Scheduler` injetado:"
+
+#, fuzzy
+msgid "Quartz Configuration Reference"
+msgstr "Referência de configuração do Quartz"
+
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-1\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de configuração fixada no momento da construção - Todas as outras propriedades de configuração podem ser substituídas no momento da execução <input type=\"search\" id=\"config-search-1\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#, fuzzy
+msgid "[[quarkus-quartz_configuration]]link:#quarkus-quartz_configuration[Configuration property]"
+msgstr "link:#quarkus-quartz_configuration[Propriedade de configuração]"
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid "Default"
+msgstr "Padrão"
+
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.clustered]]`link:#quarkus-quartz_quarkus.quartz.clustered[quarkus.quartz.clustered]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Enable cluster mode or not.\n"
+"If enabled make sure to set the appropriate cluster properties.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_CLUSTERED+++[]\n"
+"--"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.clustered[quarkus.quartz.clustered]`"
+
+#, fuzzy
+msgid "icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.clustered]]`link:#quarkus-quartz_quarkus.quartz.clustered[quarkus.quartz.clustered]`"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.clustered[quarkus.quartz.clustered]`"
+
+#, fuzzy
+msgid ""
+"Enable cluster mode or not.\n"
+"If enabled make sure to set the appropriate cluster properties."
+msgstr "Ative ou não o modo de cluster. Caso seja ativado, certifique-se de definir as propriedades apropriadas do cluster."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_CLUSTERED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_CLUSTERED[]"
+
+#, fuzzy
+msgid "<i class=\"fa fa-chevron-down\"></i><span>Show more</span>"
+msgstr "<i class=\"fa fa-chevron-down\"></i><span>Mostrar mais</span>"
+
+msgid "boolean"
+msgstr "booleano"
+
+#, fuzzy
+msgid "`false`"
+msgstr "`false`"
+
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.cluster-checkin-interval]]`link:#quarkus-quartz_quarkus.quartz.cluster-checkin-interval[quarkus.quartz.cluster-checkin-interval]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The frequency (in milliseconds) at which the scheduler instance checks-in with other instances of the cluster.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_CLUSTER_CHECKIN_INTERVAL+++[]\n"
+"--"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.cluster-checkin-interval[quarkus.quartz.cluster-checkin-interval]`"
+
+#, fuzzy
+msgid "icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.cluster-checkin-interval]]`link:#quarkus-quartz_quarkus.quartz.cluster-checkin-interval[quarkus.quartz.cluster-checkin-interval]`"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.cluster-checkin-interval[quarkus.quartz.cluster-checkin-interval]`"
+
+#, fuzzy
+msgid "The frequency (in milliseconds) at which the scheduler instance checks-in with other instances of the cluster."
+msgstr "A frequência (em milissegundos) com a qual a instância do agendador se comunica com outras instâncias do cluster."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_CLUSTER_CHECKIN_INTERVAL+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_CLUSTER_CHECKIN_INTERVAL[]"
+
+msgid "long"
+msgstr "long"
+
+#, fuzzy
+msgid "`15000`"
+msgstr "`15.000`"
+
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.store-type]]`link:#quarkus-quartz_quarkus.quartz.store-type[quarkus.quartz.store-type]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The type of store to use.\n"
+"When using `StoreType++#++JDBC_CMT` or `StoreType++#++JDBC_TX` configuration values make sure that you have the datasource configured. See link:https://quarkus.io/guides/datasource[Configuring your datasource] for more information.\n"
+"To create Quartz tables, you can perform a schema migration via the link:https://quarkus.io/guides/flyway[Flyway extension] using a SQL script matching your database picked from link:https://github.com/quartz-scheduler/quartz/blob/master/quartz-core/src/main/resources/org/quartz/impl/jdbcjobstore[Quartz repository].\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_STORE_TYPE+++[]\n"
+"--"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.store-type[quarkus.quartz.store-type]`"
+
+#, fuzzy
+msgid "icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.store-type]]`link:#quarkus-quartz_quarkus.quartz.store-type[quarkus.quartz.store-type]`"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.store-type[quarkus.quartz.store-type]`"
+
+#, fuzzy
+msgid ""
+"The type of store to use.\n"
+"When using `StoreType++#++JDBC_CMT` or `StoreType++#++JDBC_TX` configuration values make sure that you have the datasource configured. See link:https://quarkus.io/guides/datasource[Configuring your datasource] for more information.\n"
+"To create Quartz tables, you can perform a schema migration via the link:https://quarkus.io/guides/flyway[Flyway extension] using a SQL script matching your database picked from link:https://github.com/quartz-scheduler/quartz/blob/master/quartz-core/src/main/resources/org/quartz/impl/jdbcjobstore[Quartz repository]."
+msgstr "O tipo de armazenamento a ser utilizado. Ao utilizar os valores de configuração `StoreType#JDBC_CMT` ou `StoreType#JDBC_TX` , certifique-se de que a fonte de dados esteja configurada. Consulte link:https://quarkus.io/guides/datasource[“Configurando sua fonte de dados”] para obter mais informações. Para criar tabelas do Quartz, é possível realizar uma migração de esquema por meio da link:https://quarkus.io/guides/flyway[extensão Flyway] , utilizando um script SQL compatível com seu banco de dados, selecionado no link:https://github.com/quartz-scheduler/quartz/blob/master/quartz-core/src/main/resources/org/quartz/impl/jdbcjobstore[repositório do Quartz] ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_STORE_TYPE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_STORE_TYPE[]"
+
+#, fuzzy
+msgid "`ram`, `jdbc-tx`, `jdbc-cmt`"
+msgstr "`ram` , `jdbc-tx` , `jdbc-cmt`"
+
+#, fuzzy
+msgid "`ram`"
+msgstr "`ram`"
+
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.datasource]]`link:#quarkus-quartz_quarkus.quartz.datasource[quarkus.quartz.datasource]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The name of the datasource to use.\n"
+"Optionally needed when using the `jdbc-tx` or `jdbc-cmt` store types. If not specified, defaults to using the default datasource.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_DATASOURCE+++[]\n"
+"--"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.datasource[quarkus.quartz.datasource]`"
+
+#, fuzzy
+msgid "icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.datasource]]`link:#quarkus-quartz_quarkus.quartz.datasource[quarkus.quartz.datasource]`"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.datasource[quarkus.quartz.datasource]`"
+
+#, fuzzy
+msgid ""
+"The name of the datasource to use.\n"
+"Optionally needed when using the `jdbc-tx` or `jdbc-cmt` store types. If not specified, defaults to using the default datasource."
+msgstr "O nome da fonte de dados a ser utilizada. É opcional, mas necessário ao utilizar os tipos de armazenamento `jdbc-tx` ou `jdbc-cmt` . Se não for especificado, será utilizada, por padrão, a fonte de dados padrão."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_DATASOURCE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_DATASOURCE[]"
+
+msgid "string"
+msgstr "string"
+
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.table-prefix]]`link:#quarkus-quartz_quarkus.quartz.table-prefix[quarkus.quartz.table-prefix]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The prefix for quartz job store tables.\n"
+"Ignored if using a `ram` store.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_TABLE_PREFIX+++[]\n"
+"--"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.table-prefix[quarkus.quartz.table-prefix]`"
+
+#, fuzzy
+msgid "icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.table-prefix]]`link:#quarkus-quartz_quarkus.quartz.table-prefix[quarkus.quartz.table-prefix]`"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.table-prefix[quarkus.quartz.table-prefix]`"
+
+#, fuzzy
+msgid ""
+"The prefix for quartz job store tables.\n"
+"Ignored if using a `ram` store."
+msgstr "O prefixo para as tabelas de armazenamento de tarefas do Quartz. É ignorado caso se utilize um armazenamento `em memória RAM` ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_TABLE_PREFIX+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_TABLE_PREFIX[]"
+
+#, fuzzy
+msgid "`QRTZ_`"
+msgstr "`QRTZ_`"
+
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.select-with-lock-sql]]`link:#quarkus-quartz_quarkus.quartz.select-with-lock-sql[quarkus.quartz.select-with-lock-sql]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The SQL string that selects a row in the \"LOCKS\" table and places a lock on the row.\n"
+"If not set, the default value of Quartz applies, for which the \"++{++0++}++\" is replaced during run-time with the `table-prefix`, the \"++{++1++}++\" with the `instance-name`.\n"
+"An example SQL string `SELECT ++*++ FROM ++{++0++}++LOCKS WHERE SCHED_NAME = ++{++1++}++ AND LOCK_NAME = ? FOR UPDATE`\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_SELECT_WITH_LOCK_SQL+++[]\n"
+"--"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.select-with-lock-sql[quarkus.quartz.select-with-lock-sql]`"
+
+#, fuzzy
+msgid "icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.select-with-lock-sql]]`link:#quarkus-quartz_quarkus.quartz.select-with-lock-sql[quarkus.quartz.select-with-lock-sql]`"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.select-with-lock-sql[quarkus.quartz.select-with-lock-sql]`"
+
+#, fuzzy
+msgid ""
+"The SQL string that selects a row in the \"LOCKS\" table and places a lock on the row.\n"
+"If not set, the default value of Quartz applies, for which the \"++{++0++}++\" is replaced during run-time with the `table-prefix`, the \"++{++1++}++\" with the `instance-name`.\n"
+"An example SQL string `SELECT ++*++ FROM ++{++0++}++LOCKS WHERE SCHED_NAME = ++{++1++}++ AND LOCK_NAME = ? FOR UPDATE`"
+msgstr "A string SQL que seleciona uma linha na tabela “LOCKS” e aplica um bloqueio a essa linha. Caso não seja definida, aplica-se o valor padrão do Quartz, no qual “{0}” é substituído em tempo de execução pelo `prefixo da tabela` e “{1}” pelo `nome da instância` . Um exemplo de string SQL: `SELECT * FROM {0}LOCKS WHERE SCHED_NAME = {1} AND LOCK_NAME = ? FOR UPDATE`"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_SELECT_WITH_LOCK_SQL+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_SELECT_WITH_LOCK_SQL[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-quartz_quarkus.quartz.instance-name]]`link:#quarkus-quartz_quarkus.quartz.instance-name[quarkus.quartz.instance-name]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The name of the Quartz instance.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_INSTANCE_NAME+++[]\n"
+"--"
+msgstr "`link:#quarkus-quartz_quarkus.quartz.instance-name[quarkus.quartz.nome-da-instância]`"
+
+#, fuzzy
+msgid "[[quarkus-quartz_quarkus.quartz.instance-name]]`link:#quarkus-quartz_quarkus.quartz.instance-name[quarkus.quartz.instance-name]`"
+msgstr "`link:#quarkus-quartz_quarkus.quartz.instance-name[quarkus.quartz.nome-da-instância]`"
+
+#, fuzzy
+msgid "The name of the Quartz instance."
+msgstr "O nome da instância do Quartz."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_INSTANCE_NAME+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_INSTANCE_NAME[]"
+
+#, fuzzy
+msgid "`QuarkusQuartzScheduler`"
+msgstr "`QuarkusQuartzScheduler`"
+
+#, fuzzy
+msgid ""
+"[[quarkus-quartz_quarkus.quartz.thread-count]]`link:#quarkus-quartz_quarkus.quartz.thread-count[quarkus.quartz.thread-count]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The size of scheduler thread pool. This will initialize the number of worker threads in the pool.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_THREAD_COUNT+++[]\n"
+"--"
+msgstr "`link:#quarkus-quartz_quarkus.quartz.thread-count[quarkus.quartz.thread-count]`"
+
+#, fuzzy
+msgid "[[quarkus-quartz_quarkus.quartz.thread-count]]`link:#quarkus-quartz_quarkus.quartz.thread-count[quarkus.quartz.thread-count]`"
+msgstr "`link:#quarkus-quartz_quarkus.quartz.thread-count[quarkus.quartz.thread-count]`"
+
+#, fuzzy
+msgid "The size of scheduler thread pool. This will initialize the number of worker threads in the pool."
+msgstr "O tamanho do conjunto de threads do agendador. Isso inicializará o número de threads de trabalho no conjunto."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_THREAD_COUNT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_THREAD_COUNT[]"
+
+msgid "int"
+msgstr "int"
+
+#, fuzzy
+msgid "`25`"
+msgstr "`25`"
+
+#, fuzzy
+msgid ""
+"[[quarkus-quartz_quarkus.quartz.thread-priority]]`link:#quarkus-quartz_quarkus.quartz.thread-priority[quarkus.quartz.thread-priority]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Thread priority of worker threads in the pool.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_THREAD_PRIORITY+++[]\n"
+"--"
+msgstr "`link:#quarkus-quartz_quarkus.quartz.thread-priority[quarkus.quartz.prioridade-da-thread]`"
+
+#, fuzzy
+msgid "[[quarkus-quartz_quarkus.quartz.thread-priority]]`link:#quarkus-quartz_quarkus.quartz.thread-priority[quarkus.quartz.thread-priority]`"
+msgstr "`link:#quarkus-quartz_quarkus.quartz.thread-priority[quarkus.quartz.prioridade-da-thread]`"
+
+#, fuzzy
+msgid "Thread priority of worker threads in the pool."
+msgstr "Prioridade das threads de trabalho no pool."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_THREAD_PRIORITY+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_THREAD_PRIORITY[]"
+
+#, fuzzy
+msgid "`5`"
+msgstr "`5`"
+
+#, fuzzy
+msgid ""
+"[[quarkus-quartz_quarkus.quartz.misfire-threshold]]`link:#quarkus-quartz_quarkus.quartz.misfire-threshold[quarkus.quartz.misfire-threshold]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Defines how late the schedulers should be to be considered misfired.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_MISFIRE_THRESHOLD+++[]\n"
+"--"
+msgstr "`link:#quarkus-quartz_quarkus.quartz.misfire-threshold[quarkus.quartz.misfire-threshold]`"
+
+#, fuzzy
+msgid "[[quarkus-quartz_quarkus.quartz.misfire-threshold]]`link:#quarkus-quartz_quarkus.quartz.misfire-threshold[quarkus.quartz.misfire-threshold]`"
+msgstr "`link:#quarkus-quartz_quarkus.quartz.misfire-threshold[quarkus.quartz.misfire-threshold]`"
+
+#, fuzzy
+msgid "Defines how late the schedulers should be to be considered misfired."
+msgstr "Define qual deve ser o atraso dos agendadores para que sejam considerados com falha de execução."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_MISFIRE_THRESHOLD+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_MISFIRE_THRESHOLD[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"link:https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html[Duration]\n"
+"  link:#duration-note-anchor-{summaryTableId}[icon:question-circle[], title=More information about the Duration format]"
+msgstr "link:https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html[Duração] link:#duration-note-anchor-{summaryTableId}[[círculo de pergunta]]"
+
+#, fuzzy
+msgid "`60S`"
+msgstr "`anos 60`"
+
+#, fuzzy
+msgid ""
+"[[quarkus-quartz_quarkus.quartz.start-mode]]`link:#quarkus-quartz_quarkus.quartz.start-mode[quarkus.quartz.start-mode]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Scheduler can be started in different modes: normal, forced or halted. By default, the scheduler is not started unless a `io.quarkus.scheduler.Scheduled` business method is found. If set to \"forced\", scheduler will be started even if no scheduled business methods are found. This is necessary for \"pure\" programmatic scheduling. Additionally, setting it to \"halted\" will behave just like forced mode but the scheduler will not start triggering jobs until an explicit start is called from the main scheduler. This is useful to programmatically register listeners before scheduler starts performing some work.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_START_MODE+++[]\n"
+"--"
+msgstr "`link:#quarkus-quartz_quarkus.quartz.start-mode[quarkus.quartz.start-mode]`"
+
+#, fuzzy
+msgid "[[quarkus-quartz_quarkus.quartz.start-mode]]`link:#quarkus-quartz_quarkus.quartz.start-mode[quarkus.quartz.start-mode]`"
+msgstr "`link:#quarkus-quartz_quarkus.quartz.start-mode[quarkus.quartz.modo-inicial]`"
+
+#, fuzzy
+msgid "Scheduler can be started in different modes: normal, forced or halted. By default, the scheduler is not started unless a `io.quarkus.scheduler.Scheduled` business method is found. If set to \"forced\", scheduler will be started even if no scheduled business methods are found. This is necessary for \"pure\" programmatic scheduling. Additionally, setting it to \"halted\" will behave just like forced mode but the scheduler will not start triggering jobs until an explicit start is called from the main scheduler. This is useful to programmatically register listeners before scheduler starts performing some work."
+msgstr "O agendador pode ser iniciado em diferentes modos: normal, forçado ou suspenso. Por padrão, o agendador não é iniciado, a menos que seja encontrado um método de negócios `do tipo io.quarkus.scheduler.Scheduled` . Se configurado como “forçado”, o agendador será iniciado mesmo que não sejam encontrados métodos de negócios agendados. Isso é necessário para o agendamento programático “puro”. Além disso, configurá-lo como “suspenso” resultará em um comportamento semelhante ao do modo forçado, mas o agendador não começará a acionar tarefas até que uma chamada explícita de início seja feita a partir do agendador principal. Isso é útil para registrar programaticamente ouvintes antes que o agendador comece a executar alguma tarefa."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_START_MODE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_START_MODE[]"
+
+#, fuzzy
+msgid "`normal`, `forced`, `halted`"
+msgstr "`normal` , `forçado` , `interrompido`"
+
+#, fuzzy
+msgid "`normal`"
+msgstr "`normal`"
+
+#, fuzzy
+msgid "[[quarkus-quartz_quarkus.quartz.trigger-listeners-trigger-listeners]]link:#quarkus-quartz_quarkus.quartz.trigger-listeners-trigger-listeners[Trigger listeners]"
+msgstr "link:#quarkus-quartz_quarkus.quartz.trigger-listeners-trigger-listeners[Ouvintes de gatilho]"
+
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.trigger-listeners.-listener-name-.class]]`link:#quarkus-quartz_quarkus.quartz.trigger-listeners.-listener-name-.class[quarkus.quartz.trigger-listeners.\"listener-name\".class]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Class name for the configuration.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_TRIGGER_LISTENERS__LISTENER_NAME__CLASS+++[]\n"
+"--"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.trigger-listeners.-listener-name-.class[quarkus.quartz.trigger-listeners.\"listener-name\".class]`"
+
+#, fuzzy
+msgid "icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.trigger-listeners.-listener-name-.class]]`link:#quarkus-quartz_quarkus.quartz.trigger-listeners.-listener-name-.class[quarkus.quartz.trigger-listeners.\"listener-name\".class]`"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.trigger-listeners.-listener-name-.class[quarkus.quartz.trigger-listeners.\"listener-name\".class]`"
+
+#, fuzzy
+msgid "Class name for the configuration."
+msgstr "Nome da classe para a configuração."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_TRIGGER_LISTENERS__LISTENER_NAME__CLASS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_TRIGGER_LISTENERS__LISTENER_NAME__CLASS[]"
+
+#, fuzzy
+msgid "required icon:exclamation-circle[title=Configuration property is required]"
+msgstr "obrigatório [círculo de exclamação]"
+
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.trigger-listeners.-listener-name-.properties-property-name]]`link:#quarkus-quartz_quarkus.quartz.trigger-listeners.-listener-name-.properties-property-name[quarkus.quartz.trigger-listeners.\"listener-name\".properties]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The properties passed to the class.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_TRIGGER_LISTENERS__LISTENER_NAME__PROPERTIES+++[]\n"
+"--"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.trigger-listeners.-listener-name-.properties-property-name[quarkus.quartz.trigger-listeners.\"listener-name\".properties]`"
+
+#, fuzzy
+msgid "icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.trigger-listeners.-listener-name-.properties-property-name]]`link:#quarkus-quartz_quarkus.quartz.trigger-listeners.-listener-name-.properties-property-name[quarkus.quartz.trigger-listeners.\"listener-name\".properties]`"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.trigger-listeners.-listener-name-.properties-property-name[quarkus.quartz.trigger-listeners.\"listener-name\".properties]`"
+
+#, fuzzy
+msgid "The properties passed to the class."
+msgstr "As propriedades passadas à classe."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_TRIGGER_LISTENERS__LISTENER_NAME__PROPERTIES+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_TRIGGER_LISTENERS__LISTENER_NAME__PROPERTIES[]"
+
+#, fuzzy
+msgid "`Map<String,String>`"
+msgstr "`Map<String, String>`"
+
+#, fuzzy
+msgid "[[quarkus-quartz_quarkus.quartz.job-listeners-job-listeners]]link:#quarkus-quartz_quarkus.quartz.job-listeners-job-listeners[Job listeners]"
+msgstr "link:#quarkus-quartz_quarkus.quartz.job-listeners-job-listeners[Ouvintes de tarefas]"
+
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.job-listeners.-listener-name-.class]]`link:#quarkus-quartz_quarkus.quartz.job-listeners.-listener-name-.class[quarkus.quartz.job-listeners.\"listener-name\".class]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Class name for the configuration.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_JOB_LISTENERS__LISTENER_NAME__CLASS+++[]\n"
+"--"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.job-listeners.-listener-name-.class[quarkus.quartz.job-listeners.\"listener-name\".class]`"
+
+#, fuzzy
+msgid "icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.job-listeners.-listener-name-.class]]`link:#quarkus-quartz_quarkus.quartz.job-listeners.-listener-name-.class[quarkus.quartz.job-listeners.\"listener-name\".class]`"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.job-listeners.-listener-name-.class[quarkus.quartz.job-listeners.\"listener-name\".class]`"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_JOB_LISTENERS__LISTENER_NAME__CLASS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_JOB_LISTENERS__LISTENER_NAME__CLASS[]"
+
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.job-listeners.-listener-name-.properties-property-name]]`link:#quarkus-quartz_quarkus.quartz.job-listeners.-listener-name-.properties-property-name[quarkus.quartz.job-listeners.\"listener-name\".properties]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The properties passed to the class.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_JOB_LISTENERS__LISTENER_NAME__PROPERTIES+++[]\n"
+"--"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.job-listeners.-listener-name-.properties-property-name[quarkus.quartz.job-listeners.\"listener-name\".properties]`"
+
+#, fuzzy
+msgid "icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.job-listeners.-listener-name-.properties-property-name]]`link:#quarkus-quartz_quarkus.quartz.job-listeners.-listener-name-.properties-property-name[quarkus.quartz.job-listeners.\"listener-name\".properties]`"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.job-listeners.-listener-name-.properties-property-name[quarkus.quartz.job-listeners.\"listener-name\".properties]`"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_JOB_LISTENERS__LISTENER_NAME__PROPERTIES+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_JOB_LISTENERS__LISTENER_NAME__PROPERTIES[]"
+
+#, fuzzy
+msgid "[[quarkus-quartz_quarkus.quartz.plugins-plugins]]link:#quarkus-quartz_quarkus.quartz.plugins-plugins[Plugins]"
+msgstr "link:#quarkus-quartz_quarkus.quartz.plugins-plugins[Plug-ins]"
+
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.plugins.-plugin-name-.class]]`link:#quarkus-quartz_quarkus.quartz.plugins.-plugin-name-.class[quarkus.quartz.plugins.\"plugin-name\".class]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Class name for the configuration.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_PLUGINS__PLUGIN_NAME__CLASS+++[]\n"
+"--"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.plugins.-plugin-name-.class[quarkus.quartz.plugins.\"nome-do-plugin\".class]`"
+
+#, fuzzy
+msgid "icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.plugins.-plugin-name-.class]]`link:#quarkus-quartz_quarkus.quartz.plugins.-plugin-name-.class[quarkus.quartz.plugins.\"plugin-name\".class]`"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.plugins.-plugin-name-.class[quarkus.quartz.plugins.\"nome-do-plugin\".class]`"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_PLUGINS__PLUGIN_NAME__CLASS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_PLUGINS__PLUGIN_NAME__CLASS[]"
+
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.plugins.-plugin-name-.properties-property-name]]`link:#quarkus-quartz_quarkus.quartz.plugins.-plugin-name-.properties-property-name[quarkus.quartz.plugins.\"plugin-name\".properties]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The properties passed to the class.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_PLUGINS__PLUGIN_NAME__PROPERTIES+++[]\n"
+"--"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.plugins.-plugin-name-.properties-property-name[quarkus.quartz.plugins.\"nome-do-plugin\".properties]`"
+
+#, fuzzy
+msgid "icon:lock[title=Fixed at build time] [[quarkus-quartz_quarkus.quartz.plugins.-plugin-name-.properties-property-name]]`link:#quarkus-quartz_quarkus.quartz.plugins.-plugin-name-.properties-property-name[quarkus.quartz.plugins.\"plugin-name\".properties]`"
+msgstr "[lock] `link:#quarkus-quartz_quarkus.quartz.plugins.-plugin-name-.properties-property-name[quarkus.quartz.plugins.\"nome-do-plugin\".properties]`"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_PLUGINS__PLUGIN_NAME__PROPERTIES+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_PLUGINS__PLUGIN_NAME__PROPERTIES[]"
+
+#, fuzzy
+msgid "[[quarkus-quartz_quarkus.quartz.misfire-policy-per-jobs-misfire-policy-per-job-configuration]]link:#quarkus-quartz_quarkus.quartz.misfire-policy-per-jobs-misfire-policy-per-job-configuration[Misfire policy per job configuration]"
+msgstr "link:#quarkus-quartz_quarkus.quartz.misfire-policy-per-jobs-misfire-policy-per-job-configuration[Política de falhas de ignição por configuração de trabalho]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-quartz_quarkus.quartz.misfire-policy.-identity]]`link:#quarkus-quartz_quarkus.quartz.misfire-policy.-identity[quarkus.quartz.misfire-policy.\"identity\"]`\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The quartz misfire policy for this job.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_MISFIRE_POLICY__IDENTITY_+++[]\n"
+"--"
+msgstr "`link:#quarkus-quartz_quarkus.quartz.misfire-policy.-identity[quarkus.quartz.misfire-policy.\"identity\"]`"
+
+#, fuzzy
+msgid "[[quarkus-quartz_quarkus.quartz.misfire-policy.-identity]]`link:#quarkus-quartz_quarkus.quartz.misfire-policy.-identity[quarkus.quartz.misfire-policy.\"identity\"]`"
+msgstr "`link:#quarkus-quartz_quarkus.quartz.misfire-policy.-identity[quarkus.quartz.misfire-policy. \"identity\"]`"
+
+#, fuzzy
+msgid "The quartz misfire policy for this job."
+msgstr "A política relativa a falhas de funcionamento do quartzo para este trabalho."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_QUARTZ_MISFIRE_POLICY__IDENTITY_+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_QUARTZ_MISFIRE_POLICY__IDENTITY_[]"
+
+#, fuzzy
+msgid "`smart-policy`, `ignore-misfire-policy`, `fire-now`, `simple-trigger-reschedule-now-with-existing-repeat-count`, `simple-trigger-reschedule-now-with-remaining-repeat-count`, `simple-trigger-reschedule-next-with-remaining-count`, `simple-trigger-reschedule-next-with-existing-count`, `cron-trigger-do-nothing`"
+msgstr "`política-inteligente` , `política-de-ignorar-falhas-de-disparo` , `disparar-agora` , `reescalonamento-imediato-do-gatilho-simples-com-contagem-de-repetições-existente` , `reescalonamento-imediato-do-gatilho-simples-com-contagem-de-repetições-restante` , `acionador-simples-reprogramar-na-próxima-com-contagem-restante` , `acionador-simples-reprogramar-na-próxima-com-contagem-existente` , `acionador-cron-não-fazer-nada`"
+
+#, fuzzy
+msgid "`smart-policy`"
+msgstr "`política inteligente`"
+
+#, fuzzy
+msgid "About the Duration format"
+msgstr "Sobre o formato de duração"
+
+#, fuzzy
+msgid ""
+"The format for durations uses the standard `java.time.Duration` format.\n"
+"You can learn more about it in the link:https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html#parse-java.lang.CharSequence-[Duration#parse() javadoc]."
+msgstr "O formato para durações usa o formato padrão `java.time.Duration` . O senhor pode saber mais sobre isso no link:https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html#parse-java.lang.CharSequence-[javadoc Duration#parse()] ."
+
+#, fuzzy
+msgid ""
+"You can also provide duration values starting with a number.\n"
+"In this case, if the value consists only of a number, the converter treats the value as seconds.\n"
+"Otherwise, `PT` is implicitly prepended to the value to obtain a standard `java.time.Duration` format."
+msgstr "O senhor também pode fornecer valores de duração que comecem com um número. Nesse caso, se o valor consistir apenas em um número, o conversor tratará o valor como segundos. Caso contrário, `PT` é implicitamente anexado ao valor para obter um formato padrão `java.time.Duration` ."

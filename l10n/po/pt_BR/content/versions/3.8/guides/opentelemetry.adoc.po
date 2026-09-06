@@ -1,0 +1,2008 @@
+msgid ""
+msgstr ""
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: roq-plugin-l10n-adoc\n"
+
+msgid "Using OpenTelemetry"
+msgstr "Usando OpenTelemetry"
+
+#, fuzzy
+msgid ""
+"This guide explains how your Quarkus application can utilize https://opentelemetry.io/[OpenTelemetry] (OTel) to provide\n"
+"distributed tracing for interactive web applications."
+msgstr "Este guia explica como o seu aplicativo Quarkus pode utilizar o link:https://opentelemetry.io/[OpenTelemetry] (OTel) para fornecer rastreamento distribuído para aplicativos interativos da Web."
+
+#, fuzzy
+msgid "OpenTelemetry Metrics and Logging are not yet supported."
+msgstr "Ainda não há suporte para OpenTelemetry Metrics e Logging."
+
+#, fuzzy
+msgid ""
+"Quarkus now supports the OpenTelemetry Autoconfiguration for Traces. The configurations match what you can see at\n"
+"https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md[OpenTelemetry SDK Autoconfigure]\n"
+"with the `quarkus.*` prefix."
+msgstr "O Quarkus agora suporta a autoconfiguração do OpenTelemetry para traços. As configurações correspondem ao que o senhor pode ver no link:https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md[OpenTelemetry SDK Autoconfigure] com o prefixo `quarkus.*` ."
+
+#, fuzzy
+msgid "Extensions and the libraries they provide, are directly instrumented in Quarkus. The *use of the https://opentelemetry.io/docs/instrumentation/java/automatic/[OpenTelemetry Agent] is not needed nor recommended* due to context propagation issues between imperative and reactive libraries."
+msgstr "As extensões e as bibliotecas que elas fornecem são instrumentadas diretamente no Quarkus. O *uso do link:https://opentelemetry.io/docs/instrumentation/java/automatic/[OpenTelemetry Agent] não é necessário nem recomendado* devido a problemas de propagação de contexto entre bibliotecas imperativas e reativas."
+
+#, fuzzy
+msgid "If you come from the legacy OpenTracing extension, there is a xref:telemetry-opentracing-to-otel-tutorial.adoc[guide to help with the migration]."
+msgstr "Se o senhor tiver vindo da extensão OpenTracing legada, há um xref:telemetry-opentracing-to-otel-tutorial.adoc[guia para ajudar na migração] ."
+
+msgid "Prerequisites"
+msgstr "Pré-requisitos"
+
+msgid "To complete this guide, you need:"
+msgstr "Para concluir este guia, você precisa:"
+
+msgid "Roughly 15 minutes"
+msgstr "Cerca de 15 minutos"
+
+msgid "An IDE"
+msgstr "Um IDE"
+
+msgid "JDK 17+ installed with `JAVA_HOME` configured appropriately"
+msgstr "JDK 17+ instalado com `JAVA_HOME` configurado corretamente"
+
+msgid "Apache Maven {maven-version}"
+msgstr "Apache Maven {maven-version}"
+
+msgid "Docker and Docker Compose or xref:podman.adoc[Podman], and Docker Compose"
+msgstr "Docker e Docker Compose ou xref:podman.adoc[Podman] e Docker Compose"
+
+msgid "Optionally the xref:cli-tooling.adoc[Quarkus CLI] if you want to use it"
+msgstr "Opcionalmente, o xref:cli-tooling.adoc[Quarkus CLI] se você quiser usá-lo"
+
+msgid "Optionally Mandrel or GraalVM installed and xref:building-native-image.adoc#configuring-graalvm[configured appropriately] if you want to build a native executable (or Docker if you use a native container build)"
+msgstr "Opcionalmente, Mandrel ou GraalVM instalado e xref:building-native-image.adoc#configuring-graalvm[configurado apropriadamente] se você quiser criar um executável nativo (ou Docker se você usar uma compilação de contêiner nativo)"
+
+msgid "Architecture"
+msgstr "Arquitetura"
+
+#, fuzzy
+msgid "In this guide, we create a straightforward REST application to demonstrate distributed tracing."
+msgstr "Neste guia, criamos um aplicativo REST simples para demonstrar o rastreamento distribuído."
+
+msgid "Solution"
+msgstr "Solução"
+
+msgid ""
+"We recommend that you follow the instructions in the next sections and create the application step by step.\n"
+"However, you can skip right to the completed example."
+msgstr "Recomendamos que você siga as instruções nas próximas seções e crie o aplicativo passo a passo. No entanto, você pode pular diretamente para o exemplo completo."
+
+msgid "Clone the Git repository: `git clone {quickstarts-clone-url}`, or download an {quickstarts-archive-url}[archive]."
+msgstr "Clone o repositório Git: `git clone {quickstarts-clone-url}`, ou baixe um {quickstarts-archive-url}[arquivo]."
+
+#, fuzzy
+msgid "The solution is located in the `opentelemetry-quickstart` link:{quickstarts-tree-url}/opentelemetry-quickstart[directory]."
+msgstr "A solução está localizada no link:{quickstarts-tree-url}/opentelemetry-quickstart[diretório] `opentelemetry-quickstart` ."
+
+msgid "Creating the Maven project"
+msgstr "Criar o projeto Maven"
+
+msgid "First, we need a new project. Create a new project with the following command:"
+msgstr "Primeiro, precisamos de um novo projeto. Crie um novo projeto com o seguinte comando:"
+
+msgid "CLI"
+msgstr "CLI"
+
+msgid "To create a Gradle project, add the `--gradle` or `--gradle-kotlin-dsl` option."
+msgstr "Para criar um projeto Gradle, adicione a opção `--gradle` ou `--gradle-kotlin-dsl`."
+
+msgid "For more information about how to install and use the Quarkus CLI, see the xref:cli-tooling.adoc[Quarkus CLI] guide."
+msgstr "Para obter mais informações sobre como instalar e usar a CLI do Quarkus, consulte o guia xref:cli-tooling.adoc[Quarkus CLI]."
+
+msgid "Maven"
+msgstr "Maven"
+
+msgid "To create a Gradle project, add the `-DbuildTool=gradle` or `-DbuildTool=gradle-kotlin-dsl` option."
+msgstr "Para criar um projeto Gradle, adicione a opção '-DbuildTool=gradle' ou '-DbuildTool=gradle-kotlin-dsl'."
+
+msgid "For Windows users:"
+msgstr "Para usuários do Windows:"
+
+msgid "If using cmd, (don't use backward slash `\\` and put everything on the same line)"
+msgstr "Se estiver usando cmd, (não use barra invertida '\\' e coloque tudo na mesma linha)"
+
+msgid "If using Powershell, wrap `-D` parameters in double quotes e.g. `\"-DprojectArtifactId={create-app-artifact-id}\"`"
+msgstr "Se estiver usando o Powershell, envolva os parâmetros '-D' entre aspas duplas, por exemplo, '\"-DprojectArtifactId={create-app-artifact-id}\"'"
+
+#, fuzzy
+msgid ""
+"This command generates the Maven project and imports the `quarkus-opentelemetry` extension,\n"
+"which includes the default OpenTelemetry support,\n"
+"and a gRPC span exporter for https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/protocol/otlp.md[OTLP]."
+msgstr "Esse comando gera o projeto Maven e importa a extensão `quarkus-opentelemetry` , que inclui o suporte padrão ao OpenTelemetry e um exportador de extensão gRPC para o link:https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/protocol/otlp.md[OTLP] ."
+
+#, fuzzy
+msgid ""
+"If you already have your Quarkus project configured, you can add the `quarkus-opentelemetry` extension\n"
+"to your project by running the following command in your project base directory:"
+msgstr "Se já tiver o projeto Quarkus configurado, o senhor pode adicionar a extensão `quarkus-opentelemetry` ao projeto executando o seguinte comando no diretório base do projeto:"
+
+msgid "This will add the following to your build file:"
+msgstr "Isto irá adicionar o seguinte trecho no seu arquivo de build:"
+
+#, fuzzy
+msgid "Examine the Jakarta REST resource"
+msgstr "Examinar o recurso Jakarta REST"
+
+#, fuzzy
+msgid "Create a `src/main/java/org/acme/opentelemetry/TracedResource.java` file with the following content:"
+msgstr "Crie um arquivo `src/main/java/org/acme/opentelemetry/TracedResource.java` com o seguinte conteúdo:"
+
+#, fuzzy
+msgid ""
+"Notice that there is no tracing specific code included in the application. By default, requests sent to this\n"
+"endpoint will be traced without any required code changes."
+msgstr "Observe que não há código específico de rastreamento incluído no aplicativo. Por padrão, as solicitações enviadas a esse endpoint serão rastreadas sem nenhuma alteração de código necessária."
+
+msgid "Create the configuration"
+msgstr "Crie a configuração"
+
+#, fuzzy
+msgid "There are no mandatory configurations for the extension to work."
+msgstr "Não há configurações obrigatórias para que a extensão funcione."
+
+#, fuzzy
+msgid "If you need to change any of the default property values, here is an example on how to configure the default OTLP gRPC Exporter within the application, using the `src/main/resources/application.properties` file:"
+msgstr "Se o senhor precisar alterar qualquer um dos valores de propriedade padrão, aqui está um exemplo de como configurar o OTLP gRPC Exporter padrão no aplicativo, usando o arquivo `src/main/resources/application.properties` :"
+
+#, fuzzy
+msgid "All spans created from the application will include an OpenTelemetry `Resource` indicating the span was created by the `myservice` application. If not set, it will default to the artifact id."
+msgstr "Todos os intervalos criados a partir do aplicativo incluirão um OpenTelemetry `Resource` indicando que o intervalo foi criado pelo aplicativo `myservice` . Se não for definido, o padrão será o ID do artefato."
+
+#, fuzzy
+msgid "gRPC endpoint to send spans. If not set, it will default to `http://localhost:4317`."
+msgstr "Ponto de extremidade do gRPC para envio de períodos. Se não for definido, o padrão será `http://localhost:4317` ."
+
+#, fuzzy
+msgid "Optional gRPC headers commonly used for authentication"
+msgstr "Cabeçalhos gRPC opcionais comumente usados para autenticação"
+
+#, fuzzy
+msgid "Add tracing information into log messages."
+msgstr "Adicione informações de rastreamento às mensagens de registro."
+
+#, fuzzy
+msgid "You can also only put the trace info into the access log. In this case you must omit the info in the console log format."
+msgstr "O senhor também pode colocar apenas as informações de rastreamento no log de acesso. Nesse caso, é necessário omitir as informações no formato de log do console."
+
+#, fuzzy
+msgid "All configurations have been updated from `quarkus.opentelemetry.\\*` -> `quarkus.otel.*`"
+msgstr "Todas as configurações foram atualizadas a partir de `quarkus.opentelemetry.*` → `quarkus.otel.*`"
+
+#, fuzzy
+msgid "The legacy configurations are now deprecated but will still work during a transition period."
+msgstr "As configurações legadas agora estão obsoletas, mas ainda funcionarão durante um período de transição."
+
+#, fuzzy
+msgid "Disable all or parts of the OpenTelemetry extension"
+msgstr "Desativar toda ou parte da extensão OpenTelemetry"
+
+#, fuzzy
+msgid "Once you add the dependency, the extension will be enabled by default but there are a few ways to disable the OpenTelemetry extension globally or partially."
+msgstr "Depois que o senhor adicionar a dependência, a extensão será ativada por padrão, mas há algumas maneiras de desativar a extensão OpenTelemetry total ou parcialmente."
+
+#, fuzzy
+msgid "Property name"
+msgstr "Nome da propriedade"
+
+msgid "Default value"
+msgstr "Valor padrão"
+
+msgid "Description"
+msgstr "Descrição"
+
+#, fuzzy
+msgid "`quarkus.otel.enabled`"
+msgstr "`quarkus.otel.enabled`"
+
+msgid "true"
+msgstr "verdadeiro"
+
+#, fuzzy
+msgid "If false, disable the OpenTelemetry usage at *build* time."
+msgstr "Se for falso, desabilitará o uso do OpenTelemetry no momento da *compilação* ."
+
+#, fuzzy
+msgid "`quarkus.otel.sdk.disabled`"
+msgstr "`quarkus.otel.sdk.disabled`"
+
+msgid "false"
+msgstr "falso"
+
+#, fuzzy
+msgid "Comes from the OpenTelemetry autoconfiguration. If true, will disable the OpenTelemetry SDK usage at *runtime*."
+msgstr "Vem da autoconfiguração do OpenTelemetry. Se verdadeiro, desabilitará o uso do OpenTelemetry SDK em *tempo de execução* ."
+
+#, fuzzy
+msgid "`quarkus.otel.traces.enabled`"
+msgstr "`quarkus.otel.traces.enabled`"
+
+#, fuzzy
+msgid "If false, disable the OpenTelemetry tracing usage at *build* time."
+msgstr "Se for falso, desabilitará o uso de rastreamento do OpenTelemetry no momento da *compilação* ."
+
+#, fuzzy
+msgid "`quarkus.otel.exporter.otlp.enabled`"
+msgstr "`quarkus.otel.exporter.otlp.enabled`"
+
+#, fuzzy
+msgid "If false will disable the default OTLP exporter at *build* time."
+msgstr "Se for falso, desabilitará o exportador OTLP padrão no momento da *compilação* ."
+
+#, fuzzy
+msgid "If you need to enable or disable the exporter at runtime, you can use the <<sampler>> because it has the ability to filter out all the spans if needed."
+msgstr "Se precisar ativar ou desativar o exportador em tempo de execução, o senhor pode usar o <<sampler>> porque ele tem a capacidade de filtrar todos os intervalos, se necessário."
+
+msgid "Run the application"
+msgstr "Executar o aplicativo"
+
+#, fuzzy
+msgid "The first step is to configure and start the https://opentelemetry.io/docs/collector/[OpenTelemetry Collector] to receive, process and export telemetry data to https://www.jaegertracing.io/[Jaeger] that will display the captured traces."
+msgstr "A primeira etapa é configurar e iniciar o link:https://opentelemetry.io/docs/collector/[OpenTelemetry Collector] para receber, processar e exportar dados de telemetria para o link:https://www.jaegertracing.io/[Jaeger] , que exibirá os traços capturados."
+
+#, fuzzy
+msgid ""
+"Jaeger-all-in-one includes the Jaeger agent, an OTel collector, and the query service/UI.\n"
+"You do not need to install a separated collector. You can directly send the trace data to Jaeger (after enabling OTLP receivers there, see e.g. this\n"
+"https://medium.com/jaegertracing/introducing-native-support-for-opentelemetry-in-jaeger-eb661be8183c[blog entry] for details)."
+msgstr "O Jaeger-all-in-one inclui o agente Jaeger, um coletor OTel e o serviço/UI de consulta. O senhor não precisa instalar um coletor separado. O senhor pode enviar diretamente os dados de rastreamento para o Jaeger (depois de habilitar os receptores OTLP lá, consulte, por exemplo, esta link:https://medium.com/jaegertracing/introducing-native-support-for-opentelemetry-in-jaeger-eb661be8183c[entrada do blog] para obter detalhes)."
+
+#, fuzzy
+msgid "Start the OpenTelemetry Collector and Jaeger system via the following `docker-compose.yml` file that you can launch via `docker-compose up -d`:"
+msgstr "Inicie o OpenTelemetry Collector e o sistema Jaeger por meio do seguinte arquivo `docker-compose.yml` , que o senhor pode abrir em `docker-compose up -d` :"
+
+#, fuzzy
+msgid "You should remove the optional ports you don't need them."
+msgstr "O senhor deve remover as portas opcionais que não são necessárias."
+
+#, fuzzy
+msgid "Now we are ready to run our application. If using `application.properties` to configure the tracer:"
+msgstr "Agora estamos prontos para executar nosso aplicativo. Se estiver usando o site `application.properties` para configurar o rastreador:"
+
+#, fuzzy
+msgid "or if configuring the OTLP gRPC endpoint via JVM arguments:"
+msgstr "ou se estiver configurando o ponto de extremidade OTLP gRPC por meio de argumentos JVM:"
+
+#, fuzzy
+msgid "With the OpenTelemetry Collector, the Jaeger system and the application running, you can make a request to the provided endpoint:"
+msgstr "Com o OpenTelemetry Collector, o sistema Jaeger e o aplicativo em execução, o senhor pode fazer uma solicitação ao endpoint fornecido:"
+
+#, fuzzy
+msgid "When the first request has been submitted, you will be able to see the tracing information in the logs:"
+msgstr "Quando a primeira solicitação tiver sido enviada, o senhor poderá ver as informações de rastreamento nos logs:"
+
+#, fuzzy
+msgid "Then visit the http://localhost:16686[Jaeger UI] to see the tracing information."
+msgstr "Em seguida, visite a link:http://localhost:16686[interface do usuário do Jaeger] para ver as informações de rastreamento."
+
+#, fuzzy
+msgid "Hit `CTRL+C` or type `q` to stop the application."
+msgstr "Pressione `CTRL+C` ou digite `q` para interromper o aplicativo."
+
+#, fuzzy
+msgid "JDBC"
+msgstr "JDBC"
+
+#, fuzzy
+msgid "The https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation/jdbc/library[JDBC instrumentation] will add a span for each JDBC queries done by your application, to enable it, add the following dependency to your build file:"
+msgstr "A link:https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation/jdbc/library[instrumentação JDBC] adicionará um intervalo para cada consulta JDBC feita pelo aplicativo. Para ativá-la, adicione a seguinte dependência ao seu arquivo de compilação:"
+
+#, fuzzy
+msgid "As it uses a dedicated JDBC datasource wrapper, you must enable telemetry for your datasource:"
+msgstr "Como ele usa um wrapper de fonte de dados JDBC dedicado, o senhor deve ativar a telemetria para sua fonte de dados:"
+
+#, fuzzy
+msgid "Additional configuration"
+msgstr "Configuração adicional"
+
+#, fuzzy
+msgid ""
+"Some use cases will require custom configuration of OpenTelemetry.\n"
+"These sections will outline what is necessary to properly configure it."
+msgstr "Alguns casos de uso exigirão a configuração personalizada do OpenTelemetry. Estas seções descreverão o que é necessário para configurá-lo adequadamente."
+
+#, fuzzy
+msgid "ID Generator"
+msgstr "Gerador de ID"
+
+#, fuzzy
+msgid ""
+"The OpenTelemetry extension will use by default a random https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#id-generators[ID Generator]\n"
+"when creating the trace and span identifier."
+msgstr "A extensão OpenTelemetry usará, por padrão, um link:https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#id-generators[gerador de ID] aleatório ao criar o identificador de rastreamento e de intervalo."
+
+#, fuzzy
+msgid ""
+"Some vendor-specific protocols need a custom ID Generator, you can override the default one by creating a producer.\n"
+"The OpenTelemetry extension will detect the `IdGenerator` CDI bean and will use it when configuring the tracer producer."
+msgstr "Alguns protocolos específicos de fornecedores precisam de um gerador de ID personalizado; o senhor pode substituir o padrão criando um produtor. A extensão OpenTelemetry detectará o bean CDI `IdGenerator` e o usará ao configurar o produtor do rastreador."
+
+#, fuzzy
+msgid "Propagators"
+msgstr "Propagadores"
+
+#, fuzzy
+msgid ""
+"OpenTelemetry propagates cross-cutting concerns through https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/api-propagators.md[propagators] that will share an underlying `Context` for storing state and accessing\n"
+"data across the lifespan of a distributed transaction."
+msgstr "A OpenTelemetry propaga preocupações transversais por meio de link:https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/api-propagators.md[propagadores] que compartilham um `Context` subjacente para armazenar o estado e acessar os dados durante a vida útil de uma transação distribuída."
+
+#, fuzzy
+msgid ""
+"By default, the OpenTelemetry extension enables the https://www.w3.org/TR/trace-context/[W3C Trace Context] and the https://www.w3.org/TR/baggage/[W3C Baggage]\n"
+"propagators, you can however choose any of the supported OpenTelemetry propagators by setting the `propagators` config that is described in the <<configuration-reference>>."
+msgstr "Por padrão, a extensão OpenTelemetry ativa os propagadores link:https://www.w3.org/TR/trace-context/[W3C Trace Context] e link:https://www.w3.org/TR/baggage/[W3C Baggage] . No entanto, o senhor pode escolher qualquer um dos propagadores OpenTelemetry compatíveis definindo a configuração `propagators` descrita em <<configuration-reference>> ."
+
+#, fuzzy
+msgid "Additional Propagators"
+msgstr "Propagadores adicionais"
+
+#, fuzzy
+msgid ""
+"The `b3`, `b3multi`, `jaeger` and `ottrace` propagators will need the https://github.com/open-telemetry/opentelemetry-java/tree/main/extensions/trace-propagators[trace-propagators]\n"
+"extension to be added as a dependency to your project."
+msgstr "Os propagadores `b3` , `b3multi` , `jaeger` e `ottrace` precisarão que a extensão link:https://github.com/open-telemetry/opentelemetry-java/tree/main/extensions/trace-propagators[trace-propagators] seja adicionada como uma dependência ao seu projeto."
+
+#, fuzzy
+msgid ""
+"The `xray` propagator will need the https://github.com/open-telemetry/opentelemetry-java-contrib/tree/main/aws-xray-propagator[aws]\n"
+"extension to be added as a dependency to your project."
+msgstr "O propagador `xray` precisará que a extensão link:https://github.com/open-telemetry/opentelemetry-java-contrib/tree/main/aws-xray-propagator[aws] seja adicionada como uma dependência ao seu projeto."
+
+#, fuzzy
+msgid "Customise Propagator"
+msgstr "Personalizar o Propagator"
+
+#, fuzzy
+msgid "To customise the propagation header you can implement the `TextMapPropagatorCustomizer` interface. This can be used, as an example, to restrict propagation of OpenTelemetry trace headers and prevent potentially sensitive data to be sent to third party systems."
+msgstr "Para personalizar o cabeçalho de propagação, o senhor pode implementar a interface `TextMapPropagatorCustomizer` . Isso pode ser usado, por exemplo, para restringir a propagação dos cabeçalhos de rastreamento do OpenTelemetry e evitar que dados potencialmente confidenciais sejam enviados a sistemas de terceiros."
+
+#, fuzzy
+msgid "Resource"
+msgstr "Recursos"
+
+#, fuzzy
+msgid ""
+"A https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#resources[resource] is a representation\n"
+"of the entity that is producing telemetry, it adds attributes to the exported trace to characterize who is producing the trace."
+msgstr "Um link:https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#resources[recurso] é uma representação da entidade que está produzindo a telemetria e adiciona atributos ao rastreamento exportado para caracterizar quem está produzindo o rastreamento."
+
+#, fuzzy
+msgid ""
+"You can add attributes by setting the `resource-attributes` tracer config that is described in the <<configuration-reference>>.\n"
+"Since this property can be overridden at runtime, the OpenTelemetry extension will pick up its value following the order of precedence that\n"
+"is described in the xref:config-reference.adoc#configuration-sources[Quarkus Configuration Reference]."
+msgstr "O senhor pode adicionar atributos definindo a configuração do rastreador `resource-attributes` , descrita em <<configuration-reference>> . Como essa propriedade pode ser substituída em tempo de execução, a extensão OpenTelemetry pegará seu valor seguindo a ordem de precedência descrita na xref:config-reference.adoc#configuration-sources[Referência de configuração do Quarkus] ."
+
+#, fuzzy
+msgid ""
+"If by any means you need to use a custom resource or one that is provided by one of the https://github.com/open-telemetry/opentelemetry-java/tree/main/sdk-extensions[OpenTelemetry SDK Extensions]\n"
+"you can create multiple resource producers. The OpenTelemetry extension will detect the `Resource` CDI beans and will merge them when configuring the tracer producer."
+msgstr "Se, de alguma forma, o senhor precisar usar um recurso personalizado ou um que seja fornecido por uma das link:https://github.com/open-telemetry/opentelemetry-java/tree/main/sdk-extensions[extensões do OpenTelemetry SDK] , poderá criar vários produtores de recursos. A extensão OpenTelemetry detectará os beans CDI `Resource` e os mesclará ao configurar o produtor do rastreador."
+
+#, fuzzy
+msgid "Sampler"
+msgstr "Amostrador"
+
+#, fuzzy
+msgid "A https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#sampling[sampler] decides whether a trace should be discarded or forwarded, effectively managing noise and reducing overhead by limiting the number of collected traces sent to the collector."
+msgstr "Um link:https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#sampling[amostrador] decide se um traço deve ser descartado ou encaminhado, gerenciando efetivamente o ruído e reduzindo a sobrecarga ao limitar o número de traços coletados enviados ao coletor."
+
+#, fuzzy
+msgid "Quarkus comes equipped with a https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#built-in-samplers[built-in sampler], and you also have the option to create your custom sampler."
+msgstr "O Quarkus vem equipado com um link:https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#built-in-samplers[sampler integrado] , e o senhor também tem a opção de criar um sampler personalizado."
+
+#, fuzzy
+msgid "To use the built-in sampler, you can configure it by setting the desired sampler parameters as detailed in the <<configuration-reference>>. As an example, you can configure the sampler to retain 50% of the traces:"
+msgstr "Para usar o sampler integrado, o senhor pode configurá-lo definindo os parâmetros desejados do sampler, conforme detalhado em <<configuration-reference>> . Como exemplo, o senhor pode configurar o sampler para reter 50% dos traços:"
+
+#, fuzzy
+msgid "An interesting use case for the sampler is to activate and deactivate tracing export at runtime, acording to this example:"
+msgstr "Um caso de uso interessante para o sampler é ativar e desativar a exportação de rastreamento em tempo de execução, de acordo com este exemplo:"
+
+#, fuzzy
+msgid "Quarkus 3.0 introduced breaking changes on the configuration."
+msgstr "O Quarkus 3.0 introduziu mudanças significativas na configuração."
+
+#, fuzzy
+msgid "Sampler related property names and values change to comply with the latest Java OpenTelemetry SDK. During a transition period it will be possible to set the new configuration values in the old property because we are mapping  `quarkus.opentelemetry.tracer.sampler` -> `quarkus.otel.traces.sampler`."
+msgstr "Os nomes e os valores das propriedades relacionadas ao Sampler foram alterados para ficar em conformidade com o Java OpenTelemetry SDK mais recente. Durante um período de transição, será possível definir os novos valores de configuração na propriedade antiga porque estamos mapeando `quarkus.opentelemetry.tracer.sampler` → `quarkus.otel.traces.sampler` ."
+
+#, fuzzy
+msgid "If the sampler is parent based, there is no need to set, the now dropped property, `quarkus.opentelemetry.tracer.sampler.parent-based`."
+msgstr "Se o sampler for baseado no pai, não será necessário definir a propriedade, agora descartada, `quarkus.opentelemetry.tracer.sampler.parent-based` ."
+
+#, fuzzy
+msgid "The values you need to set on `quarkus.opentelemetry.tracer.sampler` are now:"
+msgstr "Os valores que o senhor precisa definir em `quarkus.opentelemetry.tracer.sampler` são agora:"
+
+#, fuzzy
+msgid "Old Sampler config value"
+msgstr "Valor de configuração do Sampler antigo"
+
+#, fuzzy
+msgid "New Sampler config value"
+msgstr "Novo valor de configuração do Sampler"
+
+#, fuzzy
+msgid "New Sampler config value (Parent based)"
+msgstr "Novo valor de configuração do Sampler (baseado no pai)"
+
+#, fuzzy
+msgid "`on`"
+msgstr "`on`"
+
+#, fuzzy
+msgid "`always_on`"
+msgstr "`always_on`"
+
+#, fuzzy
+msgid "`parentbased_always_on`"
+msgstr "`parentbased_always_on`"
+
+#, fuzzy
+msgid "`off`"
+msgstr "`off`"
+
+#, fuzzy
+msgid "`always_off`"
+msgstr "`always_off`"
+
+#, fuzzy
+msgid "`parentbased_always_off`"
+msgstr "`parentbased_always_off`"
+
+#, fuzzy
+msgid "`ratio`"
+msgstr "`ratio`"
+
+#, fuzzy
+msgid "`traceidratio`"
+msgstr "`traceidratio`"
+
+#, fuzzy
+msgid "`parentbased_traceidratio`"
+msgstr "`parentbased_traceidratio`"
+
+#, fuzzy
+msgid "If you need to use a custom sampler there are now 2 different ways:"
+msgstr "Se o senhor precisar usar um sampler personalizado, agora há duas maneiras diferentes:"
+
+#, fuzzy
+msgid "Sampler CDI Producer"
+msgstr "Produtor do CDI Sampler"
+
+#, fuzzy
+msgid "You can create a sampler CDI producer. The Quarkus OpenTelemetry extension will detect the `Sampler` CDI bean and will use it when configuring the Tracer."
+msgstr "O senhor pode criar um produtor de CDI de amostragem. A extensão Quarkus OpenTelemetry detectará o bean `Sampler` CDI e o usará ao configurar o Tracer."
+
+#, fuzzy
+msgid "OTel Sampler SPI"
+msgstr "Amostrador OTel SPI"
+
+#, fuzzy
+msgid ""
+"This will use the SPI hooks available with the OTel Autoconfiguration.\n"
+"You can create a simple Sampler class:"
+msgstr "Isso usará os ganchos SPI disponíveis com a Autoconfiguração da OTel. O senhor pode criar uma classe Sampler simples:"
+
+#, fuzzy
+msgid "Then a Sampler Provider:"
+msgstr "Em seguida, um Sampler Provider:"
+
+#, fuzzy
+msgid "Write the SPI loader text file at `resources/META-INF/services` with name `io.opentelemetry.sdk.autoconfigure.spi.traces.ConfigurableSamplerProvider` containing the full qualified name of the `CustomSPISamplerProvider` class."
+msgstr "Escreva o arquivo de texto do carregador SPI em `resources/META-INF/services` com o nome `io.opentelemetry.sdk.autoconfigure.spi.traces.ConfigurableSamplerProvider` contendo o nome qualificado completo da classe `CustomSPISamplerProvider` ."
+
+#, fuzzy
+msgid "Then activate on the configuration:"
+msgstr "Em seguida, ative a configuração:"
+
+#, fuzzy
+msgid "As you can see, CDI is much simpler to work with."
+msgstr "Como o senhor pode ver, o CDI é muito mais simples de trabalhar."
+
+#, fuzzy
+msgid "Additional instrumentation"
+msgstr "Instrumentação adicional"
+
+#, fuzzy
+msgid ""
+"Some Quarkus extensions will require additional code to ensure traces are propagated to subsequent execution.\n"
+"These sections will outline what is necessary to propagate traces across process boundaries."
+msgstr "Algumas extensões do Quarkus exigirão código adicional para garantir que os traços sejam propagados para a execução subsequente. Estas seções descreverão o que é necessário para propagar os traços entre os limites do processo."
+
+#, fuzzy
+msgid "The instrumentation documented in this section has been tested with Quarkus and works in both standard and native mode."
+msgstr "A instrumentação documentada nesta seção foi testada com o Quarkus e funciona tanto no modo padrão quanto no nativo."
+
+#, fuzzy
+msgid "CDI"
+msgstr "CDI"
+
+#, fuzzy
+msgid ""
+"Annotating a method in any CDI aware bean with the `io.opentelemetry.instrumentation.annotations.WithSpan`\n"
+"annotation will create a new Span and establish any required relationships with the current Trace context."
+msgstr "A anotação de um método em qualquer bean com reconhecimento de CDI com a anotação `io.opentelemetry.instrumentation.annotations.WithSpan` criará um novo Span e estabelecerá todas as relações necessárias com o contexto de rastreamento atual."
+
+#, fuzzy
+msgid "Annotating a method in any CDI aware bean with the `io.opentelemetry.instrumentation.annotations.AddingSpanAttributes` will not create a new span but will add annotated method parameters to attributes in the current span."
+msgstr "A anotação de um método em qualquer bean compatível com CDI com o `io.opentelemetry.instrumentation.annotations.AddingSpanAttributes` não criará um novo intervalo, mas adicionará parâmetros de método anotados aos atributos do intervalo atual."
+
+#, fuzzy
+msgid "If a method is annotated by mistake with `@AddingSpanAttributes` and `@WithSpan` annotations, the `@WithSpan` annotation will take precedence."
+msgstr "Se um método for anotado por engano com as anotações `@AddingSpanAttributes` e `@WithSpan` , a anotação `@WithSpan` terá precedência."
+
+#, fuzzy
+msgid ""
+"Method parameters can be annotated with the `io.opentelemetry.instrumentation.annotations.SpanAttribute` annotation to\n"
+"indicate which method parameters should be part of the span. The parameter name can be customized as well."
+msgstr "Os parâmetros do método podem ser anotados com a anotação `io.opentelemetry.instrumentation.annotations.SpanAttribute` para indicar quais parâmetros do método devem fazer parte do intervalo. O nome do parâmetro também pode ser personalizado."
+
+msgid "Example:"
+msgstr "Exemplo:"
+
+#, fuzzy
+msgid "Available OpenTelemetry CDI injections"
+msgstr "Injeções de CDI OpenTelemetry disponíveis"
+
+#, fuzzy
+msgid ""
+"As per MicroProfile Telemetry Tracing specification, Quarkus supports the CDI injections of the\n"
+"following classes:"
+msgstr "De acordo com a especificação do MicroProfile Telemetry Tracing, o Quarkus é compatível com as injeções de CDI das seguintes classes:"
+
+#, fuzzy
+msgid "`io.opentelemetry.api.OpenTelemetry`"
+msgstr "`io.opentelemetry.api.OpenTelemetry`"
+
+#, fuzzy
+msgid "`io.opentelemetry.api.trace.Tracer`"
+msgstr "`io.opentelemetry.api.trace.Tracer`"
+
+#, fuzzy
+msgid "`io.opentelemetry.api.trace.Span`"
+msgstr "`io.opentelemetry.api.trace.Span`"
+
+#, fuzzy
+msgid "`io.opentelemetry.api.baggage.Baggage`"
+msgstr "`io.opentelemetry.api.baggage.Baggage`"
+
+#, fuzzy
+msgid "You can inject these classes in any CDI enabled bean. For instance, the `Tracer` is particularly useful to start custom spans:"
+msgstr "O senhor pode injetar essas classes em qualquer bean habilitado para CDI. Por exemplo, o `Tracer` é particularmente útil para iniciar spans personalizados:"
+
+#, fuzzy
+msgid "SmallRye Reactive Messaging - Kafka"
+msgstr "Mensagens reativas SmallRye - Kafka"
+
+#, fuzzy
+msgid ""
+"When using the SmallRye Reactive Messaging extension for Kafka,\n"
+"we are able to propagate the span into the Kafka Record with:"
+msgstr "Ao usar a extensão SmallRye Reactive Messaging para o Kafka, podemos propagar o intervalo no registro do Kafka com:"
+
+#, fuzzy
+msgid ""
+"The above creates a `TracingMetadata` object we can add to the `Message` being produced,\n"
+"which retrieves the OpenTelemetry `Context` to extract the current span for propagation."
+msgstr "O procedimento acima cria um objeto `TracingMetadata` que podemos adicionar ao `Message` que está sendo produzido, o qual recupera o OpenTelemetry `Context` para extrair o intervalo atual para propagação."
+
+#, fuzzy
+msgid "Exporters"
+msgstr "Exportadores"
+
+msgid "Default"
+msgstr "Padrão"
+
+#, fuzzy
+msgid "The Quarkus OpenTelemetry extension uses its own exporter built on top of Vert.x for optimal performance and maintainability."
+msgstr "A extensão Quarkus OpenTelemetry usa seu próprio exportador construído sobre o Vert.x para otimizar o desempenho e a manutenção."
+
+#, fuzzy
+msgid "The exporter is automatically wired with CDI, that's why the `quarkus.otel.traces.exporter` property defaults to `cdi`."
+msgstr "O exportador é automaticamente conectado ao CDI, por isso a propriedade `quarkus.otel.traces.exporter` tem como padrão `cdi` ."
+
+#, fuzzy
+msgid "The `quarkus.otel.exporter.otlp.traces.protocol` default to `grpc` and `http/protobuf` can also be used."
+msgstr "O padrão `quarkus.otel.exporter.otlp.traces.protocol` para `grpc` e `http/protobuf` também pode ser usado."
+
+#, fuzzy
+msgid "On Quarkiverse"
+msgstr "No Quarkiverse"
+
+#, fuzzy
+msgid "Additional exporters will be available in the Quarkiverse https://github.com/quarkiverse/quarkus-opentelemetry-exporter/blob/main/README.md[quarkus-opentelemetry-exporter] project."
+msgstr "Exportadores adicionais estarão disponíveis no projeto Quarkiverse link:https://github.com/quarkiverse/quarkus-opentelemetry-exporter/blob/main/README.md[quarkus-opentelemetry-exporter] ."
+
+#, fuzzy
+msgid "Quarkus core extensions instrumented with OpenTelemetry tracing"
+msgstr "Extensões do núcleo do Quarkus instrumentadas com rastreamento OpenTelemetry"
+
+#, fuzzy
+msgid "https://quarkus.io/extensions/io.quarkus/quarkus-agroal[`quarkus-agroal`]"
+msgstr "link:https://quarkus.io/extensions/io.quarkus/quarkus-agroal[quarkus-agroal]"
+
+#, fuzzy
+msgid "https://quarkus.io/guides/grpc-getting-started[`quarkus-grpc`]"
+msgstr "link:https://quarkus.io/guides/grpc-getting-started[quarkus-grpc]"
+
+#, fuzzy
+msgid "https://quarkus.io/extensions/io.quarkus/quarkus-jaxrs-client-reactive[`quarkus-jaxrs-client-reactive`]"
+msgstr "link:https://quarkus.io/extensions/io.quarkus/quarkus-jaxrs-client-reactive[quarkus-jaxrs-client-reactive]"
+
+#, fuzzy
+msgid "https://quarkus.io/guides/resteasy[`quarkus-resteasy-jackson`]"
+msgstr "link:https://quarkus.io/guides/resteasy[quarkus-resteasy-jackson]"
+
+#, fuzzy
+msgid "https://quarkus.io/guides/resteasy-reactive[`quarkus-resteasy-reactive`]"
+msgstr "link:https://quarkus.io/guides/resteasy-reactive[quarkus-resteasy-reactive]"
+
+#, fuzzy
+msgid "https://quarkus.io/guides/rest-client[`quarkus-resteasy-client`]"
+msgstr "link:https://quarkus.io/guides/rest-client[quarkus-resteasy-client]"
+
+#, fuzzy
+msgid "https://quarkus.io/guides/scheduler[`quarkus-scheduler`]"
+msgstr "link:https://quarkus.io/guides/scheduler[quarkus-scheduler]"
+
+#, fuzzy
+msgid "https://quarkus.io/guides/smallrye-graphql[`quarkus-smallrye-graphql`]"
+msgstr "link:https://quarkus.io/guides/smallrye-graphql[quarkus-smallrye-graphql]"
+
+#, fuzzy
+msgid "https://quarkus.io/extensions/io.quarkus/quarkus-smallrye-reactive-messaging[`quarkus-smallrye-reactive-messaging`]"
+msgstr "link:https://quarkus.io/extensions/io.quarkus/quarkus-smallrye-reactive-messaging[quarkus-smallrye-reactive-messaging]"
+
+#, fuzzy
+msgid "AMQP 1.0"
+msgstr "AMQP 1.0"
+
+msgid "RabbitMQ"
+msgstr "RabbitMQ"
+
+msgid "Kafka"
+msgstr "Kafka"
+
+#, fuzzy
+msgid "Pulsar"
+msgstr "Pulsar"
+
+#, fuzzy
+msgid "https://quarkus.io/guides/vertx[`quarkus-vertx`] (http requests)"
+msgstr "link:https://quarkus.io/guides/vertx[quarkus-vertx] (solicitações http)"
+
+#, fuzzy
+msgid "OpenTelemetry Configuration Reference"
+msgstr "Referência de configuração do OpenTelemetry"
+
+#, fuzzy
+msgid ""
+"Quarkus supports the OpenTelemetry Autoconfiguration for Traces.\n"
+"The configurations match what you can see at\n"
+"https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md[OpenTelemetry SDK Autoconfigure]\n"
+"adding the usual `quarkus.*` prefix."
+msgstr "O Quarkus suporta a autoconfiguração do OpenTelemetry para traços. As configurações correspondem ao que o senhor pode ver no link:https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md[OpenTelemetry SDK Autoconfigure] , acrescentando o prefixo `quarkus.*` usual."
+
+#, fuzzy
+msgid "Quarkus OpenTelemetry configuration properties now have the `quarkus.otel.*` prefix."
+msgstr "As propriedades de configuração do Quarkus OpenTelemetry agora têm o prefixo `quarkus.otel.*` ."
+
+#, fuzzy
+msgid "*The legacy properties* with prefix `quarkus.opentelemetry.*` are currently being mapped to the new ones as a default, during a transition period. See Default column in the details below."
+msgstr "*As propriedades herdadas* com o prefixo `quarkus.opentelemetry.*` estão sendo mapeadas para as novas propriedades como padrão, durante um período de transição. Veja a coluna Padrão nos detalhes abaixo."
+
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-1\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de configuração fixada no momento da construção - Todas as outras propriedades de configuração podem ser substituídas no momento da execução <input type=\"search\" id=\"config-search-1\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#, fuzzy
+msgid "[[quarkus-opentelemetry_configuration]]link:#quarkus-opentelemetry_configuration[Configuration property]"
+msgstr "link:#quarkus-opentelemetry_configuration[Propriedade de configuração]"
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-traces-exporter]]`link:#quarkus-opentelemetry_quarkus-otel-traces-exporter[quarkus.otel.traces.exporter]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"List of exporters supported by Quarkus.\n"
+"\n"
+"List of exporters to be used for tracing, separated by commas. Has one of the values on `ExporterType` `otlp`, `cdi`, `none` or the full qualified name of a class implementing `io.opentelemetry.sdk.trace.export.SpanExporter`\n"
+"\n"
+"Default on Quarkus is `ExporterType.Constants++#++CDI_VALUE`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_TRACES_EXPORTER+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-traces-exporter]]`link:#quarkus-opentelemetry_quarkus-otel-traces-exporter[quarkus.otel.traces.exporter]`"
+msgstr ""
+
+#, fuzzy
+msgid "List of exporters supported by Quarkus."
+msgstr "Lista de exportadores compatíveis com o Quarkus."
+
+#, fuzzy
+msgid "List of exporters to be used for tracing, separated by commas. Has one of the values on `ExporterType` `otlp`, `cdi`, `none` or the full qualified name of a class implementing `io.opentelemetry.sdk.trace.export.SpanExporter`"
+msgstr "Lista de exportadores a ser utilizada para rastreamento, separados por vírgulas. Deve conter um dos valores da propriedade `ExporterType` : `otlp` , `cdi` , `none` ou o nome completo e qualificado de uma classe que implemente `io.opentelemetry.sdk.trace.export.SpanExporter`"
+
+#, fuzzy
+msgid "Default on Quarkus is `ExporterType.Constants++#++CDI_VALUE`."
+msgstr "O valor padrão no Quarkus é `ExporterType.Constants#CDI_VALUE` ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_TRACES_EXPORTER+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_TRACES_EXPORTER[]"
+
+#, fuzzy
+msgid "<i class=\"fa fa-chevron-down\"></i><span>Show more</span>"
+msgstr "<i class=\"fa fa-chevron-down\"></i><span>Mostrar mais</span>"
+
+#, fuzzy
+msgid "list of string"
+msgstr "lista de strings"
+
+msgid "`cdi`"
+msgstr ""
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-traces-sampler]]`link:#quarkus-opentelemetry_quarkus-otel-traces-sampler[quarkus.otel.traces.sampler]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The sampler to use for tracing.\n"
+"\n"
+"Has one of the values on `SamplerType` `always_on`, `always_off`, `traceidratio`, `parentbased_always_on`, `parentbased_always_off`, `parentbased_traceidratio` or the Sampler SPI name. This will use the OTel SPI hooks for the `io.opentelemetry.sdk.trace.samplers.Sampler` implementation set in the provider: `io.opentelemetry.sdk.autoconfigure.spi.traces.ConfigurableSamplerProvider`.\n"
+"\n"
+"Fallbacks to the legacy property `quarkus.opentelemetry.tracer.sampler.sampler.name` or defaults to `SamplerType.Constants++#++PARENT_BASED_ALWAYS_ON`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_TRACES_SAMPLER+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-traces-sampler]]`link:#quarkus-opentelemetry_quarkus-otel-traces-sampler[quarkus.otel.traces.sampler]`"
+msgstr ""
+
+#, fuzzy
+msgid "The sampler to use for tracing."
+msgstr "O amostrador a ser utilizado para o traçado."
+
+#, fuzzy
+msgid "Has one of the values on `SamplerType` `always_on`, `always_off`, `traceidratio`, `parentbased_always_on`, `parentbased_always_off`, `parentbased_traceidratio` or the Sampler SPI name. This will use the OTel SPI hooks for the `io.opentelemetry.sdk.trace.samplers.Sampler` implementation set in the provider: `io.opentelemetry.sdk.autoconfigure.spi.traces.ConfigurableSamplerProvider`."
+msgstr "Um dos valores em `SamplerType` deve ser `always_on` , `always_off` , `traceidratio` , `parentbased_always_on` , `parentbased_always_off` , `parentbased_traceidratio` ou o nome do SPI do Sampler. Isso utilizará os ganchos SPI do OTel para a implementação de ``io.opentelemetry.sdk.trace.samplers.Sampler`` definida no provedor: ``io.opentelemetry.sdk.autoconfigure.spi.traces.ConfigurableSamplerProvider` `."
+
+#, fuzzy
+msgid "Fallbacks to the legacy property `quarkus.opentelemetry.tracer.sampler.sampler.name` or defaults to `SamplerType.Constants++#++PARENT_BASED_ALWAYS_ON`."
+msgstr "Recorre à propriedade legada ``quarkus.opentelemetry.tracer.sampler.sampler.name` ` ou utiliza como padrão o valor ` `SamplerType.Constants#PARENT_BASED_ALWAYS_ON` `."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_TRACES_SAMPLER+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_TRACES_SAMPLER[]"
+
+msgid "string"
+msgstr "string"
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-traces-eusp-enabled]]`link:#quarkus-opentelemetry_quarkus-otel-traces-eusp-enabled[quarkus.otel.traces.eusp.enabled]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_TRACES_EUSP_ENABLED+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-traces-eusp-enabled]]`link:#quarkus-opentelemetry_quarkus-otel-traces-eusp-enabled[quarkus.otel.traces.eusp.enabled]`"
+msgstr ""
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_TRACES_EUSP_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_TRACES_EUSP_ENABLED[]"
+
+msgid "boolean"
+msgstr "booleano"
+
+#, fuzzy
+msgid "`false`"
+msgstr "`false`"
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-metrics-exporter]]`link:#quarkus-opentelemetry_quarkus-otel-metrics-exporter[quarkus.otel.metrics.exporter]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"No Metrics exporter for now\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_METRICS_EXPORTER+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-metrics-exporter]]`link:#quarkus-opentelemetry_quarkus-otel-metrics-exporter[quarkus.otel.metrics.exporter]`"
+msgstr ""
+
+msgid "No Metrics exporter for now"
+msgstr ""
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_METRICS_EXPORTER+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_METRICS_EXPORTER[]"
+
+#, fuzzy
+msgid "`none`"
+msgstr "`none`"
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-logs-exporter]]`link:#quarkus-opentelemetry_quarkus-otel-logs-exporter[quarkus.otel.logs.exporter]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"No Log exporter for now.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_LOGS_EXPORTER+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-logs-exporter]]`link:#quarkus-opentelemetry_quarkus-otel-logs-exporter[quarkus.otel.logs.exporter]`"
+msgstr ""
+
+msgid "No Log exporter for now."
+msgstr ""
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_LOGS_EXPORTER+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_LOGS_EXPORTER[]"
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-propagators]]`link:#quarkus-opentelemetry_quarkus-otel-propagators[quarkus.otel.propagators]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The propagators to be used. Use a comma-separated list for multiple propagators.\n"
+"\n"
+"Has values from `PropagatorType` or the full qualified name of a class implementing `io.opentelemetry.context.propagation.TextMapPropagator`.\n"
+"\n"
+"Default is `PropagatorType.Constants++#++TRACE_CONTEXT`,`PropagatorType.Constants++#++BAGGAGE` (W3C).\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_PROPAGATORS+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-propagators]]`link:#quarkus-opentelemetry_quarkus-otel-propagators[quarkus.otel.propagators]`"
+msgstr ""
+
+#, fuzzy
+msgid "The propagators to be used. Use a comma-separated list for multiple propagators."
+msgstr "Os propagadores a serem utilizados. Utilize uma lista separada por vírgulas para vários propagadores."
+
+#, fuzzy
+msgid "Has values from `PropagatorType` or the full qualified name of a class implementing `io.opentelemetry.context.propagation.TextMapPropagator`."
+msgstr "Possui valores do tipo ` `PropagatorType` ` ou o nome totalmente qualificado de uma classe que implemente ``io.opentelemetry.context.propagation.TextMapPropagator` `."
+
+#, fuzzy
+msgid "Default is `PropagatorType.Constants++#++TRACE_CONTEXT`,`PropagatorType.Constants++#++BAGGAGE` (W3C)."
+msgstr "O valor padrão é `PropagatorType.Constants#TRACE_CONTEXT` , `PropagatorType.Constants#BAGGAGE` (W3C)."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_PROPAGATORS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_PROPAGATORS[]"
+
+#, fuzzy
+msgid "`tracecontext,baggage`"
+msgstr "`tracecontext,bagagem`"
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-instrument-grpc]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-grpc[quarkus.otel.instrument.grpc]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Enables instrumentation for gRPC.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_GRPC+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-instrument-grpc]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-grpc[quarkus.otel.instrument.grpc]`"
+msgstr ""
+
+#, fuzzy
+msgid "Enables instrumentation for gRPC."
+msgstr "Habilita a instrumentação para gRPC."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_GRPC+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_INSTRUMENT_GRPC[]"
+
+msgid "`true`"
+msgstr "`true`"
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-instrument-reactive-messaging]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-reactive-messaging[quarkus.otel.instrument.reactive-messaging]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Enables instrumentation for SmallRye Reactive Messaging.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_REACTIVE_MESSAGING+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-instrument-reactive-messaging]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-reactive-messaging[quarkus.otel.instrument.reactive-messaging]`"
+msgstr ""
+
+msgid "Enables instrumentation for SmallRye Reactive Messaging."
+msgstr ""
+
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_REACTIVE_MESSAGING+++[]"
+msgstr ""
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-instrument-rest-client-classic]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-rest-client-classic[quarkus.otel.instrument.rest-client-classic]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Enables instrumentation for JAX-RS Rest Client backed by RESTEasy Classic.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_REST_CLIENT_CLASSIC+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-instrument-rest-client-classic]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-rest-client-classic[quarkus.otel.instrument.rest-client-classic]`"
+msgstr ""
+
+msgid "Enables instrumentation for JAX-RS Rest Client backed by RESTEasy Classic."
+msgstr ""
+
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_REST_CLIENT_CLASSIC+++[]"
+msgstr ""
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-instrument-resteasy-reactive]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-resteasy-reactive[quarkus.otel.instrument.resteasy-reactive]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Enables instrumentation for RESTEasy Reactive.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_RESTEASY_REACTIVE+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-instrument-resteasy-reactive]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-resteasy-reactive[quarkus.otel.instrument.resteasy-reactive]`"
+msgstr ""
+
+msgid "Enables instrumentation for RESTEasy Reactive."
+msgstr ""
+
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_RESTEASY_REACTIVE+++[]"
+msgstr ""
+
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-instrument-resteasy-classic]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-resteasy-classic[quarkus.otel.instrument.resteasy-classic]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Enables instrumentation for RESTEasy Classic.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_RESTEASY_CLASSIC+++[]\n"
+"--"
+msgstr ""
+
+msgid "icon:lock[title=Fixed at build time] [[quarkus-opentelemetry_quarkus-otel-instrument-resteasy-classic]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-resteasy-classic[quarkus.otel.instrument.resteasy-classic]`"
+msgstr ""
+
+#, fuzzy
+msgid "Enables instrumentation for RESTEasy Classic."
+msgstr "Habilita a instrumentação para o RESTEasy Classic."
+
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_RESTEASY_CLASSIC+++[]"
+msgstr ""
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-sdk-disabled]]`link:#quarkus-opentelemetry_quarkus-otel-sdk-disabled[quarkus.otel.sdk.disabled]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"If true, disable the OpenTelemetry SDK. Runtime configuration.\n"
+"\n"
+"Defaults to `false`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_SDK_DISABLED+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-sdk-disabled]]`link:#quarkus-opentelemetry_quarkus-otel-sdk-disabled[quarkus.otel.sdk.disabled]`"
+msgstr ""
+
+#, fuzzy
+msgid "If true, disable the OpenTelemetry SDK. Runtime configuration."
+msgstr "Se for verdade, desative o SDK do OpenTelemetry. Configuração em tempo de execução."
+
+#, fuzzy
+msgid "Defaults to `false`."
+msgstr "O valor padrão é `“false` ”."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_SDK_DISABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_SDK_DISABLED[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-traces-suppress-non-application-uris]]`link:#quarkus-opentelemetry_quarkus-otel-traces-suppress-non-application-uris[quarkus.otel.traces.suppress-non-application-uris]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Suppress non-application uris from trace collection. This will suppress tracing of `/q` endpoints.\n"
+"\n"
+"Providing a custom `io.opentelemetry.sdk.trace.samplers.Sampler` CDI Bean will ignore this setting.\n"
+"\n"
+"This is a Quarkus specific property. Suppressing non-application uris is enabled by default.\n"
+"\n"
+"Fallbacks to the legacy property `quarkus.opentelemetry.tracer.suppress-non-application-uris` or defaults to `true`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_TRACES_SUPPRESS_NON_APPLICATION_URIS+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-traces-suppress-non-application-uris]]`link:#quarkus-opentelemetry_quarkus-otel-traces-suppress-non-application-uris[quarkus.otel.traces.suppress-non-application-uris]`"
+msgstr ""
+
+#, fuzzy
+msgid "Suppress non-application uris from trace collection. This will suppress tracing of `/q` endpoints."
+msgstr "Suprimir URIs que não pertencem ao aplicativo da coleta de rastreamento. Isso suprimirá o rastreamento dos endpoints `/q` ."
+
+#, fuzzy
+msgid "Providing a custom `io.opentelemetry.sdk.trace.samplers.Sampler` CDI Bean will ignore this setting."
+msgstr "Se for fornecido um bean CDI personalizado do tipo ` `io.opentelemetry.sdk.trace.samplers.Sampler` `, essa configuração será ignorada."
+
+#, fuzzy
+msgid "This is a Quarkus specific property. Suppressing non-application uris is enabled by default."
+msgstr "Esta é uma propriedade específica do Quarkus. A supressão de URIs que não pertencem ao aplicativo está ativada por padrão."
+
+#, fuzzy
+msgid "Fallbacks to the legacy property `quarkus.opentelemetry.tracer.suppress-non-application-uris` or defaults to `true`."
+msgstr "Recorre à propriedade legada ` `quarkus.opentelemetry.tracer.suppress-non-application-uris` ` ou utiliza o valor padrão ` `true` `."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_TRACES_SUPPRESS_NON_APPLICATION_URIS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_TRACES_SUPPRESS_NON_APPLICATION_URIS[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-traces-include-static-resources]]`link:#quarkus-opentelemetry_quarkus-otel-traces-include-static-resources[quarkus.otel.traces.include-static-resources]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Include static resources from trace collection.\n"
+"\n"
+"This is a Quarkus specific property. Include static resources is disabled by default. Providing a custom `io.opentelemetry.sdk.trace.samplers.Sampler` CDI Bean will ignore this setting.\n"
+"\n"
+"Fallbacks to the legacy property `quarkus.opentelemetry.tracer.include-static-resources` or defaults to `false`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_TRACES_INCLUDE_STATIC_RESOURCES+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-traces-include-static-resources]]`link:#quarkus-opentelemetry_quarkus-otel-traces-include-static-resources[quarkus.otel.traces.include-static-resources]`"
+msgstr ""
+
+#, fuzzy
+msgid "Include static resources from trace collection."
+msgstr "Incluir recursos estáticos da coleta de rastreamentos."
+
+#, fuzzy
+msgid "This is a Quarkus specific property. Include static resources is disabled by default. Providing a custom `io.opentelemetry.sdk.trace.samplers.Sampler` CDI Bean will ignore this setting."
+msgstr "Esta é uma propriedade específica do Quarkus. A opção “Incluir recursos estáticos” está desativada por padrão. Ao fornecer um bean CDI personalizado de tipo ` `io.opentelemetry.sdk.trace.samplers.Sampler` `, essa configuração será ignorada."
+
+#, fuzzy
+msgid "Fallbacks to the legacy property `quarkus.opentelemetry.tracer.include-static-resources` or defaults to `false`."
+msgstr "Recorre à propriedade legada ` `quarkus.opentelemetry.tracer.include-static-resources` ` ou assume o valor padrão ` `false` `."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_TRACES_INCLUDE_STATIC_RESOURCES+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_TRACES_INCLUDE_STATIC_RESOURCES[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-traces-sampler-arg]]`link:#quarkus-opentelemetry_quarkus-otel-traces-sampler-arg[quarkus.otel.traces.sampler.arg]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Sampler argument. Depends on the `quarkus.otel.traces.sampler` property. Fallbacks to the legacy property `quarkus.opentelemetry.tracer.sampler.ratio`.\n"
+"\n"
+"When setting the stock sampler to `traceidratio` or `parentbased_traceidratio` you need to set a `double` compatible value between `0.0d` and `1.0d`, like `0.01d` or `0.5d`. It is kept as a `String` to allow the flexible customisation of alternative samplers.\n"
+"\n"
+"Defaults to `1.0d`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_TRACES_SAMPLER_ARG+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-traces-sampler-arg]]`link:#quarkus-opentelemetry_quarkus-otel-traces-sampler-arg[quarkus.otel.traces.sampler.arg]`"
+msgstr ""
+
+#, fuzzy
+msgid "Sampler argument. Depends on the `quarkus.otel.traces.sampler` property. Fallbacks to the legacy property `quarkus.opentelemetry.tracer.sampler.ratio`."
+msgstr "Argumento do amostrador. Depende da propriedade `quarkus.otel.traces.sampler` . Na ausência desta, recorre à propriedade legada `quarkus.opentelemetry.tracer.sampler.ratio` ."
+
+#, fuzzy
+msgid "When setting the stock sampler to `traceidratio` or `parentbased_traceidratio` you need to set a `double` compatible value between `0.0d` and `1.0d`, like `0.01d` or `0.5d`. It is kept as a `String` to allow the flexible customisation of alternative samplers."
+msgstr "Ao configurar o amostrador padrão para `“traceidratio”` ou `“parentbased_traceidratio”` , é necessário definir um valor compatível `com o tipo “double”` entre `0,0d` e `1,0d` , como `0,01d` ou `0,5d` . Esse valor é armazenado como uma `String` para permitir a personalização flexível de amostradores alternativos."
+
+#, fuzzy
+msgid "Defaults to `1.0d`."
+msgstr "O valor padrão é `1,0d` ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_TRACES_SAMPLER_ARG+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_TRACES_SAMPLER_ARG[]"
+
+msgid "`1.0d`"
+msgstr ""
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-attribute-value-length-limit]]`link:#quarkus-opentelemetry_quarkus-otel-attribute-value-length-limit[quarkus.otel.attribute.value.length.limit]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum length of attribute values. Applies to spans and logs.\n"
+"\n"
+"By default, there is no limit.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-attribute-value-length-limit]]`link:#quarkus-opentelemetry_quarkus-otel-attribute-value-length-limit[quarkus.otel.attribute.value.length.limit]`"
+msgstr ""
+
+#, fuzzy
+msgid "The maximum length of attribute values. Applies to spans and logs."
+msgstr "O comprimento máximo dos valores dos atributos. Aplica-se a spans e logs."
+
+#, fuzzy
+msgid "By default, there is no limit."
+msgstr "Por padrão, não há limite."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-attribute-count-limit]]`link:#quarkus-opentelemetry_quarkus-otel-attribute-count-limit[quarkus.otel.attribute.count.limit]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum number of attributes. Applies to spans, span events, span links, and logs.\n"
+"\n"
+"Default is `128`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_ATTRIBUTE_COUNT_LIMIT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-attribute-count-limit]]`link:#quarkus-opentelemetry_quarkus-otel-attribute-count-limit[quarkus.otel.attribute.count.limit]`"
+msgstr ""
+
+#, fuzzy
+msgid "The maximum number of attributes. Applies to spans, span events, span links, and logs."
+msgstr "O número máximo de atributos. Aplica-se a spans, eventos de span, links de span e registros."
+
+#, fuzzy
+msgid "Default is `128`."
+msgstr "O valor padrão é `128` ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_ATTRIBUTE_COUNT_LIMIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_ATTRIBUTE_COUNT_LIMIT[]"
+
+msgid "int"
+msgstr "int"
+
+#, fuzzy
+msgid "`128`"
+msgstr "`128`"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-span-attribute-value-length-limit]]`link:#quarkus-opentelemetry_quarkus-otel-span-attribute-value-length-limit[quarkus.otel.span.attribute.value.length.limit]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum length of span attribute values. Takes precedence over `otel.attribute.value.length.limit`.\n"
+"\n"
+"By default, there is no limit.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-span-attribute-value-length-limit]]`link:#quarkus-opentelemetry_quarkus-otel-span-attribute-value-length-limit[quarkus.otel.span.attribute.value.length.limit]`"
+msgstr ""
+
+#, fuzzy
+msgid "The maximum length of span attribute values. Takes precedence over `otel.attribute.value.length.limit`."
+msgstr "O comprimento máximo dos valores do atributo “span”. Tem precedência sobre `otel.attribute.value.length.limit` ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-span-attribute-count-limit]]`link:#quarkus-opentelemetry_quarkus-otel-span-attribute-count-limit[quarkus.otel.span.attribute.count.limit]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum number of attributes per span. Takes precedence over `otel.attribute.count.limit`.\n"
+"\n"
+"Default is `128`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-span-attribute-count-limit]]`link:#quarkus-opentelemetry_quarkus-otel-span-attribute-count-limit[quarkus.otel.span.attribute.count.limit]`"
+msgstr ""
+
+#, fuzzy
+msgid "The maximum number of attributes per span. Takes precedence over `otel.attribute.count.limit`."
+msgstr "O número máximo de atributos por span. Tem precedência sobre `otel.attribute.count.limit` ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-span-event-count-limit]]`link:#quarkus-opentelemetry_quarkus-otel-span-event-count-limit[quarkus.otel.span.event.count.limit]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum number of events per span.\n"
+"\n"
+"Default is `128`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_SPAN_EVENT_COUNT_LIMIT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-span-event-count-limit]]`link:#quarkus-opentelemetry_quarkus-otel-span-event-count-limit[quarkus.otel.span.event.count.limit]`"
+msgstr ""
+
+#, fuzzy
+msgid "The maximum number of events per span."
+msgstr "O número máximo de eventos por intervalo."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_SPAN_EVENT_COUNT_LIMIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_SPAN_EVENT_COUNT_LIMIT[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-span-link-count-limit]]`link:#quarkus-opentelemetry_quarkus-otel-span-link-count-limit[quarkus.otel.span.link.count.limit]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum number of links per span.\n"
+"\n"
+"Default is `128`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_SPAN_LINK_COUNT_LIMIT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-span-link-count-limit]]`link:#quarkus-opentelemetry_quarkus-otel-span-link-count-limit[quarkus.otel.span.link.count.limit]`"
+msgstr ""
+
+#, fuzzy
+msgid "The maximum number of links per span."
+msgstr "O número máximo de elos por vão."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_SPAN_LINK_COUNT_LIMIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_SPAN_LINK_COUNT_LIMIT[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-bsp-schedule-delay]]`link:#quarkus-opentelemetry_quarkus-otel-bsp-schedule-delay[quarkus.otel.bsp.schedule.delay]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The interval, in milliseconds, between two consecutive exports.\n"
+"\n"
+"Default is `5000`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_BSP_SCHEDULE_DELAY+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-bsp-schedule-delay]]`link:#quarkus-opentelemetry_quarkus-otel-bsp-schedule-delay[quarkus.otel.bsp.schedule.delay]`"
+msgstr ""
+
+msgid "The interval, in milliseconds, between two consecutive exports."
+msgstr ""
+
+msgid "Default is `5000`."
+msgstr ""
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_BSP_SCHEDULE_DELAY+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_BSP_SCHEDULE_DELAY[]"
+
+msgid ""
+"link:https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html[Duration]\n"
+"  link:#duration-note-anchor-{summaryTableId}[icon:question-circle[title=More information about the Duration format]]"
+msgstr ""
+
+#, fuzzy
+msgid "`5S`"
+msgstr "`5S`"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-bsp-max-queue-size]]`link:#quarkus-opentelemetry_quarkus-otel-bsp-max-queue-size[quarkus.otel.bsp.max.queue.size]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum queue size.\n"
+"\n"
+"Default is `2048`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_BSP_MAX_QUEUE_SIZE+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-bsp-max-queue-size]]`link:#quarkus-opentelemetry_quarkus-otel-bsp-max-queue-size[quarkus.otel.bsp.max.queue.size]`"
+msgstr ""
+
+msgid "The maximum queue size."
+msgstr ""
+
+#, fuzzy
+msgid "Default is `2048`."
+msgstr "O valor padrão é `2048` ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_BSP_MAX_QUEUE_SIZE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_BSP_MAX_QUEUE_SIZE[]"
+
+#, fuzzy
+msgid "`2048`"
+msgstr "`2048`"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-bsp-max-export-batch-size]]`link:#quarkus-opentelemetry_quarkus-otel-bsp-max-export-batch-size[quarkus.otel.bsp.max.export.batch.size]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum batch size.\n"
+"\n"
+"Default is `512`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_BSP_MAX_EXPORT_BATCH_SIZE+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-bsp-max-export-batch-size]]`link:#quarkus-opentelemetry_quarkus-otel-bsp-max-export-batch-size[quarkus.otel.bsp.max.export.batch.size]`"
+msgstr ""
+
+msgid "The maximum batch size."
+msgstr ""
+
+#, fuzzy
+msgid "Default is `512`."
+msgstr "O valor padrão é `512` ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_BSP_MAX_EXPORT_BATCH_SIZE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_BSP_MAX_EXPORT_BATCH_SIZE[]"
+
+#, fuzzy
+msgid "`512`"
+msgstr "`512`"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-bsp-export-timeout]]`link:#quarkus-opentelemetry_quarkus-otel-bsp-export-timeout[quarkus.otel.bsp.export.timeout]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum allowed time, in milliseconds, to export data.\n"
+"\n"
+"Default is `30s`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_BSP_EXPORT_TIMEOUT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-bsp-export-timeout]]`link:#quarkus-opentelemetry_quarkus-otel-bsp-export-timeout[quarkus.otel.bsp.export.timeout]`"
+msgstr ""
+
+msgid "The maximum allowed time, in milliseconds, to export data."
+msgstr ""
+
+#, fuzzy
+msgid "Default is `30s`."
+msgstr "O valor padrão é de `30 segundos` ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_BSP_EXPORT_TIMEOUT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_BSP_EXPORT_TIMEOUT[]"
+
+#, fuzzy
+msgid "`30S`"
+msgstr "`30S`"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-resource-attributes]]`link:#quarkus-opentelemetry_quarkus-otel-resource-attributes[quarkus.otel.resource.attributes]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Specify resource attributes in the following format: `key1=val1,key2=val2,key3=val3`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_RESOURCE_ATTRIBUTES+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-resource-attributes]]`link:#quarkus-opentelemetry_quarkus-otel-resource-attributes[quarkus.otel.resource.attributes]`"
+msgstr ""
+
+#, fuzzy
+msgid "Specify resource attributes in the following format: `key1=val1,key2=val2,key3=val3`."
+msgstr "Especifique os atributos do recurso no seguinte formato: `chave1=val1,chave2=val2,chave3=val3` ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_RESOURCE_ATTRIBUTES+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_RESOURCE_ATTRIBUTES[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-service-name]]`link:#quarkus-opentelemetry_quarkus-otel-service-name[quarkus.otel.service.name]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Specify logical service name. Takes precedence over service.name defined with otel.resource.attributes and from quarkus.application.name.\n"
+"\n"
+"Defaults to `quarkus.application.name`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_SERVICE_NAME+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-service-name]]`link:#quarkus-opentelemetry_quarkus-otel-service-name[quarkus.otel.service.name]`"
+msgstr ""
+
+#, fuzzy
+msgid "Specify logical service name. Takes precedence over service.name defined with otel.resource.attributes and from quarkus.application.name."
+msgstr "Especifique o nome lógico do serviço. Tem precedência sobre o nome do serviço definido com `otel.resource.attributes` e em `quarkus.application.name`."
+
+#, fuzzy
+msgid "Defaults to `quarkus.application.name`."
+msgstr "O valor padrão é `quarkus.application.name` ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_SERVICE_NAME+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_SERVICE_NAME[]"
+
+msgid "`${quarkus.application.name:unset}`"
+msgstr ""
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-experimental-resource-disabled-keys]]`link:#quarkus-opentelemetry_quarkus-otel-experimental-resource-disabled-keys[quarkus.otel.experimental.resource.disabled-keys]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Specify resource attribute keys that are filtered.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPERIMENTAL_RESOURCE_DISABLED_KEYS+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-experimental-resource-disabled-keys]]`link:#quarkus-opentelemetry_quarkus-otel-experimental-resource-disabled-keys[quarkus.otel.experimental.resource.disabled-keys]`"
+msgstr ""
+
+#, fuzzy
+msgid "Specify resource attribute keys that are filtered."
+msgstr "Especifique as chaves de atributos dos recursos que serão filtradas."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPERIMENTAL_RESOURCE_DISABLED_KEYS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPERIMENTAL_RESOURCE_DISABLED_KEYS[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-experimental-shutdown-wait-time]]`link:#quarkus-opentelemetry_quarkus-otel-experimental-shutdown-wait-time[quarkus.otel.experimental.shutdown-wait-time]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum amount of time Quarkus will wait for the OpenTelemetry SDK to flush unsent spans and shutdown.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPERIMENTAL_SHUTDOWN_WAIT_TIME+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-experimental-shutdown-wait-time]]`link:#quarkus-opentelemetry_quarkus-otel-experimental-shutdown-wait-time[quarkus.otel.experimental.shutdown-wait-time]`"
+msgstr ""
+
+#, fuzzy
+msgid "The maximum amount of time Quarkus will wait for the OpenTelemetry SDK to flush unsent spans and shutdown."
+msgstr "O tempo máximo que o Quarkus aguardará até que o SDK do OpenTelemetry libere os spans não enviados e seja encerrado."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPERIMENTAL_SHUTDOWN_WAIT_TIME+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPERIMENTAL_SHUTDOWN_WAIT_TIME[]"
+
+#, fuzzy
+msgid "`1S`"
+msgstr "`1S`"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-instrument-vertx-http]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-vertx-http[quarkus.otel.instrument.vertx-http]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Enables instrumentation for Vert.x HTTP.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_VERTX_HTTP+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-instrument-vertx-http]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-vertx-http[quarkus.otel.instrument.vertx-http]`"
+msgstr ""
+
+#, fuzzy
+msgid "Enables instrumentation for Vert.x HTTP."
+msgstr "Habilita a instrumentação para o Vert.x HTTP."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_VERTX_HTTP+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_INSTRUMENT_VERTX_HTTP[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-instrument-vertx-event-bus]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-vertx-event-bus[quarkus.otel.instrument.vertx-event-bus]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Enables instrumentation for Vert.x Event Bus.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_VERTX_EVENT_BUS+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-instrument-vertx-event-bus]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-vertx-event-bus[quarkus.otel.instrument.vertx-event-bus]`"
+msgstr ""
+
+#, fuzzy
+msgid "Enables instrumentation for Vert.x Event Bus."
+msgstr "Habilita a instrumentação para o Vert.x Event Bus."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_VERTX_EVENT_BUS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_INSTRUMENT_VERTX_EVENT_BUS[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-instrument-vertx-sql-client]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-vertx-sql-client[quarkus.otel.instrument.vertx-sql-client]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Enables instrumentation for Vert.x SQL Client.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_VERTX_SQL_CLIENT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-instrument-vertx-sql-client]]`link:#quarkus-opentelemetry_quarkus-otel-instrument-vertx-sql-client[quarkus.otel.instrument.vertx-sql-client]`"
+msgstr ""
+
+#, fuzzy
+msgid "Enables instrumentation for Vert.x SQL Client."
+msgstr "Habilita a instrumentação para o Vert.x SQL Client."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_INSTRUMENT_VERTX_SQL_CLIENT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_INSTRUMENT_VERTX_SQL_CLIENT[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-endpoint]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-endpoint[quarkus.otel.exporter.otlp.endpoint]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Sets the OTLP endpoint to connect to. If unset, defaults to `OtlpExporterRuntimeConfig++#++DEFAULT_GRPC_BASE_URI`. We are currently using just the traces, therefore `quarkus.otel.exporter.otlp.traces.endpoint` is recommended.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_ENDPOINT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-endpoint]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-endpoint[quarkus.otel.exporter.otlp.endpoint]`"
+msgstr ""
+
+msgid "Sets the OTLP endpoint to connect to. If unset, defaults to `OtlpExporterRuntimeConfig++#++DEFAULT_GRPC_BASE_URI`. We are currently using just the traces, therefore `quarkus.otel.exporter.otlp.traces.endpoint` is recommended."
+msgstr ""
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_ENDPOINT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_ENDPOINT[]"
+
+msgid "`http://localhost:4317/`"
+msgstr ""
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-endpoint]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-endpoint[quarkus.otel.exporter.otlp.traces.endpoint]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"OTLP Exporter specific. Will override `otel.exporter.otlp.endpoint`, if set.\n"
+"\n"
+"Fallbacks to the legacy property `quarkus.opentelemetry.tracer.exporter.otlp.endpoint<` or defaults to `OtlpExporterRuntimeConfig++#++DEFAULT_GRPC_BASE_URI`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-endpoint]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-endpoint[quarkus.otel.exporter.otlp.traces.endpoint]`"
+msgstr ""
+
+msgid "OTLP Exporter specific. Will override `otel.exporter.otlp.endpoint`, if set."
+msgstr ""
+
+msgid "Fallbacks to the legacy property `quarkus.opentelemetry.tracer.exporter.otlp.endpoint<` or defaults to `OtlpExporterRuntimeConfig++#++DEFAULT_GRPC_BASE_URI`."
+msgstr ""
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-headers]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-headers[quarkus.otel.exporter.otlp.traces.headers]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Key-value pairs to be used as headers associated with gRPC requests. The format is similar to the `OTEL_EXPORTER_OTLP_HEADERS` environment variable, a list of key-value pairs separated by the \"=\" character. i.e.: key1=value1,key2=value2\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_HEADERS+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-headers]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-headers[quarkus.otel.exporter.otlp.traces.headers]`"
+msgstr ""
+
+msgid "Key-value pairs to be used as headers associated with gRPC requests. The format is similar to the `OTEL_EXPORTER_OTLP_HEADERS` environment variable, a list of key-value pairs separated by the \"=\" character. i.e.: key1=value1,key2=value2"
+msgstr ""
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_HEADERS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_TRACES_HEADERS[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-compression]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-compression[quarkus.otel.exporter.otlp.traces.compression]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Sets the method used to compress payloads. If unset, compression is disabled. Currently supported compression methods include `gzip` and `none`.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_COMPRESSION+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-compression]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-compression[quarkus.otel.exporter.otlp.traces.compression]`"
+msgstr ""
+
+#, fuzzy
+msgid "Sets the method used to compress payloads. If unset, compression is disabled. Currently supported compression methods include `gzip` and `none`."
+msgstr "Define o método utilizado para compactar as cargas úteis. Se não for definido, a compactação fica desativada. Os métodos de compactação atualmente suportados incluem `gzip` e `nenhum` ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_COMPRESSION+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_TRACES_COMPRESSION[]"
+
+#, fuzzy
+msgid "`gzip`, `none`"
+msgstr "`gzip` , `nenhum`"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-timeout]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-timeout[quarkus.otel.exporter.otlp.traces.timeout]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Sets the maximum time to wait for the collector to process an exported batch of spans. If unset, defaults to `OtlpExporterRuntimeConfig++#++DEFAULT_TIMEOUT_SECS`s.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_TIMEOUT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-timeout]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-timeout[quarkus.otel.exporter.otlp.traces.timeout]`"
+msgstr ""
+
+msgid "Sets the maximum time to wait for the collector to process an exported batch of spans. If unset, defaults to `OtlpExporterRuntimeConfig++#++DEFAULT_TIMEOUT_SECS`s."
+msgstr ""
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_TIMEOUT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_TRACES_TIMEOUT[]"
+
+#, fuzzy
+msgid "`10S`"
+msgstr "`10S`"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-protocol]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-protocol[quarkus.otel.exporter.otlp.traces.protocol]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"OTLP defines the encoding of telemetry data and the protocol used to exchange data between the client and the server. Depending on the exporter, the available protocols will be different.\n"
+"\n"
+"Currently, only `grpc` and `http/protobuf` are allowed.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROTOCOL+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-protocol]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-protocol[quarkus.otel.exporter.otlp.traces.protocol]`"
+msgstr ""
+
+#, fuzzy
+msgid "OTLP defines the encoding of telemetry data and the protocol used to exchange data between the client and the server. Depending on the exporter, the available protocols will be different."
+msgstr "O OTLP define a codificação dos dados de telemetria e o protocolo utilizado para a troca de dados entre o cliente e o servidor. Dependendo do exportador, os protocolos disponíveis serão diferentes."
+
+#, fuzzy
+msgid "Currently, only `grpc` and `http/protobuf` are allowed."
+msgstr "Atualmente, apenas `o gRPC` e `o HTTP/Protobuf` são permitidos."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROTOCOL+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROTOCOL[]"
+
+msgid "`grpc`"
+msgstr ""
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-key-cert-keys]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-key-cert-keys[quarkus.otel.exporter.otlp.traces.key-cert.keys]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Comma-separated list of the path to the key files (Pem format).\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_KEY_CERT_KEYS+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-key-cert-keys]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-key-cert-keys[quarkus.otel.exporter.otlp.traces.key-cert.keys]`"
+msgstr ""
+
+#, fuzzy
+msgid "Comma-separated list of the path to the key files (Pem format)."
+msgstr "Lista separada por vírgulas dos caminhos para os arquivos de chave (formato PEM)."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_KEY_CERT_KEYS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_TRACES_KEY_CERT_KEYS[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-key-cert-certs]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-key-cert-certs[quarkus.otel.exporter.otlp.traces.key-cert.certs]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Comma-separated list of the path to the certificate files (Pem format).\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_KEY_CERT_CERTS+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-key-cert-certs]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-key-cert-certs[quarkus.otel.exporter.otlp.traces.key-cert.certs]`"
+msgstr ""
+
+#, fuzzy
+msgid "Comma-separated list of the path to the certificate files (Pem format)."
+msgstr "Lista separada por vírgulas do caminho para os arquivos de certificados (formato PEM)."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_KEY_CERT_CERTS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_TRACES_KEY_CERT_CERTS[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-trust-cert-certs]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-trust-cert-certs[quarkus.otel.exporter.otlp.traces.trust-cert.certs]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Comma-separated list of the trust certificate files (Pem format).\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_TRUST_CERT_CERTS+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-trust-cert-certs]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-trust-cert-certs[quarkus.otel.exporter.otlp.traces.trust-cert.certs]`"
+msgstr ""
+
+#, fuzzy
+msgid "Comma-separated list of the trust certificate files (Pem format)."
+msgstr "Lista separada por vírgulas dos arquivos de certificados de confiança (formato PEM)."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_TRUST_CERT_CERTS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_TRACES_TRUST_CERT_CERTS[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-enabled]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-enabled[quarkus.otel.exporter.otlp.traces.proxy-options.enabled]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"If proxy connection must be used.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_ENABLED+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-enabled]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-enabled[quarkus.otel.exporter.otlp.traces.proxy-options.enabled]`"
+msgstr ""
+
+#, fuzzy
+msgid "If proxy connection must be used."
+msgstr "Caso seja necessário utilizar uma conexão por proxy."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_ENABLED[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-username]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-username[quarkus.otel.exporter.otlp.traces.proxy-options.username]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Set proxy username.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_USERNAME+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-username]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-username[quarkus.otel.exporter.otlp.traces.proxy-options.username]`"
+msgstr ""
+
+#, fuzzy
+msgid "Set proxy username."
+msgstr "Defina o nome de usuário do proxy."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_USERNAME+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_USERNAME[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-password]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-password[quarkus.otel.exporter.otlp.traces.proxy-options.password]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Set proxy password.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_PASSWORD+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-password]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-password[quarkus.otel.exporter.otlp.traces.proxy-options.password]`"
+msgstr ""
+
+#, fuzzy
+msgid "Set proxy password."
+msgstr "Defina a senha do proxy."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_PASSWORD+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_PASSWORD[]"
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-port]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-port[quarkus.otel.exporter.otlp.traces.proxy-options.port]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Set proxy port.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_PORT+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-port]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-port[quarkus.otel.exporter.otlp.traces.proxy-options.port]`"
+msgstr ""
+
+#, fuzzy
+msgid "Set proxy port."
+msgstr "Definir a porta do proxy."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_PORT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_PORT[]"
+
+msgid "`3128`"
+msgstr ""
+
+msgid ""
+"[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-host]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-host[quarkus.otel.exporter.otlp.traces.proxy-options.host]`\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Set proxy host.\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_HOST+++[]\n"
+"--"
+msgstr ""
+
+msgid "[[quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-host]]`link:#quarkus-opentelemetry_quarkus-otel-exporter-otlp-traces-proxy-options-host[quarkus.otel.exporter.otlp.traces.proxy-options.host]`"
+msgstr ""
+
+#, fuzzy
+msgid "Set proxy host."
+msgstr "Definir o host do proxy."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_HOST+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_OTEL_EXPORTER_OTLP_TRACES_PROXY_OPTIONS_HOST[]"
+
+#, fuzzy
+msgid "About the Duration format"
+msgstr "Sobre o formato de duração"
+
+#, fuzzy
+msgid ""
+"To write duration values, use the standard `java.time.Duration` format.\n"
+"See the link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)[Duration#parse() Java API documentation] for more information."
+msgstr "Para escrever valores de duração, utilize o formato padrão `java.time.Duration` . Consulte link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)[a documentação da API Java] do método link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)[Duration#parse()] para obter mais informações."
+
+msgid "You can also use a simplified format, starting with a number:"
+msgstr "Você também pode usar um formato simplificado, começando com um número:"
+
+msgid "If the value is only a number, it represents time in seconds."
+msgstr "Se o valor for apenas um número, ele representará o tempo em segundos."
+
+msgid "If the value is a number followed by `ms`, it represents time in milliseconds."
+msgstr "Se o valor for um número seguido de 'ms', ele representa o tempo em milissegundos."
+
+msgid "In other cases, the simplified format is translated to the `java.time.Duration` format for parsing:"
+msgstr "Em outros casos, o formato simplificado é traduzido para o formato 'java.time.Duration' para análise:"
+
+msgid "If the value is a number followed by `h`, `m`, or `s`, it is prefixed with `PT`."
+msgstr "Se o valor for um número seguido de 'h', 'm' ou 's', ele é prefixado com 'PT'."
+
+msgid "If the value is a number followed by `d`, it is prefixed with `P`."
+msgstr "Se o valor for um número seguido de 'd', ele é prefixado com 'P'."

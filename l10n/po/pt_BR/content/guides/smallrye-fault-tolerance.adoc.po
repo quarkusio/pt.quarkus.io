@@ -1,0 +1,2649 @@
+msgid ""
+msgstr ""
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: roq-plugin-l10n-adoc\n"
+
+#, fuzzy
+msgid "SmallRye Fault Tolerance"
+msgstr "Tolerância a falhas do SmallRye"
+
+#, fuzzy
+msgid ""
+"One of the challenges brought by the distributed nature of microservices is that communication with external systems is\n"
+"inherently unreliable. This increases demand on resiliency of applications. To simplify making more resilient\n"
+"applications, Quarkus provides https://github.com/smallrye/smallrye-fault-tolerance/[SmallRye Fault Tolerance], an\n"
+"implementation of the https://github.com/eclipse/microprofile-fault-tolerance/[MicroProfile Fault Tolerance]\n"
+"specification."
+msgstr "Um dos desafios trazidos pela natureza distribuída dos microsserviços é que a comunicação com sistemas externos é inerentemente não confiável. Isso aumenta a demanda por resiliência dos aplicativos. Para simplificar a criação de aplicativos mais resilientes, o Quarkus fornece o link:https://github.com/smallrye/smallrye-fault-tolerance/[SmallRye Fault Tolerance] , uma implementação da especificação link:https://github.com/eclipse/microprofile-fault-tolerance/[MicroProfile Fault Tolerance] ."
+
+#, fuzzy
+msgid ""
+"In this guide, we demonstrate usage of MicroProfile Fault Tolerance annotations such as `@Timeout`, `@Fallback`,\n"
+"`@Retry`, `@CircuitBreaker`, and `@RateLimit`."
+msgstr "Neste guia, demonstramos o uso de anotações do MicroProfile Fault Tolerance, como `@Timeout` , `@Fallback` , `@Retry` , `@CircuitBreaker` , e `@RateLimit` ."
+
+msgid "Prerequisites"
+msgstr "Pré-requisitos"
+
+msgid "To complete this guide, you need:"
+msgstr "Para concluir este guia, você precisa:"
+
+msgid "Roughly 15 minutes"
+msgstr "Cerca de 15 minutos"
+
+msgid "An IDE"
+msgstr "Um IDE"
+
+msgid "JDK 17+ installed with `JAVA_HOME` configured appropriately"
+msgstr "JDK 17+ instalado com `JAVA_HOME` configurado corretamente"
+
+msgid "Apache Maven {maven-version}"
+msgstr "Apache Maven {maven-version}"
+
+msgid "Optionally the xref:cli-tooling.adoc[Quarkus CLI] if you want to use it"
+msgstr "Opcionalmente, o xref:cli-tooling.adoc[Quarkus CLI] se você quiser usá-lo"
+
+msgid "Optionally Mandrel or GraalVM installed and xref:building-native-image.adoc#configuring-graalvm[configured appropriately] if you want to build a native executable (or Docker if you use a native container build)"
+msgstr "Opcionalmente, Mandrel ou GraalVM instalado e xref:building-native-image.adoc#configuring-graalvm[configurado apropriadamente] se você quiser criar um executável nativo (ou Docker se você usar uma compilação de contêiner nativo)"
+
+#, fuzzy
+msgid "The Scenario"
+msgstr "O cenário"
+
+#, fuzzy
+msgid ""
+"The application built in this guide simulates a simple backend for a gourmet coffee e-shop. It implements a REST\n"
+"endpoint providing information about coffee samples we have on store."
+msgstr "O aplicativo criado neste guia simula um backend simples para uma loja virtual de café gourmet. Ele implementa um endpoint REST que fornece informações sobre amostras de café que temos na loja."
+
+#, fuzzy
+msgid ""
+"Let's imagine, although it's not implemented as such, that some methods in our endpoint require communication\n"
+"to external services like a database or an external microservice, which introduces a factor of unreliability."
+msgstr "Vamos imaginar, embora não seja implementado como tal, que alguns métodos em nosso endpoint exigem comunicação com serviços externos, como um banco de dados ou um microsserviço externo, o que introduz um fator de falta de confiabilidade."
+
+msgid "Solution"
+msgstr "Solução"
+
+msgid ""
+"We recommend that you follow the instructions in the next sections and create the application step by step.\n"
+"However, you can go right to the completed example."
+msgstr "Recomendamos que siga as instruções nas seções seguintes e crie a aplicação passo a passo. No entanto, você pode ir diretamente para o exemplo completo."
+
+msgid "Clone the Git repository: `git clone {quickstarts-clone-url}`, or download an {quickstarts-archive-url}[archive]."
+msgstr "Clone o repositório Git: `git clone {quickstarts-clone-url}`, ou baixe um {quickstarts-archive-url}[arquivo]."
+
+#, fuzzy
+msgid "The solution is located in the `microprofile-fault-tolerance-quickstart` link:{quickstarts-tree-url}/microprofile-fault-tolerance-quickstart[directory]."
+msgstr "A solução está localizada no link:{quickstarts-tree-url}/microprofile-fault-tolerance-quickstart[diretório] `microprofile-fault-tolerance-quickstart` ."
+
+msgid "Creating the Maven Project"
+msgstr "Criando o projeto Maven"
+
+msgid "First, we need a new project. Create a new project with the following command:"
+msgstr "Primeiro, precisamos de um novo projeto. Crie um novo projeto com o seguinte comando:"
+
+msgid "CLI"
+msgstr "CLI"
+
+msgid "To create a Gradle project, add the `--gradle` or `--gradle-kotlin-dsl` option."
+msgstr "Para criar um projeto Gradle, adicione a opção `--gradle` ou `--gradle-kotlin-dsl`."
+
+msgid "For more information about how to install and use the Quarkus CLI, see the xref:cli-tooling.adoc[Quarkus CLI] guide."
+msgstr "Para obter mais informações sobre como instalar e usar a CLI do Quarkus, consulte o guia xref:cli-tooling.adoc[Quarkus CLI]."
+
+msgid "Maven"
+msgstr "Maven"
+
+msgid "To create a Gradle project, add the `-DbuildTool=gradle` or `-DbuildTool=gradle-kotlin-dsl` option."
+msgstr "Para criar um projeto Gradle, adicione a opção '-DbuildTool=gradle' ou '-DbuildTool=gradle-kotlin-dsl'."
+
+msgid "For Windows users:"
+msgstr "Para usuários do Windows:"
+
+msgid "If using cmd, (don't use backward slash `\\` and put everything on the same line)"
+msgstr "Se estiver usando cmd, (não use barra invertida '\\' e coloque tudo na mesma linha)"
+
+msgid "If using Powershell, wrap `-D` parameters in double quotes e.g. `\"-DprojectArtifactId={create-app-artifact-id}\"`"
+msgstr "Se estiver usando o Powershell, envolva os parâmetros '-D' entre aspas duplas, por exemplo, '\"-DprojectArtifactId={create-app-artifact-id}\"'"
+
+#, fuzzy
+msgid "This command generates a project, importing the extensions for Quarkus REST (formerly RESTEasy Reactive)/Jakarta REST and SmallRye Fault Tolerance."
+msgstr "Esse comando gera um projeto, importando as extensões do Quarkus REST (antigo RESTEasy Reactive)/Jakarta REST e SmallRye Fault Tolerance."
+
+#, fuzzy
+msgid ""
+"If you already have your Quarkus project configured, you can add the `smallrye-fault-tolerance` extension\n"
+"to your project by running the following command in your project base directory:"
+msgstr "Se já tiver o projeto Quarkus configurado, o senhor pode adicionar a extensão `smallrye-fault-tolerance` ao projeto executando o seguinte comando no diretório base do projeto:"
+
+msgid "This will add the following to your build file:"
+msgstr "Isto irá adicionar o seguinte trecho no seu arquivo de build:"
+
+#, fuzzy
+msgid "Preparing an Application: REST Endpoint and CDI Bean"
+msgstr "Preparando um aplicativo: Ponto de extremidade REST e CDI Bean"
+
+#, fuzzy
+msgid ""
+"In this section we create a skeleton of our application, so that we have something that we can extend and to which\n"
+"we can add fault tolerance features later on."
+msgstr "Nesta seção, criamos um esqueleto do nosso aplicativo, para que tenhamos algo que possamos estender e ao qual possamos adicionar recursos de tolerância a falhas posteriormente."
+
+#, fuzzy
+msgid "First, create a simple entity representing a coffee sample in our store:"
+msgstr "Primeiro, crie uma entidade simples que represente uma amostra de café em nossa loja:"
+
+#, fuzzy
+msgid "Let's continue with a simple CDI bean, that would work as a repository of our coffee samples."
+msgstr "Vamos continuar com um grão CDI simples, que funcionaria como um repositório de nossas amostras de café."
+
+#, fuzzy
+msgid "Finally, create the `org.acme.microprofile.faulttolerance.CoffeeResource` class as follows:"
+msgstr "Por fim, crie a classe `org.acme.microprofile.faulttolerance.CoffeeResource` da seguinte forma:"
+
+#, fuzzy
+msgid ""
+"At this point, we expose a single REST method that will show a list of coffee samples in a JSON format. Note\n"
+"that we introduced some fault making code in our `CoffeeResource#maybeFail()` method, which is going to cause failures\n"
+"in the `CoffeeResource#coffees()` endpoint method in about 50 % of requests."
+msgstr "Neste ponto, expomos um único método REST que mostrará uma lista de amostras de café em um formato JSON. Observe que introduzimos algum código de criação de falhas em nosso método `CoffeeResource#maybeFail()` , o que causará falhas no método de endpoint `CoffeeResource#coffees()` em cerca de 50% das solicitações."
+
+#, fuzzy
+msgid "Why not check that our application works? Run the Quarkus development server with:"
+msgstr "Por que não verificar se o nosso aplicativo funciona? Execute o servidor de desenvolvimento do Quarkus com:"
+
+#, fuzzy
+msgid ""
+"and open `http://localhost:8080/coffee` in your browser. Make a couple of requests (remember, some of them are expected\n"
+"to fail). At least some requests should show us the list of our coffee samples in JSON, the rest will fail\n"
+"with a `RuntimeException` thrown in `CoffeeResource#maybeFail()`."
+msgstr "e abra `http://localhost:8080/coffee` em seu navegador. Faça algumas solicitações (lembre-se, espera-se que algumas delas falhem). Pelo menos algumas solicitações devem nos mostrar a lista de nossas amostras de café em JSON, as demais falharão com um `RuntimeException` lançado em `CoffeeResource#maybeFail()` ."
+
+#, fuzzy
+msgid "Congratulations, you've just made a working (although somewhat unreliable) Quarkus application!"
+msgstr "Parabéns, o senhor acabou de criar um aplicativo Quarkus funcional (embora um pouco não confiável)!"
+
+#, fuzzy
+msgid "Adding Resiliency: Retries"
+msgstr "Adicionando resiliência: Novas tentativas"
+
+#, fuzzy
+msgid ""
+"Let the Quarkus development server running and in your IDE add the `@Retry` annotation to the `CoffeeResource#coffees()`\n"
+"method as follows and save the file:"
+msgstr "Deixe o servidor de desenvolvimento Quarkus em execução e, no seu IDE, adicione a anotação `@Retry` ao método `CoffeeResource#coffees()` da seguinte forma e salve o arquivo:"
+
+#, fuzzy
+msgid ""
+"Hit refresh in your browser. The Quarkus development server will automatically detect the changes\n"
+"and recompile the app for you, so there's no need to restart it."
+msgstr "Clique em atualizar no navegador. O servidor de desenvolvimento do Quarkus detectará automaticamente as alterações e recompilará o aplicativo para o senhor, portanto, não há necessidade de reiniciá-lo."
+
+#, fuzzy
+msgid ""
+"You can hit refresh couple more times. Practically all requests should now be succeeding. The `CoffeeResource#coffees()`\n"
+"method is still in fact failing in about 50 % of time, but every time it happens, the platform will automatically retry\n"
+"the call!"
+msgstr "O senhor pode clicar em atualizar mais algumas vezes. Praticamente todas as solicitações devem estar sendo bem-sucedidas. O método `CoffeeResource#coffees()` ainda está falhando em cerca de 50% das vezes, mas toda vez que isso acontecer, a plataforma tentará novamente a chamada automaticamente!"
+
+#, fuzzy
+msgid ""
+"To see that the failures still happen, check the output of the development server. The log messages should be\n"
+"similar to these:"
+msgstr "Para ver se as falhas ainda ocorrem, verifique a saída do servidor de desenvolvimento. As mensagens de registro devem ser semelhantes a estas:"
+
+#, fuzzy
+msgid ""
+"You can see that every time an invocation fails, it's immediately followed by another invocation, until one succeeds.\n"
+"Since we allowed 4 retries, it would require 5 invocations to fail in a row, in order for the user to be actually exposed\n"
+"to a failure. Which is fairly unlikely to happen."
+msgstr "O senhor pode ver que toda vez que uma invocação falha, ela é imediatamente seguida por outra invocação, até que uma seja bem-sucedida. Como permitimos 4 novas tentativas, seria necessário que 5 invocações falhassem em sequência para que o usuário fosse realmente exposto a uma falha. O que é bastante improvável de acontecer."
+
+#, fuzzy
+msgid "Adding Resiliency: Timeouts"
+msgstr "Adicionando resiliência: Timeouts"
+
+#, fuzzy
+msgid "So what else have we got in MicroProfile Fault Tolerance? Let's look into timeouts."
+msgstr "Então, o que mais temos no MicroProfile Fault Tolerance? Vamos dar uma olhada nos tempos limite."
+
+#, fuzzy
+msgid ""
+"Add following two methods to our `CoffeeResource` endpoint. Again, no need to restart the server, just paste the code\n"
+"and save the file."
+msgstr "Adicione os dois métodos a seguir ao nosso endpoint `CoffeeResource` . Novamente, não é necessário reiniciar o servidor, basta colar o código e salvar o arquivo."
+
+#, fuzzy
+msgid ""
+"We added some new functionality. We want to be able to recommend some related coffees based on a coffee that a user\n"
+"is currently looking at. It's not a critical functionality, it's a nice-to-have. When the system is overloaded and the\n"
+"logic behind obtaining recommendations takes too long to execute, we would rather time out and render the UI without\n"
+"recommendations."
+msgstr "Adicionamos algumas novas funcionalidades. Queremos poder recomendar alguns cafés relacionados com base em um café que o usuário esteja vendo no momento. Não se trata de uma funcionalidade essencial, mas sim de uma funcionalidade agradável de se ter. Quando o sistema está sobrecarregado e a lógica por trás da obtenção de recomendações leva muito tempo para ser executada, preferimos dar um tempo e renderizar a interface do usuário sem recomendações."
+
+#, fuzzy
+msgid ""
+"Note that the timeout was configured to 250 ms, and a random artificial delay between 0 and 500 ms was introduced\n"
+"into the `CoffeeResource#recommendations()` method."
+msgstr "Observe que o tempo limite foi configurado para 250 ms, e um atraso artificial aleatório entre 0 e 500 ms foi introduzido no método `CoffeeResource#recommendations()` ."
+
+#, fuzzy
+msgid "In your browser, go to `http://localhost:8080/coffee/2/recommendations` and hit refresh a couple of times."
+msgstr "Em seu navegador, vá para `http://localhost:8080/coffee/2/recommendations` e pressione atualizar algumas vezes."
+
+#, fuzzy
+msgid ""
+"You should see some requests time out with `org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException`.\n"
+"Requests that do not time out should show two recommended coffee samples in JSON."
+msgstr "O senhor deve ver algumas solicitações expirarem com `org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException` . As solicitações que não atingem o tempo limite devem mostrar duas amostras de café recomendadas em JSON."
+
+#, fuzzy
+msgid "Adding Resiliency: Fallbacks"
+msgstr "Adicionando resiliência: Recursos alternativos"
+
+#, fuzzy
+msgid ""
+"Let's make our recommendations feature even better by providing a fallback (and presumably faster) way of getting related\n"
+"coffees."
+msgstr "Vamos tornar nosso recurso de recomendações ainda melhor, oferecendo uma maneira alternativa (e presumivelmente mais rápida) de obter cafés relacionados."
+
+#, fuzzy
+msgid ""
+"Add a fallback method to `CoffeeResource` and a `@Fallback` annotation to `CoffeeResource#recommendations()` method\n"
+"as follows:"
+msgstr "Adicione um método de fallback a `CoffeeResource` e uma anotação `@Fallback` ao método `CoffeeResource#recommendations()` da seguinte forma:"
+
+#, fuzzy
+msgid ""
+"Hit refresh several times on `http://localhost:8080/coffee/2/recommendations`.\n"
+"The `TimeoutException` should not appear anymore. Instead, in case of a timeout, the page will\n"
+"display a single recommendation that we hardcoded in our fallback method `fallbackRecommendations()`, rather than\n"
+"two recommendations returned by the original method."
+msgstr "Pressione atualizar várias vezes no `http://localhost:8080/coffee/2/recommendations` . O endereço `TimeoutException` não deve mais aparecer. Em vez disso, no caso de um tempo limite, a página exibirá uma única recomendação que codificamos em nosso método de fallback `fallbackRecommendations()` , em vez de duas recomendações retornadas pelo método original."
+
+#, fuzzy
+msgid "Check the server output to see that fallback is really happening:"
+msgstr "Verifique a saída do servidor para ver se o fallback está realmente acontecendo:"
+
+#, fuzzy
+msgid "Adding Resiliency: Circuit Breaker"
+msgstr "Adicionando resiliência: Disjuntor"
+
+#, fuzzy
+msgid ""
+"A circuit breaker is useful for limiting number of failures happening in the system, when part of the system becomes\n"
+"temporarily unstable. The circuit breaker records successful and failed invocations of a method, and when the ratio\n"
+"of failed invocations reaches the specified threshold, the circuit breaker _opens_ and blocks all further invocations\n"
+"of that method for a given time."
+msgstr "Um disjuntor é útil para limitar o número de falhas que ocorrem no sistema, quando parte do sistema se torna temporariamente instável. O disjuntor registra as invocações bem-sucedidas e fracassadas de um método e, quando a proporção de invocações fracassadas atinge o limite especificado, o disjuntor _se abre_ e bloqueia todas as outras invocações desse método por um determinado período."
+
+#, fuzzy
+msgid "Add the following code into the `CoffeeRepositoryService` bean, so that we can demonstrate a circuit breaker in action:"
+msgstr "Adicione o seguinte código ao bean `CoffeeRepositoryService` para que possamos demonstrar um disjuntor em ação:"
+
+#, fuzzy
+msgid "And inject the code below into the `CoffeeResource` endpoint:"
+msgstr "E injetar o código abaixo no endpoint `CoffeeResource` :"
+
+#, fuzzy
+msgid ""
+"We added another functionality - the application can return the amount of remaining packages of given coffee on our store\n"
+"(just a random number)."
+msgstr "Adicionamos outra funcionalidade: o aplicativo pode retornar a quantidade de pacotes restantes de determinado café em nossa loja (apenas um número aleatório)."
+
+#, fuzzy
+msgid ""
+"This time an artificial failure was introduced in the CDI bean: the `CoffeeRepositoryService#getAvailability()` method is\n"
+"going to alternate between two successful and two failed invocations."
+msgstr "Desta vez, foi introduzida uma falha artificial no bean do CDI: o método `CoffeeRepositoryService#getAvailability()` alternará entre duas invocações bem-sucedidas e duas com falha."
+
+#, fuzzy
+msgid ""
+"We also added a `@CircuitBreaker` annotation with `requestVolumeThreshold = 4`. `CircuitBreaker.failureRatio` is\n"
+"by default 0.5, and `CircuitBreaker.delay` is by default 5 seconds. That means that a circuit breaker will open\n"
+"when 2 of the last 4 invocations failed, and it will stay open for 5 seconds."
+msgstr "Também adicionamos uma anotação `@CircuitBreaker` com `requestVolumeThreshold = 4` . `CircuitBreaker.failureRatio` é, por padrão, 0,5 e `CircuitBreaker.delay` é, por padrão, 5 segundos. Isso significa que um disjuntor será aberto quando 2 das últimas 4 invocações falharem, e permanecerá aberto por 5 segundos."
+
+#, fuzzy
+msgid "To test this out, do the following:"
+msgstr "Para testar isso, faça o seguinte:"
+
+#, fuzzy
+msgid "Go to `http://localhost:8080/coffee/2/availability` in your browser. You should see a number being returned."
+msgstr "Ir para `http://localhost:8080/coffee/2/availability` em seu navegador. O senhor deve ver um número sendo retornado."
+
+#, fuzzy
+msgid "Hit refresh, this second request should again be successful and return a number."
+msgstr "Pressione refresh; essa segunda solicitação deverá ser bem-sucedida novamente e retornar um número."
+
+#, fuzzy
+msgid ""
+"Refresh two more times. Both times you should see text \"RuntimeException: Service failed.\", which is the exception\n"
+"thrown by `CoffeeRepositoryService#getAvailability()`."
+msgstr "Atualize mais duas vezes. Nas duas vezes, o senhor verá o texto \"RuntimeException: Service failed.\", que é a exceção lançada pelo site `CoffeeRepositoryService#getAvailability()` ."
+
+#, fuzzy
+msgid ""
+"Refresh a couple more times. Unless you waited too long, you should again see exception, but this time it's\n"
+"\"CircuitBreakerOpenException: getAvailability\". This exception indicates that the circuit breaker opened\n"
+"and the `CoffeeRepositoryService#getAvailability()` method is not being called anymore."
+msgstr "Atualize mais algumas vezes. A menos que o senhor tenha esperado demais, deverá ver novamente a exceção, mas desta vez é \"CircuitBreakerOpenException: getAvailability\". Essa exceção indica que o disjuntor foi aberto e o método `CoffeeRepositoryService#getAvailability()` não está mais sendo chamado."
+
+#, fuzzy
+msgid ""
+"Give it 5 seconds during which circuit breaker should close, and you should be able to make two successful requests\n"
+"again."
+msgstr "Aguarde 5 segundos, durante os quais o disjuntor deve fechar, e o senhor poderá fazer duas solicitações bem-sucedidas novamente."
+
+#, fuzzy
+msgid "Adding Resiliency: Rate Limits"
+msgstr "Adicionando resiliência: Limites de taxas"
+
+#, fuzzy
+msgid "It is possible to prevent an operation from being executed too often using a _rate limit_. Rate limits enforce a maximum number of permitted invocations in a time window of some length. For example, with a rate limit, one can make sure that a method may only be called 50 times per minute. Invocations that would exceed the limit are rejected with an exception of type `RateLimitException`."
+msgstr "É possível evitar que uma operação seja executada com muita frequência usando um _limite de taxa_ . Os limites de taxa impõem um número máximo de invocações permitidas em uma janela de tempo de algum tamanho. Por exemplo, com um limite de taxa, é possível garantir que um método só possa ser chamado 50 vezes por minuto. As chamadas que excederem o limite são rejeitadas com uma exceção do tipo `RateLimitException` ."
+
+#, fuzzy
+msgid "Additionally, it is possible to define minimum spacing between invocations. For example, with a minimum spacing of 1 second, if a second invocation happens 500 millis after the first, it is rejected even if the limit would not be exceeded yet."
+msgstr "Além disso, é possível definir o espaçamento mínimo entre as invocações. Por exemplo, com um espaçamento mínimo de 1 segundo, se uma segunda invocação ocorrer 500 milis após a primeira, ela será rejeitada mesmo que o limite ainda não tenha sido excedido."
+
+#, fuzzy
+msgid "Rate limit is superficially similar to a bulkhead (concurrency limit), but is in fact quite different. Bulkhead limits the number of executions happening concurrently at any point in time. Rate limit limits the number of executions in a time window of some length, without considering concurrency."
+msgstr "O limite de taxa é superficialmente semelhante a um bulkhead (limite de simultaneidade), mas, na verdade, é bem diferente. O bulkhead limita o número de execuções que ocorrem simultaneamente em qualquer ponto no tempo. O limite de taxa limita o número de execuções em uma janela de tempo de algum tamanho, sem considerar a simultaneidade."
+
+#, fuzzy
+msgid "Rate limits need to maintain some state between invocations: the number of recent invocations, the time stamp of last invocation, and so on. This state is a singleton, irrespective of the lifecycle of the bean that uses the `@RateLimit` annotation."
+msgstr "Os limites de taxa precisam manter algum estado entre as invocações: o número de invocações recentes, o registro de data e hora da última invocação e assim por diante. Esse estado é um singleton, independentemente do ciclo de vida do bean que usa a anotação `@RateLimit` ."
+
+#, fuzzy
+msgid "More specifically, the rate limit state is uniquely identified by the combination of the bean class (`java.lang.Class`) and the method object (`java.lang.reflect.Method`) representing the guarded method."
+msgstr "Mais especificamente, o estado do limite de taxa é identificado exclusivamente pela combinação da classe do bean ( `java.lang.Class` ) e do objeto do método ( `java.lang.reflect.Method` ) que representa o método protegido."
+
+#, fuzzy
+msgid "Let the Quarkus development mode run and in your IDE add the `@RateLimit` annotation to the `CoffeeResource#coffees()` method as follows and save the file:"
+msgstr "Deixe o modo de desenvolvimento do Quarkus ser executado e, no seu IDE, adicione a anotação `@RateLimit` ao método `CoffeeResource#coffees()` da seguinte forma e salve o arquivo:"
+
+#, fuzzy
+msgid "Hit refresh in your browser. The Quarkus development server will automatically detect the changes and recompile the app for you, so there’s no need to restart it."
+msgstr "Clique em atualizar no navegador. O servidor de desenvolvimento do Quarkus detectará automaticamente as alterações e recompilará o aplicativo para o senhor, portanto, não há necessidade de reiniciá-lo."
+
+#, fuzzy
+msgid "You can hit refresh a couple more times. After 2 requests within a 10 second interval you should start seeing errors in the logs, similar to these:"
+msgstr "O senhor pode clicar em atualizar mais algumas vezes. Após 2 solicitações em um intervalo de 10 segundos, o senhor deve começar a ver erros nos logs, semelhantes a estes:"
+
+#, fuzzy
+msgid "If `@Fallback` is used with `@RateLimit`, the fallback method or handler may be invoked if a `RateLimitException` is thrown, depending on the fallback configuration."
+msgstr "Se `@Fallback` for usado com `@RateLimit` , o método ou o manipulador de fallback poderá ser invocado se um `RateLimitException` for lançado, dependendo da configuração de fallback."
+
+#, fuzzy
+msgid "If `@Retry` is used with `@RateLimit`, each retry attempt is processed by the rate limit as an independent invocation. If `RateLimitException` is thrown, the execution may be retried, depending on how the retry is configured."
+msgstr "Se `@Retry` for usado com `@RateLimit` , cada tentativa de nova tentativa será processada pelo limite de taxa como uma invocação independente. Se o `RateLimitException` for lançado, a execução poderá ser repetida, dependendo de como a repetição estiver configurada."
+
+#, fuzzy
+msgid "If `@CircuitBreaker` is used with `@RateLimit`, the circuit breaker is checked before enforcing the rate limit. If rate limiting results in `RateLimitException`, this may be counted as a failure, depending on how the circuit breaker is configured."
+msgstr "Se `@CircuitBreaker` for usado com `@RateLimit` , o disjuntor será verificado antes de aplicar o limite de taxa. Se a limitação de taxa resultar em `RateLimitException` , isso poderá ser considerado uma falha, dependendo de como o disjuntor estiver configurado."
+
+#, fuzzy
+msgid "Runtime configuration"
+msgstr "Configuração do tempo de execução"
+
+#, fuzzy
+msgid "You can override the annotations parameters at runtime inside your `application.properties` file."
+msgstr "O senhor pode substituir os parâmetros de anotações em tempo de execução no arquivo `application.properties` ."
+
+#, fuzzy
+msgid "If we take the retry example that we already saw:"
+msgstr "Se pegarmos o exemplo de nova tentativa que já vimos:"
+
+#, fuzzy
+msgid "We can override the `maxRetries` parameter with 6 retries instead of 4 by the following configuration item:"
+msgstr "Podemos substituir o parâmetro `maxRetries` por 6 tentativas em vez de 4 com o seguinte item de configuração:"
+
+#, fuzzy
+msgid ""
+"The full set of Quarkus-native configuration properties is detailed in the <<configuration-reference>>.\n"
+"The specification-defined configuration properties are still supported, but the Quarkus-native configuration takes priority."
+msgstr "O conjunto completo de propriedades de configuração nativas do Quarkus está detalhado em <<configuration-reference>> . As propriedades de configuração definidas pela especificação ainda são compatíveis, mas a configuração nativa do Quarkus tem prioridade."
+
+#, fuzzy
+msgid "Conclusion"
+msgstr "Conclusão"
+
+#, fuzzy
+msgid ""
+"SmallRye Fault Tolerance allows to improve resiliency of your application, without having an impact on the complexity\n"
+"of our business logic."
+msgstr "O SmallRye Fault Tolerance permite melhorar a resiliência de seu aplicativo, sem afetar a complexidade de sua lógica de negócios."
+
+#, fuzzy
+msgid "All that is needed to enable the fault tolerance features in Quarkus is:"
+msgstr "Tudo o que é necessário para ativar os recursos de tolerância a falhas no Quarkus é:"
+
+#, fuzzy
+msgid "adding the `smallrye-fault-tolerance` Quarkus extension to your project using the `quarkus-maven-plugin`:"
+msgstr "Adicionando a extensão `smallrye-fault-tolerance` do Quarkus ao seu projeto usando o `quarkus-maven-plugin` :"
+
+#, fuzzy
+msgid "or simply adding the following Maven dependency:"
+msgstr "ou simplesmente adicionando a seguinte dependência do Maven:"
+
+#, fuzzy
+msgid "Additional resources"
+msgstr "Recursos adicionais"
+
+#, fuzzy
+msgid ""
+"SmallRye Fault Tolerance has more features than shown here.\n"
+"Please check the link:https://smallrye.io/docs/smallrye-fault-tolerance/6.11.1/index.html[SmallRye Fault Tolerance documentation] to learn about them."
+msgstr "O SmallRye Fault Tolerance tem mais recursos do que os mostrados aqui. Consulte a link:https://smallrye.io/docs/smallrye-fault-tolerance/6.11.1/index.html[documentação do SmallRye Fault Tolerance] para saber mais sobre eles."
+
+#, fuzzy
+msgid "In Quarkus, you can use the SmallRye Fault Tolerance optional features out of the box."
+msgstr "No Quarkus, o senhor pode usar os recursos opcionais do SmallRye Fault Tolerance imediatamente."
+
+#, fuzzy
+msgid "Support for Mutiny is present, so your asynchronous methods can return `Uni` in addition to `CompletionStage`."
+msgstr "O suporte ao Mutiny está presente, portanto, seus métodos assíncronos podem retornar `Uni` além de `CompletionStage` ."
+
+#, fuzzy
+msgid "MicroProfile Context Propagation is integrated with Fault Tolerance, so existing contexts are automatically propagated to your asynchronous methods."
+msgstr "A propagação de contexto do MicroProfile é integrada à tolerância a falhas, de modo que os contextos existentes são propagados automaticamente para os métodos assíncronos."
+
+#, fuzzy
+msgid ""
+"This also applies to the CDI request context: if it is active on the original thread, it is propagated to the new thread, but if it's not, then the new thread won't have it either.\n"
+"This is contrary to MicroProfile Fault Tolerance specification, which states that the request context must be active during the `@Asynchronous` method invocation."
+msgstr "Isso também se aplica ao contexto de solicitação de CDI: se estiver ativo no thread original, ele será propagado para o novo thread, mas se não estiver, o novo thread também não o terá. Isso é contrário à especificação MicroProfile Fault Tolerance, que afirma que o contexto da solicitação deve estar ativo durante a invocação do método `@Asynchronous` ."
+
+#, fuzzy
+msgid ""
+"We believe that in presence of MicroProfile Context Propagation, this requirement should not apply.\n"
+"The entire point of context propagation is to make sure the new thread has the same contexts as the original thread."
+msgstr "Acreditamos que, na presença da propagação de contexto de microperfil, esse requisito não deve se aplicar. O objetivo da propagação de contexto é garantir que o novo thread tenha os mesmos contextos que o thread original."
+
+#, fuzzy
+msgid ""
+"Non-compatible mode is enabled by default.\n"
+"This means that methods that return `CompletionStage` (or `Uni`) have asynchronous fault tolerance applied without the `@Asynchronous` or `@AsynchronousNonBlocking` annotation.\n"
+"It also means that circuit breaker, fallback and retry automatically inspect the exception cause chain if the exception itself is insufficient to decide what should happen."
+msgstr "O modo não compatível é ativado por padrão. Isso significa que os métodos que retornam `CompletionStage` (ou `Uni` ) têm tolerância assíncrona a falhas aplicada sem a anotação `@Asynchronous` ou `@AsynchronousNonBlocking` . Isso também significa que o circuit breaker, o fallback e o retry inspecionam automaticamente a cadeia de causas da exceção se a própria exceção for insuficiente para decidir o que deve acontecer."
+
+#, fuzzy
+msgid ""
+"This mode is not compatible with the MicroProfile Fault Tolerance specification, albeit the incompatibility is very small.\n"
+"To restore full compatibility, add this configuration property:"
+msgstr "Esse modo não é compatível com a especificação MicroProfile Fault Tolerance, embora a incompatibilidade seja muito pequena. Para restaurar a compatibilidade total, adicione essa propriedade de configuração:"
+
+#, fuzzy
+msgid ""
+"The link:https://smallrye.io/docs/smallrye-fault-tolerance/6.11.1/reference/programmatic-api.html[programmatic API] is present and integrated with the declarative, annotation-based API.\n"
+"You can use the `Guard`, `TypedGuard` and `@ApplyGuard` APIs out of the box."
+msgstr "A link:https://smallrye.io/docs/smallrye-fault-tolerance/6.11.1/reference/programmatic-api.html[API programática] está presente e integrada à API declarativa e baseada em anotações. O senhor pode usar as APIs `Guard` , `TypedGuard` e `@ApplyGuard` imediatamente."
+
+#, fuzzy
+msgid "Support for Kotlin is present (assuming you use the Quarkus extension for Kotlin), so you can guard your `suspend` functions with fault tolerance annotations."
+msgstr "O suporte para Kotlin está presente (supondo que o senhor use a extensão Quarkus para Kotlin), portanto, é possível proteger suas funções `suspend` com anotações de tolerância a falhas."
+
+#, fuzzy
+msgid ""
+"Metrics are automatically discovered and integrated.\n"
+"If your application uses the Quarkus extension for Micrometer, SmallRye Fault Tolerance will emit metrics to Micrometer.\n"
+"Otherwise, SmallRye Fault Tolerance will emit metrics to OpenTelemetry Metrics if OpenTelemetry Metrics is available.\n"
+"If no Quarkus metrics extension is present, SmallRye Fault Tolerance metrics will be disabled."
+msgstr "As métricas são descobertas e integradas automaticamente. Se o seu aplicativo usar a extensão Quarkus para o Micrometer, o SmallRye Fault Tolerance emitirá métricas para o Micrometer. Caso contrário, o SmallRye Fault Tolerance emitirá métricas para o OpenTelemetry Metrics se o OpenTelemetry Metrics estiver disponível. Se nenhuma extensão de métricas do Quarkus estiver presente, as métricas do SmallRye Fault Tolerance serão desativadas."
+
+#, fuzzy
+msgid "Configuration reference"
+msgstr "Referência de configuração"
+
+#, fuzzy
+msgid "The `\"<identifier>\"` below is:"
+msgstr "O site `\"<identifier>\"` abaixo é:"
+
+#, fuzzy
+msgid "`\"<classname>/<methodname>\"` for per method configuration"
+msgstr "`\"<classname>/<methodname>\"` para configuração por método"
+
+#, fuzzy
+msgid "`\"<classname>\"` for per class configuration"
+msgstr "`\"<classname>\"` para configuração por classe"
+
+#, fuzzy
+msgid "`global` for global configuration"
+msgstr "`global` para configuração global"
+
+#, fuzzy
+msgid ""
+"It may also be an `@Identifier` value for configuring a programmatically constructed `Guard` or `TypedGuard` that is used declaratively through `@ApplyGuard`.\n"
+"Note that in this case, the `Guard`/`TypedGuard` should *NEVER* be used programmatically, because configuration is applied on creation, which happens lazily, on the first use.\n"
+"This first use must be through `@ApplyGuard`, otherwise configuration would be ignored."
+msgstr "Também pode ser um valor `@Identifier` para configurar um `Guard` ou `TypedGuard` construído programaticamente e usado declarativamente por meio do `@ApplyGuard` . Observe que, nesse caso, o `Guard` / `TypedGuard` *NUNCA* deve ser usado de forma programática, pois a configuração é aplicada na criação, o que acontece de forma preguiçosa, no primeiro uso. Esse primeiro uso deve ser feito por meio de `@ApplyGuard` , caso contrário, a configuração seria ignorada."
+
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-1\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de configuração fixada no momento da construção - Todas as outras propriedades de configuração podem ser substituídas no momento da execução <input type=\"search\" id=\"config-search-1\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#. mt: deepl
+#, fuzzy
+msgid "[.header-title]##Configuration property##"
+msgstr "Propriedade de configuração"
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid "Default"
+msgstr "Padrão"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-enabled[`+++quarkus.fault-tolerance.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether fault tolerance strategies are enabled. Note that `@Fallback` is always enabled, this applies to all other strategies.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-enabled[quarkus.fault-tolerance.enabled] config_property_copy_button:quarkus.fault-tolerance.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-enabled[`+++quarkus.fault-tolerance.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-enabled[quarkus.fault-tolerance.enabled] config_property_copy_button:quarkus.fault-tolerance.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether fault tolerance strategies are enabled. Note that `@Fallback` is always enabled, this applies to all other strategies."
+msgstr "Se as estratégias de tolerância a falhas estão ativadas. Observe que `@Fallback` está sempre ativado; isso se aplica a todas as outras estratégias."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "<i class=\"fa fa-chevron-down\"></i><span>Show more</span>"
+msgstr "<i class=\"fa fa-chevron-down\"></i><span>Mostrar mais</span>"
+
+msgid "boolean"
+msgstr "booleano"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++true+++`"
+msgstr "`verdadeiro`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-metrics-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-metrics-enabled[`+++quarkus.fault-tolerance.metrics.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.metrics.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether fault tolerance metrics are enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE_METRICS_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-metrics-enabled[quarkus.fault-tolerance.metrics.enabled] config_property_copy_button:quarkus.fault-tolerance.metrics.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-metrics-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-metrics-enabled[`+++quarkus.fault-tolerance.metrics.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.metrics.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-metrics-enabled[quarkus.fault-tolerance.metrics.enabled] config_property_copy_button:quarkus.fault-tolerance.metrics.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether fault tolerance metrics are enabled."
+msgstr "Se as métricas de tolerância a falhas estão ativadas."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE_METRICS_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE_METRICS_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-mp-compatibility]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-mp-compatibility[`+++quarkus.fault-tolerance.mp-compatibility+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.mp-compatibility+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether SmallRye Fault Tolerance should be compatible with the MicroProfile Fault Tolerance specification.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE_MP_COMPATIBILITY+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-mp-compatibility[quarkus.fault-tolerance.mp-compatibility] config_property_copy_button:quarkus.fault-tolerance.mp-compatibility[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-mp-compatibility]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-mp-compatibility[`+++quarkus.fault-tolerance.mp-compatibility+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.mp-compatibility+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-mp-compatibility[quarkus.fault-tolerance.mp-compatibility] config_property_copy_button:quarkus.fault-tolerance.mp-compatibility[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether SmallRye Fault Tolerance should be compatible with the MicroProfile Fault Tolerance specification."
+msgstr "Se o SmallRye Fault Tolerance deve ser compatível com a especificação MicroProfile Fault Tolerance."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE_MP_COMPATIBILITY+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE_MP_COMPATIBILITY[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++false+++`"
+msgstr "`falso`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-method-name]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-method-name[`+++quarkus.fault-tolerance.\"<identifier>\".before-retry.method-name+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".before-retry.method-name+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The name of the method to call before retrying. The method belongs to the same class as the guarded method. The method must have no parameters and return `void`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BEFORE_RETRY_METHOD_NAME+++[]\n"
+"--"
+msgstr "[lock]  link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-method-name[quarkus.fault-tolerance.\"\".before-retry.method-name] config_property_copy_button:quarkus.fault-tolerance.\"\".before-retry.method-name[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-method-name]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-method-name[`+++quarkus.fault-tolerance.\"<identifier>\".before-retry.method-name+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".before-retry.method-name+++[]"
+msgstr "[lock]  link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-method-name[quarkus.fault-tolerance.\"\".before-retry.method-name] config_property_copy_button:quarkus.fault-tolerance.\"\".before-retry.method-name[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The name of the method to call before retrying. The method belongs to the same class as the guarded method. The method must have no parameters and return `void`."
+msgstr "O nome do método a ser chamado antes da nova tentativa. O método pertence à mesma classe que o método protegido. O método não deve ter parâmetros e deve retornar ``void`` ."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BEFORE_RETRY_METHOD_NAME+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFICADOR___BEFORE_RETRY_METHOD_NAME[]"
+
+msgid "string"
+msgstr "string"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-fallback-method]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-fallback-method[`+++quarkus.fault-tolerance.\"<identifier>\".fallback.fallback-method+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fallback.fallback-method+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The name of the method to call on fallback. The method belongs to the same class as the guarded method. The method must have a signature matching the signature of the guarded method.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_FALLBACK_METHOD+++[]\n"
+"--"
+msgstr "[lock]  link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-fallback-method[quarkus.fault-tolerance.\"\".fallback.fallback-method] config_property_copy_button:quarkus.fault-tolerance.\"\".fallback.fallback-method[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-fallback-method]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-fallback-method[`+++quarkus.fault-tolerance.\"<identifier>\".fallback.fallback-method+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fallback.fallback-method+++[]"
+msgstr "[lock]  link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-fallback-method[quarkus.fault-tolerance.\"\".fallback.fallback-method] config_property_copy_button:quarkus.fault-tolerance.\"\".fallback.fallback-method[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The name of the method to call on fallback. The method belongs to the same class as the guarded method. The method must have a signature matching the signature of the guarded method."
+msgstr "O nome do método a ser chamado no caso de fallback. O método pertence à mesma classe que o método protegido. O método deve ter uma assinatura que corresponda à assinatura do método protegido."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_FALLBACK_METHOD+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_FALLBACK_METHOD[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-apply-guard-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-apply-guard-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".apply-guard.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".apply-guard.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@ApplyGuard` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___APPLY_GUARD_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-apply-guard-enabled[quarkus.fault-tolerance.\"\".apply-guard.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".apply-guard.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-apply-guard-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-apply-guard-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".apply-guard.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".apply-guard.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-apply-guard-enabled[quarkus.fault-tolerance.\"\".apply-guard.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".apply-guard.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@ApplyGuard` strategy is enabled."
+msgstr "Se a estratégia `@ApplyGuard` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___APPLY_GUARD_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___APPLY_GUARD_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-apply-guard-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-apply-guard-value[`+++quarkus.fault-tolerance.\"<identifier>\".apply-guard.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".apply-guard.value+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The `io.smallrye.common.annotation.Identifier @Identifier` of the `io.smallrye.faulttolerance.api.Guard Guard` or `io.smallrye.faulttolerance.api.TypedGuard TypedGuard` to use on the annotated method.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___APPLY_GUARD_VALUE+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-apply-guard-value[quarkus.fault-tolerance.\"\".apply-guard.value] config_property_copy_button:quarkus.fault-tolerance.\"\".apply-guard.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-apply-guard-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-apply-guard-value[`+++quarkus.fault-tolerance.\"<identifier>\".apply-guard.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".apply-guard.value+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-apply-guard-value[quarkus.fault-tolerance.\"\".apply-guard.value] config_property_copy_button:quarkus.fault-tolerance.\"\".apply-guard.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The `io.smallrye.common.annotation.Identifier @Identifier` of the `io.smallrye.faulttolerance.api.Guard Guard` or `io.smallrye.faulttolerance.api.TypedGuard TypedGuard` to use on the annotated method."
+msgstr "`O @Identifier` da classe `io.smallrye.common.annotation.Identifier` `do Guard (` `io` `.smallrye.faulttolerance.api.Guard)` ou `do TypedGuard (io.smallrye.faulttolerance.api.TypedGuard` ) a ser utilizado no método anotado."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___APPLY_GUARD_VALUE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___APPLY_GUARD_VALUE[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-asynchronous-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-asynchronous-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".asynchronous.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".asynchronous.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@Asynchronous` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___ASYNCHRONOUS_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-asynchronous-enabled[quarkus.fault-tolerance.\"\".asynchronous.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".asynchronous.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-asynchronous-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-asynchronous-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".asynchronous.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".asynchronous.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-asynchronous-enabled[quarkus.fault-tolerance.\"\".asynchronous.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".asynchronous.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@Asynchronous` strategy is enabled."
+msgstr "Se a estratégia `@Asynchronous` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___ASYNCHRONOUS_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___ASYNCHRONOUS_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-asynchronous-non-blocking-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-asynchronous-non-blocking-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".asynchronous-non-blocking.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".asynchronous-non-blocking.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@AsynchronousNonBlocking` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___ASYNCHRONOUS_NON_BLOCKING_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-asynchronous-non-blocking-enabled[quarkus.fault-tolerance.\"\".asynchronous-non-blocking.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".asynchronous-non-blocking.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-asynchronous-non-blocking-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-asynchronous-non-blocking-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".asynchronous-non-blocking.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".asynchronous-non-blocking.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-asynchronous-non-blocking-enabled[quarkus.fault-tolerance.\"\".asynchronous-non-blocking.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".asynchronous-non-blocking.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@AsynchronousNonBlocking` strategy is enabled."
+msgstr "Se a estratégia `@AsynchronousNonBlocking` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___ASYNCHRONOUS_NON_BLOCKING_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___ASYNCHRONOUS_NON_BLOCKING_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".before-retry.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".before-retry.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@BeforeRetry` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BEFORE_RETRY_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-enabled[quarkus.fault-tolerance.\"\".before-retry.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".before-retry.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".before-retry.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".before-retry.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-enabled[quarkus.fault-tolerance.\"\".before-retry.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".before-retry.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@BeforeRetry` strategy is enabled."
+msgstr "Se a estratégia `@BeforeRetry` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BEFORE_RETRY_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BEFORE_RETRY_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-value[`+++quarkus.fault-tolerance.\"<identifier>\".before-retry.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".before-retry.value+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The class of the `BeforeRetryHandler` to call before retrying.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BEFORE_RETRY_VALUE+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-value[quarkus.fault-tolerance.\"\".before-retry.value] config_property_copy_button:quarkus.fault-tolerance.\"\".before-retry.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-value[`+++quarkus.fault-tolerance.\"<identifier>\".before-retry.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".before-retry.value+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-before-retry-value[quarkus.fault-tolerance.\"\".before-retry.value] config_property_copy_button:quarkus.fault-tolerance.\"\".before-retry.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The class of the `BeforeRetryHandler` to call before retrying."
+msgstr "A classe do `BeforeRetryHandler` a ser chamada antes da nova tentativa."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BEFORE_RETRY_VALUE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BEFORE_RETRY_VALUE[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html[Class]"
+msgstr "link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html[Classe]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".bulkhead.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".bulkhead.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@Bulkhead` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BULKHEAD_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-enabled[quarkus.fault-tolerance.\"\".bulkhead.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".bulkhead.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".bulkhead.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".bulkhead.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-enabled[quarkus.fault-tolerance.\"\".bulkhead.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".bulkhead.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@Bulkhead` strategy is enabled."
+msgstr "Se a estratégia `@Bulkhead` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BULKHEAD_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BULKHEAD_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-value[`+++quarkus.fault-tolerance.\"<identifier>\".bulkhead.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".bulkhead.value+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum number of concurrent invocations.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BULKHEAD_VALUE+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-value[quarkus.fault-tolerance.\"\".bulkhead.value] config_property_copy_button:quarkus.fault-tolerance.\"\".bulkhead.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-value[`+++quarkus.fault-tolerance.\"<identifier>\".bulkhead.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".bulkhead.value+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-value[quarkus.fault-tolerance.\"\".bulkhead.value] config_property_copy_button:quarkus.fault-tolerance.\"\".bulkhead.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The maximum number of concurrent invocations."
+msgstr "O número máximo de chamadas simultâneas."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BULKHEAD_VALUE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BULKHEAD_VALUE[]"
+
+msgid "int"
+msgstr "int"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++10+++`"
+msgstr "`10`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-waiting-task-queue]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-waiting-task-queue[`+++quarkus.fault-tolerance.\"<identifier>\".bulkhead.waiting-task-queue+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".bulkhead.waiting-task-queue+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum number of queued asynchronous invocations. Asynchronous invocations are queued when the number of concurrent invocations in progress has already reached the maximum. Synchronous invocations are not queued at all and are rejected immediately.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BULKHEAD_WAITING_TASK_QUEUE+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-waiting-task-queue[quarkus.fault-tolerance.\"\".bulkhead.waiting-task-queue] config_property_copy_button:quarkus.fault-tolerance.\"\".bulkhead.waiting-task-queue[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-waiting-task-queue]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-waiting-task-queue[`+++quarkus.fault-tolerance.\"<identifier>\".bulkhead.waiting-task-queue+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".bulkhead.waiting-task-queue+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-bulkhead-waiting-task-queue[quarkus.fault-tolerance.\"\".bulkhead.waiting-task-queue] config_property_copy_button:quarkus.fault-tolerance.\"\".bulkhead.waiting-task-queue[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The maximum number of queued asynchronous invocations. Asynchronous invocations are queued when the number of concurrent invocations in progress has already reached the maximum. Synchronous invocations are not queued at all and are rejected immediately."
+msgstr "O número máximo de chamadas assíncronas na fila. As chamadas assíncronas são colocadas na fila quando o número de chamadas simultâneas em andamento já atingiu o limite máximo. As chamadas síncronas não são colocadas na fila e são rejeitadas imediatamente."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BULKHEAD_WAITING_TASK_QUEUE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___BULKHEAD_WAITING_TASK_QUEUE[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@CircuitBreaker` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-enabled[quarkus.fault-tolerance.\"\".circuit-breaker.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".circuit-breaker.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-enabled[quarkus.fault-tolerance.\"\".circuit-breaker.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".circuit-breaker.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@CircuitBreaker` strategy is enabled."
+msgstr "Se a estratégia `@CircuitBreaker` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-delay]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-delay[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.delay+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.delay+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The delay after which an open circuit breaker will move to half-open.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_DELAY+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-delay[quarkus.fault-tolerance.\"\".circuit-breaker.delay] botão_para_copiar_propriedade_de_configuração:quarkus.fault-tolerance.\"\".circuit-breaker.delay[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-delay]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-delay[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.delay+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.delay+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-delay[quarkus.fault-tolerance.\"\".circuit-breaker.delay] config_property_copy_button:quarkus.fault-tolerance.\"\".circuit-breaker.delay[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The delay after which an open circuit breaker will move to half-open."
+msgstr "O tempo de atraso após o qual um disjuntor aberto passará para a posição semiaberta."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_DELAY+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_DELAY[]"
+
+msgid "long"
+msgstr "long"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++5 seconds+++`"
+msgstr "`5 segundos`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-delay-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-delay-unit[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.delay-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.delay-unit+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The unit for `delay()`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_DELAY_UNIT+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-delay-unit[quarkus.fault-tolerance.\"\".circuit-breaker.delay-unit] botão de cópia de propriedade de configuração:quarkus.fault-tolerance.\"\".circuit-breaker.delay-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-delay-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-delay-unit[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.delay-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.delay-unit+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-delay-unit[quarkus.fault-tolerance.\"\".circuit-breaker.delay-unit] botão de cópia de propriedade de configuração:quarkus.fault-tolerance.\"\".circuit-breaker.delay-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The unit for `delay()`."
+msgstr "A unidade de medida para `delay()` ."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_DELAY_UNIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_DELAY_UNIT[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`nanos`, `micros`, `millis`, `seconds`, `minutes`, `hours`, `half-days`, `days`, `weeks`, `months`, `years`, `decades`, `centuries`, `millennia`, `eras`, `forever`"
+msgstr "`nanos` , `micros` , `milis` , `segundos` , `minutos` , `horas` , `meios dias` , `dias` , `semanas` , `meses` , `anos` , `décadas` , `séculos` , `milênios` , `eras` , `para sempre`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-fail-on]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-fail-on[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.fail-on+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.fail-on+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The exception types that are considered failures.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_FAIL_ON+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-fail-on[quarkus.fault-tolerance.\"\".circuit-breaker.fail-on] config_property_copy_button:quarkus.fault-tolerance.\"\".circuit-breaker.fail-on[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-fail-on]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-fail-on[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.fail-on+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.fail-on+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-fail-on[quarkus.fault-tolerance.\"\".circuit-breaker.fail-on] config_property_copy_button:quarkus.fault-tolerance.\"\".circuit-breaker.fail-on[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The exception types that are considered failures."
+msgstr "Os tipos de exceção que são considerados falhas."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_FAIL_ON+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_FAIL_ON[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "list of link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html[Class]"
+msgstr "lista de link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html[turmas]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++Throwable (all exceptions)+++`"
+msgstr "`Lançável (todas as exceções)`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-failure-ratio]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-failure-ratio[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.failure-ratio+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.failure-ratio+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The ratio of failures within the rolling window that will move a closed circuit breaker to open.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_FAILURE_RATIO+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-failure-ratio[quarkus.fault-tolerance.\"\".circuit-breaker.failure-ratio] config_property_copy_button:quarkus.fault-tolerance.\"\".circuit-breaker.failure-ratio[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-failure-ratio]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-failure-ratio[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.failure-ratio+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.failure-ratio+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-failure-ratio[quarkus.fault-tolerance.\"\".circuit-breaker.failure-ratio] config_property_copy_button:quarkus.fault-tolerance.\"\".circuit-breaker.failure-ratio[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The ratio of failures within the rolling window that will move a closed circuit breaker to open."
+msgstr "A proporção de falhas dentro da janela móvel que fará com que um disjuntor fechado seja aberto."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_FAILURE_RATIO+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_FAILURE_RATIO[]"
+
+#, fuzzy
+msgid "double"
+msgstr "duplo"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++0.5+++`"
+msgstr "`0,5`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-request-volume-threshold]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-request-volume-threshold[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.request-volume-threshold+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.request-volume-threshold+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The size of the circuit breaker rolling window.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_REQUEST_VOLUME_THRESHOLD+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-request-volume-threshold[quarkus.fault-tolerance.\"\".circuit-breaker.request-volume-threshold] config_property_copy_button:quarkus.fault-tolerance.\"\".circuit-breaker.request-volume-threshold[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-request-volume-threshold]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-request-volume-threshold[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.request-volume-threshold+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.request-volume-threshold+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-request-volume-threshold[quarkus.fault-tolerance.\"\".circuit-breaker.request-volume-threshold] config_property_copy_button:quarkus.fault-tolerance.\"\".circuit-breaker.request-volume-threshold[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The size of the circuit breaker rolling window."
+msgstr "O tamanho da janela móvel do disjuntor."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_REQUEST_VOLUME_THRESHOLD+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_REQUEST_VOLUME_THRESHOLD[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++20+++`"
+msgstr "`20`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-skip-on]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-skip-on[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.skip-on+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.skip-on+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The exception types that are not considered failures. Takes priority over `fail-on()`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_SKIP_ON+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-skip-on[quarkus.fault-tolerance.\"\".circuit-breaker.skip-on] config_property_copy_button:quarkus.fault-tolerance.\"\".circuit-breaker.skip-on[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-skip-on]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-skip-on[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.skip-on+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.skip-on+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-skip-on[quarkus.fault-tolerance.\"\".circuit-breaker.skip-on] config_property_copy_button:quarkus.fault-tolerance.\"\".circuit-breaker.skip-on[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The exception types that are not considered failures. Takes priority over `fail-on()`."
+msgstr "Os tipos de exceção que não são considerados falhas. Tem prioridade sobre `o `fail-on()` `."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_SKIP_ON+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_SKIP_ON[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++<empty set>+++`"
+msgstr "``"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-success-threshold]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-success-threshold[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.success-threshold+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.success-threshold+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The number of successful executions that move a half-open circuit breaker to closed.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_SUCCESS_THRESHOLD+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-success-threshold[quarkus.fault-tolerance.\"\".circuit-breaker.success-threshold] config_property_copy_button:quarkus.fault-tolerance.\"\".circuit-breaker.success-threshold[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-success-threshold]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-success-threshold[`+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.success-threshold+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".circuit-breaker.success-threshold+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-circuit-breaker-success-threshold[quarkus.fault-tolerance.\"\".circuit-breaker.success-threshold] config_property_copy_button:quarkus.fault-tolerance.\"\".circuit-breaker.success-threshold[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The number of successful executions that move a half-open circuit breaker to closed."
+msgstr "O número de execuções bem-sucedidas que fazem com que um disjuntor semiaberto passe para a posição fechada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_SUCCESS_THRESHOLD+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CIRCUIT_BREAKER_SUCCESS_THRESHOLD[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++1+++`"
+msgstr "`1`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-custom-backoff-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-custom-backoff-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".custom-backoff.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".custom-backoff.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@CustomBackoff` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CUSTOM_BACKOFF_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-custom-backoff-enabled[quarkus.fault-tolerance.\"\".custom-backoff.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".custom-backoff.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-custom-backoff-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-custom-backoff-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".custom-backoff.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".custom-backoff.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-custom-backoff-enabled[quarkus.fault-tolerance.\"\".custom-backoff.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".custom-backoff.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@CustomBackoff` strategy is enabled."
+msgstr "Se a estratégia `@CustomBackoff` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CUSTOM_BACKOFF_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CUSTOM_BACKOFF_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-custom-backoff-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-custom-backoff-value[`+++quarkus.fault-tolerance.\"<identifier>\".custom-backoff.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".custom-backoff.value+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The class of the `CustomBackoffStrategy` that will be used to compute retry delays.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CUSTOM_BACKOFF_VALUE+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-custom-backoff-value[quarkus.fault-tolerance.\"\".custom-backoff.value] config_property_copy_button:quarkus.fault-tolerance.\"\".custom-backoff.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-custom-backoff-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-custom-backoff-value[`+++quarkus.fault-tolerance.\"<identifier>\".custom-backoff.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".custom-backoff.value+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-custom-backoff-value[quarkus.fault-tolerance.\"\".custom-backoff.value] config_property_copy_button:quarkus.fault-tolerance.\"\".custom-backoff.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The class of the `CustomBackoffStrategy` that will be used to compute retry delays."
+msgstr "A classe da `CustomBackoffStrategy` que será utilizada para calcular os atrasos entre tentativas."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CUSTOM_BACKOFF_VALUE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___CUSTOM_BACKOFF_VALUE[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@ExponentialBackoff` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___EXPONENTIAL_BACKOFF_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-enabled[quarkus.fault-tolerance.\"\".exponential-backoff.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".exponential-backoff.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-enabled[quarkus.fault-tolerance.\"\".exponential-backoff.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".exponential-backoff.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@ExponentialBackoff` strategy is enabled."
+msgstr "Se a estratégia `@ExponentialBackoff` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___EXPONENTIAL_BACKOFF_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___EXPONENTIAL_BACKOFF_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-factor]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-factor[`+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.factor+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.factor+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The multiplicative factor used when determining a delay between two retries. A delay is computed as `factor ++*++ previousDelay`, resulting in an exponential growth.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___EXPONENTIAL_BACKOFF_FACTOR+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-factor[quarkus.fault-tolerance.\"\".exponential-backoff.factor] config_property_copy_button:quarkus.fault-tolerance.\"\".exponential-backoff.factor[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-factor]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-factor[`+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.factor+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.factor+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-factor[quarkus.fault-tolerance.\"\".exponential-backoff.factor] config_property_copy_button:quarkus.fault-tolerance.\"\".exponential-backoff.factor[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The multiplicative factor used when determining a delay between two retries. A delay is computed as `factor ++*++ previousDelay`, resulting in an exponential growth."
+msgstr "O fator multiplicativo utilizado na determinação de um intervalo entre duas tentativas. O intervalo é calculado como `fator * intervaloAnterior` , resultando em um crescimento exponencial."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___EXPONENTIAL_BACKOFF_FACTOR+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___EXPONENTIAL_BACKOFF_FACTOR[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++2+++`"
+msgstr "`2`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-max-delay]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-max-delay[`+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.max-delay+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.max-delay+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum delay between retries.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___EXPONENTIAL_BACKOFF_MAX_DELAY+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-max-delay[quarkus.fault-tolerance.\"\".exponential-backoff.max-delay] config_property_copy_button:quarkus.fault-tolerance.\"\".exponential-backoff.max-delay[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-max-delay]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-max-delay[`+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.max-delay+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.max-delay+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-max-delay[quarkus.fault-tolerance.\"\".exponential-backoff.max-delay] config_property_copy_button:quarkus.fault-tolerance.\"\".exponential-backoff.max-delay[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The maximum delay between retries."
+msgstr "O intervalo máximo entre tentativas."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___EXPONENTIAL_BACKOFF_MAX_DELAY+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___EXPONENTIAL_BACKOFF_MAX_DELAY[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++1 minute+++`"
+msgstr "`1 minuto`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-max-delay-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-max-delay-unit[`+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.max-delay-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.max-delay-unit+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The unit for `max-delay()`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___EXPONENTIAL_BACKOFF_MAX_DELAY_UNIT+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-max-delay-unit[quarkus.fault-tolerance.\"\".exponential-backoff.max-delay-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".exponential-backoff.max-delay-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-max-delay-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-max-delay-unit[`+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.max-delay-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".exponential-backoff.max-delay-unit+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-exponential-backoff-max-delay-unit[quarkus.fault-tolerance.\"\".exponential-backoff.max-delay-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".exponential-backoff.max-delay-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The unit for `max-delay()`."
+msgstr "A unidade de medida da função `max-delay()` ."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___EXPONENTIAL_BACKOFF_MAX_DELAY_UNIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___EXPONENTIAL_BACKOFF_MAX_DELAY_UNIT[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".fallback.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fallback.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@Fallback` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-enabled[quarkus.fault-tolerance.\"\".fallback.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".fallback.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".fallback.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fallback.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-enabled[quarkus.fault-tolerance.\"\".fallback.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".fallback.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@Fallback` strategy is enabled."
+msgstr "Se a estratégia `@Fallback` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-apply-on]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-apply-on[`+++quarkus.fault-tolerance.\"<identifier>\".fallback.apply-on+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fallback.apply-on+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The exception types that are considered failures and hence should trigger fallback.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_APPLY_ON+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-apply-on[quarkus.fault-tolerance.\"\".fallback.apply-on] config_property_copy_button:quarkus.fault-tolerance.\"\".fallback.apply-on[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-apply-on]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-apply-on[`+++quarkus.fault-tolerance.\"<identifier>\".fallback.apply-on+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fallback.apply-on+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-apply-on[quarkus.fault-tolerance.\"\".fallback.apply-on] config_property_copy_button:quarkus.fault-tolerance.\"\".fallback.apply-on[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The exception types that are considered failures and hence should trigger fallback."
+msgstr "Os tipos de exceção que são considerados falhas e, portanto, devem acionar o plano alternativo."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_APPLY_ON+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_APPLY_ON[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-skip-on]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-skip-on[`+++quarkus.fault-tolerance.\"<identifier>\".fallback.skip-on+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fallback.skip-on+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The exception types that are not considered failures and hence should not trigger fallback. Takes priority over `apply-on()`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_SKIP_ON+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-skip-on[quarkus.fault-tolerance.\"\".fallback.skip-on] config_property_copy_button:quarkus.fault-tolerance.\"\".fallback.skip-on[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-skip-on]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-skip-on[`+++quarkus.fault-tolerance.\"<identifier>\".fallback.skip-on+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fallback.skip-on+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-skip-on[quarkus.fault-tolerance.\"\".fallback.skip-on] config_property_copy_button:quarkus.fault-tolerance.\"\".fallback.skip-on[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The exception types that are not considered failures and hence should not trigger fallback. Takes priority over `apply-on()`."
+msgstr "Os tipos de exceção que não são considerados falhas e, portanto, não devem acionar o mecanismo de fallback. Tem prioridade sobre `o método apply-on()` ."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_SKIP_ON+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_SKIP_ON[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-value[`+++quarkus.fault-tolerance.\"<identifier>\".fallback.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fallback.value+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The class of the `FallbackHandler` to call on fallback.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_VALUE+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-value[quarkus.fault-tolerance.\"\".fallback.value] config_property_copy_button:quarkus.fault-tolerance.\"\".fallback.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-value[`+++quarkus.fault-tolerance.\"<identifier>\".fallback.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fallback.value+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fallback-value[quarkus.fault-tolerance.\"\".fallback.value] config_property_copy_button:quarkus.fault-tolerance.\"\".fallback.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The class of the `FallbackHandler` to call on fallback."
+msgstr "A classe do `FallbackHandler` a ser chamada em caso de fallback."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_VALUE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FALLBACK_VALUE[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".fibonacci-backoff.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fibonacci-backoff.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@FibonacciBackoff` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FIBONACCI_BACKOFF_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-enabled[quarkus.fault-tolerance.\"\".fibonacci-backoff.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".fibonacci-backoff.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".fibonacci-backoff.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fibonacci-backoff.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-enabled[quarkus.fault-tolerance.\"\".fibonacci-backoff.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".fibonacci-backoff.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@FibonacciBackoff` strategy is enabled."
+msgstr "Se a estratégia `@FibonacciBackoff` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FIBONACCI_BACKOFF_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FIBONACCI_BACKOFF_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-max-delay]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-max-delay[`+++quarkus.fault-tolerance.\"<identifier>\".fibonacci-backoff.max-delay+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fibonacci-backoff.max-delay+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum delay between retries.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FIBONACCI_BACKOFF_MAX_DELAY+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-max-delay[quarkus.fault-tolerance.\"\".fibonacci-backoff.max-delay] config_property_copy_button:quarkus.fault-tolerance.\"\".fibonacci-backoff.max-delay[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-max-delay]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-max-delay[`+++quarkus.fault-tolerance.\"<identifier>\".fibonacci-backoff.max-delay+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fibonacci-backoff.max-delay+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-max-delay[quarkus.fault-tolerance.\"\".fibonacci-backoff.max-delay] config_property_copy_button:quarkus.fault-tolerance.\"\".fibonacci-backoff.max-delay[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FIBONACCI_BACKOFF_MAX_DELAY+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FIBONACCI_BACKOFF_MAX_DELAY[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-max-delay-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-max-delay-unit[`+++quarkus.fault-tolerance.\"<identifier>\".fibonacci-backoff.max-delay-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fibonacci-backoff.max-delay-unit+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The unit for `max-delay()`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FIBONACCI_BACKOFF_MAX_DELAY_UNIT+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-max-delay-unit[quarkus.fault-tolerance.\"\".fibonacci-backoff.max-delay-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".fibonacci-backoff.max-delay-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-max-delay-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-max-delay-unit[`+++quarkus.fault-tolerance.\"<identifier>\".fibonacci-backoff.max-delay-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".fibonacci-backoff.max-delay-unit+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-fibonacci-backoff-max-delay-unit[quarkus.fault-tolerance.\"\".fibonacci-backoff.max-delay-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".fibonacci-backoff.max-delay-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FIBONACCI_BACKOFF_MAX_DELAY_UNIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___FIBONACCI_BACKOFF_MAX_DELAY_UNIT[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@RateLimit` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-enabled[quarkus.fault-tolerance.\"\".rate-limit.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".rate-limit.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-enabled[quarkus.fault-tolerance.\"\".rate-limit.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".rate-limit.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@RateLimit` strategy is enabled."
+msgstr "Se a estratégia `@RateLimit` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-min-spacing]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-min-spacing[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.min-spacing+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.min-spacing+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Minimum time between two consecutive invocations. If the time between two consecutive invocations is shorter, the second invocation is rejected.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_MIN_SPACING+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-min-spacing[quarkus.fault-tolerance.\"\".rate-limit.min-spacing] config_property_copy_button:quarkus.fault-tolerance.\"\".rate-limit.min-spacing[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-min-spacing]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-min-spacing[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.min-spacing+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.min-spacing+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-min-spacing[quarkus.fault-tolerance.\"\".rate-limit.min-spacing] config_property_copy_button:quarkus.fault-tolerance.\"\".rate-limit.min-spacing[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Minimum time between two consecutive invocations. If the time between two consecutive invocations is shorter, the second invocation is rejected."
+msgstr "Tempo mínimo entre duas chamadas consecutivas. Caso o tempo entre duas chamadas consecutivas seja menor, a segunda chamada será rejeitada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_MIN_SPACING+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_MIN_SPACING[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++0+++`"
+msgstr "`0`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-min-spacing-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-min-spacing-unit[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.min-spacing-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.min-spacing-unit+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The unit for `min-spacing()`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_MIN_SPACING_UNIT+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-min-spacing-unit[quarkus.fault-tolerance.\"\".rate-limit.min-spacing-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".rate-limit.min-spacing-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-min-spacing-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-min-spacing-unit[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.min-spacing-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.min-spacing-unit+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-min-spacing-unit[quarkus.fault-tolerance.\"\".rate-limit.min-spacing-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".rate-limit.min-spacing-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The unit for `min-spacing()`."
+msgstr "A unidade de medida para `a função min-spacing()` ."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_MIN_SPACING_UNIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_MIN_SPACING_UNIT[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-type]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-type[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.type+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.type+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The type of type windows used for rate limiting.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_TYPE+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-type[quarkus.fault-tolerance.\"\".rate-limit.type] config_property_copy_button:quarkus.fault-tolerance.\"\".rate-limit.type[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-type]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-type[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.type+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.type+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-type[quarkus.fault-tolerance.\"\".rate-limit.type] config_property_copy_button:quarkus.fault-tolerance.\"\".rate-limit.type[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The type of type windows used for rate limiting."
+msgstr "O tipo de janelas de tipo utilizadas para a limitação de taxa."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_TYPE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_TYPE[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`fixed`, `rolling`, `smooth`"
+msgstr "`fixo` , `rolante` , `suave`"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++fixed+++`"
+msgstr "`corrigido`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-value[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.value+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum number of invocations in a time window.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_VALUE+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-value[quarkus.fault-tolerance.\"\".rate-limit.value] botão_para_copiar_propriedade_de_configuração:quarkus.fault-tolerance.\"\".rate-limit.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-value[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.value+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-value[quarkus.fault-tolerance.\"\".rate-limit.value] config_property_copy_button:quarkus.fault-tolerance.\"\".rate-limit.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The maximum number of invocations in a time window."
+msgstr "O número máximo de chamadas em um intervalo de tempo."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_VALUE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_VALUE[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++100+++`"
+msgstr "`100`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-window]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-window[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.window+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.window+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The time window length.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_WINDOW+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-window[quarkus.fault-tolerance.\"\".rate-limit.window] botão_para_copiar_propriedade_de_configuração:quarkus.fault-tolerance.\"\".rate-limit.window[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-window]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-window[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.window+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.window+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-window[quarkus.fault-tolerance.\"\".rate-limit.window] botão_para_copiar_propriedade_de_configuração:quarkus.fault-tolerance.\"\".rate-limit.window[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The time window length."
+msgstr "A duração da janela de tempo."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_WINDOW+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_WINDOW[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++1 second+++`"
+msgstr "`1 segundo`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-window-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-window-unit[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.window-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.window-unit+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The unit for `window()`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_WINDOW_UNIT+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-window-unit[quarkus.fault-tolerance.\"\".rate-limit.window-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".rate-limit.window-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-window-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-window-unit[`+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.window-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".rate-limit.window-unit+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-rate-limit-window-unit[quarkus.fault-tolerance.\"\".rate-limit.window-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".rate-limit.window-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The unit for `window()`."
+msgstr "A unidade para `window()` ."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_WINDOW_UNIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RATE_LIMIT_WINDOW_UNIT[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".retry.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@Retry` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-enabled[quarkus.fault-tolerance.\"\".retry.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".retry.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-enabled[quarkus.fault-tolerance.\"\".retry.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@Retry` strategy is enabled."
+msgstr "Se a estratégia `@Retry` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-abort-on]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-abort-on[`+++quarkus.fault-tolerance.\"<identifier>\".retry.abort-on+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.abort-on+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The exception types that are not considered failures and hence should not be retried. Takes priority over `retry-on()`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_ABORT_ON+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-abort-on[quarkus.fault-tolerance.\"\".retry.abort-on] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.abort-on[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-abort-on]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-abort-on[`+++quarkus.fault-tolerance.\"<identifier>\".retry.abort-on+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.abort-on+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-abort-on[quarkus.fault-tolerance.\"\".retry.abort-on] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.abort-on[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The exception types that are not considered failures and hence should not be retried. Takes priority over `retry-on()`."
+msgstr "Os tipos de exceção que não são considerados falhas e, portanto, não devem ser repetidos. Tem prioridade sobre `o método retry-on()` ."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_ABORT_ON+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_ABORT_ON[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-delay]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-delay[`+++quarkus.fault-tolerance.\"<identifier>\".retry.delay+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.delay+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The delay between retry attempts.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_DELAY+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-delay[quarkus.fault-tolerance.\"\".retry.delay] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.delay[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-delay]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-delay[`+++quarkus.fault-tolerance.\"<identifier>\".retry.delay+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.delay+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-delay[quarkus.fault-tolerance.\"\".retry.delay] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.delay[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The delay between retry attempts."
+msgstr "O intervalo entre as tentativas de repetição."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_DELAY+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_DELAY[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-delay-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-delay-unit[`+++quarkus.fault-tolerance.\"<identifier>\".retry.delay-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.delay-unit+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The unit for `delay()`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_DELAY_UNIT+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-delay-unit[quarkus.fault-tolerance.\"\".retry.delay-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.delay-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-delay-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-delay-unit[`+++quarkus.fault-tolerance.\"<identifier>\".retry.delay-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.delay-unit+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-delay-unit[quarkus.fault-tolerance.\"\".retry.delay-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.delay-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_DELAY_UNIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_DELAY_UNIT[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-jitter]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-jitter[`+++quarkus.fault-tolerance.\"<identifier>\".retry.jitter+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.jitter+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum jitter to apply for the delay between retry attempts. The actual delay will be in the interval `++[++delay - jitter, delay {plus} jitter++]++`, but will not be negative.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_JITTER+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-jitter[quarkus.fault-tolerance.\"\".retry.jitter] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.jitter[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-jitter]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-jitter[`+++quarkus.fault-tolerance.\"<identifier>\".retry.jitter+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.jitter+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-jitter[quarkus.fault-tolerance.\"\".retry.jitter] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.jitter[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The maximum jitter to apply for the delay between retry attempts. The actual delay will be in the interval `++[++delay - jitter, delay {plus} jitter++]++`, but will not be negative."
+msgstr "A variação máxima a ser aplicada ao atraso entre as tentativas de repetição. O atraso efetivo estará no intervalo `[atraso - variação, atraso + variação]` , mas não será negativo."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_JITTER+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_JITTER[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++200 millis+++`"
+msgstr "`200 milis`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-jitter-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-jitter-unit[`+++quarkus.fault-tolerance.\"<identifier>\".retry.jitter-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.jitter-unit+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The unit for `jitter()`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_JITTER_UNIT+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-jitter-unit[quarkus.fault-tolerance.\"\".retry.jitter-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.jitter-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-jitter-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-jitter-unit[`+++quarkus.fault-tolerance.\"<identifier>\".retry.jitter-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.jitter-unit+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-jitter-unit[quarkus.fault-tolerance.\"\".retry.jitter-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.jitter-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The unit for `jitter()`."
+msgstr "A unidade de medida para `jitter()` ."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_JITTER_UNIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_JITTER_UNIT[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-duration]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-duration[`+++quarkus.fault-tolerance.\"<identifier>\".retry.max-duration+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.max-duration+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum duration for which to retry.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_MAX_DURATION+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-duration[quarkus.fault-tolerance.\"\".retry.max-duration] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.max-duration[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-duration]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-duration[`+++quarkus.fault-tolerance.\"<identifier>\".retry.max-duration+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.max-duration+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-duration[quarkus.fault-tolerance.\"\".retry.max-duration] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.max-duration[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The maximum duration for which to retry."
+msgstr "O tempo máximo durante o qual as tentativas serão repetidas."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_MAX_DURATION+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_MAX_DURATION[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++3 minutes+++`"
+msgstr "`3 minutos`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-duration-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-duration-unit[`+++quarkus.fault-tolerance.\"<identifier>\".retry.max-duration-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.max-duration-unit+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The unit for `max-duration()`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_MAX_DURATION_UNIT+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-duration-unit[quarkus.fault-tolerance.\"\".retry.max-duration-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.max-duration-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-duration-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-duration-unit[`+++quarkus.fault-tolerance.\"<identifier>\".retry.max-duration-unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.max-duration-unit+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-duration-unit[quarkus.fault-tolerance.\"\".retry.max-duration-unit] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.max-duration-unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The unit for `max-duration()`."
+msgstr "A unidade de medida para `max-duration()` ."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_MAX_DURATION_UNIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_MAX_DURATION_UNIT[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-retries]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-retries[`+++quarkus.fault-tolerance.\"<identifier>\".retry.max-retries+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.max-retries+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum number of retry attempts.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_MAX_RETRIES+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-retries[quarkus.fault-tolerance.\"\".retry.max-retries] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.max-retries[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-retries]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-retries[`+++quarkus.fault-tolerance.\"<identifier>\".retry.max-retries+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.max-retries+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-max-retries[quarkus.fault-tolerance.\"\".retry.max-retries] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.max-retries[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The maximum number of retry attempts."
+msgstr "O número máximo de tentativas de repetição."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_MAX_RETRIES+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_MAX_RETRIES[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++3+++`"
+msgstr "`3`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-retry-on]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-retry-on[`+++quarkus.fault-tolerance.\"<identifier>\".retry.retry-on+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.retry-on+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The exception types that are considered failures and hence should be retried.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_RETRY_ON+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-retry-on[quarkus.fault-tolerance.\"\".retry.retry-on] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.retry-on[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-retry-on]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-retry-on[`+++quarkus.fault-tolerance.\"<identifier>\".retry.retry-on+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry.retry-on+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-retry-on[quarkus.fault-tolerance.\"\".retry.retry-on] config_property_copy_button:quarkus.fault-tolerance.\"\".retry.retry-on[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The exception types that are considered failures and hence should be retried."
+msgstr "Os tipos de exceção que são considerados falhas e, portanto, devem ser repetidos."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_RETRY_ON+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_RETRY_ON[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++Exception (all exceptions)+++`"
+msgstr "`Exceção (todas as exceções)`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".retry-when.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry-when.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@RetryWhen` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_WHEN_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-enabled[quarkus.fault-tolerance.\"\".retry-when.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".retry-when.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".retry-when.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry-when.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-enabled[quarkus.fault-tolerance.\"\".retry-when.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".retry-when.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@RetryWhen` strategy is enabled."
+msgstr "Se a estratégia `@RetryWhen` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_WHEN_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_WHEN_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-exception]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-exception[`+++quarkus.fault-tolerance.\"<identifier>\".retry-when.exception+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry-when.exception+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Class of the predicate that will be used to determine whether the invocation should be retried if the guarded method has thrown an exception.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_WHEN_EXCEPTION+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-exception[quarkus.fault-tolerance.\"\".retry-when.exception] config_property_copy_button:quarkus.fault-tolerance.\"\".retry-when.exception[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-exception]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-exception[`+++quarkus.fault-tolerance.\"<identifier>\".retry-when.exception+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry-when.exception+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-exception[quarkus.fault-tolerance.\"\".retry-when.exception] config_property_copy_button:quarkus.fault-tolerance.\"\".retry-when.exception[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Class of the predicate that will be used to determine whether the invocation should be retried if the guarded method has thrown an exception."
+msgstr "Classe do predicado que será utilizada para determinar se a invocação deve ser repetida caso o método protegido tenha lançado uma exceção."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_WHEN_EXCEPTION+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_WHEN_EXCEPTION[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++AlwaysOnException+++`"
+msgstr "`AlwaysOnException`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-result]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-result[`+++quarkus.fault-tolerance.\"<identifier>\".retry-when.result+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry-when.result+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Class of the predicate that will be used to determine whether the invocation should be retried if the guarded method has returned a result.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_WHEN_RESULT+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-result[quarkus.fault-tolerance.\"\".retry-when.result] config_property_copy_button:quarkus.fault-tolerance.\"\".retry-when.result[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-result]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-result[`+++quarkus.fault-tolerance.\"<identifier>\".retry-when.result+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".retry-when.result+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-retry-when-result[quarkus.fault-tolerance.\"\".retry-when.result] config_property_copy_button:quarkus.fault-tolerance.\"\".retry-when.result[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Class of the predicate that will be used to determine whether the invocation should be retried if the guarded method has returned a result."
+msgstr "Classe do predicado que será utilizada para determinar se a invocação deve ser repetida caso o método protegido tenha retornado um resultado."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_WHEN_RESULT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___RETRY_WHEN_RESULT[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "`+++NeverOnResult+++`"
+msgstr "`NeverOnResult`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".timeout.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".timeout.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether the `@Timeout` strategy is enabled.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___TIMEOUT_ENABLED+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-enabled[quarkus.fault-tolerance.\"\".timeout.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".timeout.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-enabled]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-enabled[`+++quarkus.fault-tolerance.\"<identifier>\".timeout.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".timeout.enabled+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-enabled[quarkus.fault-tolerance.\"\".timeout.enabled] config_property_copy_button:quarkus.fault-tolerance.\"\".timeout.enabled[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "Whether the `@Timeout` strategy is enabled."
+msgstr "Se a estratégia `@Timeout` está ativada."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___TIMEOUT_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___TIMEOUT_ENABLED[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-unit[`+++quarkus.fault-tolerance.\"<identifier>\".timeout.unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".timeout.unit+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The unit for `value()`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___TIMEOUT_UNIT+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-unit[quarkus.fault-tolerance.\"\".timeout.unit] config_property_copy_button:quarkus.fault-tolerance.\"\".timeout.unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-unit]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-unit[`+++quarkus.fault-tolerance.\"<identifier>\".timeout.unit+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".timeout.unit+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-unit[quarkus.fault-tolerance.\"\".timeout.unit] config_property_copy_button:quarkus.fault-tolerance.\"\".timeout.unit[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The unit for `value()`."
+msgstr "A unidade para `value()` ."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___TIMEOUT_UNIT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___TIMEOUT_UNIT[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-value[`+++quarkus.fault-tolerance.\"<identifier>\".timeout.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".timeout.value+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The timeout to enforce.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___TIMEOUT_VALUE+++[]\n"
+"--"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-value[quarkus.fault-tolerance.\"\".timeout.value] config_property_copy_button:quarkus.fault-tolerance.\"\".timeout.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-value]] [.property-path]##link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-value[`+++quarkus.fault-tolerance.\"<identifier>\".timeout.value+++`]##\n"
+"config_property_copy_button:+++quarkus.fault-tolerance.\"<identifier>\".timeout.value+++[]"
+msgstr " link:#quarkus-smallrye-fault-tolerance_quarkus-fault-tolerance-identifier-timeout-value[quarkus.fault-tolerance.\"\".timeout.value] config_property_copy_button:quarkus.fault-tolerance.\"\".timeout.value[]"
+
+#. mt: deepl
+#, fuzzy
+msgid "The timeout to enforce."
+msgstr "O tempo limite a ser aplicado."
+
+#. mt: deepl
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_FAULT_TOLERANCE___IDENTIFIER___TIMEOUT_VALUE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_FAULT_TOLERANCE___IDENTIFIER___TIMEOUT_VALUE[]"
+
+#, fuzzy
+msgid "This is how the specification-defined properties are mapped to the Quarkus-native configuration:"
+msgstr "É assim que as propriedades definidas pela especificação são mapeadas para a configuração nativa do Quarkus:"
+
+#, fuzzy
+msgid "Specification-defined config property"
+msgstr "Propriedade de configuração definida por especificação"
+
+#, fuzzy
+msgid "Quarkus-native config property"
+msgstr "Propriedade de configuração nativa do Quarkus"
+
+#, fuzzy
+msgid "`<classname>/<methodname>/<annotation>/<member>`"
+msgstr "`<classname>/<methodname>/<annotation>/<member>`"
+
+#, fuzzy
+msgid "`quarkus.fault-tolerance.\"<classname>/<methodname>\".<annotation>.<member>`"
+msgstr "`quarkus.fault-tolerance.\"<classname>/<methodname>\".<annotation>.<member>`"
+
+#, fuzzy
+msgid "`<classname>/<annotation>/<member>`"
+msgstr "`<classname>/<annotation>/<member>`"
+
+#, fuzzy
+msgid "`quarkus.fault-tolerance.\"<classname>\".<annotation>.<member>`"
+msgstr "`quarkus.fault-tolerance.\"<classname>\".<annotation>.<member>`"
+
+#, fuzzy
+msgid "`<annotation>/<member>`"
+msgstr "`<annotation>/<member>`"
+
+#, fuzzy
+msgid "`quarkus.fault-tolerance.global.<annotation>.<member>`"
+msgstr "`quarkus.fault-tolerance.global.<annotation>.<member>`"
+
+#, fuzzy
+msgid "`MP_Fault_Tolerance_NonFallback_Enabled`"
+msgstr "`MP_Fault_Tolerance_NonFallback_Enabled`"
+
+#, fuzzy
+msgid "`quarkus.fault-tolerance.enabled`"
+msgstr "`quarkus.fault-tolerance.enabled`"
+
+#, fuzzy
+msgid "`MP_Fault_Tolerance_Metrics_Enabled`"
+msgstr "`MP_Fault_Tolerance_Metrics_Enabled`"
+
+#, fuzzy
+msgid "`quarkus.fault-tolerance.metrics.enabled`"
+msgstr "`quarkus.fault-tolerance.metrics.enabled`"
+
+#, fuzzy
+msgid ""
+"All the `<annotation>` and `<member>` parts are changed from camel case (`BeforeRetry`, `methodName`) to kebab case (`before-retry`, `method-name`).\n"
+"Two annotation members are special cased to improve consistency:"
+msgstr "Todas as partes de `<annotation>` e `<member>` foram alteradas de camel case ( `BeforeRetry` , `methodName` ) para kebab case ( `before-retry` , `method-name` ). Dois membros de anotação receberam letras maiúsculas especiais para melhorar a consistência:"
+
+#, fuzzy
+msgid "`Retry/durationUnit` moves to `retry.max-duration-unit`"
+msgstr "`Retry/durationUnit` move-se para `retry.max-duration-unit`"
+
+#, fuzzy
+msgid "`Retry/jitterDelayUnit` moves to `retry.jitter-unit`"
+msgstr "`Retry/jitterDelayUnit` move-se para `retry.jitter-unit`"

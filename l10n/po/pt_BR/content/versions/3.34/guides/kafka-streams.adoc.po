@@ -1,0 +1,2007 @@
+msgid ""
+msgstr ""
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: roq-plugin-l10n-adoc\n"
+
+msgid "Using Apache Kafka Streams"
+msgstr "Usando Apache Kafka Streams"
+
+msgid "This guide demonstrates how your Quarkus application can utilize the Apache Kafka Streams API to implement stream processing applications based on Apache Kafka."
+msgstr "Este guia demonstra como a sua aplicação Quarkus pode utilizar a API Apache Kafka Streams para implementar aplicações de processamento de fluxo baseadas no Apache Kafka."
+
+msgid "Prerequisites"
+msgstr "Pré-requisitos"
+
+msgid "To complete this guide, you need:"
+msgstr "Para concluir este guia, você precisa:"
+
+msgid "Roughly {prerequisites-time}"
+msgstr "Mais ou menos {prerequisites-time}"
+
+msgid "An IDE"
+msgstr "Um IDE"
+
+msgid "JDK 17+ installed with `JAVA_HOME` configured appropriately"
+msgstr "JDK 17+ instalado com `JAVA_HOME` configurado corretamente"
+
+msgid "Apache Maven {maven-version}"
+msgstr "Apache Maven {maven-version}"
+
+msgid "Docker and Docker Compose or xref:podman.adoc[Podman], and Docker Compose"
+msgstr "Docker e Docker Compose ou xref:podman.adoc[Podman] e Docker Compose"
+
+msgid "Optionally the xref:cli-tooling.adoc[Quarkus CLI] if you want to use it"
+msgstr "Opcionalmente, o xref:cli-tooling.adoc[Quarkus CLI] se você quiser usá-lo"
+
+msgid "Optionally Mandrel or GraalVM installed and xref:building-native-image.adoc#configuring-graalvm[configured appropriately] if you want to build a native executable (or Docker if you use a native container build)"
+msgstr "Opcionalmente, Mandrel ou GraalVM instalado e xref:building-native-image.adoc#configuring-graalvm[configurado apropriadamente] se você quiser criar um executável nativo (ou Docker se você usar uma compilação de contêiner nativo)"
+
+#, fuzzy
+msgid "It is recommended, that you have read the link:{quickstarts-tree-url}/kafka-quickstart[Kafka quickstart] before."
+msgstr "É recomendável que o senhor tenha lido o link:{quickstarts-tree-url}/kafka-quickstart[início rápido do Kafka] antes."
+
+#, fuzzy
+msgid ""
+"The Quarkus extension for Kafka Streams allows for very fast turnaround times during development by supporting the Quarkus Dev Mode (e.g. via `./mvnw quarkus:dev`).\n"
+"After changing the code of your Kafka Streams topology, the application will automatically be reloaded when the next input message arrives."
+msgstr "A extensão Quarkus para Kafka Streams permite tempos de resposta muito rápidos durante o desenvolvimento, oferecendo suporte ao Quarkus Dev Mode (por exemplo, via `./mvnw quarkus:dev` ). Depois de alterar o código da topologia do Kafka Streams, o aplicativo será automaticamente recarregado quando a próxima mensagem de entrada chegar."
+
+#, fuzzy
+msgid ""
+"A recommended development set-up is to have some producer which creates test messages on the processed topic(s) in fixed intervals, e.g. every second and observe the streaming application's output topic(s) using a tool such as `kafkacat`.\n"
+"Using the dev mode, you'll instantly see messages on the output topic(s) as produced by the latest version of your streaming application when saving."
+msgstr "Uma configuração de desenvolvimento recomendada é ter algum produtor que crie mensagens de teste no(s) tópico(s) processado(s) em intervalos fixos, por exemplo, a cada segundo, e observar o(s) tópico(s) de saída do aplicativo de streaming usando uma ferramenta como `kafkacat` . Usando o modo de desenvolvimento, o senhor verá instantaneamente as mensagens no(s) tópico(s) de saída produzidas pela versão mais recente do seu aplicativo de streaming ao salvar."
+
+#, fuzzy
+msgid "For the best development experience, we recommend applying the following configuration settings to your Kafka broker:"
+msgstr "Para obter a melhor experiência de desenvolvimento, recomendamos aplicar as seguintes definições de configuração ao seu corretor Kafka:"
+
+#, fuzzy
+msgid "Also specify the following settings in your Quarkus `application.properties`:"
+msgstr "Especifique também as seguintes configurações em seu Quarkus `application.properties` :"
+
+#, fuzzy
+msgid "Together, these settings will ensure that the application can very quickly reconnect to the broker after being restarted in dev mode."
+msgstr "Juntas, essas configurações garantirão que o aplicativo possa se reconectar rapidamente ao broker depois de ser reiniciado no modo de desenvolvimento."
+
+msgid "Architecture"
+msgstr "Arquitetura"
+
+#, fuzzy
+msgid ""
+"In this guide, we are going to generate (random) temperature values in one component (named `generator`).\n"
+"These values are associated to given weather stations and are written in a Kafka topic (`temperature-values`).\n"
+"Another topic (`weather-stations`) contains just the main data about the weather stations themselves (id and name)."
+msgstr "Neste guia, vamos gerar valores de temperatura (aleatórios) em um componente (chamado `generator` ). Esses valores estão associados a determinadas estações meteorológicas e são gravados em um tópico do Kafka ( `temperature-values` ). Outro tópico ( `weather-stations` ) contém apenas os dados principais sobre as próprias estações meteorológicas (id e nome)."
+
+#, fuzzy
+msgid "A second component (`aggregator`) reads from the two Kafka topics and processes them in a streaming pipeline:"
+msgstr "Um segundo componente ( `aggregator` ) lê os dois tópicos do Kafka e os processa em um pipeline de streaming:"
+
+#, fuzzy
+msgid "the two topics are joined on weather station id"
+msgstr "os dois tópicos são unidos na identificação da estação meteorológica"
+
+#, fuzzy
+msgid "per weather station the min, max and average temperature is determined"
+msgstr "Por estação meteorológica, a temperatura mínima, máxima e média é determinada"
+
+#, fuzzy
+msgid "this aggregated data is written out to a third topic (`temperatures-aggregated`)"
+msgstr "Esses dados agregados são gravados em um terceiro tópico ( `temperatures-aggregated` )"
+
+#, fuzzy
+msgid ""
+"The data can be examined by inspecting the output topic.\n"
+"By exposing a Kafka Streams https://kafka.apache.org/22/documentation/streams/developer-guide/interactive-queries.html[interactive query],\n"
+"the latest result for each weather station can alternatively be obtained via a simple REST query."
+msgstr "Os dados podem ser examinados por meio da inspeção do tópico de saída. Ao expor uma link:https://kafka.apache.org/22/documentation/streams/developer-guide/interactive-queries.html[consulta interativa] do Kafka Streams, o resultado mais recente de cada estação meteorológica pode ser obtido alternativamente por meio de uma consulta REST simples."
+
+#, fuzzy
+msgid "The overall architecture looks like so:"
+msgstr "A arquitetura geral é a seguinte:"
+
+msgid "Solution"
+msgstr "Solução"
+
+msgid ""
+"We recommend that you follow the instructions in the next sections and create the application step by step.\n"
+"However, you can go right to the completed example."
+msgstr "Recomendamos que siga as instruções nas seções seguintes e crie a aplicação passo a passo. No entanto, você pode ir diretamente para o exemplo completo."
+
+msgid "Clone the Git repository: `git clone {quickstarts-clone-url}`, or download an {quickstarts-archive-url}[archive]."
+msgstr "Clone o repositório Git: `git clone {quickstarts-clone-url}`, ou baixe um {quickstarts-archive-url}[arquivo]."
+
+#, fuzzy
+msgid "The solution is located in the `kafka-streams-quickstart` link:{quickstarts-tree-url}/kafka-streams-quickstart[directory]."
+msgstr "A solução está localizada no link:{quickstarts-tree-url}/kafka-streams-quickstart[diretório] `kafka-streams-quickstart` ."
+
+#, fuzzy
+msgid "Creating the Producer Maven Project"
+msgstr "Criação do projeto Maven do produtor"
+
+#, fuzzy
+msgid ""
+"First, we need a new project with the temperature value producer.\n"
+"Create a new project with the following command:"
+msgstr "Primeiro, precisamos de um novo projeto com o produtor de valores de temperatura. Crie um novo projeto com o seguinte comando:"
+
+msgid "CLI"
+msgstr "CLI"
+
+msgid "To create a Gradle project, add the `--gradle` or `--gradle-kotlin-dsl` option."
+msgstr "Para criar um projeto Gradle, adicione a opção `--gradle` ou `--gradle-kotlin-dsl`."
+
+msgid "For more information about how to install and use the Quarkus CLI, see the xref:cli-tooling.adoc[Quarkus CLI] guide."
+msgstr "Para obter mais informações sobre como instalar e usar a CLI do Quarkus, consulte o guia xref:cli-tooling.adoc[Quarkus CLI]."
+
+msgid "Maven"
+msgstr "Maven"
+
+msgid "To create a Gradle project, add the `-DbuildTool=gradle` or `-DbuildTool=gradle-kotlin-dsl` option."
+msgstr "Para criar um projeto Gradle, adicione a opção '-DbuildTool=gradle' ou '-DbuildTool=gradle-kotlin-dsl'."
+
+msgid "For Windows users:"
+msgstr "Para usuários do Windows:"
+
+msgid "If using cmd, (don't use backward slash `\\` and put everything on the same line)"
+msgstr "Se estiver usando cmd, (não use barra invertida '\\' e coloque tudo na mesma linha)"
+
+msgid "If using Powershell, wrap `-D` parameters in double quotes e.g. `\"-DprojectArtifactId={create-app-artifact-id}\"`"
+msgstr "Se estiver usando o Powershell, envolva os parâmetros '-D' entre aspas duplas, por exemplo, '\"-DprojectArtifactId={create-app-artifact-id}\"'"
+
+#, fuzzy
+msgid "This command generates a Maven project, importing the Reactive Messaging and Kafka connector extensions."
+msgstr "Esse comando gera um projeto Maven, importando as extensões do conector Reactive Messaging e Kafka."
+
+#, fuzzy
+msgid ""
+"If you already have your Quarkus project configured, you can add the `messaging-kafka` extension\n"
+"to your project by running the following command in your project base directory:"
+msgstr "Se já tiver o projeto Quarkus configurado, o senhor pode adicionar a extensão `messaging-kafka` ao projeto executando o seguinte comando no diretório base do projeto:"
+
+msgid "This will add the following to your build file:"
+msgstr "Isto irá adicionar o seguinte trecho no seu arquivo de build:"
+
+#, fuzzy
+msgid "The Temperature Value Producer"
+msgstr "O produtor de valor de temperatura"
+
+#, fuzzy
+msgid ""
+"Create the `producer/src/main/java/org/acme/kafka/streams/producer/generator/ValuesGenerator.java` file,\n"
+"with the following content:"
+msgstr "Crie o arquivo `producer/src/main/java/org/acme/kafka/streams/producer/generator/ValuesGenerator.java` , com o seguinte conteúdo:"
+
+#, fuzzy
+msgid "Instruct Reactive Messaging to dispatch the items from the returned `Multi` to `temperature-values`."
+msgstr "Instrua o Reactive Messaging a enviar os itens do `Multi` retornado para `temperature-values` ."
+
+#, fuzzy
+msgid "The method returns a Mutiny _stream_ (`Multi`) emitting a random temperature value every 0.5 seconds."
+msgstr "O método retorna um _fluxo_ Mutiny ( `Multi` ) que emite um valor de temperatura aleatório a cada 0,5 segundo."
+
+#, fuzzy
+msgid "Instruct Reactive Messaging to dispatch the items from the returned `Multi` (static list of weather stations) to `weather-stations`."
+msgstr "Instrua o Reactive Messaging a enviar os itens do `Multi` retornado (lista estática de estações meteorológicas) para `weather-stations` ."
+
+#, fuzzy
+msgid "The two methods each return a _reactive stream_ whose items are sent to the streams named `temperature-values` and `weather-stations`, respectively."
+msgstr "Cada um dos dois métodos retorna um _fluxo reativo_ cujos itens são enviados para os fluxos denominados `temperature-values` e `weather-stations` , respectivamente."
+
+#, fuzzy
+msgid "Topic Configuration"
+msgstr "Configuração de tópicos"
+
+#, fuzzy
+msgid ""
+"The two channels are mapped to Kafka topics using the Quarkus configuration file `application.properties`.\n"
+"For that, add the following to the file `producer/src/main/resources/application.properties`:"
+msgstr "Os dois canais são mapeados para tópicos do Kafka usando o arquivo de configuração do Quarkus `application.properties` . Para isso, adicione o seguinte ao arquivo `producer/src/main/resources/application.properties` :"
+
+#, fuzzy
+msgid ""
+"This configures the Kafka bootstrap server, the two topics and the corresponding (de-)serializers.\n"
+"More details about the different configuration options are available on the https://kafka.apache.org/documentation/#producerconfigs[Producer configuration] and https://kafka.apache.org/documentation/#consumerconfigs[Consumer configuration] section from the Kafka documentation."
+msgstr "Isso configura o servidor bootstrap do Kafka, os dois tópicos e os (des)serializadores correspondentes. Mais detalhes sobre as diferentes opções de configuração estão disponíveis na seção link:https://kafka.apache.org/documentation/#producerconfigs[Configuração do produtor] e link:https://kafka.apache.org/documentation/#consumerconfigs[Configuração do consumidor] da documentação do Kafka."
+
+#, fuzzy
+msgid "Creating the Aggregator Maven Project"
+msgstr "Criação do projeto Maven do agregador"
+
+#, fuzzy
+msgid ""
+"With the producer application in place, it's time to implement the actual aggregator application,\n"
+"which will run the Kafka Streams pipeline.\n"
+"Create another project like so:"
+msgstr "Com o aplicativo produtor em funcionamento, é hora de implementar o aplicativo agregador real, que executará o pipeline do Kafka Streams. Crie outro projeto como este:"
+
+#, fuzzy
+msgid "This creates the `aggregator` project with the Quarkus extension for Kafka Streams and with the Jackson support for Quarkus REST (formerly RESTEasy Reactive)."
+msgstr "Isso cria o projeto `aggregator` com a extensão Quarkus para Kafka Streams e com o suporte Jackson para Quarkus REST (anteriormente RESTEasy Reactive)."
+
+#, fuzzy
+msgid ""
+"If you already have your Quarkus project configured, you can add the `kafka-streams` extension\n"
+"to your project by running the following command in your project base directory:"
+msgstr "Se já tiver o projeto Quarkus configurado, o senhor pode adicionar a extensão `kafka-streams` ao projeto executando o seguinte comando no diretório base do projeto:"
+
+msgid "This will add the following to your `pom.xml`:"
+msgstr "Isso adicionará o seguinte ao seu arquivo  `pom.xml`:"
+
+#, fuzzy
+msgid "The Pipeline Implementation"
+msgstr "A implementação do pipeline"
+
+#, fuzzy
+msgid ""
+"Let's begin the implementation of the stream processing application by creating\n"
+"a few value objects for representing temperature measurements, weather stations and for keeping track of aggregated values."
+msgstr "Vamos começar a implementação do aplicativo de processamento de fluxo criando alguns objetos de valor para representar medições de temperatura, estações meteorológicas e para manter o controle dos valores agregados."
+
+#, fuzzy
+msgid ""
+"First, create the file `aggregator/src/main/java/org/acme/kafka/streams/aggregator/model/WeatherStation.java`,\n"
+"representing a weather station, with the following content:"
+msgstr "Primeiro, crie o arquivo `aggregator/src/main/java/org/acme/kafka/streams/aggregator/model/WeatherStation.java` , que representa uma estação meteorológica, com o seguinte conteúdo:"
+
+#, fuzzy
+msgid "The `@RegisterForReflection` annotation instructs Quarkus to keep the class and its members during the native compilation. More details about the `@RegisterForReflection` annotation can be found on  the xref:writing-native-applications-tips.adoc#registerForReflection[native application tips] page."
+msgstr "A anotação `@RegisterForReflection` instrui o Quarkus a manter a classe e seus membros durante a compilação nativa. Mais detalhes sobre a anotação `@RegisterForReflection` podem ser encontrados na página de xref:writing-native-applications-tips.adoc#registerForReflection[dicas de aplicativos nativos] ."
+
+#, fuzzy
+msgid ""
+"Then the file `aggregator/src/main/java/org/acme/kafka/streams/aggregator/model/TemperatureMeasurement.java`,\n"
+"representing temperature measurements for a given station:"
+msgstr "Em seguida, o arquivo `aggregator/src/main/java/org/acme/kafka/streams/aggregator/model/TemperatureMeasurement.java` , que representa as medições de temperatura de uma determinada estação:"
+
+#, fuzzy
+msgid ""
+"And finally `aggregator/src/main/java/org/acme/kafka/streams/aggregator/model/Aggregation.java`,\n"
+"which will be used to keep track of the aggregated values while the events are processed in the streaming pipeline:"
+msgstr "E, por fim, `aggregator/src/main/java/org/acme/kafka/streams/aggregator/model/Aggregation.java` , que será usado para manter o controle dos valores agregados enquanto os eventos são processados no pipeline de streaming:"
+
+#, fuzzy
+msgid ""
+"Next, let's create the actual streaming query implementation itself in the `aggregator/src/main/java/org/acme/kafka/streams/aggregator/streams/TopologyProducer.java` file.\n"
+"All we need to do for that is to declare a CDI producer method which returns the Kafka Streams `Topology`;\n"
+"the Quarkus extension will take care of configuring, starting and stopping the actual Kafka Streams engine."
+msgstr "Em seguida, vamos criar a implementação real da consulta de streaming no arquivo `aggregator/src/main/java/org/acme/kafka/streams/aggregator/streams/TopologyProducer.java` . Tudo o que precisamos fazer para isso é declarar um método produtor CDI que retorna o Kafka Streams `Topology` ; a extensão Quarkus se encarregará de configurar, iniciar e parar o mecanismo real do Kafka Streams."
+
+#, fuzzy
+msgid "The `weather-stations` table is read into a `GlobalKTable`, representing the current state of each weather station"
+msgstr "A tabela `weather-stations` é lida em um `GlobalKTable` , representando o estado atual de cada estação meteorológica"
+
+#, fuzzy
+msgid "The `temperature-values` topic is read into a `KStream`; whenever a new message arrives to this topic, the pipeline will be processed for this measurement"
+msgstr "O tópico `temperature-values` é lido em um `KStream` ; sempre que uma nova mensagem chegar a esse tópico, o pipeline será processado para essa medição"
+
+#, fuzzy
+msgid "The message from the `temperature-values` topic is joined with the corresponding weather station, using the topic's key (weather station id); the join result contains the data from the measurement and associated weather station message"
+msgstr "A mensagem do tópico `temperature-values` é unida à estação meteorológica correspondente, usando a chave do tópico (id da estação meteorológica); o resultado da união contém os dados da medição e a mensagem da estação meteorológica associada"
+
+#, fuzzy
+msgid "The values are grouped by message key (the weather station id)"
+msgstr "Os valores são agrupados por chave de mensagem (o ID da estação meteorológica)"
+
+#, fuzzy
+msgid "Within each group, all the measurements of that station are aggregated, by keeping track of minimum and maximum values and calculating the average value of all measurements of that station (see the `Aggregation` type)"
+msgstr "Em cada grupo, todas as medições dessa estação são agregadas, mantendo o controle dos valores mínimo e máximo e calculando o valor médio de todas as medições dessa estação (consulte o tipo `Aggregation` )"
+
+#, fuzzy
+msgid "The results of the pipeline are written out to the `temperatures-aggregated` topic"
+msgstr "Os resultados do pipeline são gravados no tópico `temperatures-aggregated` ."
+
+#, fuzzy
+msgid ""
+"The Kafka Streams extension is configured via the Quarkus configuration file `application.properties`.\n"
+"Create the file `aggregator/src/main/resources/application.properties` with the following contents:"
+msgstr "A extensão Kafka Streams é configurada por meio do arquivo de configuração do Quarkus `application.properties` . Crie o arquivo `aggregator/src/main/resources/application.properties` com o seguinte conteúdo:"
+
+#, fuzzy
+msgid ""
+"The options with the `quarkus.kafka-streams` prefix can be changed dynamically at application startup,\n"
+"e.g. via environment variables or system properties.\n"
+"`bootstrap-servers` and `application-server` are mapped to the Kafka Streams properties `bootstrap.servers` and `application.server`, respectively.\n"
+"`topics` is specific to Quarkus: the application will wait for all the given topics to exist before launching the Kafka Streams engine.\n"
+"This is to done to gracefully await the creation of topics that don't yet exist at application startup time."
+msgstr "As opções com o prefixo `quarkus.kafka-streams` podem ser alteradas dinamicamente na inicialização do aplicativo, por exemplo, por meio de variáveis de ambiente ou propriedades do sistema. `bootstrap-servers` e `application-server` são mapeadas para as propriedades do Kafka Streams `bootstrap.servers` e `application.server` , respectivamente. `topics` é específico do Quarkus: o aplicativo aguardará a existência de todos os tópicos fornecidos antes de iniciar o mecanismo do Kafka Streams. Isso é feito para aguardar a criação de tópicos que ainda não existem no momento da inicialização do aplicativo."
+
+#, fuzzy
+msgid "Once you are ready to promote your application into production, consider changing the above configuration values. While `cache.max.bytes.buffering=10240` will move your records faster through the topology, the default value of `10485760` is more throughput-friendly. Also condider increasing `metadata.max.age.ms` from `500`, which will update cluster metadata quickly, but will generate a lot of redundant requests, to a value closer to the default of `300000`. A `commit.interval.ms` of `1000` is good for exactly-once processing, but might generate excessive load for  the default at-least-once processing with the default value of `30000`."
+msgstr "Quando o senhor estiver pronto para colocar seu aplicativo em produção, considere a possibilidade de alterar os valores de configuração acima. Embora o `cache.max.bytes.buffering=10240` mova os registros mais rapidamente pela topologia, o valor padrão de `10485760` é mais favorável à taxa de transferência. Considere também aumentar o valor de `metadata.max.age.ms` de `500` , que atualizará os metadados do cluster rapidamente, mas gerará muitas solicitações redundantes, para um valor mais próximo do padrão de `300000` . Um `commit.interval.ms` de `1000` é bom para o processamento exatamente uma vez, mas pode gerar carga excessiva para o processamento padrão ao menos uma vez com o valor padrão de `30000` ."
+
+#, fuzzy
+msgid ""
+"All the properties within the `kafka-streams` namespace are passed through as-is to the Kafka Streams engine.\n"
+"Changing their values requires a rebuild of the application."
+msgstr "Todas as propriedades do namespace `kafka-streams` são transmitidas como estão para o mecanismo Kafka Streams. A alteração de seus valores requer a reconstrução do aplicativo."
+
+#, fuzzy
+msgid "Building and Running the Applications"
+msgstr "Criação e execução dos aplicativos"
+
+#, fuzzy
+msgid "We now can build the `producer` and `aggregator` applications:"
+msgstr "Agora podemos criar os aplicativos `producer` e `aggregator` :"
+
+#, fuzzy
+msgid ""
+"Instead of running them directly on the host machine using the Quarkus dev mode,\n"
+"we're going to package them into container images and launch them via Docker Compose.\n"
+"This is done in order to demonstrate scaling the `aggregator` aggregation to multiple nodes later on."
+msgstr "Em vez de executá-los diretamente na máquina host usando o modo de desenvolvimento do Quarkus, vamos empacotá-los em imagens de contêiner e lançá-los por meio do Docker Compose. Isso é feito para demonstrar o dimensionamento da agregação do `aggregator` para vários nós mais tarde."
+
+#, fuzzy
+msgid ""
+"The `Dockerfile` created by Quarkus by default needs one adjustment for the `aggregator` application in order to run the Kafka Streams pipeline.\n"
+"To do so, edit the file `aggregator/src/main/docker/Dockerfile.jvm` and replace the line `FROM fabric8/java-alpine-openjdk8-jre` with `FROM fabric8/java-centos-openjdk8-jdk`."
+msgstr "O `Dockerfile` criado pelo Quarkus por padrão precisa de um ajuste para o aplicativo `aggregator` a fim de executar o pipeline do Kafka Streams. Para isso, edite o arquivo `aggregator/src/main/docker/Dockerfile.jvm` e substitua a linha `FROM fabric8/java-alpine-openjdk8-jre` por `FROM fabric8/java-centos-openjdk8-jdk` ."
+
+#, fuzzy
+msgid "Next create a Docker Compose file (`docker-compose.yaml`) for spinning up the two applications as well as Apache Kafka like so:"
+msgstr "Em seguida, crie um arquivo do Docker Compose `(docker-compose.yaml` ) para rodar os dois aplicativos, bem como o Apache Kafka, da seguinte forma:"
+
+#, fuzzy
+msgid ""
+"To launch all the containers, building the `producer` and `aggregator` container images,\n"
+"run `docker-compose up --build`."
+msgstr "Para iniciar todos os contêineres, construindo as imagens dos contêineres `producer` e `aggregator` , execute `docker-compose up --build` ."
+
+#, fuzzy
+msgid "You should see log statements from the `producer` application about messages being sent to the \"temperature-values\" topic."
+msgstr "O senhor deverá ver declarações de registro do aplicativo `producer` sobre as mensagens enviadas ao tópico \"temperature-values\"."
+
+#, fuzzy
+msgid ""
+"Now run an instance of the _debezium/tooling_ image, attaching to the same network all the other containers run in.\n"
+"This image provides several useful tools such as _kafkacat_ and _httpie_:"
+msgstr "Agora, execute uma instância da imagem _debezium/tooling_ , conectando-se à mesma rede em que todos os outros contêineres são executados. Essa imagem fornece várias ferramentas úteis, como _kafkacat_ e _httpie_ :"
+
+#, fuzzy
+msgid "Within the tooling container, run _kafkacat_ to examine the results of the streaming pipeline:"
+msgstr "No contêiner de ferramentas, execute _o kafkacat_ para examinar os resultados do pipeline de streaming:"
+
+#, fuzzy
+msgid ""
+"You should see new values arrive as the producer continues to emit temperature measurements,\n"
+"each value on the outbound topic showing the minimum, maximum and average temperature values of the represented weather station."
+msgstr "O senhor deve ver novos valores chegando à medida que o produtor continua a emitir medições de temperatura, sendo que cada valor no tópico de saída mostra os valores mínimo, máximo e médio de temperatura da estação meteorológica representada."
+
+#, fuzzy
+msgid "Interactive Queries"
+msgstr "Consultas interativas"
+
+#, fuzzy
+msgid ""
+"Subscribing to the `temperatures-aggregated` topic is a great way to react to any new temperature values.\n"
+"It's a bit wasteful though if you're just interested in the latest aggregated value for a given weather station.\n"
+"This is where Kafka Streams interactive queries shine:\n"
+"they let you directly query the underlying state store of the pipeline for the value associated to a given key.\n"
+"By exposing a simple REST endpoint which queries the state store,\n"
+"the latest aggregation result can be retrieved without having to subscribe to any Kafka topic."
+msgstr "Inscrever-se no tópico `temperatures-aggregated` é uma ótima maneira de reagir a qualquer novo valor de temperatura. No entanto, isso é um pouco inútil se o senhor estiver interessado apenas no valor agregado mais recente de uma determinada estação meteorológica. É nesse ponto que as consultas interativas do Kafka Streams brilham: elas permitem que o senhor consulte diretamente o armazenamento de estado subjacente do pipeline para obter o valor associado a uma determinada chave. Ao expor um ponto de extremidade REST simples que consulta o armazenamento de estado, o resultado da agregação mais recente pode ser recuperado sem a necessidade de se inscrever em nenhum tópico do Kafka."
+
+#, fuzzy
+msgid "Let's begin by creating a new class `InteractiveQueries` in the file `aggregator/src/main/java/org/acme/kafka/streams/aggregator/streams/InteractiveQueries.java`:"
+msgstr "Vamos começar criando uma nova classe `InteractiveQueries` no arquivo `aggregator/src/main/java/org/acme/kafka/streams/aggregator/streams/InteractiveQueries.java` :"
+
+#, fuzzy
+msgid "one more method to the `KafkaStreamsPipeline` class which obtains the current state for a given key:"
+msgstr "mais um método para a classe `KafkaStreamsPipeline` que obtém o estado atual de uma determinada chave:"
+
+#, fuzzy
+msgid "A value for the given station id was found, so that value will be returned"
+msgstr "Foi encontrado um valor para o ID de estação fornecido, portanto, esse valor será retornado"
+
+#, fuzzy
+msgid "No value was found, either because a non-existing station was queried or no measurement exists yet for the given station"
+msgstr "Nenhum valor foi encontrado, seja porque uma estação inexistente foi consultada ou porque ainda não existe nenhuma medição para a estação em questão"
+
+#, fuzzy
+msgid "Also create the method's return type in the file `aggregator/src/main/java/org/acme/kafka/streams/aggregator/streams/GetWeatherStationDataResult.java`:"
+msgstr "Crie também o tipo de retorno do método no arquivo `aggregator/src/main/java/org/acme/kafka/streams/aggregator/streams/GetWeatherStationDataResult.java` :"
+
+#, fuzzy
+msgid ""
+"Also create `aggregator/src/main/java/org/acme/kafka/streams/aggregator/model/WeatherStationData.java`,\n"
+"which represents the actual aggregation result for a weather station:"
+msgstr "Crie também `aggregator/src/main/java/org/acme/kafka/streams/aggregator/model/WeatherStationData.java` , que representa o resultado real da agregação de uma estação meteorológica:"
+
+#, fuzzy
+msgid ""
+"We now can add a simple REST endpoint (`aggregator/src/main/java/org/acme/kafka/streams/aggregator/rest/WeatherStationEndpoint.java`),\n"
+"which invokes `getWeatherStationData()` and returns the data to the client:"
+msgstr "Agora podemos adicionar um endpoint REST simples ( `aggregator/src/main/java/org/acme/kafka/streams/aggregator/rest/WeatherStationEndpoint.java` ), que invoca `getWeatherStationData()` e retorna os dados para o cliente:"
+
+#, fuzzy
+msgid "Depending on whether a value was obtained, either return that value or a 404 response"
+msgstr "Dependendo do fato de um valor ter sido obtido, o senhor pode retornar esse valor ou uma resposta 404"
+
+#, fuzzy
+msgid "With this code in place, it's time to rebuild the application and the `aggregator` service in Docker Compose:"
+msgstr "Com esse código em vigor, é hora de reconstruir o aplicativo e o serviço `aggregator` no Docker Compose:"
+
+#, fuzzy
+msgid ""
+"This will rebuild the `aggregator` container and restart its service.\n"
+"Once that's done, you can invoke the service's REST API to obtain the temperature data for one of the existing stations.\n"
+"To do so, you can use `httpie` in the tooling container launched before:"
+msgstr "Isso reconstruirá o contêiner `aggregator` e reiniciará seu serviço. Feito isso, o senhor pode invocar a API REST do serviço para obter os dados de temperatura de uma das estações existentes. Para isso, o senhor pode usar `httpie` no contêiner de ferramentas iniciado anteriormente:"
+
+#, fuzzy
+msgid "Scaling Out"
+msgstr "Dimensionamento"
+
+#, fuzzy
+msgid ""
+"A very interesting trait of Kafka Streams applications is that they can be scaled out,\n"
+"i.e. the load and state can be distributed amongst multiple application instances running the same pipeline.\n"
+"Each node will then contain a subset of the aggregation results,\n"
+"but Kafka Streams provides you with https://kafka.apache.org/22/documentation/streams/developer-guide/interactive-queries.html#querying-remote-state-stores-for-the-entire-app[an API] to obtain the information which node is hosting a given key.\n"
+"The application can then either fetch the data directly from the other instance, or simply point the client to the location of that other node."
+msgstr "Uma característica muito interessante dos aplicativos Kafka Streams é que eles podem ser dimensionados, ou seja, a carga e o estado podem ser distribuídos entre várias instâncias de aplicativos que executam o mesmo pipeline. Cada nó conterá um subconjunto dos resultados da agregação, mas o Kafka Streams fornece link:https://kafka.apache.org/22/documentation/streams/developer-guide/interactive-queries.html#querying-remote-state-stores-for-the-entire-app[uma API] para obter as informações sobre qual nó está hospedando uma determinada chave. O aplicativo pode, então, buscar os dados diretamente da outra instância ou simplesmente apontar o cliente para o local desse outro nó."
+
+#, fuzzy
+msgid "Launching multiple instances of the `aggregator` application will make look the overall architecture like so:"
+msgstr "O lançamento de várias instâncias do aplicativo `aggregator` fará com que a arquitetura geral fique assim:"
+
+#, fuzzy
+msgid "The `InteractiveQueries` class must be adjusted slightly for this distributed architecture:"
+msgstr "A classe `InteractiveQueries` deve ser ligeiramente ajustada para essa arquitetura distribuída:"
+
+#, fuzzy
+msgid "The streams metadata for the given weather station id is obtained"
+msgstr "São obtidos os metadados de fluxos para a identificação da estação meteorológica fornecida"
+
+#, fuzzy
+msgid "The given key (weather station id) is maintained by the local application node, i.e. it can answer the query itself"
+msgstr "A chave fornecida (id da estação meteorológica) é mantida pelo nó do aplicativo local, ou seja, ele mesmo pode responder à consulta"
+
+#, fuzzy
+msgid "The given key is maintained by another application node; in this case the information about that node (host and port) will be returned"
+msgstr "A chave fornecida é mantida por outro nó de aplicativo; nesse caso, as informações sobre esse nó (host e porta) serão retornadas"
+
+#, fuzzy
+msgid "The `getMetaData()` method is added to provide callers with a list of all the nodes in the application cluster."
+msgstr "O método `getMetaData()` foi adicionado para fornecer aos chamadores uma lista de todos os nós do cluster de aplicativos."
+
+#, fuzzy
+msgid "The `GetWeatherStationDataResult` type must be adjusted accordingly:"
+msgstr "O tipo de `GetWeatherStationDataResult` deve ser ajustado adequadamente:"
+
+#, fuzzy
+msgid ""
+"Also, the return type for `getMetaData()` must be defined\n"
+"(`aggregator/src/main/java/org/acme/kafka/streams/aggregator/streams/PipelineMetadata.java`):"
+msgstr "Além disso, o tipo de retorno para `getMetaData()` deve ser definido ( `aggregator/src/main/java/org/acme/kafka/streams/aggregator/streams/PipelineMetadata.java` ):"
+
+#, fuzzy
+msgid "Lastly, the REST endpoint class must be updated:"
+msgstr "Por fim, a classe de endpoint REST deve ser atualizada:"
+
+#, fuzzy
+msgid "The data was found locally, so return it"
+msgstr "Os dados foram encontrados localmente, portanto, retorne-os"
+
+#, fuzzy
+msgid "The data is maintained by another node, so reply with a redirect (HTTP status code 303) if the data for the given key is stored on one of the other nodes."
+msgstr "Os dados são mantidos por outro nó, portanto, responda com um redirecionamento (código de status HTTP 303) se os dados da chave fornecida estiverem armazenados em um dos outros nós."
+
+#, fuzzy
+msgid "No data was found for the given weather station id"
+msgstr "Não foram encontrados dados para a identificação da estação meteorológica em questão"
+
+#, fuzzy
+msgid "Exposes information about all the hosts forming the application cluster"
+msgstr "Expõe informações sobre todos os hosts que formam o cluster de aplicativos"
+
+#, fuzzy
+msgid ""
+"Now stop the `aggregator` service again and rebuild it.\n"
+"Then let's spin up three instances of it:"
+msgstr "Agora, pare novamente o serviço `aggregator` e reconstrua-o. Em seguida, vamos rodar três instâncias dele:"
+
+#, fuzzy
+msgid ""
+"When invoking the REST API on any of the three instances, it might either be\n"
+"that the aggregation for the requested weather station id is stored locally on the node receiving the query,\n"
+"or it could be stored on one of the other two nodes."
+msgstr "Ao invocar a API REST em qualquer uma das três instâncias, pode ser que a agregação do ID da estação meteorológica solicitada seja armazenada localmente no nó que recebe a consulta ou em um dos outros dois nós."
+
+#, fuzzy
+msgid ""
+"As the load balancer of Docker Compose will distribute requests to the `aggregator` service in a round-robin fashion,\n"
+"we'll invoke the actual nodes directly.\n"
+"The application exposes information about all the host names via REST:"
+msgstr "Como o balanceador de carga do Docker Compose distribuirá as solicitações para o serviço `aggregator` de forma round-robin, invocaremos os nós reais diretamente. O aplicativo expõe informações sobre todos os nomes de host via REST:"
+
+#, fuzzy
+msgid ""
+"Retrieve the data from one of the three hosts shown in the response\n"
+"(your actual host names will differ):"
+msgstr "Recupere os dados de um dos três hosts mostrados na resposta (os nomes reais dos hosts serão diferentes):"
+
+#, fuzzy
+msgid "If that node holds the data for key \"1\", you'll get a response like this:"
+msgstr "Se esse nó contiver os dados da chave \"1\", o senhor obterá uma resposta como esta:"
+
+#, fuzzy
+msgid "Otherwise, the service will send a redirect:"
+msgstr "Caso contrário, o serviço enviará um redirecionamento:"
+
+#, fuzzy
+msgid "You can also have _httpie_ automatically follow the redirect by passing the `--follow option`:"
+msgstr "O senhor também pode fazer com que _o httpie_ siga automaticamente o redirecionamento, passando o endereço `--follow option` :"
+
+#, fuzzy
+msgid "Running Natively"
+msgstr "Executando nativamente"
+
+#, fuzzy
+msgid ""
+"The Quarkus extension for Kafka Streams enables the execution of stream processing applications\n"
+"natively via GraalVM without further configuration."
+msgstr "A extensão Quarkus para Kafka Streams permite a execução de aplicativos de processamento de fluxo nativamente por meio do GraalVM sem configuração adicional."
+
+#, fuzzy
+msgid ""
+"To run both the `producer` and `aggregator` applications in native mode,\n"
+"the Maven builds can be executed using `-Dnative`:"
+msgstr "Para executar os aplicativos `producer` e `aggregator` no modo nativo, as compilações do Maven podem ser executadas usando `-Dnative` :"
+
+#, fuzzy
+msgid "Now create an environment variable named `QUARKUS_MODE` and with value set to \"native\":"
+msgstr "Agora, crie uma variável de ambiente chamada `QUARKUS_MODE` e com o valor definido como \"native\":"
+
+#, fuzzy
+msgid ""
+"This is used by the Docker Compose file to use the correct `Dockerfile` when building the `producer` and `aggregator` images.\n"
+"The Kafka Streams application can work with less than 50 MB RSS in native mode.\n"
+"To do so, add the `Xmx` option to the program invocation in `aggregator/src/main/docker/Dockerfile.native`:"
+msgstr "Isso é usado pelo arquivo Docker Compose para usar o endereço `Dockerfile` correto ao criar as imagens `producer` e `aggregator` . O aplicativo Kafka Streams pode funcionar com menos de 50 MB de RSS no modo nativo. Para isso, adicione a opção `Xmx` à invocação do programa em `aggregator/src/main/docker/Dockerfile.native` :"
+
+#, fuzzy
+msgid ""
+"Now start Docker Compose as described above\n"
+"(don't forget to rebuild the container images)."
+msgstr "Agora inicie o Docker Compose conforme descrito acima (não se esqueça de reconstruir as imagens do contêiner)."
+
+#, fuzzy
+msgid "Kafka Streams Health Checks"
+msgstr "Verificações de integridade do Kafka Streams"
+
+#, fuzzy
+msgid "If you are using the `quarkus-smallrye-health` extension, `quarkus-kafka-streams` will automatically add:"
+msgstr "Se o senhor estiver usando a extensão `quarkus-smallrye-health` , `quarkus-kafka-streams` será adicionado automaticamente:"
+
+#, fuzzy
+msgid "a readiness health check to validate that all topics declared in the `quarkus.kafka-streams.topics` property are created,"
+msgstr "uma verificação de integridade de prontidão para validar se todos os tópicos declarados na propriedade `quarkus.kafka-streams.topics` foram criados,"
+
+#, fuzzy
+msgid "a liveness health check based on the Kafka Streams state."
+msgstr "uma verificação de integridade da vivacidade com base no estado dos fluxos do Kafka."
+
+#, fuzzy
+msgid "So when you access the `/q/health` endpoint of your application you will have information about the state of the Kafka Streams and the available and/or missing topics."
+msgstr "Assim, quando o senhor acessar o endpoint `/q/health` do seu aplicativo, terá informações sobre o estado dos fluxos do Kafka e os tópicos disponíveis e/ou ausentes."
+
+#, fuzzy
+msgid "This is an example of when the status is `DOWN`:"
+msgstr "Este é um exemplo de quando o status é `DOWN` :"
+
+#, fuzzy
+msgid "Liveness health check. Also available at `/q/health/live` endpoint."
+msgstr "Verificação da integridade da vivacidade. Também disponível em `/q/health/live` endpoint."
+
+#, fuzzy
+msgid "Readiness health check. Also available at `/q/health/ready` endpoint."
+msgstr "Verificação da integridade da prontidão. Também disponível em `/q/health/ready` endpoint."
+
+#, fuzzy
+msgid "So as you can see, the status is `DOWN` as soon as one of the `quarkus.kafka-streams.topics` is missing or the Kafka Streams `state` is not `RUNNING`."
+msgstr "Portanto, como o senhor pode ver, o status é `DOWN` assim que um dos `quarkus.kafka-streams.topics` estiver ausente ou o Kafka Streams `state` não for `RUNNING` ."
+
+#, fuzzy
+msgid ""
+"If no topics are available, the `available_topics` key will not be present in the `data` field of the `Kafka Streams topics health check`.\n"
+"As well as if no topics are missing, the `missing_topics` key will not be present in the `data` field of the `Kafka Streams topics health check`."
+msgstr "Se não houver tópicos disponíveis, a chave `available_topics` não estará presente no campo `data` do site `Kafka Streams topics health check` . Da mesma forma, se não houver tópicos, a chave `missing_topics` não estará presente no campo `data` do site `Kafka Streams topics health check` ."
+
+#, fuzzy
+msgid "You can of course disable the health check of the `quarkus-kafka-streams` extension by setting the `quarkus.kafka-streams.health.enabled` property to `false` in your `application.properties`."
+msgstr "É claro que o senhor pode desativar a verificação de integridade da extensão `quarkus-kafka-streams` definindo a propriedade `quarkus.kafka-streams.health.enabled` como `false` em seu `application.properties` ."
+
+#, fuzzy
+msgid "Obviously you can create your liveness and readiness probes based on the respective endpoints `/q/health/live` and `/q/health/ready`."
+msgstr "Obviamente, o senhor pode criar suas sondas de vivacidade e prontidão com base nos respectivos endpoints `/q/health/live` e `/q/health/ready` ."
+
+#, fuzzy
+msgid "Liveness health check"
+msgstr "Verificação da integridade da vivacidade"
+
+#, fuzzy
+msgid "Here is an example of the liveness check:"
+msgstr "Aqui está um exemplo de verificação de vivacidade:"
+
+#, fuzzy
+msgid "The `state` is coming from the `KafkaStreams.State` enum."
+msgstr "O `state` é proveniente do enum `KafkaStreams.State` ."
+
+#, fuzzy
+msgid "Readiness health check"
+msgstr "Verificação da prontidão"
+
+#, fuzzy
+msgid "Here is an example of the readiness check:"
+msgstr "Aqui está um exemplo de verificação de prontidão:"
+
+#, fuzzy
+msgid "Going Further"
+msgstr "Indo além"
+
+#, fuzzy
+msgid ""
+"This guide has shown how you can build stream processing applications using Quarkus and the Kafka Streams APIs,\n"
+"both in JVM and native modes.\n"
+"For running your KStreams application in production, you could also add health checks and metrics for the data pipeline.\n"
+"Refer to the Quarkus guides on xref:telemetry-micrometer.adoc[Micrometer],\n"
+"and xref:smallrye-health.adoc[SmallRye Health] to learn more."
+msgstr "Este guia mostrou como o senhor pode criar aplicativos de processamento de fluxo usando o Quarkus e as APIs do Kafka Streams, tanto no modo JVM quanto no nativo. Para executar seu aplicativo KStreams na produção, o senhor também pode adicionar verificações de integridade e métricas para o pipeline de dados. Consulte os guias do Quarkus sobre xref:telemetry-micrometer.adoc[Micrometer] e xref:smallrye-health.adoc[SmallRye Health] para saber mais."
+
+msgid "Configuration Reference"
+msgstr "Referência de configuração"
+
+msgid "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Configuration property fixed at build time - All other configuration properties are overridable at runtime <input type=\"search\" id=\"config-search-1\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+msgstr "<span class=\"icon\"><i class=\"fa fa-lock\" title=\"Fixed at build time\"></i></span> Propriedade de configuração fixada no momento da construção - Todas as outras propriedades de configuração podem ser substituídas no momento da execução <input type=\"search\" id=\"config-search-1\" placeholder=\"FILTER CONFIGURATION\" disabled>"
+
+#, fuzzy
+msgid "[.header-title]##Configuration property##"
+msgstr "Propriedade de configuração"
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid "Default"
+msgstr "Padrão"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-kafka-streams_quarkus-kafka-streams-health-enabled]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-health-enabled[`+++quarkus.kafka-streams.health.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.health.enabled+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Whether a health check is published in case the smallrye-health extension is present (defaults to true).\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_HEALTH_ENABLED+++[]\n"
+"--"
+msgstr "[lock]  link:#quarkus-kafka-streams_quarkus-kafka-streams-health-enabled[quarkus.kafka-streams.health.enabled] config_property_copy_button:quarkus.kafka-streams.health.enabled[]"
+
+#, fuzzy
+msgid ""
+"icon:lock[title=Fixed at build time] [[quarkus-kafka-streams_quarkus-kafka-streams-health-enabled]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-health-enabled[`+++quarkus.kafka-streams.health.enabled+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.health.enabled+++[]"
+msgstr "[lock]  link:#quarkus-kafka-streams_quarkus-kafka-streams-health-enabled[quarkus.kafka-streams.health.enabled] config_property_copy_button:quarkus.kafka-streams.health.enabled[]"
+
+#, fuzzy
+msgid "Whether a health check is published in case the smallrye-health extension is present (defaults to true)."
+msgstr "Se uma verificação de integridade deve ser publicada caso a extensão “smallrye-health” esteja presente (o valor padrão é “true”)."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_HEALTH_ENABLED+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_HEALTH_ENABLED[]"
+
+#, fuzzy
+msgid "<i class=\"fa fa-chevron-down\"></i><span>Show more</span>"
+msgstr "<i class=\"fa fa-chevron-down\"></i><span>Mostrar mais</span>"
+
+msgid "boolean"
+msgstr "booleano"
+
+#, fuzzy
+msgid "`+++true+++`"
+msgstr "`verdadeiro`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-application-id]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-application-id[`+++quarkus.kafka-streams.application-id+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.application-id+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"A unique identifier for this Kafka Streams application. If not set, defaults to quarkus.application.name.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_APPLICATION_ID+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-application-id[quarkus.kafka-streams.application-id] config_property_copy_button:quarkus.kafka-streams.application-id[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-application-id]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-application-id[`+++quarkus.kafka-streams.application-id+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.application-id+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-application-id[quarkus.kafka-streams.application-id] config_property_copy_button:quarkus.kafka-streams.application-id[]"
+
+#, fuzzy
+msgid "A unique identifier for this Kafka Streams application. If not set, defaults to quarkus.application.name."
+msgstr "Um identificador exclusivo para esta aplicação do Kafka Streams. Se não for definido, o valor padrão será quarkus.application.name."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_APPLICATION_ID+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_APPLICATION_ID[]"
+
+msgid "string"
+msgstr "string"
+
+#, fuzzy
+msgid "`+++${quarkus.application.name}+++`"
+msgstr "`${quarkus.application.name}`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-bootstrap-servers]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-bootstrap-servers[`+++quarkus.kafka-streams.bootstrap-servers+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.bootstrap-servers+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"A comma-separated list of host:port pairs identifying the Kafka bootstrap server(s). If not set, fallback to `kafka.bootstrap.servers`, and if not set either use `localhost:9092`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-bootstrap-servers[quarkus.kafka-streams.bootstrap-servers] config_property_copy_button:quarkus.kafka-streams.bootstrap-servers[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-bootstrap-servers]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-bootstrap-servers[`+++quarkus.kafka-streams.bootstrap-servers+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.bootstrap-servers+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-bootstrap-servers[quarkus.kafka-streams.bootstrap-servers] config_property_copy_button:quarkus.kafka-streams.bootstrap-servers[]"
+
+#, fuzzy
+msgid "A comma-separated list of host:port pairs identifying the Kafka bootstrap server(s). If not set, fallback to `kafka.bootstrap.servers`, and if not set either use `localhost:9092`."
+msgstr "Uma lista separada por vírgulas de pares host:porta que identificam o(s) servidor(es) de inicialização do Kafka. Caso não seja definida, recorre-se à variável ``kafka.bootstrap.servers` ` e, caso esta também não esteja definida, utiliza-se ``localhost:9092` `."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_BOOTSTRAP_SERVERS[]"
+
+#, fuzzy
+msgid "list of host:port"
+msgstr "lista de servidor:porta"
+
+#, fuzzy
+msgid "`+++localhost:9092+++`"
+msgstr "`localhost:9092`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-application-server]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-application-server[`+++quarkus.kafka-streams.application-server+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.application-server+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"A unique identifier of this application instance, typically in the form host:port.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_APPLICATION_SERVER+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-application-server[quarkus.kafka-streams.application-server] config_property_copy_button:quarkus.kafka-streams.application-server[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-application-server]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-application-server[`+++quarkus.kafka-streams.application-server+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.application-server+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-application-server[quarkus.kafka-streams.application-server] config_property_copy_button:quarkus.kafka-streams.application-server[]"
+
+#, fuzzy
+msgid "A unique identifier of this application instance, typically in the form host:port."
+msgstr "Um identificador exclusivo desta instância da aplicação, normalmente no formato host:porta."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_APPLICATION_SERVER+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_APPLICATION_SERVER[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-topics]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-topics[`+++quarkus.kafka-streams.topics+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.topics+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"A comma-separated list of topic names. The pipeline will only be started once all these topics are present in the Kafka cluster and `ignore.topics` is set to false.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_TOPICS+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-topics[quarkus.kafka-streams.topics] config_property_copy_button:quarkus.kafka-streams.topics[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-topics]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-topics[`+++quarkus.kafka-streams.topics+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.topics+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-topics[quarkus.kafka-streams.topics] config_property_copy_button:quarkus.kafka-streams.topics[]"
+
+#, fuzzy
+msgid "A comma-separated list of topic names. The pipeline will only be started once all these topics are present in the Kafka cluster and `ignore.topics` is set to false."
+msgstr "Uma lista de nomes de tópicos separados por vírgulas. O pipeline só será iniciado quando todos esses tópicos estiverem presentes no cluster do Kafka e a variável ` `ignore.topics` ` estiver definida como `false`."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_TOPICS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_TOPICS[]"
+
+#, fuzzy
+msgid "list of string"
+msgstr "lista de strings"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-topic-patterns]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-topic-patterns[`+++quarkus.kafka-streams.topic-patterns+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.topic-patterns+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"A comma-separated list of topic name patterns. The pipeline will only be started once all these topics are present in the Kafka cluster and `ignore.topics` is set to false.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_TOPIC_PATTERNS+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-topic-patterns[quarkus.kafka-streams.topic-patterns] config_property_copy_button:quarkus.kafka-streams.topic-patterns[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-topic-patterns]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-topic-patterns[`+++quarkus.kafka-streams.topic-patterns+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.topic-patterns+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-topic-patterns[quarkus.kafka-streams.topic-patterns] config_property_copy_button:quarkus.kafka-streams.topic-patterns[]"
+
+#, fuzzy
+msgid "A comma-separated list of topic name patterns. The pipeline will only be started once all these topics are present in the Kafka cluster and `ignore.topics` is set to false."
+msgstr "Uma lista de padrões de nomes de tópicos separados por vírgulas. O pipeline só será iniciado quando todos esses tópicos estiverem presentes no cluster do Kafka e a variável ` `ignore.topics` ` estiver definida como `false`."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_TOPIC_PATTERNS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_TOPIC_PATTERNS[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-topics-timeout]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-topics-timeout[`+++quarkus.kafka-streams.topics-timeout+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.topics-timeout+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Timeout to wait for topic names to be returned from admin client. If set to 0 (or negative), `topics` check is ignored.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_TOPICS_TIMEOUT+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-topics-timeout[quarkus.kafka-streams.topics-timeout] config_property_copy_button:quarkus.kafka-streams.topics-timeout[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-topics-timeout]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-topics-timeout[`+++quarkus.kafka-streams.topics-timeout+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.topics-timeout+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-topics-timeout[quarkus.kafka-streams.topics-timeout] config_property_copy_button:quarkus.kafka-streams.topics-timeout[]"
+
+#, fuzzy
+msgid "Timeout to wait for topic names to be returned from admin client. If set to 0 (or negative), `topics` check is ignored."
+msgstr "Tempo limite para aguardar o retorno dos nomes dos tópicos pelo cliente de administração. Se definido como 0 (ou um valor negativo), a verificação `dos tópicos` será ignorada."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_TOPICS_TIMEOUT+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_TOPICS_TIMEOUT[]"
+
+#, fuzzy
+msgid "link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-kafka-streams_quarkus-kafka-streams[icon:question-circle[title=More information about the Duration format]]"
+msgstr "link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duração] link:#duration-note-anchor-quarkus-kafka-streams_quarkus-kafka-streams[[círculo de pergunta]]"
+
+#, fuzzy
+msgid "`+++10S+++`"
+msgstr "`10S`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-schema-registry-key]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-schema-registry-key[`+++quarkus.kafka-streams.schema-registry-key+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.schema-registry-key+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The schema registry key. Different schema registry libraries expect a registry URL in different configuration properties. For Apicurio Registry, use `apicurio.registry.url`. For Confluent schema registry, use `schema.registry.url`.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SCHEMA_REGISTRY_KEY+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-schema-registry-key[quarkus.kafka-streams.schema-registry-key] config_property_copy_button:quarkus.kafka-streams.schema-registry-key[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-schema-registry-key]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-schema-registry-key[`+++quarkus.kafka-streams.schema-registry-key+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.schema-registry-key+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-schema-registry-key[quarkus.kafka-streams.schema-registry-key] config_property_copy_button:quarkus.kafka-streams.schema-registry-key[]"
+
+#, fuzzy
+msgid "The schema registry key. Different schema registry libraries expect a registry URL in different configuration properties. For Apicurio Registry, use `apicurio.registry.url`. For Confluent schema registry, use `schema.registry.url`."
+msgstr "A chave do registro de esquemas. Diferentes bibliotecas de registro de esquemas esperam um URL de registro em propriedades de configuração distintas. Para o Apicurio Registry, utilize `apicurio.registry.url` . Para o registro de esquemas da Confluent, utilize `schema.registry.url` ."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SCHEMA_REGISTRY_KEY+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SCHEMA_REGISTRY_KEY[]"
+
+#, fuzzy
+msgid "`+++schema.registry.url+++`"
+msgstr "`schema.registry.url`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-schema-registry-url]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-schema-registry-url[`+++quarkus.kafka-streams.schema-registry-url+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.schema-registry-url+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The schema registry URL.\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SCHEMA_REGISTRY_URL+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-schema-registry-url[quarkus.kafka-streams.schema-registry-url] config_property_copy_button:quarkus.kafka-streams.schema-registry-url[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-schema-registry-url]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-schema-registry-url[`+++quarkus.kafka-streams.schema-registry-url+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.schema-registry-url+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-schema-registry-url[quarkus.kafka-streams.schema-registry-url] config_property_copy_button:quarkus.kafka-streams.schema-registry-url[]"
+
+#, fuzzy
+msgid "The schema registry URL."
+msgstr "A URL do registro de esquemas."
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SCHEMA_REGISTRY_URL+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SCHEMA_REGISTRY_URL[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-security-protocol]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-security-protocol[`+++quarkus.kafka-streams.security.protocol+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.security.protocol+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The security protocol to use See https://docs.confluent.io/current/streams/developer-guide/security.html++#++security-example\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SECURITY_PROTOCOL+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-security-protocol[quarkus.kafka-streams.security.protocol] config_property_copy_button:quarkus.kafka-streams.security.protocol[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-security-protocol]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-security-protocol[`+++quarkus.kafka-streams.security.protocol+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.security.protocol+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-security-protocol[quarkus.kafka-streams.security.protocol] config_property_copy_button:quarkus.kafka-streams.security.protocol[]"
+
+#, fuzzy
+msgid "The security protocol to use See https://docs.confluent.io/current/streams/developer-guide/security.html++#++security-example"
+msgstr "Para saber qual protocolo de segurança utilizar, consulte https://docs.confluent.io/current/streams/developer-guide/security.html#security-example"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SECURITY_PROTOCOL+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SECURITY_PROTOCOL[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-mechanism]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-mechanism[`+++quarkus.kafka-streams.sasl.mechanism+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.mechanism+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"SASL mechanism used for client connections\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_MECHANISM+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-mechanism[quarkus.kafka-streams.sasl.mechanism] config_property_copy_button:quarkus.kafka-streams.sasl.mechanism[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-mechanism]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-mechanism[`+++quarkus.kafka-streams.sasl.mechanism+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.mechanism+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-mechanism[quarkus.kafka-streams.sasl.mechanism] config_property_copy_button:quarkus.kafka-streams.sasl.mechanism[]"
+
+#, fuzzy
+msgid "SASL mechanism used for client connections"
+msgstr "Mecanismo SASL utilizado para conexões de clientes"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_MECHANISM+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_MECHANISM[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-jaas-config]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-jaas-config[`+++quarkus.kafka-streams.sasl.jaas-config+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.jaas-config+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"JAAS login context parameters for SASL connections in the format used by JAAS configuration files\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_JAAS_CONFIG+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-jaas-config[quarkus.kafka-streams.sasl.jaas-config] config_property_copy_button:quarkus.kafka-streams.sasl.jaas-config[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-jaas-config]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-jaas-config[`+++quarkus.kafka-streams.sasl.jaas-config+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.jaas-config+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-jaas-config[quarkus.kafka-streams.sasl.jaas-config] config_property_copy_button:quarkus.kafka-streams.sasl.jaas-config[]"
+
+#, fuzzy
+msgid "JAAS login context parameters for SASL connections in the format used by JAAS configuration files"
+msgstr "Parâmetros de contexto de login do JAAS para conexões SASL no formato utilizado pelos arquivos de configuração do JAAS"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_JAAS_CONFIG+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_JAAS_CONFIG[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-client-callback-handler-class]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-client-callback-handler-class[`+++quarkus.kafka-streams.sasl.client-callback-handler-class+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.client-callback-handler-class+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The fully qualified name of a SASL client callback handler class\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_CLIENT_CALLBACK_HANDLER_CLASS+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-client-callback-handler-class[quarkus.kafka-streams.sasl.client-callback-handler-class] config_property_copy_button:quarkus.kafka-streams.sasl.client-callback-handler-class[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-client-callback-handler-class]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-client-callback-handler-class[`+++quarkus.kafka-streams.sasl.client-callback-handler-class+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.client-callback-handler-class+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-client-callback-handler-class[quarkus.kafka-streams.sasl.client-callback-handler-class] config_property_copy_button:quarkus.kafka-streams.sasl.client-callback-handler-class[]"
+
+#, fuzzy
+msgid "The fully qualified name of a SASL client callback handler class"
+msgstr "O nome totalmente qualificado de uma classe de manipulador de retorno de chamada do cliente SASL"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_CLIENT_CALLBACK_HANDLER_CLASS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_CLIENT_CALLBACK_HANDLER_CLASS[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-callback-handler-class]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-callback-handler-class[`+++quarkus.kafka-streams.sasl.login-callback-handler-class+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.login-callback-handler-class+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The fully qualified name of a SASL login callback handler class\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_LOGIN_CALLBACK_HANDLER_CLASS+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-callback-handler-class[quarkus.kafka-streams.sasl.login-callback-handler-class] config_property_copy_button:quarkus.kafka-streams.sasl.login-callback-handler-class[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-callback-handler-class]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-callback-handler-class[`+++quarkus.kafka-streams.sasl.login-callback-handler-class+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.login-callback-handler-class+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-callback-handler-class[quarkus.kafka-streams.sasl.login-callback-handler-class] config_property_copy_button:quarkus.kafka-streams.sasl.login-callback-handler-class[]"
+
+#, fuzzy
+msgid "The fully qualified name of a SASL login callback handler class"
+msgstr "O nome totalmente qualificado de uma classe de manipulador de retorno de chamada de login SASL"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_LOGIN_CALLBACK_HANDLER_CLASS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_LOGIN_CALLBACK_HANDLER_CLASS[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-class]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-class[`+++quarkus.kafka-streams.sasl.login-class+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.login-class+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The fully qualified name of a class that implements the Login interface\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_LOGIN_CLASS+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-class[quarkus.kafka-streams.sasl.login-class] config_property_copy_button:quarkus.kafka-streams.sasl.login-class[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-class]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-class[`+++quarkus.kafka-streams.sasl.login-class+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.login-class+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-class[quarkus.kafka-streams.sasl.login-class] config_property_copy_button:quarkus.kafka-streams.sasl.login-class[]"
+
+#, fuzzy
+msgid "The fully qualified name of a class that implements the Login interface"
+msgstr "O nome totalmente qualificado de uma classe que implementa a interface Login"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_LOGIN_CLASS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_LOGIN_CLASS[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-service-name]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-service-name[`+++quarkus.kafka-streams.sasl.kerberos-service-name+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.kerberos-service-name+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The Kerberos principal name that Kafka runs as\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_SERVICE_NAME+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-service-name[quarkus.kafka-streams.sasl.kerberos-service-name] config_property_copy_button:quarkus.kafka-streams.sasl.kerberos-service-name[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-service-name]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-service-name[`+++quarkus.kafka-streams.sasl.kerberos-service-name+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.kerberos-service-name+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-service-name[quarkus.kafka-streams.sasl.kerberos-service-name] config_property_copy_button:quarkus.kafka-streams.sasl.kerberos-service-name[]"
+
+#, fuzzy
+msgid "The Kerberos principal name that Kafka runs as"
+msgstr "O nome de principal do Kerberos com o qual o Kafka é executado"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_SERVICE_NAME+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_SERVICE_NAME[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-kinit-cmd]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-kinit-cmd[`+++quarkus.kafka-streams.sasl.kerberos-kinit-cmd+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.kerberos-kinit-cmd+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Kerberos kinit command path\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_KINIT_CMD+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-kinit-cmd[quarkus.kafka-streams.sasl.kerberos-kinit-cmd] config_property_copy_button:quarkus.kafka-streams.sasl.kerberos-kinit-cmd[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-kinit-cmd]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-kinit-cmd[`+++quarkus.kafka-streams.sasl.kerberos-kinit-cmd+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.kerberos-kinit-cmd+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-kinit-cmd[quarkus.kafka-streams.sasl.kerberos-kinit-cmd] config_property_copy_button:quarkus.kafka-streams.sasl.kerberos-kinit-cmd[]"
+
+#, fuzzy
+msgid "Kerberos kinit command path"
+msgstr "Caminho do comando `kinit` do Kerberos"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_KINIT_CMD+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_KINIT_CMD[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-ticket-renew-window-factor]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-ticket-renew-window-factor[`+++quarkus.kafka-streams.sasl.kerberos-ticket-renew-window-factor+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.kerberos-ticket-renew-window-factor+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Login thread will sleep until the specified window factor of time from last refresh\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_TICKET_RENEW_WINDOW_FACTOR+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-ticket-renew-window-factor[quarkus.kafka-streams.sasl.kerberos-ticket-renew-window-factor] config_property_copy_button:quarkus.kafka-streams.sasl.kerberos-ticket-renew-window-factor[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-ticket-renew-window-factor]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-ticket-renew-window-factor[`+++quarkus.kafka-streams.sasl.kerberos-ticket-renew-window-factor+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.kerberos-ticket-renew-window-factor+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-ticket-renew-window-factor[quarkus.kafka-streams.sasl.kerberos-ticket-renew-window-factor] config_property_copy_button:quarkus.kafka-streams.sasl.kerberos-ticket-renew-window-factor[]"
+
+#, fuzzy
+msgid "Login thread will sleep until the specified window factor of time from last refresh"
+msgstr "O thread de login ficará inativo até que se transcorra o fator de janela especificado desde a última atualização"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_TICKET_RENEW_WINDOW_FACTOR+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_TICKET_RENEW_WINDOW_FACTOR[]"
+
+#, fuzzy
+msgid "double"
+msgstr "duplo"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-ticket-renew-jitter]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-ticket-renew-jitter[`+++quarkus.kafka-streams.sasl.kerberos-ticket-renew-jitter+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.kerberos-ticket-renew-jitter+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Percentage of random jitter added to the renewal time\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_TICKET_RENEW_JITTER+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-ticket-renew-jitter[quarkus.kafka-streams.sasl.kerberos-ticket-renew-jitter] config_property_copy_button:quarkus.kafka-streams.sasl.kerberos-ticket-renew-jitter[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-ticket-renew-jitter]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-ticket-renew-jitter[`+++quarkus.kafka-streams.sasl.kerberos-ticket-renew-jitter+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.kerberos-ticket-renew-jitter+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-ticket-renew-jitter[quarkus.kafka-streams.sasl.kerberos-ticket-renew-jitter] config_property_copy_button:quarkus.kafka-streams.sasl.kerberos-ticket-renew-jitter[]"
+
+#, fuzzy
+msgid "Percentage of random jitter added to the renewal time"
+msgstr "Porcentagem de variação aleatória adicionada ao tempo de renovação"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_TICKET_RENEW_JITTER+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_TICKET_RENEW_JITTER[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-min-time-before-relogin]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-min-time-before-relogin[`+++quarkus.kafka-streams.sasl.kerberos-min-time-before-relogin+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.kerberos-min-time-before-relogin+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Percentage of random jitter added to the renewal time\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_MIN_TIME_BEFORE_RELOGIN+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-min-time-before-relogin[quarkus.kafka-streams.sasl.kerberos-min-time-before-relogin] botão_para_copiar_propriedade_de_configuração:quarkus.kafka-streams.sasl.kerberos-min-time-before-relogin[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-min-time-before-relogin]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-min-time-before-relogin[`+++quarkus.kafka-streams.sasl.kerberos-min-time-before-relogin+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.kerberos-min-time-before-relogin+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-kerberos-min-time-before-relogin[quarkus.kafka-streams.sasl.kerberos-min-time-before-relogin] config_property_copy_button:quarkus.kafka-streams.sasl.kerberos-min-time-before-relogin[]"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_MIN_TIME_BEFORE_RELOGIN+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_KERBEROS_MIN_TIME_BEFORE_RELOGIN[]"
+
+msgid "long"
+msgstr "long"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-window-factor]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-window-factor[`+++quarkus.kafka-streams.sasl.login-refresh-window-factor+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.login-refresh-window-factor+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Login refresh thread will sleep until the specified window factor relative to the credential's lifetime has been reached-\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_LOGIN_REFRESH_WINDOW_FACTOR+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-window-factor[quarkus.kafka-streams.sasl.login-refresh-window-factor] config_property_copy_button:quarkus.kafka-streams.sasl.login-refresh-window-factor[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-window-factor]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-window-factor[`+++quarkus.kafka-streams.sasl.login-refresh-window-factor+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.login-refresh-window-factor+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-window-factor[quarkus.kafka-streams.sasl.login-refresh-window-factor] config_property_copy_button:quarkus.kafka-streams.sasl.login-refresh-window-factor[]"
+
+#, fuzzy
+msgid "Login refresh thread will sleep until the specified window factor relative to the credential's lifetime has been reached-"
+msgstr "O thread de atualização de login permanecerá inativo até que seja atingido o fator de janela especificado, em relação ao prazo de validade da credencial—"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_LOGIN_REFRESH_WINDOW_FACTOR+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_LOGIN_REFRESH_WINDOW_FACTOR[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-window-jitter]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-window-jitter[`+++quarkus.kafka-streams.sasl.login-refresh-window-jitter+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.login-refresh-window-jitter+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The maximum amount of random jitter relative to the credential's lifetime\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_LOGIN_REFRESH_WINDOW_JITTER+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-window-jitter[quarkus.kafka-streams.sasl.login-refresh-window-jitter] config_property_copy_button:quarkus.kafka-streams.sasl.login-refresh-window-jitter[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-window-jitter]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-window-jitter[`+++quarkus.kafka-streams.sasl.login-refresh-window-jitter+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.login-refresh-window-jitter+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-window-jitter[quarkus.kafka-streams.sasl.login-refresh-window-jitter] config_property_copy_button:quarkus.kafka-streams.sasl.login-refresh-window-jitter[]"
+
+#, fuzzy
+msgid "The maximum amount of random jitter relative to the credential's lifetime"
+msgstr "A quantidade máxima de variação aleatória em relação ao prazo de validade da credencial"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_LOGIN_REFRESH_WINDOW_JITTER+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_LOGIN_REFRESH_WINDOW_JITTER[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-min-period]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-min-period[`+++quarkus.kafka-streams.sasl.login-refresh-min-period+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.login-refresh-min-period+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The desired minimum duration for the login refresh thread to wait before refreshing a credential\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_LOGIN_REFRESH_MIN_PERIOD+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-min-period[quarkus.kafka-streams.sasl.login-refresh-min-period] config_property_copy_button:quarkus.kafka-streams.sasl.login-refresh-min-period[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-min-period]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-min-period[`+++quarkus.kafka-streams.sasl.login-refresh-min-period+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.login-refresh-min-period+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-min-period[quarkus.kafka-streams.sasl.login-refresh-min-period] config_property_copy_button:quarkus.kafka-streams.sasl.login-refresh-min-period[]"
+
+#, fuzzy
+msgid "The desired minimum duration for the login refresh thread to wait before refreshing a credential"
+msgstr "O tempo mínimo desejado que o thread de atualização de login deve aguardar antes de atualizar uma credencial"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_LOGIN_REFRESH_MIN_PERIOD+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_LOGIN_REFRESH_MIN_PERIOD[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-buffer]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-buffer[`+++quarkus.kafka-streams.sasl.login-refresh-buffer+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.login-refresh-buffer+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The amount of buffer duration before credential expiration to maintain when refreshing a credential\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_LOGIN_REFRESH_BUFFER+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-buffer[quarkus.kafka-streams.sasl.login-refresh-buffer] config_property_copy_button:quarkus.kafka-streams.sasl.login-refresh-buffer[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-buffer]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-buffer[`+++quarkus.kafka-streams.sasl.login-refresh-buffer+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.sasl.login-refresh-buffer+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-sasl-login-refresh-buffer[quarkus.kafka-streams.sasl.login-refresh-buffer] config_property_copy_button:quarkus.kafka-streams.sasl.login-refresh-buffer[]"
+
+#, fuzzy
+msgid "The amount of buffer duration before credential expiration to maintain when refreshing a credential"
+msgstr "O período de validade do buffer a ser mantido antes do vencimento da credencial, ao atualizá-la"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SASL_LOGIN_REFRESH_BUFFER+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SASL_LOGIN_REFRESH_BUFFER[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-protocol]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-protocol[`+++quarkus.kafka-streams.ssl.protocol+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.protocol+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The SSL protocol used to generate the SSLContext\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_PROTOCOL+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-protocol[quarkus.kafka-streams.ssl.protocol] config_property_copy_button:quarkus.kafka-streams.ssl.protocol[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-protocol]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-protocol[`+++quarkus.kafka-streams.ssl.protocol+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.protocol+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-protocol[quarkus.kafka-streams.ssl.protocol] config_property_copy_button:quarkus.kafka-streams.ssl.protocol[]"
+
+#, fuzzy
+msgid "The SSL protocol used to generate the SSLContext"
+msgstr "O protocolo SSL utilizado para gerar o SSLContext"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_PROTOCOL+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_PROTOCOL[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-provider]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-provider[`+++quarkus.kafka-streams.ssl.provider+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.provider+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The name of the security provider used for SSL connections\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_PROVIDER+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-provider[quarkus.kafka-streams.ssl.provider] config_property_copy_button:quarkus.kafka-streams.ssl.provider[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-provider]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-provider[`+++quarkus.kafka-streams.ssl.provider+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.provider+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-provider[quarkus.kafka-streams.ssl.provider] config_property_copy_button:quarkus.kafka-streams.ssl.provider[]"
+
+#, fuzzy
+msgid "The name of the security provider used for SSL connections"
+msgstr "O nome do provedor de segurança utilizado para conexões SSL"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_PROVIDER+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_PROVIDER[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-cipher-suites]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-cipher-suites[`+++quarkus.kafka-streams.ssl.cipher-suites+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.cipher-suites+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"A list of cipher suites\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_CIPHER_SUITES+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-cipher-suites[quarkus.kafka-streams.ssl.cipher-suites] config_property_copy_button:quarkus.kafka-streams.ssl.cipher-suites[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-cipher-suites]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-cipher-suites[`+++quarkus.kafka-streams.ssl.cipher-suites+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.cipher-suites+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-cipher-suites[quarkus.kafka-streams.ssl.cipher-suites] config_property_copy_button:quarkus.kafka-streams.ssl.cipher-suites[]"
+
+#, fuzzy
+msgid "A list of cipher suites"
+msgstr "Uma lista de conjuntos de criptografia"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_CIPHER_SUITES+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_CIPHER_SUITES[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-enabled-protocols]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-enabled-protocols[`+++quarkus.kafka-streams.ssl.enabled-protocols+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.enabled-protocols+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The list of protocols enabled for SSL connections\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_ENABLED_PROTOCOLS+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-enabled-protocols[quarkus.kafka-streams.ssl.enabled-protocols] config_property_copy_button:quarkus.kafka-streams.ssl.enabled-protocols[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-enabled-protocols]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-enabled-protocols[`+++quarkus.kafka-streams.ssl.enabled-protocols+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.enabled-protocols+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-enabled-protocols[quarkus.kafka-streams.ssl.enabled-protocols] config_property_copy_button:quarkus.kafka-streams.ssl.enabled-protocols[]"
+
+#, fuzzy
+msgid "The list of protocols enabled for SSL connections"
+msgstr "A lista de protocolos habilitados para conexões SSL"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_ENABLED_PROTOCOLS+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_ENABLED_PROTOCOLS[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-type]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-type[`+++quarkus.kafka-streams.ssl.truststore.type+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.truststore.type+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Trust store type\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_TRUSTSTORE_TYPE+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-type[quarkus.kafka-streams.ssl.truststore.type] config_property_copy_button:quarkus.kafka-streams.ssl.truststore.type[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-type]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-type[`+++quarkus.kafka-streams.ssl.truststore.type+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.truststore.type+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-type[quarkus.kafka-streams.ssl.truststore.type] config_property_copy_button:quarkus.kafka-streams.ssl.truststore.type[]"
+
+#, fuzzy
+msgid "Trust store type"
+msgstr "Tipo de loja de confiança"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_TRUSTSTORE_TYPE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_TRUSTSTORE_TYPE[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-location]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-location[`+++quarkus.kafka-streams.ssl.truststore.location+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.truststore.location+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Trust store location\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_TRUSTSTORE_LOCATION+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-location[quarkus.kafka-streams.ssl.truststore.location] config_property_copy_button:quarkus.kafka-streams.ssl.truststore.location[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-location]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-location[`+++quarkus.kafka-streams.ssl.truststore.location+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.truststore.location+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-location[quarkus.kafka-streams.ssl.truststore.location] config_property_copy_button:quarkus.kafka-streams.ssl.truststore.location[]"
+
+#, fuzzy
+msgid "Trust store location"
+msgstr "Localização da loja da Trust"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_TRUSTSTORE_LOCATION+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_TRUSTSTORE_LOCATION[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-password]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-password[`+++quarkus.kafka-streams.ssl.truststore.password+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.truststore.password+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Trust store password\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_TRUSTSTORE_PASSWORD+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-password[quarkus.kafka-streams.ssl.truststore.password] config_property_copy_button:quarkus.kafka-streams.ssl.truststore.password[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-password]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-password[`+++quarkus.kafka-streams.ssl.truststore.password+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.truststore.password+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-password[quarkus.kafka-streams.ssl.truststore.password] config_property_copy_button:quarkus.kafka-streams.ssl.truststore.password[]"
+
+#, fuzzy
+msgid "Trust store password"
+msgstr "Senha da loja de confiança"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_TRUSTSTORE_PASSWORD+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_TRUSTSTORE_PASSWORD[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-certificates]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-certificates[`+++quarkus.kafka-streams.ssl.truststore.certificates+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.truststore.certificates+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Trust store certificates\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_TRUSTSTORE_CERTIFICATES+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-certificates[quarkus.kafka-streams.ssl.truststore.certificates] config_property_copy_button:quarkus.kafka-streams.ssl.truststore.certificates[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-certificates]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-certificates[`+++quarkus.kafka-streams.ssl.truststore.certificates+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.truststore.certificates+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-truststore-certificates[quarkus.kafka-streams.ssl.truststore.certificates] config_property_copy_button:quarkus.kafka-streams.ssl.truststore.certificates[]"
+
+#, fuzzy
+msgid "Trust store certificates"
+msgstr "Certificados do Trust Store"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_TRUSTSTORE_CERTIFICATES+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_TRUSTSTORE_CERTIFICATES[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-type]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-type[`+++quarkus.kafka-streams.ssl.keystore.type+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.keystore.type+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Key store type\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_TYPE+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-type[quarkus.kafka-streams.ssl.keystore.type] config_property_copy_button:quarkus.kafka-streams.ssl.keystore.type[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-type]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-type[`+++quarkus.kafka-streams.ssl.keystore.type+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.keystore.type+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-type[quarkus.kafka-streams.ssl.keystore.type] config_property_copy_button:quarkus.kafka-streams.ssl.keystore.type[]"
+
+#, fuzzy
+msgid "Key store type"
+msgstr "Tipo de armazenamento de chaves"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_TYPE+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_TYPE[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-location]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-location[`+++quarkus.kafka-streams.ssl.keystore.location+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.keystore.location+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Key store location\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_LOCATION+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-location[quarkus.kafka-streams.ssl.keystore.location] config_property_copy_button:quarkus.kafka-streams.ssl.keystore.location[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-location]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-location[`+++quarkus.kafka-streams.ssl.keystore.location+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.keystore.location+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-location[quarkus.kafka-streams.ssl.keystore.location] config_property_copy_button:quarkus.kafka-streams.ssl.keystore.location[]"
+
+#, fuzzy
+msgid "Key store location"
+msgstr "Localização estratégica da loja"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_LOCATION+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_LOCATION[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-password]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-password[`+++quarkus.kafka-streams.ssl.keystore.password+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.keystore.password+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Key store password\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_PASSWORD+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-password[quarkus.kafka-streams.ssl.keystore.password] config_property_copy_button:quarkus.kafka-streams.ssl.keystore.password[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-password]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-password[`+++quarkus.kafka-streams.ssl.keystore.password+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.keystore.password+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-password[quarkus.kafka-streams.ssl.keystore.password] config_property_copy_button:quarkus.kafka-streams.ssl.keystore.password[]"
+
+#, fuzzy
+msgid "Key store password"
+msgstr "Senha do armazenamento de chaves"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_PASSWORD+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_PASSWORD[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-key]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-key[`+++quarkus.kafka-streams.ssl.keystore.key+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.keystore.key+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Key store private key\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_KEY+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-key[quarkus.kafka-streams.ssl.keystore.key] config_property_copy_button:quarkus.kafka-streams.ssl.keystore.key[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-key]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-key[`+++quarkus.kafka-streams.ssl.keystore.key+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.keystore.key+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-key[quarkus.kafka-streams.ssl.keystore.key] config_property_copy_button:quarkus.kafka-streams.ssl.keystore.key[]"
+
+#, fuzzy
+msgid "Key store private key"
+msgstr "Chave privada do armazenamento de chaves"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_KEY+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_KEY[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-certificate-chain]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-certificate-chain[`+++quarkus.kafka-streams.ssl.keystore.certificate-chain+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.keystore.certificate-chain+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Key store certificate chain\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_CERTIFICATE_CHAIN+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-certificate-chain[quarkus.kafka-streams.ssl.keystore.certificate-chain] config_property_copy_button:quarkus.kafka-streams.ssl.keystore.certificate-chain[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-certificate-chain]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-certificate-chain[`+++quarkus.kafka-streams.ssl.keystore.certificate-chain+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.keystore.certificate-chain+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keystore-certificate-chain[quarkus.kafka-streams.ssl.keystore.certificate-chain] config_property_copy_button:quarkus.kafka-streams.ssl.keystore.certificate-chain[]"
+
+#, fuzzy
+msgid "Key store certificate chain"
+msgstr "Cadeia de certificados do armazenamento de chaves"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_CERTIFICATE_CHAIN+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_KEYSTORE_CERTIFICATE_CHAIN[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-key-password]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-key-password[`+++quarkus.kafka-streams.ssl.key.password+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.key.password+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"Password of the private key in the key store\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEY_PASSWORD+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-key-password[quarkus.kafka-streams.ssl.key.password] config_property_copy_button:quarkus.kafka-streams.ssl.key.password[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-key-password]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-key-password[`+++quarkus.kafka-streams.ssl.key.password+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.key.password+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-key-password[quarkus.kafka-streams.ssl.key.password] config_property_copy_button:quarkus.kafka-streams.ssl.key.password[]"
+
+#, fuzzy
+msgid "Password of the private key in the key store"
+msgstr "Senha da chave privada no armazenamento de chaves"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEY_PASSWORD+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_KEY_PASSWORD[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-keymanager-algorithm]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keymanager-algorithm[`+++quarkus.kafka-streams.ssl.keymanager-algorithm+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.keymanager-algorithm+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The algorithm used by key manager factory for SSL connections\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEYMANAGER_ALGORITHM+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keymanager-algorithm[quarkus.kafka-streams.ssl.keymanager-algorithm] config_property_copy_button:quarkus.kafka-streams.ssl.keymanager-algorithm[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-keymanager-algorithm]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keymanager-algorithm[`+++quarkus.kafka-streams.ssl.keymanager-algorithm+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.keymanager-algorithm+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-keymanager-algorithm[quarkus.kafka-streams.ssl.keymanager-algorithm] config_property_copy_button:quarkus.kafka-streams.ssl.keymanager-algorithm[]"
+
+#, fuzzy
+msgid "The algorithm used by key manager factory for SSL connections"
+msgstr "O algoritmo utilizado pela fábrica de gerenciadores de chaves para conexões SSL"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_KEYMANAGER_ALGORITHM+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_KEYMANAGER_ALGORITHM[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-trustmanager-algorithm]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-trustmanager-algorithm[`+++quarkus.kafka-streams.ssl.trustmanager-algorithm+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.trustmanager-algorithm+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The algorithm used by trust manager factory for SSL connections\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_TRUSTMANAGER_ALGORITHM+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-trustmanager-algorithm[quarkus.kafka-streams.ssl.trustmanager-algorithm] config_property_copy_button:quarkus.kafka-streams.ssl.trustmanager-algorithm[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-trustmanager-algorithm]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-trustmanager-algorithm[`+++quarkus.kafka-streams.ssl.trustmanager-algorithm+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.trustmanager-algorithm+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-trustmanager-algorithm[quarkus.kafka-streams.ssl.trustmanager-algorithm] config_property_copy_button:quarkus.kafka-streams.ssl.trustmanager-algorithm[]"
+
+#, fuzzy
+msgid "The algorithm used by trust manager factory for SSL connections"
+msgstr "O algoritmo utilizado pela fábrica de gerenciadores de confiança para conexões SSL"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_TRUSTMANAGER_ALGORITHM+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_TRUSTMANAGER_ALGORITHM[]"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-endpoint-identification-algorithm]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-endpoint-identification-algorithm[`+++quarkus.kafka-streams.ssl.endpoint-identification-algorithm+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.endpoint-identification-algorithm+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The endpoint identification algorithm to validate server hostname using server certificate\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-endpoint-identification-algorithm[quarkus.kafka-streams.ssl.endpoint-identification-algorithm] config_property_copy_button:quarkus.kafka-streams.ssl.endpoint-identification-algorithm[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-endpoint-identification-algorithm]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-endpoint-identification-algorithm[`+++quarkus.kafka-streams.ssl.endpoint-identification-algorithm+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.endpoint-identification-algorithm+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-endpoint-identification-algorithm[quarkus.kafka-streams.ssl.endpoint-identification-algorithm] config_property_copy_button:quarkus.kafka-streams.ssl.endpoint-identification-algorithm[]"
+
+#, fuzzy
+msgid "The endpoint identification algorithm to validate server hostname using server certificate"
+msgstr "O algoritmo de identificação de ponto final para validar o nome do host do servidor por meio do certificado do servidor"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM[]"
+
+#, fuzzy
+msgid "`+++https+++`"
+msgstr "`https`"
+
+#. mt: deepl
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-secure-random-implementation]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-secure-random-implementation[`+++quarkus.kafka-streams.ssl.secure-random-implementation+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.secure-random-implementation+++[]\n"
+"\n"
+"\n"
+"[.description]\n"
+"--\n"
+"The SecureRandom PRNG implementation to use for SSL cryptography operations\n"
+"\n"
+"\n"
+"Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_SECURE_RANDOM_IMPLEMENTATION+++[]\n"
+"--"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-secure-random-implementation[quarkus.kafka-streams.ssl.secure-random-implementation] config_property_copy_button:quarkus.kafka-streams.ssl.secure-random-implementation[]"
+
+#, fuzzy
+msgid ""
+"[[quarkus-kafka-streams_quarkus-kafka-streams-ssl-secure-random-implementation]] [.property-path]##link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-secure-random-implementation[`+++quarkus.kafka-streams.ssl.secure-random-implementation+++`]##\n"
+"config_property_copy_button:+++quarkus.kafka-streams.ssl.secure-random-implementation+++[]"
+msgstr " link:#quarkus-kafka-streams_quarkus-kafka-streams-ssl-secure-random-implementation[quarkus.kafka-streams.ssl.secure-random-implementation] config_property_copy_button:quarkus.kafka-streams.ssl.secure-random-implementation[]"
+
+#, fuzzy
+msgid "The SecureRandom PRNG implementation to use for SSL cryptography operations"
+msgstr "A implementação do PRNG SecureRandom a ser utilizada para operações de criptografia SSL"
+
+#, fuzzy
+msgid "Environment variable: env_var_with_copy_button:+++QUARKUS_KAFKA_STREAMS_SSL_SECURE_RANDOM_IMPLEMENTATION+++[]"
+msgstr "Variável de ambiente: env_var_with_copy_button:QUARKUS_KAFKA_STREAMS_SSL_SECURE_RANDOM_IMPLEMENTATION[]"
+
+#, fuzzy
+msgid "About the Duration format"
+msgstr "Sobre o formato de duração"
+
+#, fuzzy
+msgid ""
+"To write duration values, use the standard `java.time.Duration` format.\n"
+"See the link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)[Duration#parse() Java API documentation] for more information."
+msgstr "Para escrever valores de duração, utilize o formato padrão `java.time.Duration` . Consulte link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)[a documentação da API Java] do método link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)[Duration#parse()] para obter mais informações."
+
+msgid "You can also use a simplified format, starting with a number:"
+msgstr "Você também pode usar um formato simplificado, começando com um número:"
+
+msgid "If the value is only a number, it represents time in seconds."
+msgstr "Se o valor for apenas um número, ele representará o tempo em segundos."
+
+msgid "If the value is a number followed by `ms`, it represents time in milliseconds."
+msgstr "Se o valor for um número seguido de 'ms', ele representa o tempo em milissegundos."
+
+msgid "In other cases, the simplified format is translated to the `java.time.Duration` format for parsing:"
+msgstr "Em outros casos, o formato simplificado é traduzido para o formato 'java.time.Duration' para análise:"
+
+msgid "If the value is a number followed by `h`, `m`, or `s`, it is prefixed with `PT`."
+msgstr "Se o valor for um número seguido de 'h', 'm' ou 's', ele é prefixado com 'PT'."
+
+msgid "If the value is a number followed by `d`, it is prefixed with `P`."
+msgstr "Se o valor for um número seguido de 'd', ele é prefixado com 'P'."
