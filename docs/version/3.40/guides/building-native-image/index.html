@@ -1,0 +1,4110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+
+
+<head>
+    <title>Building a native executable - 3.40 - Quarkus</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="
+  connect-src 'self' https://analytics.ossupstream.org/ https://search.quarkus.io https://ajax.googleapis.com;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval'
+      
+      https://app.requestly.io/
+      jsonip.com
+      https://ajax.googleapis.com
+      https://use.fontawesome.com
+      http://www.youtube.com
+      https://giscus.app
+      https://analytics.ossupstream.org/
+      https://app.mailjet.com;
+
+  style-src 'self' https://fonts.googleapis.com https://use.fontawesome.com;
+  img-src 'self' * data:;
+  media-src 'self';
+  frame-src https://www.youtube.com https://player.restream.io https://app.mailjet.com http://xy0p2.mjt.lu https://mj.quarkus.io https://giscus.app;
+  base-uri 'none';
+  object-src 'none';
+  form-action 'none';
+  font-src 'self' https://use.fontawesome.com https://fonts.gstatic.com;" />
+    <script src="/assets/javascript/highlight.pack.js" type="text/javascript"></script>
+    <META HTTP-EQUIV='X-XSS-Protection' CONTENT="1; mode=block">
+    <META HTTP-EQUIV='X-Content-Type-Options' CONTENT="nosniff">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Quarkus is a Java framework for building fast, efficient, cloud-native applications. It is Kubernetes-native, supports JVM and native executable deployments, provides live reload and delightful developer tooling, integrates with Jakarta and MicroProfile standards, and offers extensions for databases, messaging, security, observability and AI.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@QuarkusIO">
+    <meta name="twitter:creator" content="@QuarkusIO">
+    <meta property="og:url" content="https://quarkus.io/version/3.40/guides/building-native-image/" />
+    <meta property="og:title" content="Building a native executable - 3.40" />
+    <meta property="og:description" content="Quarkus is a Java framework for building fast, efficient, cloud-native applications. It is Kubernetes-native, supports JVM and native executable deployments, provides live reload and delightful developer tooling, integrates with Jakarta and MicroProfile standards, and offers extensions for databases, messaging, security, observability and AI." />
+    <meta property="og:image" content="https://quarkus.io/assets/images/quarkus_card.png" />
+    <link rel="canonical" href="https://quarkus.io/guides/building-native-image/">
+    <link rel="shortcut icon" type="image/png" href="/favicon.ico" >
+    <link rel="stylesheet" href="/guides/stylesheet/config.css" />
+    <script type="module" src="/static/bundle/app-UNQQD6ED.js"></script>
+      <link rel="stylesheet" href="/static/bundle/app-Q3KOMF5Z.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css" crossorigin="anonymous">
+    <link rel="alternate" type="application/rss+xml"  href="/feed.xml" title="Quarkus - Supersonic Subatomic Java">
+    <script src="/assets/javascript/hl.js" type="text/javascript"></script>
+    <link rel="alternate" hreflang="en" href="https://quarkus.io//version3.40/guides/building-native-image/" />
+    <link rel="alternate" hreflang="pt-br" href="https://pt.quarkus.io//version3.40/guides/building-native-image/" />
+    <link rel="alternate" hreflang="es" href="https://es.quarkus.io//version3.40/guides/building-native-image/" />
+    <link rel="alternate" hreflang="zh" href="https://cn.quarkus.io//version3.40/guides/building-native-image/" />
+    <link rel="alternate" hreflang="ja" href="https://ja.quarkus.io//version3.40/guides/building-native-image/" />
+    <link rel="alternate" hreflang="x-default" href="https://quarkus.io/" />
+    <script src="/assets/javascript/tracking.js"></script>
+    <script src="/assets/javascript/colormode.js" type="text/javascript"></script>
+
+</head>
+
+<body class="guides">
+
+<div class="nav-wrapper">
+  <div class="grid-wrapper">
+    <div class="width-12-12">
+      <input type="checkbox" id="checkbox" />
+      <nav id="main-nav" class="main-nav">
+        <div class="logo-wrapper">
+           <a href="/"><img src="/assets/images/quarkus_logo_horizontal_rgb_600px_reverse.webp" class="project-logo" title="Quarkus" alt="Quarkus"></a>
+        </div>
+    <label class="nav-toggle" for="checkbox"> <i class="fa fa-bars"></i>
+</label>
+    <ul id="menu" class="menu">
+      <li class="dropdown">
+        <span href="#">Why<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          <li><a href="/about" class="">WHAT IS QUARKUS?</a></li>
+          <li><a href="/developer-joy" class="">DEVELOPER JOY</a></li>
+          <li><a href="/performance" class="">PERFORMANCE</a></li>
+          <li><a href="/kubernetes-native" class="">KUBERNETES NATIVE</a></li>
+          <li><a href="/standards" class="">STANDARDS</a></li>
+          <li><a href="/versatility" class="">VERSATILITY</a></li>
+          <li><a href="/container-first" class="">CONTAINER FIRST</a></li>
+          <li class="tertiarydropdown">
+            <span href="#">USING SPRING?<i class="fas fa-chevron-down"></i></span>
+            <ul class="tertiarymenu">
+              <li><a href="/spring" class="">SPRING OVERVIEW</a></li>
+              <li><a href="/spring/migrate/" class="">MIGRATE TO QUARKUS</a></li>
+            </ul>
+          </li>
+          <li class="tertiarydropdown">
+            <span href="#">AI<i class="fas fa-chevron-down"></i></span>
+            <ul class="tertiarymenu">
+              <li><a href="/ai" class="">AI
+OVERVIEW</a></li>
+              <li><a href="/java-for-ai" class="">JAVA FOR AI</a></li>
+              <li><a href="/quarkus-for-ai" class="">WHY QUARKUS FOR AI</a></li>
+              <li><a href="/ai-blueprints" class="">AI BLUEPRINTS</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <span href="#">Learn<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          <li><a href="/get-started" class="">GET STARTED</a></li>
+          <li><a href="/guides" class="active">DOCUMENTATION</a></li>
+          <li><a href="/releases/" class="">RELEASES</a></li>
+          <li><a href="/userstories/" class="">USER STORIES</a></li>  
+          <li><a href="/qtips" class="">"Q" TIP VIDEOS</a></li>          
+          <li><a href="/books" class="">BOOKS</a></li>
+          <li><a href="/workshops" class="">WORKSHOPS</a></li>
+          </ul>
+      </li>
+      <li class="dropdown">
+        <span href="#">Extensions<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          
+          <!-- Note that quarkus.io is hardcoded here, because it is the only url which supports extensions -->
+<li><a href="https://quarkus.io/extensions/" class="">BROWSE EXTENSIONS</a></li>
+          <li><a href="/faq/#what-is-a-quarkus-extension" class="">USE
+EXTENSIONS</a></li>
+          <li><a href="/guides/writing-extensions" class="">CREATE
+EXTENSIONS</a></li>
+          <li><a href="https://hub.quarkiverse.io" class="">SHARE EXTENSIONS</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <span href="#">Community<i class="fas fa-chevron-down firsti"></i></span>
+        <ul class="submenu">
+          <li><a href="/support/" class="">SUPPORT</a></li>
+          <li><a href="/blog" class="">BLOG</a></li>
+          <li><a href="/discussion" class="">DISCUSSION</a></li>
+          <li><a href="/working-groups" class="">WORKING GROUPS</a></li>
+          <li><a href="/insights" class="">PODCAST</a></li>
+          <li><a href="/events" class="">EVENTS</a></li>
+          <li><a href="/newsletter" class="">NEWSLETTER</a></li>
+          <li><a href="https://github.com/orgs/quarkusio/projects/13/views/1" class="">ROADMAP</a></li>
+          <li><a href="/benefactors" class="">BENEFACTORS</a></li>
+          </ul>
+      </li>
+      <li>
+        <a href="https://code.quarkus.io" class="button-cta secondary white">COMECE
+A CODIFICAR</a>
+      </li>
+      <li class="dropdown">
+        <span href="/language/"><div class="fas fa-globe langicon"></div><i class="fas fa-chevron-down"></i></span>
+        <ul class="submenu">
+          <li><a href="https://quarkus.io/version/3.40/guides/building-native-image/" >OFFICIAL (ENGLISH)</a></li>
+          <li><a href="https://pt.quarkus.io/version/3.40/guides/building-native-image/">PORTUGUÊS (BR)</a></li>
+          <li><a href="https://es.quarkus.io/version/3.40/guides/building-native-image/">ESPAÑOL</a></li>
+          <li><a href="https://cn.quarkus.io/version/3.40/guides/building-native-image/">简体中文</a></li>
+          <li><a href="https://ja.quarkus.io/version/3.40/guides/building-native-image/">日本語</a></li>
+          </ul>
+      </li>
+      <li>
+        <span href="#" class="modeswitcher" id='theme-toggle'><i class="fas
+fa-sun"></i><i class="fas fa-moon"></i><i class="fas fa-cog"></i></span>
+      </li>
+    </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+<div class="content">
+
+
+
+<section class="full-width-version-bg flexfilterbar guides">
+  <div class="guideflexcontainer">
+    <div class="docslink">
+      <a class="returnlink" href="/version/3.40/guides/"> Back to Guides</a>
+    </div>
+<div class="version-split guide-version-split" id="guide-version-split">
+  <label class="version-split-description-label" for="guide-version-selector">Version:</label>
+  <button type="button" class="version-split-toggle" id="guide-version-selector"
+          aria-haspopup="true" aria-expanded="false"
+          aria-label="Select documentation version">
+    <span class="version-split-display">
+      <span class="version-split-label">3.40</span>
+    </span>
+    <span class="version-split-caret">
+      <i class="fa-solid fa-chevron-down"></i>
+    </span>
+  </button>
+  <ul class="version-split-menu" role="menu">
+    <li role="none">
+      <a role="menuitem"
+         class="version-split-item"
+         
+         href="/version/main/guides/building-native-image/">
+        Main
+      </a>
+    </li>
+    <li role="none">
+      <a role="menuitem"
+         class="version-split-item"
+         
+         href="/guides/building-native-image/">
+        Latest
+      </a>
+    </li>
+    <li role="none">
+      <a role="menuitem"
+         class="version-split-item is-current"
+         aria-current="true"
+         href="/version/3.40/guides/building-native-image/">
+        3.40
+      </a>
+    </li>
+    <li role="none">
+      <a role="menuitem"
+         class="version-split-item"
+         
+         href="/version/3.33/guides/building-native-image/">
+        3.33
+      </a>
+    </li>
+    <li role="none">
+      <a role="menuitem"
+         class="version-split-item"
+         
+         href="/version/3.27/guides/building-native-image/">
+        3.27
+      </a>
+    </li>
+    <li role="none">
+      <a role="menuitem"
+         class="version-split-item"
+         
+         href="/version/3.20/guides/building-native-image/">
+        3.20
+      </a>
+    </li>
+    <li role="none">
+      <a role="menuitem"
+         class="version-split-item"
+         
+         href="/version/3.15/guides/building-native-image/">
+        3.15
+      </a>
+    </li>
+    <li role="none">
+      <a role="menuitem"
+         class="version-split-item"
+         
+         href="/version/3.8/guides/building-native-image/">
+        3.8
+      </a>
+    </li>
+  </ul>
+</div>
+  </div>
+</section>
+
+<div class="guide guide-full-width">
+  <button class="guide-nav-toggle" id="guide-nav-toggle" aria-label="Open guide navigation" aria-controls="guide-nav-wrapper" aria-expanded="false">
+    <span class="guide-nav-toggle-icon"><i class="fa-solid fa-bars"></i></span>
+  </button>
+  <div class="guide-nav-backdrop" id="guide-nav-backdrop"></div>
+  <div class="guide-nav-wrapper" id="guide-nav-wrapper" role="dialog" aria-modal="true" aria-labelledby="guide-nav-heading" aria-hidden="true" tabindex="-1">
+    <div class="guide-nav-title">
+      <h2 id="guide-nav-heading">Guide categories</h2>
+      <button class="guide-nav-close" id="guide-nav-close" aria-label="Close guide navigation">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+<nav class="guide-nav-sidebar">
+    
+        
+        
+        
+        
+
+    <details class="guide-nav-cat" >
+      <summary>Getting started</summary>
+
+        <ul>
+                <li >
+                  <a href="/version/3.40/guides/getting-started/">Creating your first application</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/getting-started-dev-services/">Your second Quarkus application</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/tooling/">Using our tooling</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/ide-tooling/">Quarkus tools in your favorite IDE</a>
+                </li>
+        </ul>
+    </details>
+    
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+
+    <details class="guide-nav-cat" open>
+      <summary>Packaging</summary>
+
+          
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>JARs</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/packaging/">Packaging overview</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/aot/">Ahead-of-time (AOT) caching</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/jar-tree-shaking/">Tree-shaking JAR dependencies</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/jlink/">JLink packaging</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/reaugmentation/">Re-augment a Quarkus application</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" open>
+            <summary>Native</summary>
+            <ul>
+                    <li class="active">
+                      <a href="/version/3.40/guides/building-native-image/">Criação de um executável nativo</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/native-reference/">Native reference guide</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/writing-native-applications-tips/">Tips for writing native applications</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/native-and-ssl/">Using SSL with native executables</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/upx/">Compactação de executáveis nativos com UPX</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Containers</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/container-image/">Imagens de Contêiner</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/quarkus-runtime-base-image/">Quarkus base runtime image</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Release and distribution</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/cyclonedx/">Generating and using CycloneDX SBOMs</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/jreleaser/">Packaging and releasing with JReleaser</a>
+                    </li>
+            </ul>
+          </details>
+    </details>
+    
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+
+    <details class="guide-nav-cat" >
+      <summary>Núcleo</summary>
+
+          
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Contexts and Dependency Injection (CDI)</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/cdi/">Introduction to Contexts and Dependency Injection (CDI)</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/cdi-reference/">Contextos e Injeção de Dependência</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/lifecycle/">Application initialization and termination</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Serviços de Desenvolvimento</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/dev-services/">Dev Services overview</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/compose-dev-services/">Compose Dev Services</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/podman/">Usando o Podman com o Quarkus</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Configuração</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/config/">Configuring your application</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/config-yaml/">Configuração YAML</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/config-mappings/">Mapeando configuração para objetos</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/config-reference/">Configuration reference guide</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/config-extending-support/">Extending configuration support</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/all-config/">Todas as opções de configuração</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Vert.x</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/vertx/">Using Eclipse Vert.x API from a Quarkus application</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/vertx-reference/">Vert.x reference guide</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Testando</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/getting-started-testing/">Testing your application</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/continuous-testing/">Continuous testing</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/testing-components/">Testing components</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/tests-with-coverage/">Medindo a cobertura de seus testes</a>
+                    </li>
+            </ul>
+          </details>
+    </details>
+    
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+
+    <details class="guide-nav-cat" >
+      <summary>Web</summary>
+
+          
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>HTTP</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/web/">Quarkus for the Web</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/http-reference/">HTTP reference</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/reactive-routes/">Usando rotas reativas</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>REST</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/rest/">Writing REST services with Quarkus REST (formerly RESTEasy Reactive)</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/rest-client/">Usando o Cliente REST</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/rest-json/">Escrevendo serviços JSON REST</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/openapi-swaggerui/">Utilizar OpenAPI e Swagger UI</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/resteasy/">RESTEasy Classic</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/resteasy-client/">Using the legacy REST Client</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/resteasy-client-multipart/">Using the legacy REST Client with Multipart</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/rest-data-panache/">Generating Jakarta REST resources with Panache</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/rest-virtual-threads/">Use virtual threads in REST applications</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/rest-migration/">Migrating to Quarkus REST (formerly RESTEasy Reactive)</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>GraphQL</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/smallrye-graphql/">SmallRye GraphQL</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/smallrye-graphql-client/">SmallRye GraphQL Client</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>WebSockets</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/websockets-next-tutorial/">Getting started with WebSockets Next</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/websockets-next-reference/">WebSockets Next reference guide</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/websockets/">Using WebSockets with Undertow</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Frontend</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/web-dependency-locator/">Web dependency locator</a>
+                    </li>
+            </ul>
+          </details>
+    </details>
+    
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+
+    <details class="guide-nav-cat" >
+      <summary>Dados</summary>
+
+          
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Datasources</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/datasource/">Configure data sources in Quarkus</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/reactive-sql-clients/">Reactive SQL clients</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/databases-dev-services/">Dev Services for databases</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>ORM and Hibernate</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/hibernate-orm/">Usando Hibernate ORM e Jakarta Persistence</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/quarkus-data-hibernate/">Simplified Hibernate with Quarkus Data Hibernate</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/hibernate-orm-panache/">Hibernate ORM simplificado com Panache</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/hibernate-orm-panache-kotlin/">Hibernate ORM simplificado com Panache e Kotlin</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/hibernate-reactive/">Usando o Hibernate Reactive</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/hibernate-reactive-panache/">Hibernate Reativo Simplificado com Panache</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/hibernate-search-orm-elasticsearch/">Use Hibernate Search with Hibernate ORM and Elasticsearch/OpenSearch</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/hibernate-search-standalone-elasticsearch/">Use Hibernate Search in Standalone mode with Elasticsearch/OpenSearch</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/blaze-persistence/">Usando o Blaze-Persistence</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Transactions</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/transaction/">Using transactions in Quarkus</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/software-transactional-memory/">Using Software Transactional Memory in Quarkus</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/lra/">Narayana LRA participant support</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/lra-dev-services/">Dev Services for LRA</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Validação</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/validation/">Validação com o Hibernate Validator</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>NoSQL</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/mongodb/">Usando o cliente MongoDB</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/mongodb-panache/">Simplified MongoDB with Panache</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/mongodb-panache-kotlin/">Simplified MongoDB with Panache and Kotlin</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/mongodb-dev-services/">Dev Services for MongoDB</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/redis/">Usando o cliente Redis</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/redis-reference/">Redis extension reference guide</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/redis-dev-services/">Dev Services para Redis</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/elasticsearch/">Connecting to an Elasticsearch cluster</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/elasticsearch-dev-services/">Dev Services for Elasticsearch</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/cassandra/">Using the Cassandra Client</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Armazenamento em cache</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/cache/">Application data caching</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/cache-redis-reference/">Cache Redis</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/cache-infinispan-reference/">Infinispan Cache</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/infinispan-client/">Using the Infinispan Client</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/infinispan-client-reference/">Infinispan Client extension reference guide</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/infinispan-dev-services/">Dev Services for Infinispan</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Database migration</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/flyway/">Usando o Flyway</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/liquibase/">Using Liquibase</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/liquibase-mongodb/">Using Liquibase MongoDB</a>
+                    </li>
+            </ul>
+          </details>
+    </details>
+    
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+
+    <details class="guide-nav-cat" >
+      <summary>Mensagens</summary>
+
+          
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Messaging core</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/messaging/">Quarkus Messaging extensions</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/messaging-virtual-threads/">Quarkus virtual thread support with Reactive Messaging</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Eventos</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/signals/">Quarkus Signals</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/reactive-event-bus/">Utilizar o barramento de eventos</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>JMS</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/jms/">Usando JMS</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Kafka</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/kafka-getting-started/">Getting started with Quarkus Messaging and Apache Kafka</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/kafka/">Apache Kafka reference guide</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/kafka-dev-services/">Dev Services para o Kafka</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/kafka-streams/">Usando Apache Kafka Streams</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/kafka-schema-registry-avro/">Utilização do Apache Kafka com o Schema Registry e o Avro</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/kafka-schema-registry-json-schema/">Using Apache Kafka with Schema Registry and JSON Schema</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/kafka-dev-ui/">Kafka Dev UI</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/apicurio-registry-dev-services/">Dev Services para Apicurio Registry</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>AMQP</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/amqp/">Getting started with Quarkus Messaging and AMQP 1.0</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/amqp-reference/">Reactive Messaging AMQP 1.0 Connector reference documentation</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/amqp-dev-services/">Dev Services para AMQP</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Pulsar</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/pulsar-getting-started/">Getting started with Quarkus Messaging and Apache Pulsar</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/pulsar/">Apache Pulsar reference guide</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/pulsar-dev-services/">Dev Services para Pulsar</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>RabbitMQ</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/rabbitmq/">Getting started with Quarkus Messaging and RabbitMQ</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/rabbitmq-reference/">Reactive Messaging RabbitMQ Connector reference documentation</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/rabbitmq-dev-services/">Dev Services for RabbitMQ</a>
+                    </li>
+            </ul>
+          </details>
+    </details>
+    
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+
+    <details class="guide-nav-cat" >
+      <summary>Segurança</summary>
+
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Security core</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/security-overview/">Visão geral do Quarkus Security</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-architecture/">Arquitetura da Segurança do Quarkus</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-getting-started-tutorial/">Getting started with security by using Basic authentication and Jakarta Persistence</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-customization/">Security tips and tricks</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-authorize-web-endpoints-reference/">Authorization of web endpoints</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-proactive-authentication/">Autenticação proativa</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-cors/">Cross-Origin Resource Sharing (CORS)</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-csrf-prevention/">Cross-Site Request Forgery prevention</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-properties/">Using security with .properties file</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-testing/">Security testing</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/config-secrets/">Secrets in configuration</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/credentials-provider/">Using a credentials provider</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/native-and-ssl/">Using SSL with native executables</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-vulnerability-detection/">Detecção e relatório de vulnerabilidades de segurança no Quarkus</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Autenticação</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/security-authentication-mechanisms/">Authentication mechanisms in Quarkus</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-basic-authentication/">Autenticação básica</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-basic-authentication-howto/">Ativar a autenticação básica</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-jwt/">Usando JWT RBAC</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-jwt-build/">Build, sign, and encrypt JSON Web Tokens</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-oauth2/">Usando OAuth2 RBAC</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-webauthn/">Using security with WebAuthn</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>OpenID Connect (OIDC)</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/security-oidc-code-flow-authentication/">OpenID Connect authorization code flow mechanism for protecting web applications</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-oidc-code-flow-authentication-tutorial/">Protect a web application by using OpenID Connect (OIDC) authorization code flow</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-oidc-bearer-token-authentication/">OpenID Connect (OIDC) Bearer token authentication</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-oidc-bearer-token-authentication-tutorial/">Protect a service application by using OpenID Connect (OIDC) Bearer token authentication</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-oidc-auth0-tutorial/">Protect a Quarkus web application by using an Auth0 OpenID Connect provider</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-oidc-configuration-properties-reference/">Propriedades de configuração do OpenID Connect (OIDC)</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-oidc-expanded-configuration/">Quarkus OpenID Connect (OIDC) expanded configuration reference</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-openid-connect-providers/">Configuring well-known OpenID Connect providers</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-openid-connect-client/">OpenID Connect client and token propagation quickstart</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-openid-connect-client-reference/">OpenID Connect (OIDC) and OAuth2 client and filters</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-openid-connect-client-registration/">OpenID Connect (OIDC) and OAuth2 dynamic client registration</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-openid-connect-multitenancy/">Using OpenID Connect (OIDC) multitenancy</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-openid-connect-dev-services/">Dev Services and Dev UI for OpenID Connect (OIDC)</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-vertx-oidc-to-quarkus-oidc-migration/">Migrate from Vert.x OIDC to Quarkus OIDC</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Identity providers</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/security-identity-providers/">Identity providers</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-jpa/">Quarkus Security with Jakarta Persistence</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-jdbc/">Using security with JDBC</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-ldap/">Using security with an LDAP realm</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-keycloak-authorization/">Using OpenID Connect (OIDC) and Keycloak to centralize authorization</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/security-keycloak-admin-client/">Using Keycloak Admin Client</a>
+                    </li>
+            </ul>
+          </details>
+    </details>
+    
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+
+    <details class="guide-nav-cat" >
+      <summary>Modelo de execução</summary>
+
+          
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Virtual threads</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/virtual-threads/">Virtual thread support reference</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/rest-virtual-threads/">Use virtual threads in REST applications</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/grpc-virtual-threads/">Quarkus virtual thread support for gRPC services</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/messaging-virtual-threads/">Quarkus virtual thread support with Reactive Messaging</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Reativo</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/getting-started-reactive/">Getting started with Reactive</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/mutiny-primer/">Mutiny - Async for mere mortals</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/quarkus-reactive-architecture/">Quarkus reactive architecture</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/reactive-routes/">Usando rotas reativas</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/reactive-sql-clients/">Reactive SQL clients</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/hibernate-reactive/">Usando o Hibernate Reactive</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/hibernate-reactive-panache/">Hibernate Reativo Simplificado com Panache</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/reactive-event-bus/">Utilizar o barramento de eventos</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Context propagation</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/context-propagation/">Context propagation in Quarkus</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/duplicated-context/">Duplicated context, context locals, asynchronous processing and propagation</a>
+                    </li>
+            </ul>
+          </details>
+    </details>
+    
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+
+    <details class="guide-nav-cat" >
+      <summary>Cloud</summary>
+
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Deployment</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/deploying-to-kubernetes/">Kubernetes extension</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/deploying-to-openshift/">Deploying Quarkus applications to OpenShift</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/deploying-to-openshift-howto/">Deploying Quarkus applications to OpenShift in a single step</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/deploying-to-openshift-s2i-howto/">Using S2I to deploy Quarkus applications to OpenShift</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/deploying-to-openshift-docker-howto/">Deploying Quarkus Java applications to OpenShift by using a Docker build strategy</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/deploying-to-openshift-native-howto/">Deploying Quarkus applications compiled to native executables</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/deploying-to-azure-cloud/">Implantando na nuvem do Microsoft Azure</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/deploying-to-google-cloud/">Deploying to Google Cloud Platform (GCP)</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/deploying-to-heroku/">Implantando na Heroku</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/ansible/">Automate Quarkus deployment with Ansible</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Serverless functions</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/aws-lambda/">AWS Lambda</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/aws-lambda-http/">AWS Lambda com Quarkus REST, Undertow ou Reactive Routes</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/aws-lambda-snapstart/">AWS Lambda SnapStart configuration</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/gcp-functions/">Google Cloud Functions (serverless)</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/gcp-functions-http/">Google Cloud Functions (Serverless) with Quarkus REST, Undertow, or Reactive Routes</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/azure-functions/">Azure Functions</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/azure-functions-http/">Azure Functions with Quarkus REST, Undertow, or Reactive Routes</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/funqy/">Funqy</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/funqy-http/">Funqy HTTP binding (standalone)</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/funqy-aws-lambda/">Funqy AWS Lambda binding</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/funqy-aws-lambda-http/">Funqy HTTP Binding with AWS Lambda�</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/funqy-gcp-functions/">Funqy Google Cloud Functions</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/funqy-gcp-functions-http/">Funqy HTTP binding with Google Cloud Functions</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/funqy-azure-functions-http/">Funqy HTTP binding with Azure Functions</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/funqy-knative-events/">Funqy Knative events binding</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Kubernetes</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/kubernetes-client/">Kubernetes Client</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/kubernetes-config/">Kubernetes Config</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/kubernetes-dev-services/">Dev Services para Kubernetes</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/init-tasks/">Tarefas de inicialização</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Service discovery</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/stork/">Getting started with SmallRye Stork</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/stork-kubernetes/">Usando o Stork com o Kubernetes</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/stork-reference/">Stork reference guide</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/stork-registration/">Automatic service registration with SmallRye Stork for Quarkus</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/stork-manual-service-registration/">Implementing a custom Stork service registrar</a>
+                    </li>
+            </ul>
+          </details>
+    </details>
+    
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+
+    <details class="guide-nav-cat" >
+      <summary>Operações</summary>
+
+          
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Management</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/management-interface-reference/">Management interface reference</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/tls-registry-reference/">TLS registry reference</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/proxy-registry/">Using Proxy Registry</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Health</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/smallrye-health/">SmallRye Health</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/info/">Application info endpoint</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Registrando</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/logging/">Logging configuration</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/centralized-log-management/">Centralized log management (Graylog, Logstash, Fluentd)</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/opentelemetry-logging/">Using OpenTelemetry Logging</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Metrics and telemetry</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/telemetry-micrometer/">Micrometer Metrics</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/telemetry-micrometer-tutorial/">Collect metrics using Micrometer</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/observability/">Observabilidade no Quarkus</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/opentelemetry/">Usando OpenTelemetry</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/opentelemetry-tracing/">Using OpenTelemetry Tracing</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/opentelemetry-metrics/">Using OpenTelemetry Metrics</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/telemetry-micrometer-to-opentelemetry/">Micrometer and OpenTelemetry extension</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/telemetry-opentracing-to-otel-tutorial/">Migrate from OpenTracing to OpenTelemetry tracing</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/jfr/">Using JDK Flight Recorder</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/observability-devservices/">Observability Dev Services</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/observability-devservices-lgtm/">Observability Dev Services with Grafana OTel LGTM</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Resilience</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/smallrye-fault-tolerance/">SmallRye Fault Tolerance</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/load-shedding-reference/">Load shedding reference guide</a>
+                    </li>
+            </ul>
+          </details>
+    </details>
+    
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+
+    <details class="guide-nav-cat" >
+      <summary>Serialização</summary>
+
+          
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>JSON</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/rest-json/">Escrevendo serviços JSON REST</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>gRPC</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/grpc/">gRPC</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/grpc-getting-started/">Getting started with gRPC</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/grpc-service-implementation/">Implementação de um serviço gRPC</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/grpc-service-consumption/">Consumindo um serviço gRPC</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/grpc-cli/">Using gRPC CLI</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/grpc-reference/">gRPC reference guide</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/grpc-generation-reference/">gRPC code generation reference guide</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/grpc-kubernetes/">Deploying your gRPC service in Kubernetes</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/grpc-virtual-threads/">Quarkus virtual thread support for gRPC services</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/grpc-xds/">Usando o xDS gRPC</a>
+                    </li>
+            </ul>
+          </details>
+    </details>
+    
+        
+        
+        
+        
+
+    <details class="guide-nav-cat" >
+      <summary>Command line</summary>
+
+        <ul>
+                <li >
+                  <a href="/version/3.40/guides/command-mode-reference/">Command mode applications</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/picocli/">Command mode with Picocli</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/aesh/">Command mode with Aesh</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/scripting/">Scripting with Quarkus</a>
+                </li>
+        </ul>
+    </details>
+    
+          
+          
+          
+          
+          
+          
+          
+
+    <details class="guide-nav-cat" >
+      <summary>Diversos</summary>
+
+          
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Mail</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/mailer/">Sending emails using SMTP</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/mailer-reference/">Mailer reference guide</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Scheduling</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/scheduler/">Scheduling periodic tasks</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/scheduler-reference/">Scheduler reference guide</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/quartz/">Scheduling periodic tasks with Quartz</a>
+                    </li>
+            </ul>
+          </details>
+          
+            
+            
+
+          <details class="guide-nav-subcat" >
+            <summary>Templating</summary>
+            <ul>
+                    <li >
+                      <a href="/version/3.40/guides/qute/">Qute templating engine</a>
+                    </li>
+                    <li >
+                      <a href="/version/3.40/guides/qute-reference/">Qute reference guide</a>
+                    </li>
+            </ul>
+          </details>
+    </details>
+    
+        
+        
+        
+        
+        
+        
+
+    <details class="guide-nav-cat" >
+      <summary>Ferramentas</summary>
+
+        <ul>
+                <li >
+                  <a href="/version/3.40/guides/cli-tooling/">Criar aplicações Quarkus com a interface de linha de comandos (CLI) do Quarkus</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/maven-tooling/">Quarkus and Maven</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/quarkus-maven-plugin/">Quarkus Maven plugin</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/gradle-tooling/">Quarkus and Gradle</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/build-analytics/">Build analytics</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/update-quarkus/">Atualizando projetos para a versão mais recente do Quarkus</a>
+                </li>
+        </ul>
+    </details>
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+    <details class="guide-nav-cat" >
+      <summary>Spring compatibility</summary>
+
+        <ul>
+                <li >
+                  <a href="/version/3.40/guides/spring-di/">Quarkus extension for Spring DI API</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/spring-web/">Quarkus extension for Spring Web API</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/spring-data-jpa/">Extension for Spring Data API</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/spring-tx/">Quarkus extension for Spring Transaction API</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/spring-boot-properties/">Acessando propriedades da aplicação com Spring Boot Properties API</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/spring-security/">Quarkus extension for Spring Security API</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/spring-cache/">Quarkus extension for Spring Cache API</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/spring-scheduled/">Quarkus extension for Spring Scheduling API</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/spring-data-rest/">Extensão para Spring Data REST</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/spring-cloud-config-client/">Reading properties from Spring Cloud Config Server</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/spring-test/">Testing Spring-style applications in Quarkus</a>
+                </li>
+        </ul>
+    </details>
+    
+        
+
+    <details class="guide-nav-cat" >
+      <summary>Integração</summary>
+
+        <ul>
+                <li >
+                  <a href="/version/3.40/guides/camel/">Apache Camel no Quarkus</a>
+                </li>
+        </ul>
+    </details>
+    
+        
+
+    <details class="guide-nav-cat" >
+      <summary>Alternative languages</summary>
+
+        <ul>
+                <li >
+                  <a href="/version/3.40/guides/kotlin/">Usando Kotlin</a>
+                </li>
+        </ul>
+    </details>
+    
+        
+        
+        
+        
+        
+        
+        
+        
+
+    <details class="guide-nav-cat" >
+      <summary>Arquitetura</summary>
+
+        <ul>
+                <li >
+                  <a href="/version/3.40/guides/quarkus-reactive-architecture/">Quarkus reactive architecture</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/platform/">Platform</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/class-loading-reference/">Class loading reference</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/modularity/">Quarkus modularity</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/modularity-reference/">Modularity SPI reference</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/dev-mode-differences/">Como é que o modo de desenvolvimento difere de uma aplicação de produção</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/extension-registry-user/">Quarkus extension registry</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/performance-measure/">Measuring performance</a>
+                </li>
+        </ul>
+    </details>
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+    <details class="guide-nav-cat" >
+      <summary>Writing extensions</summary>
+
+        <ul>
+                <li >
+                  <a href="/version/3.40/guides/writing-extensions/">Writing your own extension</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/building-my-first-extension/">Building my first extension</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/extension-metadata/">Quarkus extension metadata</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/capabilities/">Extension capabilities</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/cdi-integration/">CDI integration guide</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/conditional-extension-dependencies/">Conditional extension dependencies</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/all-builditems/">Itens de Construção</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/dev-ui/">Interface do usuário do desenvolvedor</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/extension-codestart/">Extension codestart</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/extension-writing-dev-service/">Writing a Dev Service</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/dev-mcp/">Dev MCP</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/agent-mcp/">Agent MCP</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/assistant/">Dev Assistant</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/extension-maturity-matrix/">Uma matriz de maturidade para extensões Quarkus</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/extension-faq/">Frequently asked questions about writing extensions</a>
+                </li>
+        </ul>
+    </details>
+    
+        
+        
+        
+        
+
+    <details class="guide-nav-cat" >
+      <summary>Contribuindo</summary>
+
+        <ul>
+                <li >
+                  <a href="/version/3.40/guides/doc-contribute-docs-howto/">Contribute to Quarkus documentation</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/doc-concept/">Tipos de conteúdo da documentação Quarkus</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/doc-reference/">Quarkus style and content guidelines</a>
+                </li>
+                <li >
+                  <a href="/version/3.40/guides/doc-create-tutorial/">Creating a tutorial</a>
+                </li>
+        </ul>
+    </details>
+    
+        
+
+    <details class="guide-nav-cat" >
+      <summary>Rule engine</summary>
+
+        <ul>
+                <li >
+                  <a href="/version/3.40/guides/drools/">Definindo e executando regras de negócio com Drools</a>
+                </li>
+        </ul>
+    </details>
+</nav>
+  </div>
+  <div class="guide-layout">
+    <div class="guide-toc-wrapper hide-tablet">
+      <div class="toc"><nav class="roq-toc" aria-label="Table of contents">
+<ul>
+<li data-level="1"><a href="#_do_you_need_a_native_executable">Do you need a native executable?</a>
+<ul>
+<li data-level="2"><a href="#comparing-jvm-aot-native">Comparing JVM, Leyden AOT, and native modes</a></li>
+</ul>
+</li>
+<li data-level="1"><a href="#_prerequisites">Pré-requisitos</a>
+<ul>
+<li data-level="2"><a href="#_background">Background</a></li>
+<li data-level="2"><a href="#configuring-graalvm">Configurando a GraalVM</a></li>
+</ul>
+</li>
+<li data-level="1"><a href="#_solution">Solução</a></li>
+<li data-level="1"><a href="#_producing_a_native_executable">Desenvolvendo um executável nativo</a>
+<ul>
+<li data-level="2"><a href="#_build_fully_static_native_executables">Buildando executáveis nativos totalmente estáticos</a></li>
+</ul>
+</li>
+<li data-level="1"><a href="#_testing_the_native_executable">Testando o executável nativo</a>
+<ul>
+<li data-level="2"><a href="#_profiles">Profiles</a></li>
+<li data-level="2"><a href="#_java_preview_features">Java preview features</a></li>
+<li data-level="2"><a href="#_excluding_tests_when_running_as_a_native_executable">Excluindo testes ao executar como um executável nativo</a></li>
+<li data-level="2"><a href="#_testing_an_existing_native_executable">Testar um executável nativo existente</a></li>
+</ul>
+</li>
+<li data-level="1"><a href="#container-runtime">Criando um executável Linux sem o GraalVM instalado</a></li>
+<li data-level="1"><a href="#_creating_a_container">Criando um contêiner</a>
+<ul>
+<li data-level="2"><a href="#_using_the_container_image_extensions">Utilizar as extensões dos container-image</a></li>
+<li data-level="2"><a href="#_manually_using_the_micro_base_image">Utilizando a micro imagem base manualmente</a></li>
+<li data-level="2"><a href="#_manually_using_the_minimal_base_image">Utilizando manualmente a imagem base mínima</a></li>
+<li data-level="2"><a href="#multistage-docker">Utilizar uma compilação do Docker multi-stage</a></li>
+<li data-level="2"><a href="#_using_a_distroless_base_image">Usando uma imagem base sem distribuição</a></li>
+<li data-level="2"><a href="#_build_a_container_image_from_scratch">Criar uma imagem scratch</a></li>
+<li data-level="2"><a href="#_compress_native_images">Compactar imagens nativas</a></li>
+<li data-level="2"><a href="#_separating_java_and_native_image_compilation">Separando a compilação de imagens nativas e Java</a></li>
+</ul>
+</li>
+<li data-level="1"><a href="#_debugging_native_executable">Debugando um executável nativo</a></li>
+<li data-level="1"><a href="#_using_monitoring_options">Utilizar as opções de monitoração</a></li>
+<li data-level="1"><a href="#configuration-reference">Creating a Native Image Bundle</a></li>
+<li data-level="1"><a href="#_configuring_the_native_executable">Configuração do executável nativo</a></li>
+<li data-level="1"><a href="#_whats_next">What’s next?</a></li>
+</ul>
+</nav>
+</div>
+    </div>
+    <div class="guide-main">
+      <h1 class="text-caps">Building a native executable </h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Este guia inclui:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Compilar a aplicação para um executável nativo</p>
+</li>
+<li>
+<p>Empacotar o executável nativo em um container</p>
+</li>
+<li>
+<p>Debugando um executável nativo</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_do_you_need_a_native_executable">Do you need a native executable?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Quarkus on the JVM is already fast, sub-second startup, low memory footprint, and optimized throughput.
+For many applications, JVM mode is the right choice.</p>
+</div>
+<div class="paragraph">
+<p>Native executables shine when:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Startup time is critical</strong>: serverless/FaaS, CLI tools, or scale-to-zero environments where cold starts matter.</p>
+</li>
+<li>
+<p><strong>Memory is constrained</strong>: dense container deployments or edge devices with tight RAM budgets.</p>
+</li>
+<li>
+<p><strong>You want the smallest possible container image</strong>: native binaries produce images under 50MB.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>JVM mode is typically better when:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Peak throughput matters most</strong>: the JVM&#8217;s JIT compiler optimizes hot paths at runtime, which can outperform native on long-running workloads.</p>
+</li>
+<li>
+<p><strong>Build time is a constraint</strong>: native compilation takes minutes, JVM builds take seconds.</p>
+</li>
+<li>
+<p><strong>You rely heavily on reflection or dynamic class loading</strong>: these require explicit configuration for native images.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Start with JVM mode. Move to native when you have a concrete need. Both modes use the same code and the same Quarkus optimizations: native just changes how the binary is produced.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="comparing-jvm-aot-native">Comparing JVM, Leyden AOT, and native modes</h3>
+<div class="paragraph">
+<p>Native is one of three runtime options Quarkus supports.
+JVM fast-jar, JVM with <a href="/version/3.40/guides/aot/">Project Leyden AOT caching</a> (JDK 24+), and native (Mandrel) each trade cold-start speed, peak throughput, memory footprint, and build cost differently.
+The table below compares them.
+Pick the mode that matches your workload&#8217;s most important constraint.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Mode</th>
+<th class="tableblock halign-left valign-top">Cold start</th>
+<th class="tableblock halign-left valign-top">Time to first request</th>
+<th class="tableblock halign-left valign-top">Peak throughput</th>
+<th class="tableblock halign-left valign-top">Memory (RSS)</th>
+<th class="tableblock halign-left valign-top">Container image size</th>
+<th class="tableblock halign-left valign-top">Build cost</th>
+<th class="tableblock halign-left valign-top">When to choose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JVM fast-jar</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">~0.4 s (small REST) to ~3 s (large CRUD)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4,417 ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13,265 tps (baseline)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">304 MiB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">517 MB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">~30 s build; no special workflow</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Long-running services, throughput-critical workloads; teams on pre-JDK-24 runtimes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="/version/3.40/guides/aot/">JVM + Leyden AOT cache</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">~80 ms (small) to ~900 ms (large)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1,859 ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">12,389 tps (~7% below JVM)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">240 MiB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">715 MB (AOT cache adds ~198 MB)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Standard build plus a training run on a representative workload</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cold-start-sensitive but not millisecond-critical; requires JDK 24+; keeps full JVM tooling (debuggers, profilers, JFR)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Native (Mandrel)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">~17 ms (small) to ~240 ms (large)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">581 ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5,411 tps (~59% below JVM)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">95 MiB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">244 MB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3-10 min build; 4-8 GB build-host RAM</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Extreme cold start (serverless, scale-to-zero); edge deployments; high-density container hosts where memory is the binding constraint</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Time to first request, peak throughput, and memory (RSS) come from the <a href="https://raw.githubusercontent.com/quarkusio/benchmarks/main/images/spring-quarkus-perf-comparison/2026-04-21_09-26-13/metrics-tuned-composite-for-quarkus-light.svg">2026-04-21 perf-lab tuned benchmark</a> (Quarkus 3.34.3, JDK 25.0.2, GraalVM 25.0.2-graalce, 4 CPUs, <code>-Xmx512m</code>).
+Cold-start ranges and container image sizes come from the <a href="https://quarkus.io/blog/leyden-2/">Leyden integration benchmarks</a> and the <a href="https://quarkus.io/blog/new-benchmarks/">Mar 2026 performance post</a>.
+For the latest numbers, see the <a href="https://github.com/quarkusio/benchmarks#chart-reference">Quarkus benchmarks chart reference</a>.</p>
+</div>
+<div class="paragraph">
+<p>For the Leyden AOT cache path, see <a href="/version/3.40/guides/aot/">the AOT caching guide</a>.
+If native is the right fit for your workload, read on. The next sections walk you through prerequisites, compilation, testing, and container packaging.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_prerequisites">Pré-requisitos</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Para concluir este guia, você precisa:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Cerca de 15 minutos</p>
+</li>
+<li>
+<p>Um IDE</p>
+</li>
+<li>
+<p>JDK 17+ instalado com <code>JAVA_HOME</code> configurado corretamente</p>
+</li>
+<li>
+<p>Apache Maven 3.9.16</p>
+</li>
+<li>
+<p>Um container runtime instalado (Docker ou <a href="/version/3.40/guides/podman/">Podman</a>)</p>
+</li>
+<li>
+<p>Opcionalmente, o <a href="/version/3.40/guides/cli-tooling/">Quarkus CLI</a> se você quiser usá-lo</p>
+</li>
+<li>
+<p>Mandrel ou GraalVM instalado e <a href="#configuring-graalvm">configurado adequadamente</a></p>
+</li>
+<li>
+<p>Um  <a href="#configuring-c-development">ambiente de desenvolvimento em C</a></p>
+</li>
+<li>
+<p>O código da aplicação desenvolvida no  <a href="getting-started.html">Guia de Iniciação</a>.</p>
+</li>
+</ul>
+</div>
+<div id="configuring-c-development" class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Suporte à compilação nativa em C</div>
+<div class="paragraph">
+<p>O que significa ter um ambiente de desenvolvimento em C?</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>No Linux, é necessário o GCC e os headers glibc e zlib. Exemplos de distribuições comuns:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># dnf (rpm-based)
+sudo dnf install gcc glibc-devel zlib-devel libstdc++-static
+# Debian-based distributions:
+sudo apt-get install build-essential libz-dev zlib1g-dev
+# Arch Linux
+sudo pacman -S freetype2 gcc glibc lib32-gcc-libs zlib</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>O XCode fornece as dependências necessárias no macOS:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">xcode-select --install</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>On Windows, you will need to install the <a href="https://aka.ms/vs/17/release/vs_buildtools.exe">Visual Studio 2022 Visual C++ Build Tools</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_background">Background</h3>
+<div class="paragraph">
+<p>A criação de um executável nativo requer o uso de uma distribuição do GraalVM. Há três distribuições: Oracle GraalVM Community Edition (CE), Oracle GraalVM Enterprise Edition (EE) e Mandrel. As diferenças entre as distribuições Oracle e Mandrel são as seguintes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>O Mandrel é uma distribuição downstream do Oracle GraalVM CE. O principal objetivo do Mandrel é fornecer uma maneira de criar executáveis nativos projetados especificamente para dar suporte ao Quarkus.</p>
+</li>
+<li>
+<p>As versões Mandrel são criadas a partir de uma base de código derivada da base de código do Oracle GraalVM CE, com apenas pequenas alterações, mas algumas exclusões significativas que não são necessárias para os aplicativos nativos do Quarkus. Eles suportam os mesmos recursos para criar executáveis nativos que o Oracle GraalVM CE, sem alterações significativas na funcionalidade. Notavelmente, eles não incluem suporte para programação poliglota. O motivo dessas exclusões é oferecer um melhor nível de suporte para a maioria dos usuários do Quarkus. Essas exclusões também significam que o Mandrel oferece uma redução considerável no tamanho de sua distribuição quando comparado ao Oracle GraalVM CE/EE.</p>
+</li>
+<li>
+<p>O Mandrel foi desenvolvido de forma ligeiramente diferente do Oracle GraalVM CE, usando o projeto OpenJDK padrão. Isso significa que ele não se beneficia de alguns pequenos aprimoramentos que a Oracle adicionou à versão do OpenJDK usada para criar seus próprios downloads do GraalVM. Esses aprimoramentos são omitidos porque o OpenJDK upstream não os gerencia e não pode garantir eles. Isso é particularmente importante quando se trata de conformidade e segurança.</p>
+</li>
+<li>
+<p>Mandrel is recommended for building native executables that target Linux containerized environments.
+This means that Mandrel users are encouraged to use containers to build their native executables.
+If you are building native executables for macOS on amd64/x86,
+you should consider using Oracle GraalVM instead,
+because Mandrel does not currently target this platform.
+Building native executables directly on bare metal Linux, macOS (on M processors), or Windows is possible,
+with details available in the <a href="https://github.com/graalvm/mandrel/blob/default/README.md">Mandrel README</a>
+and <a href="https://github.com/graalvm/mandrel/releases">Mandrel releases</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configuring-graalvm">Configurando a GraalVM</h3>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This step is only required for generating native executables targeting non-Linux operating systems.
+For generating native executables targeting Linux, you can optionally skip this section and <a href="#container-runtime">use a builder image</a> instead.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you cannot install GraalVM, you can use a multi-stage Docker build to run Maven inside a Docker container that embeds GraalVM.
+There is an explanation of how to do this at <a href="#multistage-docker">the end of this guide</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>GraalVM for JDK 21 é necessário.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Instale o GraalVM se ainda não o fez. Existem algumas opções para isso:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Download do arquivo apropriado de  <a href="https://github.com/graalvm/mandrel/releases" class="bare">https://github.com/graalvm/mandrel/releases</a>  ou  <a href="https://github.com/graalvm/graalvm-ce-builds/releases" class="bare">https://github.com/graalvm/graalvm-ce-builds/releases</a>  e descompacte-o como faria com qualquer outro JDK.</p>
+</li>
+<li>
+<p>Use ferramentas de instalação específicas da plataforma, como <a href="https://sdkman.io/jdks#graalce">sdkman</a> , <a href="https://github.com/graalvm/homebrew-tap">homebrew</a> ou <a href="https://github.com/ScoopInstaller/Java">scoop</a> . Recomendamos a <em>community edition</em> do GraalVM. Por exemplo, instale-o com <code>sdk install java 21-graalce</code> .</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Configurar o runtime environment. Defina a variável de ambiente <code>GRAALVM_HOME</code> para o diretório de instalação do GraalVM, por exemplo:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export GRAALVM_HOME=$HOME/Development/mandrel/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>On macOS (amd64/x86 based Macs not supported), point the variable to the <code>Home</code> sub-directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export GRAALVM_HOME=$HOME/Development/graalvm/Contents/Home/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>No Windows, você terá que ir até o Painel de Controle para definir as suas variáveis de ambiente.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>A instalação através do scoop irá fazer tudo por você.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>(Opcional) Defina a variável de ambiente <code>JAVA_HOME</code> para o diretório de instalação do GraalVM.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export JAVA_HOME=${GRAALVM_HOME}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>(Opcional) Adicione o diretório <code>bin</code> GraalVM <code>bin</code> no PATH</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export PATH=${GRAALVM_HOME}/bin:$PATH</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div id="graal-and-macos" class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Problemas ao usar o GraalVM com o macOS</div>
+<div class="paragraph">
+<p>Os binários do GraalVM não estão (ainda) certificados para macOS, conforme relatado nesta  <a href="https://github.com/oracle/graal/issues/1724">issue do GraalVM</a>. Isso significa que pode ocorrer o seguinte erro ao usar <code>native-image</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">“native-image” cannot be opened because the developer cannot be verified</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use o seguinte comando para excluir recursivamente o atributo estendido <code>com.apple.quarantine</code> no diretório de instalação do GraalVM como uma solução alternativa:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">xattr -r -d com.apple.quarantine ${GRAALVM_HOME}/../..</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_solution">Solução</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Recomendamos que siga as instruções nos passos seguintes e que prepare a aplicação passo a passo. No entanto, pode ir diretamente para o exemplo completo.</p>
+</div>
+<div class="paragraph">
+<p>Clone o repositório Git: <code>git clone -b 3.40 <a href="https://github.com/quarkusio/quarkus-quickstarts.git" class="bare">https://github.com/quarkusio/quarkus-quickstarts.git</a></code>, ou baixe um <a href="https://github.com/quarkusio/quarkus-quickstarts/archive/3.40.zip">arquivo</a>.</p>
+</div>
+<div class="paragraph">
+<p>A solução está localizada no diretório <code>getting-started</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_producing_a_native_executable">Desenvolvendo um executável nativo</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>O executável nativo da nossa aplicação conterá o código da aplicação, as bibliotecas necessárias, as APIs Java e uma versão reduzida de uma VM. A base menor da VM melhora o tempo de inicialização da aplicação e cria um espaço menor em disco.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="./images/native-executable-process.png" alt="Criando um executável nativo"></span></p>
+</div>
+<div class="paragraph">
+<p>If you have generated the application from the previous tutorial, you can find in the <code>pom.xml</code> the following Maven profile section:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;profiles&gt;
+    &lt;profile&gt;
+        &lt;id&gt;native&lt;/id&gt;
+        &lt;activation&gt;
+            &lt;property&gt;
+                &lt;name&gt;native&lt;/name&gt;
+            &lt;/property&gt;
+        &lt;/activation&gt;
+        &lt;properties&gt;
+            &lt;skipITs&gt;false&lt;/skipITs&gt;
+            &lt;quarkus.native.enabled&gt;true&lt;/quarkus.native.enabled&gt;
+        &lt;/properties&gt;
+    &lt;/profile&gt;
+&lt;/profiles&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can provide custom options for the <code>native-image</code> command using the <code>quarkus.native.additional-build-args</code> and <code>quarkus.native.additional-build-args-append</code> properties.
+Multiple options may be separated by a comma.</p>
+</div>
+<div class="paragraph">
+<p>By convention <code>quarkus.native.additional-build-args-append</code> is meant to be defined at the command line (e.g. <code>-Dquarkus.native.additional-build-args-append=--verbose</code>), while <code>quarkus.native.additional-build-args</code> may be defined either at the command line or in your <code>application.properties</code>. Note that, any arguments included in <code>quarkus.native.additional-build-args-append</code> may override those included in <code>quarkus.native.additional-build-args</code>.</p>
+</div>
+<div class="paragraph">
+<p>You can find more information about how to configure the native image building process in the <a href="#configuration-reference">Creating a Native Image Bundle</a> section below.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>We use a profile because, you will see very soon, packaging the native executable takes a <em>few</em> minutes. You could
+just pass -Dquarkus.native.enabled=true as a property on the command line, however it is better to use a profile as
+this allows native image tests to also be run.</p>
+</div>
+<div class="paragraph">
+<p>Criar um executável nativo utilizando:</p>
+</div>
+<div class="listingblock primary asciidoc-tabs-sync-cli">
+<div class="title">CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">quarkus build --native</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-maven">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw install -Dnative</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-gradle">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./gradlew build -Dquarkus.native.enabled=true</code></pre>
+</div>
+</div>
+<div id="graal-and-windows" class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Problemas com o empacotamento no Windows</div>
+<div class="paragraph">
+<p>As Microsoft Native Tools for Visual Studio devem ser inicializadas antes do empacotamento. Você pode fazer isso iniciando o <code>x64 Native Tools Command Prompt</code> que foi instalado com o Visual Studio Build Tools. No <code>x64 Native Tools Command Prompt</code> , você pode navegar até a pasta do projeto e executar <code>./mvnw package -Dnative</code> .</p>
+</div>
+<div class="paragraph">
+<p>Outra solução é escrever um script para fazer isso para você:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cmd /c 'call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" &amp;&amp; mvn package -Dnative'</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Além dos arquivos normais, a construção também produz <code>target/getting-started-1.0.0-SNAPSHOT-runner</code> . Você pode executá-lo usando: <code>./target/getting-started-1.0.0-SNAPSHOT-runner</code> .</p>
+</div>
+<div id="graal-package-preview" class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Java preview features</div>
+<div class="paragraph">
+<p>O código Java que depende de recursos preview requer atenção especial. Para produzir um executável nativo, isso significa que o sinalizador <code>--enable-preview</code> precisa ser passado para a invocação da imagem nativa subjacente. Você pode fazer isso prefixando o sinalizador com <code>-J</code> e passando-o como argumento adicional de construção nativa: <code>-Dquarkus.native.additional-build-args=-J—​enable-preview</code> .</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_build_fully_static_native_executables">Buildando executáveis nativos totalmente estáticos</h3>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Fully static native executables support is experimental.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>No Linux, é possível empacotar um executável nativo que não dependa de nenhuma biblioteca compartilhada do sistema. Há <a href="https://www.graalvm.org/jdk21/reference-manual/native-image/guides/build-static-executables/#prerequisites-and-preparation">alguns requisitos de sistema</a> a serem atendidos e argumentos de construção adicionais a serem usados junto com a invocação <code>native-image</code> ; o mínimo é <code>-Dquarkus.native.additional-build-args="--static","--libc=musl"</code> .</p>
+</div>
+<div class="paragraph">
+<p>A compilação de binários totalmente estáticos é feita através de um link estático com o <a href="https://musl.libc.org/">musl</a> em vez de <code>glibc</code> e não deve ser usada em produção sem testes rigorosos.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_testing_the_native_executable">Testando o executável nativo</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Produzir um executável nativo pode gerar alguns problemas e, por isso, também é uma boa ideia executar alguns testes na aplicação em execução no arquivo nativo. O raciocínio é explicado no <a href="getting-started-testing#quarkus-integration-test">Guia de testes</a>.</p>
+</div>
+<div class="paragraph">
+<p>Para ver o <code>GreetingResourceIT</code> ser executado no executável nativo, utilize <code>./mvnw verify -Dnative</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">$ ./mvnw verify -Dnative
+...
+Finished generating 'getting-started-1.0.0-SNAPSHOT-runner' in 22.0s.
+[INFO] [io.quarkus.deployment.pkg.steps.NativeImageBuildRunner] docker run --env LANG=C --rm --user 1000:1000 -v /home/zakkak/code/quarkus-quickstarts/getting-started/target/getting-started-1.0.0-SNAPSHOT-native-image-source-jar:/project:z --entrypoint /bin/bash quay.io/quarkus/ubi9-quarkus-mandrel-builder-image:jdk-21 -c objcopy --strip-debug getting-started-1.0.0-SNAPSHOT-runner
+[INFO] [io.quarkus.deployment.QuarkusAugmentor] Quarkus augmentation completed in 70686ms
+[INFO]
+[INFO] --- maven-failsafe-plugin:3.0.0-M7:integration-test (default) @ getting-started ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO]
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running org.acme.getting.started.GreetingResourceIT
+Executing "/home/zakkak/code/quarkus-quickstarts/getting-started/target/getting-started-1.0.0-SNAPSHOT-runner -Dquarkus.http.port=8081 -Dquarkus.http.ssl-port=8444 -Dquarkus.log.file.path=/home/zakkak/code/quarkus-quickstarts/getting-started/target/quarkus.log -Dquarkus.log.file.enable=true -Dquarkus.log.category."io.quarkus".level=INFO"
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,&lt; / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2023-05-05 10:55:52,068 INFO  [io.quarkus] (main) getting-started 1.0.0-SNAPSHOT native (powered by Quarkus 3.0.2.Final) started in 0.009s. Listening on: http://0.0.0.0:8081
+2023-05-05 10:55:52,069 INFO  [io.quarkus] (main) Profile prod activated.
+2023-05-05 10:55:52,069 INFO  [io.quarkus] (main) Installed features: [cdi, rest, smallrye-context-propagation, vertx]
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.99 s - in org.acme.getting.started.GreetingResourceIT
+...</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Por padrão, o Quarkus aguarda 60 segundos para que a imagem nativa seja iniciada antes de reprovar automaticamente os testes nativos. Essa duração pode ser alterada usando a propriedade do sistema <code>quarkus.test.wait-time</code> . Por exemplo, para aumentar a duração para 300 segundos, use: <code>./mvnw verify -Dnative -Dquarkus.test.wait-time=300</code> .</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Esse procedimento era realizado anteriormente usando a anotação <code>@NativeImageTest</code> . <code>@NativeImageTest</code> foi substituído por <code>@QuarkusIntegrationTest</code> , que fornece um superconjunto dos recursos de teste de <code>@NativeImageTest</code> . Mais informações sobre <code>@QuarkusIntegrationTest</code> podem ser encontradas no <a href="/version/3.40/guides/getting-started-testing/#quarkus-integration-test">Guia de Testes</a> .</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_profiles">Profiles</h3>
+<div class="paragraph">
+<p>Por padrão, os testes de integração <strong>build</strong> e <strong>run</strong> são feitos usando o profile <code>prod</code>.</p>
+</div>
+<div class="paragraph">
+<p>You can override the profile the executable <strong>runs</strong> with during the test using the <code>quarkus.test.integration-test-profile</code> property.
+Either by adding it to <code>application.properties</code> or by appending it to the command line:
+<code>./mvnw verify -Dnative -Dquarkus.test.integration-test-profile=test</code>.
+Your <code>%test.</code> prefixed properties will be used at the test runtime.</p>
+</div>
+<div class="paragraph">
+<p>Você pode substituir o perfil com o qual o executável é <strong>construído</strong> e <strong>rodado</strong> usando a propriedade <code>quarkus.profile=test</code> , por exemplo, <code>./mvnw clean verify -Dnative -Dquarkus.profile=test</code> . Isso pode ser útil se houver recursos específicos de teste a serem processados, como a importação de dados de teste para o banco de dados.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">quarkus.native.resources.includes=version.txt
+%test.quarkus.native.resources.includes=version.txt,import-dev.sql
+%test.quarkus.hibernate-orm.schema-management.strategy=drop-and-create
+%test.quarkus.hibernate-orm.sql-load-script=import-dev.sql</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Com o exemplo mencionado acima em seu <code>application.properties</code> , o banco de dados gerenciado do Hibernate ORM será preenchido com dados de teste durante a execução do teste no modo JVM e durante a execução do teste no modo nativo. O executável de produção conterá apenas o recurso <code>version.txt</code> , sem dados de teste supérfluos.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>O executável criado com <code>-Dquarkus.profile=test</code> não é adequado para a implantação em produção. Ele contém os arquivos e as configurações dos recursos de teste. Quando o teste for concluído, o executável deverá ser criado novamente, usando o perfil padrão <code>prod</code> .</p>
+</div>
+<div class="paragraph">
+<p>Como alternativa, se você precisar especificar propriedades específicas ao executar testes no executável nativo criado usando o perfil <code>prod</code> , uma opção é colocar essas propriedades no arquivo <code>src/test/resources/application-nativeit.yaml</code> e fazer referência a ele na configuração do plug-in <code>failsafe</code> usando a variável de ambiente <code>QUARKUS_CONFIG_LOCATIONS</code> . Por exemplo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+  &lt;artifactId&gt;maven-failsafe-plugin&lt;/artifactId&gt;
+  &lt;version&gt;${surefire-plugin.version}&lt;/version&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+      &lt;goals&gt;
+        &lt;goal&gt;integration-test&lt;/goal&gt;
+        &lt;goal&gt;verify&lt;/goal&gt;
+      &lt;/goals&gt;
+      &lt;configuration&gt;
+        &lt;systemPropertyVariables&gt;
+          &lt;native.image.path&gt;${project.build.directory}/${project.build.finalName}-runner&lt;/native.image.path&gt;
+          &lt;java.util.logging.manager&gt;org.jboss.logmanager.LogManager&lt;/java.util.logging.manager&gt;
+          &lt;maven.home&gt;${maven.home}&lt;/maven.home&gt;
+        &lt;/systemPropertyVariables&gt;
+        &lt;environmentVariables&gt;
+          &lt;QUARKUS_CONFIG_LOCATIONS&gt;./src/test/resources/application-nativeit.yaml&lt;/QUARKUS_CONFIG_LOCATIONS&gt;
+        &lt;/environmentVariables&gt;
+      &lt;/configuration&gt;
+    &lt;/execution&gt;
+  &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_java_preview_features">Java preview features</h3>
+<div id="graal-test-preview" class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Java preview features</div>
+<div class="paragraph">
+<p>O código Java que depende de recursos preview requer atenção especial. Para testar um executável nativo, isso significa que o indicador <code>--enable-preview</code> precisa ser passado para o plug-in Surefire. Adicionar <code>&lt;argLine&gt;--enable-preview&lt;/argLine&gt;</code> à sua seção <code>configuration</code> é uma maneira de fazer isso.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_excluding_tests_when_running_as_a_native_executable">Excluindo testes ao executar como um executável nativo</h3>
+<div class="paragraph">
+<p>Ao executar testes dessa forma, as únicas coisas que realmente são executadas nativamente são os endpoints da aplicação, que só podem ser testados por meio de chamadas HTTP. Seu código de teste não é realmente executado nativamente, portanto, se você estiver testando um código que não chama seus endpoints HTTP, provavelmente não é uma boa ideia executá-los como parte dos testes nativos.</p>
+</div>
+<div class="paragraph">
+<p>Se você compartilhar sua classe de teste entre a JVM e as execuções nativas, como aconselhamos acima, poderá marcar determinados testes com a anotação <code>@DisabledOnIntegrationTest</code> para ignorá-los ao testar uma imagem nativa.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Usar <code>@DisabledOnIntegrationTest</code> também desativará o teste em todas as instâncias de teste de integração, incluindo o teste da aplicação no modo JVM, em uma imagem de contêiner e em uma imagem nativa.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_testing_an_existing_native_executable">Testar um executável nativo existente</h3>
+<div class="paragraph">
+<p>Também é possível executar novamente os testes em um executável nativo que já tenha sido criado. Para fazer isso, execute <code>./mvnw test-compile failsafe:integration-test -Dnative</code> . Isso descobrirá a imagem nativa existente e executará os testes com base nela usando o failsafe.</p>
+</div>
+<div class="paragraph">
+<p>Se o processo não conseguir encontrar a imagem nativa por algum motivo ou se você quiser testar uma imagem nativa que não esteja mais no diretório de destino, poderá especificar o executável com a propriedade de sistema <code>-Dnative.image.path=</code> .</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="container-runtime">Criando um executável Linux sem o GraalVM instalado</h2>
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Before going further, be sure to have a working container runtime (Docker, podman) environment. If you use Docker
+on Windows you should share your project&#8217;s drive at Docker Desktop file share settings and restart Docker Desktop.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Muitas vezes, é necessário apenas criar um executável Linux nativo para o aplicativo Quarkus (por exemplo, para ser executado em um ambiente de contêiner) e evitar o trabalho de instalar a versão adequada do GraalVM para realizar essa tarefa (por exemplo, em ambientes de CI, é prática comum instalar o mínimo de software possível).</p>
+</div>
+<div class="paragraph">
+<p>Para isso, o Quarkus oferece uma maneira muito conveniente de criar um executável nativo do Linux, aproveitando um tempo de execução de contêiner, como o Docker ou o podman. A maneira mais fácil de realizar essa tarefa é executar:</p>
+</div>
+<div class="listingblock primary asciidoc-tabs-sync-cli">
+<div class="title">CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">quarkus build --native --no-tests -Dquarkus.native.container-build=true
+# The --no-tests flag is required only on Windows and macOS.</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-maven">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw install -Dnative -DskipTests -Dquarkus.native.container-build=true</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-gradle">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Por padrão, o Quarkus detecta automaticamente o tempo de execução do contêiner. Se quiser selecionar explicitamente o tempo de execução do contêiner, você pode fazer isso com:</p>
+</div>
+<div class="paragraph">
+<p>Para o Docker:</p>
+</div>
+<div class="listingblock primary asciidoc-tabs-sync-cli">
+<div class="title">CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">quarkus build --native -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime=docker</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-maven">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw install -Dnative -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime=docker</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-gradle">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime=docker</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Para o podman:</p>
+</div>
+<div class="listingblock primary asciidoc-tabs-sync-cli">
+<div class="title">CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">quarkus build --native -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime=podman</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-maven">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw install -Dnative -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime=podman</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-gradle">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true -Dquarkus.native.container-runtime=podman</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Essas são propriedades regulares de configuração do Quarkus, portanto, se quiser sempre construir em um contêiner, é recomendável adicioná-las ao seu <code>application.properties</code> para evitar especificá-las sempre.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Executable built that way with the container runtime will be a 64-bit Linux executable, so depending on your operating system, it may no longer be runnable.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Starting with Quarkus 3.19+, the <em>builder</em> image used to build the native executable is based on UBI 9.
+It means that the native executable produced by the container build will be based on UBI 9 as well.
+So, if you plan to build a container, make sure that the base image in your <code>Dockerfile</code> is compatible with UBI 9.
+The native executable will not run on UBI 8 base images.</p>
+</div>
+<div class="paragraph">
+<p>You can configure the builder image used for the container build by setting the <code>quarkus.native.builder-image</code> property.
+For example, to switch back to an UBI8 <em>builder image</em> you can use:</p>
+</div>
+<div class="paragraph">
+<p><code>quarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21</code></p>
+</div>
+<div class="paragraph">
+<p>You can see the available tags for UBI8 <a href="https://quay.io/repository/quarkus/ubi-quarkus-mandrel-builder-image?tab=tags">here</a>
+and for UBI9 <a href="https://quay.io/repository/quarkus/ubi9-quarkus-mandrel-builder-image?tab=tags">here (UBI 9)</a>)</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tip-quarkus-native-remote-container-build" class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Se vir o seguinte erro de caminho inválido para o JAR da sua aplicação ao tentar criar um executável nativo utilizando uma build em contêiner, mesmo o JAR ter sido compilado com sucesso, é muito provável que esteja utilizando um daemon remoto para o tempo de execução do contêiner.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Error: Invalid Path entry getting-started-1.0.0-SNAPSHOT-runner.jar
+Caused by: java.nio.file.NoSuchFileException: /project/getting-started-1.0.0-SNAPSHOT-runner.jar</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Neste caso, utilize o parâmetro <code>-Dquarkus.native.remote-container-build=true</code> ao invés de <code>-Dquarkus.native.container-build=true</code>.</p>
+</div>
+<div class="paragraph">
+<p>O motivo para isso é que o driver do build local é executado através do <code>-Dquarkus.native.container-build=true</code> que utiliza irá montar volumes para tornar o JAR disponível na build do contêiner, mas os volumes montados não funcionam com daemons remotos. O driver que faz a build do contêiner remoto copia apenas os arquivos necessários para montar ele. Observe que, embora o driver remoto também funcione com daemons locais, o driver local deve ser preferido no caso local porque a montagem é geralmente mais eficiente do que a cópia.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Fazer o build com o GraalVM ao invés do Mandrel requer que seja passado um parâmetro adicional ao construtor da imagem:</p>
+</div>
+<div class="listingblock primary asciidoc-tabs-sync-cli">
+<div class="title">CLI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">quarkus build --native -Dquarkus.native.container-build=true -Dquarkus.native.builder-image=graalvm</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-maven">
+<div class="title">Maven</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw install -Dnative -Dquarkus.native.container-build=true -Dquarkus.native.builder-image=graalvm</code></pre>
+</div>
+</div>
+<div class="listingblock secondary asciidoc-tabs-sync-gradle">
+<div class="title">Gradle</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true -Dquarkus.native.builder-image=graalvm</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Please note that the above command points to a floating tag.
+It is highly recommended to use the floating tag,
+so that your builder image remains up-to-date and secure.
+If you absolutely must, you may hard-code to a specific tag
+(see <a href="https://quay.io/repository/quarkus/ubi-quarkus-mandrel-builder-image?tab=tags">here (UBI 8)</a>
+and  <a href="https://quay.io/repository/quarkus/ubi9-quarkus-mandrel-builder-image?tab=tags">here (UBI 9)</a> for available tags),
+but be aware that you won&#8217;t get security updates that way and it&#8217;s unsupported.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_creating_a_container">Criando um contêiner</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_using_the_container_image_extensions">Utilizar as extensões dos container-image</h3>
+<div class="paragraph">
+<p>A maneira mais fácil de criar uma container-image a partir da sua aplicação Quarkus é utilizar uma das extensões de imagem de contêiner.</p>
+</div>
+<div class="paragraph">
+<p>Se uma dessas extensões estiverem presente, então a criação de uma imagem de contêiner para o executável nativo é executar um único comando:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw package -Dnative -Dquarkus.native.container-build=true -Dquarkus.container-image.build=true</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>quarkus.native.container-build=true</code> permite criar um executável Linux sem que o GraalVM esteja instalado (e só é necessário se não tiver o GraalVM instalado localmente ou se o seu sistema operacional local não for Linux)</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Se estiver executando um daemon Docker remoto, você terá que substituir <code>quarkus.native.container-build=true</code> por <code>quarkus.native.remote-container-build=true</code>.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="#tip-quarkus-native-remote-container-build">Creating a Linux executable without GraalVM installed</a> for more details.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>quarkus.container-image.build=true</code> instrui o Quarkus para criar um container-image utilizando o artefato final da aplicação (que, neste caso, é o executável nativo)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Consulte o <a href="container-image.html">Guia do container-image</a> para obter mais informações.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_manually_using_the_micro_base_image">Utilizando a micro imagem base manualmente</h3>
+<div class="paragraph">
+<p>You can run the application in a container using the JAR produced by the Quarkus Maven Plugin.
+However, in this section, we focus on creating a container image using the produced native executable.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="./images/containerization-process.png" alt="Processo de conteinerização"></span></p>
+</div>
+<div class="paragraph">
+<p>When using a local GraalVM installation, the native executable targets your local operating system (Linux, macOS, Windows etc).
+However, as a container may not use the same <em>executable</em> format as the one produced by your operating system,
+we will instruct the Maven build to produce an executable by leveraging a container runtime (as described in <a href="#container-runtime">this section</a>):</p>
+</div>
+<div class="paragraph">
+<p>The produced executable will be a 64-bit Linux executable, so depending on your operating system, it may no longer be runnable.
+However, it&#8217;s not an issue as we are going to copy it to a container.
+The project generation has provided a <code>Dockerfile.native-micro</code> in the <code>src/main/docker</code> directory with the following content:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dockerfile hljs" data-lang="dockerfile">FROM quay.io/quarkus/ubi9-quarkus-micro-image:2.0
+WORKDIR /work/
+RUN chown 1001 /work \
+    &amp;&amp; chmod "g+rwX" /work \
+    &amp;&amp; chown 1001:root /work
+COPY --chown=1001:root --chmod=755 target/*-runner /work/application
+
+EXPOSE 8080
+USER 1001
+
+ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0"]</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Quarkus Micro Image?</div>
+<div class="paragraph">
+<p>The Quarkus Micro Image is a small container image providing the right set of dependencies to run your native application.
+It is based on <a href="https://catalog.redhat.com/software/containers/ubi9-micro/61832b36dd607bfc82e66399?container-tabs=overview">UBI Micro</a>.
+This base image has been tailored to work perfectly in containers.</p>
+</div>
+<div class="paragraph">
+<p>Você pode ler mais sobre as imagens UBI em:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image">Introdução à imagem base universal</a></p>
+</li>
+<li>
+<p><a href="https://catalog.redhat.com/software/containers/ubi9/ubi/615bcf606feffc5384e8452e">Red Hat Universal Base Image 9</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>As imagens UBI podem ser utilizadas sem qualquer limitações.</p>
+</div>
+<div class="paragraph">
+<p><a href="quarkus-runtime-base-image.html">Esta página</a> explica como extender a imagem <code>quarkus-micro</code> quando a sua aplicação tem requisitos específicos.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Depois, se não tiver deletado o executável nativo criado, pode construir a imagem docker com:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker build -f src/main/docker/Dockerfile.native-micro -t quarkus-quickstart/getting-started .</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>E, finalmente, execute-o com:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker run -i --rm -p 8080:8080 quarkus-quickstart/getting-started</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_manually_using_the_minimal_base_image">Utilizando manualmente a imagem base mínima</h3>
+<div class="paragraph">
+<p>A geração do projeto também forneceu um <code>Dockerfile.native</code> na pasta <code>src/main/docker</code> com o seguinte conteúdo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dockerfile hljs" data-lang="dockerfile">FROM registry.access.redhat.com/ubi9/ubi-minimal:9.6
+WORKDIR /work/
+RUN chown 1001 /work \
+    &amp;&amp; chmod "g+rwX" /work \
+    &amp;&amp; chown 1001:root /work
+COPY --chown=1001:root --chmod=0755 target/*-runner /work/application
+
+EXPOSE 8080
+USER 1001
+
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A imagem mínima da UBI é maior do que a micro mencionada acima. Ela contém mais utilitários, como o gerenciador de pacotes <code>microdnf</code> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="multistage-docker">Utilizar uma compilação do Docker multi-stage</h3>
+<div class="paragraph">
+<p>A seção anterior mostrou como criar um executável nativo usando o Maven ou o Gradle, mas isso exige que o executável nativo tenha sido criado primeiro. Além disso, esse executável nativo deve ser um executável Linux de 64 bits.</p>
+</div>
+<div class="paragraph">
+<p>Talvez você queira criar o executável nativo diretamente em um contêiner sem ter um contêiner final que contenha as ferramentas de criação. Essa abordagem é possível com uma compilação do Docker em vários estágios:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>O primeiro estágio faz o build do executável nativo utilizando o Maven ou o Gradle</p>
+</li>
+<li>
+<p>O segundo estágio é uma imagem mínima que copia o executável nativo produzido</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Antes de construir uma imagem de contêiner a partir dos Dockerfiles mostrados abaixo, é necessário atualizar o arquivo <code>.dockerignore</code>, uma vez que este filtra tudo exceto o diretório <code>target</code>. Para fazer o build dentro de um contêiner, é necessário copiar o diretório <code>src</code>. Portanto, edite seu <code>.dockerignore</code> e remova a linha <code>*</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Esta construção em vários estágios pode ser realizada da seguinte forma:</p>
+</div>
+<div class="paragraph">
+<p>Exemplo de Dockerfile para fazer o build com o Maven:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dockerfile hljs" data-lang="dockerfile">## Stage 1 : build with maven builder image with native capabilities
+FROM quay.io/quarkus/ubi9-quarkus-mandrel-builder-image:jdk-21 AS build
+COPY --chown=quarkus:quarkus --chmod=0755 mvnw /code/mvnw
+COPY --chown=quarkus:quarkus .mvn /code/.mvn
+COPY --chown=quarkus:quarkus pom.xml /code/
+USER quarkus
+WORKDIR /code
+RUN ./mvnw -B org.apache.maven.plugins:maven-dependency-plugin:3.8.1:go-offline
+COPY src /code/src
+RUN ./mvnw package -Dnative
+
+## Stage 2 : create the docker final image
+FROM quay.io/quarkus/ubi9-quarkus-micro-image:2.0
+WORKDIR /work/
+COPY --from=build /code/target/*-runner /work/application
+
+# set up permissions for user `1001`
+RUN chmod 775 /work /work/application \
+  &amp;&amp; chown -R 1001 /work \
+  &amp;&amp; chmod -R "g+rwX" /work \
+  &amp;&amp; chown -R 1001:root /work
+
+EXPOSE 8080
+USER 1001
+
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This multi-stage Docker build copies the Maven wrapper from the host machine.
+The Maven wrapper (or the Gradle wrapper) is a convenient way to provide a specific version of Maven/Gradle.
+It avoids having to create a base image with Maven and Gradle.
+To provision the Maven Wrapper in your project, use: <code>mvn wrapper:wrapper</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Salve esse arquivo em <code>src/main/docker/Dockerfile.multistage</code>, uma vez que não está incluído no startup rápido.</p>
+</div>
+<div class="paragraph">
+<p>Exemplo de Dockerfile para build com o Gradle:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dockerfile hljs" data-lang="dockerfile">## Stage 1 : build with maven builder image with native capabilities
+FROM quay.io/quarkus/ubi9-quarkus-mandrel-builder-image:jdk-21 AS build
+USER root
+RUN microdnf install findutils -y
+COPY --chown=quarkus:quarkus gradlew /code/gradlew
+COPY --chown=quarkus:quarkus gradle /code/gradle
+COPY --chown=quarkus:quarkus build.gradle /code/
+COPY --chown=quarkus:quarkus settings.gradle /code/
+COPY --chown=quarkus:quarkus gradle.properties /code/
+USER quarkus
+WORKDIR /code
+COPY src /code/src
+RUN ./gradlew build -Dquarkus.native.enabled=true
+
+## Stage 2 : create the docker final image
+FROM quay.io/quarkus/ubi9-quarkus-micro-image:2.0
+WORKDIR /work/
+COPY --from=build /code/build/*-runner /work/application
+RUN chmod 775 /work
+EXPOSE 8080
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Se estiver utilizando o Gradle no seu projeto, pode utilizar este exemplo de Dockerfile. Salve-o em <code>src/main/docker/Dockerfile.multistage</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker build -f src/main/docker/Dockerfile.multistage -t quarkus-quickstart/getting-started .</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>E, finalmente, execute-o com:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker run -i --rm -p 8080:8080 quarkus-quickstart/getting-started</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Se precisar de suporte SSL no seu executável nativo, pode facilmente incluir as bibliotecas necessárias na sua imagem Docker.</p>
+</div>
+<div class="paragraph">
+<p>Consulte o <a href="native-and-ssl.html#working-with-containers">nosso guia Usando SSL com executáveis nativos</a> para obter mais informações.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>To use GraalVM CE instead of Mandrel, update the <code>FROM</code> clause to: <code>FROM quay.io/quarkus/ubi9-quarkus-graalvmce-builder-image:jdk-21 AS build</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_using_a_distroless_base_image">Usando uma imagem base sem distribuição</h3>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Distroless image support is experimental.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Se estiver procurando por imagens de contêineres pequenas, a abordagem <a href="https://github.com/GoogleContainerTools/distroless">sem distribuição</a> reduz o tamanho da camada base. A ideia por trás do <em>sem distribuição</em> é o uso de uma imagem base única e mínima que contenha todos os requisitos e, às vezes, até a própria aplicação.</p>
+</div>
+<div class="paragraph">
+<p>O Quarkus fornece uma imagem base sem distribuição que você pode usar no seu <code>Dockerfile</code> . Você só precisa copiar sua aplicação e pronto:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dockerfile hljs" data-lang="dockerfile">FROM quay.io/quarkus/quarkus-distroless-image:2.0
+COPY target/*-runner /application
+
+EXPOSE 8080
+USER nonroot
+
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>O Quarkus fornece a imagem <code>quay.io/quarkus/quarkus-distroless-image:2.0</code> . Ela contém os pacotes necessários para rodar um executável nativo e tem apenas <strong>9 Mb</strong>. Basta adicionar sua aplicação sobre essa imagem e você obterá uma imagem de contêiner minúscula.</p>
+</div>
+<div class="paragraph">
+<p>As imagens sem distribuição não devem ser utilizadas em produção sem um teste rigoroso.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_build_a_container_image_from_scratch">Criar uma imagem scratch</h3>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Scratch image support is experimental.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>O build de binários totalmente linkados estaticamente permite a utilização de uma <a href="https://hub.docker.com/_/scratch">imagem de rascunho</a> contendo apenas o executável nativo resultante.</p>
+</div>
+<div class="paragraph">
+<p>Exemplo de Dockerfile de vários estágios para criar uma imagem a partir de <code>scratch</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dockerfile hljs" data-lang="dockerfile">## Stage 1 : build with maven builder image with native capabilities
+FROM quay.io/quarkus/ubi9-quarkus-graalvmce-builder-image:jdk-21 AS build
+USER root
+RUN microdnf install make gcc -y
+COPY --chown=quarkus:quarkus mvnw /code/mvnw
+COPY --chown=quarkus:quarkus .mvn /code/.mvn
+COPY --chown=quarkus:quarkus pom.xml /code/
+RUN mkdir /musl &amp;&amp; \
+    curl -L -o musl.tar.gz https://more.musl.cc/11.2.1/x86_64-linux-musl/x86_64-linux-musl-native.tgz &amp;&amp; \
+    tar -xvzf musl.tar.gz -C /musl --strip-components 1 &amp;&amp; \
+    curl -L -o zlib.tar.gz https://github.com/madler/zlib/releases/download/v1.2.13/zlib-1.2.13.tar.gz &amp;&amp; \
+    mkdir zlib &amp;&amp; tar -xvzf zlib.tar.gz -C zlib --strip-components 1 &amp;&amp; \
+    cd zlib &amp;&amp; ./configure --static --prefix=/musl &amp;&amp; \
+    make &amp;&amp; make install &amp;&amp; \
+    cd .. &amp;&amp; rm -rf zlib &amp;&amp; rm -f zlib.tar.gz &amp;&amp; rm -f musl.tar.gz
+ENV PATH="/musl/bin:${PATH}"
+USER quarkus
+WORKDIR /code
+RUN ./mvnw -B org.apache.maven.plugins:maven-dependency-plugin:3.8.1:go-offline
+COPY src /code/src
+RUN ./mvnw package -Dnative -DskipTests -Dquarkus.native.additional-build-args="--static","--libc=musl"
+
+## Stage 2 : create the final image
+FROM scratch
+COPY --from=build /code/target/*-runner /application
+EXPOSE 8080
+ENTRYPOINT [ "/application" ]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As imagens Scratch não devem ser utilizadas em produção sem um teste rigoroso.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The versions of musl and zlib may need to be updated to meet the native-image executable requirements (and UPX if you use native image compression).
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_compress_native_images">Compactar imagens nativas</h3>
+<div class="paragraph">
+<p>O Quarkus pode compactar o executável nativo produzido usando UPX. Mais detalhes na <a href="/version/3.40/guides/./upx/">documentação de Compressão UPX</a> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_separating_java_and_native_image_compilation">Separando a compilação de imagens nativas e Java</h3>
+<div class="paragraph">
+<p>In certain circumstances, you may want to build the native image in a separate step.
+For example, in a CI/CD pipeline, you may want to have one step to generate the source that will be used for the native image generation and another step to use these sources to actually build the native executable.
+For this use case, you can set the additional flag <code>quarkus.native.sources-only=true</code>.
+This will execute the java compilation as if you had started native compilation (<code>-Dnative</code>), but stops before triggering the actual call to GraalVM&#8217;s <code>native-image</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ ./mvnw clean package -Dnative -Dquarkus.native.sources-only=true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Após finalizar a compilação, você encontrará o artefato compilado em <code>target/native-sources</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ cd target/native-sources
+$ ls
+getting-started-1.0.0-SNAPSHOT-runner.jar  graalvm.version  lib  native-image.args</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Na saída acima, é possível ver que, além do arquivo jar produzido e do diretório lib associado, foi criado um arquivo de texto chamado <code>native-image.args</code> . Esse arquivo contém todos os parâmetros (inclusive o nome do JAR a ser compilado) a serem transmitidos ao comando <code>native-image</code> do GraalVM. Um arquivo de texto chamado <code>graalvm.version</code> também foi criado e contém a versão do GraalVM que deve ser usada. Se o GraalVM estiver instalado e corresponder a essa versão, você poderá iniciar a compilação nativa executando:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ cd target/native-sources
+$ native-image $(cat native-image.args)
+...
+$ ls
+native-image.args
+getting-started-1.0.0-SNAPSHOT-runner
+getting-started-1.0.0-SNAPSHOT-runner.build_artifacts.txt
+getting-started-1.0.0-SNAPSHOT-runner.jar</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>O processo para o Gradle é análogo.</p>
+</div>
+<div class="paragraph">
+<p>Também é possível executar o processo de compilação num contêiner:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ ./mvnw clean package -Dquarkus.native.enabled=true -Dquarkus.native.sources-only=true -Dquarkus.native.container-build=true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>-Dquarkus.native.container-build=true</code> produzirá um arquivo de texto adicional chamado <code>native-builder.image</code> com o nome da imagem docker a ser utilizada para construir a imagem nativa.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd target/native-sources
+docker run \
+  -it \
+  --user $(id -ur):$(id -gr) \
+  --rm \
+  -v $(pwd):/work \<i class="conum" data-value="1"></i><b>(1)</b>
+  -w /work \<i class="conum" data-value="2"></i><b>(2)</b>
+  --entrypoint /bin/sh \
+  $(cat native-builder.image) \<i class="conum" data-value="3"></i><b>(3)</b>
+  -c "native-image $(cat native-image.args) -J-Xmx4g"<i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Monte o diretório raiz <code>target/native-image</code> no diretório do contêiner <code>/work</code>. Assim, o binário gerado também será escrito neste diretório.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Mude o diretório de trabalho para <code>/work</code>, que foi montado em &lt;1&gt;.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Utilize a imagem docker do arquivo <code>native-builder.image</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Chamar <code>native-image</code> com o conteúdo do arquivo <code>native-image.args</code> como argumentos. Também fornecemos um argumento adicional para limitar a memória máxima do processo a 4 Gigabytes (isto pode variar dependendo do projeto que está sendo construído e da máquina que está sendo usada).</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Se você estiver executando em uma máquina Windows, lembre-se de que o binário foi criado em um contêiner docker do Linux. Portanto, o binário não será executável na máquina Windows do hospedeiro.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Uma visão geral de alto nível do que seriam as várias etapas de um pipeline CI/CD é a seguinte:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Registar a saída da etapa que executa o comando <code>./mvnw …​</code> (ou seja, o diretório <code>target/native-image</code>) como um artefacto de construção,</p>
+</li>
+<li>
+<p>Exigir este artefacto no passo que executa o comando <code>native-image …​</code>, e</p>
+</li>
+<li>
+<p>Registar a saída do passo que executa o comando <code>native-image …​</code> (ou seja, arquivos que correspondem a <code>target/*runner</code>) como artefacto de build.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>O ambiente que executa o passo <code>1</code> apenas necessita do Java e Maven (ou Gradle) instalados, enquanto o ambiente que executa o passo <code>3</code> apenas necessita de uma instalação GraalVM (incluindo a funcionalidade <code>native-image</code> ).</p>
+</div>
+<div class="paragraph">
+<p>Dependendo do resultado final desejado do pipeline CI/CD, o binário gerado pode então ser utilizado para criar uma imagem de contêiner.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_debugging_native_executable">Debugando um executável nativo</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Os executáveis nativos podem ser depurados por meio de ferramentas como <code>gdb</code> . Para que isso seja possível, os executáveis nativos precisam ser gerados com símbolos de depuração.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>A geração de símbolos de depuração só é compatível com o Linux. O suporte ao Windows ainda está em desenvolvimento, enquanto o macOS não é compatível.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Para gerar símbolos de depuração, adicione o sinalizador <code>-Dquarkus.native.debug.enabled=true</code> ao gerar o executável nativo. Você encontrará os símbolos de depuração para o executável nativo em um arquivo <code>.debug</code> ao lado do executável nativo.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The generation of the <code>.debug</code> file depends on <code>objcopy</code>.
+As a result, when using a local GraalVM installation on common Linux distributions, you will need to install the <code>binutils</code> package:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># dnf (rpm-based)
+sudo dnf install binutils
+# Debian-based distributions
+sudo apt-get install binutils</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When <code>objcopy</code> is not available, debug symbols are embedded in the executable.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Aside from debug symbols,
+setting <code>-Dquarkus.native.debug.enabled=true</code> flag generates a cache of source files
+for any JDK runtime classes, GraalVM classes, and application classes resolved during native executable generation.
+This source cache is useful for native debugging tools,
+to establish the link between the symbols and the matching source code.
+It provides a convenient way of making just the necessary sources available to the debugger/IDE when debugging a native executable.</p>
+</div>
+<div class="paragraph">
+<p>Fontes para dependências jar de terceiros, incluindo o código-fonte do Quarkus, não são adicionadas ao cache de fontes por padrão. Para incluí-los, certifique-se de invocar <code>mvn dependency:sources</code> primeiro. Essa etapa é necessária para extrair os códigos-fonte dessas dependências e incluí-los no cache de código-fonte.</p>
+</div>
+<div class="paragraph">
+<p>A cache de fonte está localizado na pasta <code>target/sources</code>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Se executar <code>gdb</code> a partir de um diretório diferente do <code>target</code>, então as fontes podem ser carregadas ao executar:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">directory path/to/target</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>no prompt <code>gdb</code>.</p>
+</div>
+<div class="paragraph">
+<p>Ou começar <code>gdb</code> com:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">gdb -ex 'directory path/to/target' path/to/target/{project.name}-{project.version}-runner</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>por exemplo,</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">gdb -ex 'directory ./target' ./target/getting-started-1.0.0-SNAPSHOT-runner</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Para obter um guia mais detalhado sobre o debug de imagens nativas, consulte o <a href="native-reference.html">Guia de Referência Nativo</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_monitoring_options">Utilizar as opções de monitoração</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Monitoring options such as JDK flight recorder, jvmstat, heap dumps, NMT (starting with Mandrel 24.1 for JDK 23), and remote JMX
+can be added to the native executable build. Simply supply a comma separated list of the monitoring options you wish to
+include at build time.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">-Dquarkus.native.monitoring=&lt;comma separated list of options&gt;</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Opção de monitoração</th>
+<th class="tableblock halign-left valign-top">Descrição</th>
+<th class="tableblock halign-left valign-top">Disponibilidade a partir de</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jcmd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Include JCMD support</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GraalVM CE for JDK 24 Mandrel 24.2</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jfr</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Incluir suporte para o JDK Flight Recorder</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GraalVM CE 21.3 Mandril 21.3</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jvmstat</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adiciona suporte a jvmstat</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GraalVM 22.3, GraalVM CE 17.0.7 Mandrel 22.3 Mandrel 23.0 (17.0.7)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">heapdump</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adiciona suporte para gerar heap dumps</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GraalVM 22.3, GraalVM CE 17.0.7 Mandrel 22.3 Mandrel 23.0 (17.0.7)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jmxclient</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adiciona suporte para conexões a servidores JMX.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GraalVM para JDK 17/20 Mandrel 23.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jmxserver</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adiciona suporte para aceitar conexões de clientes JMX.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GraalVM para JDK 17/20 Mandrel 23.0 (17.0.7)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nmt</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adds support for native memory tracking.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GraalVM for JDK 23 Mandrel 24.1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">threaddump</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adds support for dumping thread stacks on SIGQUIT/SIGBREAK.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GraalVM for JDK 22 Mandrel 24.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">none</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Disables support for all monitoring options that would be enabled by default in Quarkus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pseudo option used by Quarkus</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">todos</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adiciona todas as opções de monitoração.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GraalVM 22.3, GraalVM CE 17.0.7 Mandrel 22.3 Mandrel 23.0 (17.0.7)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Consulte o Guia de Referência do Quarkus Native para obter informações mais detalhadas sobre estas opções de monitoração.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration-reference">Creating a Native Image Bundle</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A native image bundle containing everything required to build a native image can be generated.
+This is useful to inspect the build inputs and configuration.</p>
+</div>
+<div class="paragraph">
+<p>The generation of the bundle can be activated by setting any of the following parameters:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Descrição</th>
+<th class="tableblock halign-left valign-top">Padrão</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.native.bundle.enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables the native-image bundle generation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.native.bundle.dry-run</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Generates the bundle without building the native executable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">quarkus.native.bundle.name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets the name of the bundle</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>To use this feature, run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">./mvnw package -Dnative -Dquarkus.native.bundle.enabled=true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This command will generate all the files and configuration needed for the native image build in <code>target/{project.name}-{project.version}-runner.nib</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>More details on the GraalVM native-image bundle are available in the <a href="https://www.graalvm.org/jdk21/reference-manual/native-image/overview/Bundles">GraalVM documentation</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuring_the_native_executable">Configuração do executável nativo</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Há várias opções de configuração diferentes que podem afetar a forma como o executável nativo é gerado. Elas são fornecidas em <code>application.properties</code> da mesma forma que qualquer outra propriedade de configuração.</p>
+</div>
+<div class="paragraph">
+<p>As propriedades são apresentadas abaixo:</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next">What&#8217;s next?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Este guia abordou a criação de um executável nativo (binário) para a sua aplicação. Ele fornece uma aplicação que exibe um tempo de inicialização rápido e consome menos memória. No entanto, há muito mais.</p>
+</div>
+<div class="paragraph">
+<p>Recomendamos continuar a jornada com a  <a href="deploying-to-kubernetes.html">implantação no Kubernetes e no OpenShift</a>.</p>
+</div>
+</div>
+</div>    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="content project-footer">
+  <div class="footer-section">
+    <div class="logo-wrapper">
+      <a href="/"><img loading="lazy" src="/assets/images/quarkus_logo_horizontal_rgb_reverse.svg" class="project-logo" title="Quarkus" alt="Quarkus"></a>
+    </div>
+  </div>
+  <div class="grid-wrapper">
+    <p class="grid__item width-3-12">Quarkus is open. All dependencies of this project are available under the <a href='https://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache Software License 2.0</a> or compatible license. <i class='fab fa-creative-commons'></i><i class='fab fa-creative-commons-by'></i> <a href='https://creativecommons.org/licenses/by/3.0/' target='_blank'>CC by 3.0</a><br /><br />This website was built with <a href='https://iamroq.dev/' target='_blank'>Roq</a> on Quarkus, is hosted on <a href='https://pages.github.com/' target='_blank'>GitHub Pages</a> and is completely open source. If you want to make it better, <a href='https://github.com/quarkusio/quarkusio.github.io' target='_blank'>fork the website</a> and show us what you’ve got.</p>
+
+      <div class="width-1-12 project-links">
+        <span>Navigation</span>
+        <ul class="footer-links">
+            <li><a href="/" target="_blank">Home</a></li>
+            <li><a href="/about" target="_blank">About</a></li>
+            <li><a href="/blog" target="_blank">Blog</a></li>
+            <li><a href="/insights" target="_blank">Podcast</a></li>
+            <li><a href="/events" target="_blank">Eventos</a></li>
+            <li><a href="/newsletter" target="_blank">Newsletter</a></li>
+            <li><a href="/userstories" target="_blank">User Stories</a></li>
+            <li><a href="https://github.com/orgs/quarkusio/projects/13/views/1" target="_blank">Roadmap</a></li>
+            <li><a href="/releases" target="_blank">Releases</a></li>
+            <li><a href="/security" target="_blank">Security&nbsp;policy</a></li>
+            <li><a href="/usage" target="_blank">Usage</a></li>
+            <li><a href="/brand" target="_blank">Brand</a></li>
+            <li><a href="/desktopwallpapers" target="_blank">Wallpapers</a></li>
+            <li><a href="https://www.redhat.com/en/about/privacy-policy" target="_blank">Privacy Policy</a></li>
+            <li><a href="/sitemap" target="_blank">Sitemap</a></li>
+        </ul>
+      </div>
+      <div class="width-1-12 project-links">
+        <span>Follow Us</span>
+        <ul class="footer-links">
+            <li><a href="https://x.com/quarkusio" target="_blank">X</a></li>
+            <li><a href="https://bsky.app/profile/quarkus.io" target="_blank">Bluesky</a></li>
+            <li><a rel="me" href="https://fosstodon.org/@quarkusio"
+target="_blank">Mastodon</a></li>
+            <li><a href="https://www.threads.com/@quarkusio" target="_blank">Threads</a></li>
+            <li><a href="https://www.facebook.com/quarkusio" target="_blank">Facebook</a></li>
+            <li><a href="https://www.linkedin.com/company/quarkusio/" target="_blank">Linkedin</a></li>
+            <li><a href="https://www.youtube.com/channel/UCaW8QG_QoIk_FnjLgr5eOqg" target="_blank">Youtube</a></li>
+            <li><a href="https://www.tiktok.com/@quarkusio" target="_blank">TikTok</a></li>
+            <li><a href="https://www.instagram.com/quarkusio" target="_blank">Instagram</a></li>
+            <li><a href="https://github.com/quarkusio" target="_blank">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="width-2-12 project-links">
+        <span>Get Help</span>
+        <ul class="footer-links">
+            <li><a href="/support" target="_blank">Support</a></li>
+            <li><a href="/guides" target="_blank">Guias</a></li>
+            <li><a href="/faq" target="_blank">FAQ</a></li>
+            <li><a href="/get-started" target="_blank">Get Started</a></li>
+            <li><a href="https://stackoverflow.com/questions/tagged/quarkus" target="_blank">Stack Overflow</a></li>
+            <li><a href="https://github.com/quarkusio/quarkus/discussions" target="_blank">Discussions</a></li>
+            <li><a href="https://groups.google.com/forum/#!forum/quarkus-dev" target="_blank">Development mailing list</a></li>
+            <li><a href="https://stats.uptimerobot.com/ze1PfweT2p" target="_blank">Quarkus Service Status</a></li>
+        </ul>
+      </div>
+      <div class="width-1-12 project-links">
+        <span>Languages</span>
+        <ul class="footer-links">
+            <li><a href="https://quarkus.io/" target="_blank">English</a></li>
+            <li><a href="https://pt.quarkus.io/" target="_blank">Português&nbsp;(Brasileiro)</a></li>
+            <li><a href="https://es.quarkus.io/" target="_blank">Español</a></li>
+            <li><a href="https://cn.quarkus.io/" target="_blank">简体中文</a></li>
+            <li><a href="https://ja.quarkus.io/" target="_blank">日本語</a></li>
+        </ul>
+      </div>
+      <div class="width-4-12 more-links">
+        <span>Quarkus is made of community projects</span>
+        <ul class="footer-links">
+            <li><a blah href="https://vertx.io/" target="_blank">Eclipse Vert.x</a></li>
+            <li><a blah href="https://smallrye.io" target="_blank">SmallRye</a></li>
+            <li><a blah href="https://hibernate.org" target="_blank">Hibernate</a></li>
+            <li><a blah href="https://netty.io" target="_blank">Netty</a></li>
+            <li><a blah href="https://resteasy.github.io" target="_blank">RESTEasy</a></li>
+            <li><a blah href="https://camel.apache.org" target="_blank">Apache Camel</a></li>
+            <li><a blah href="https://microprofile.io" target="_blank">Eclipse MicroProfile</a></li>
+            <li><a blah href="https://code.quarkus.io/" target="_blank">And many more...</a></li>
+        </ul>
+      </div>
+  </div>
+</div>
+<div class="content cf-footer">
+  <div class="flexcontainer">
+    <div class="cf-logo">
+      <a class="cf-logo" href="https://www.commonhaus.org/" target="_blank"><img loading="lazy" src="https://raw.githubusercontent.com/commonhaus/artwork/main/foundation/brand/svg/CF_logo_horizontal_single_reverse.svg" alt="Commonhaus Foundation logo"/></a>
+    </div>
+    <div class="license">
+      Copyright © <a href="/">Quarkus</a>. All rights reserved. For details on our
+trademarks, please visit our <a
+href="https://www.commonhaus.org/policies/trademark-policy/">Trademark
+Policy</a> and <a href="https://www.commonhaus.org/trademarks/">Trademark
+List</a>. Trademarks of third parties are owned by their respective holders
+and their mention here does not suggest any endorsement or association.
+    </div>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/assets/javascript/mobile-nav.js"></script>
+<script type="text/javascript" src="/assets/javascript/scroll-down.js"></script>
+<script src="/guides/javascript/config.js" type="text/javascript"></script>
+<script src="/assets/javascript/guides-version-dropdown.js" type="text/javascript"></script>
+<script src="/assets/javascript/guide-nav-drawer.js" type="text/javascript"></script>
+<script src="/assets/javascript/guide-toc-scroll.js" type="text/javascript"></script>
+<script src="/assets/javascript/back-to-top.js" type="text/javascript"></script>
+<script src="/assets/javascript/clipboard.min.js" type="text/javascript"></script>
+<script src="/assets/javascript/copy.js" type="text/javascript"></script>
+<script src="/assets/javascript/asciidoc-tabs.js" type="text/javascript"></script>
+<script src="/assets/javascript/future-date.js" type="text/javascript"></script>
+<script src="/assets/javascript/randomize.js" type="text/javascript"></script>
+<script src="/assets/javascript/time.js" type="text/javascript"></script>
+</body>
+
+</html>
