@@ -6,252 +6,416 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: roq-plugin-l10n-adoc\n"
 
+#. mt: deepl
+#, fuzzy
 msgid "A deterministic backbone, with model judgment inside"
-msgstr ""
+msgstr "Uma estrutura determinística, com julgamento do modelo em seu interior"
 
+#. mt: deepl
+#, fuzzy
 msgid "At the moment when I write this, the LangChain4j project has received 1,698 pull requests since the beginning of this year. Reviewing them all is a lot of work, and we wanted an agentic system to help. But a single pattern can't do it: routing, debating, voting and reflection all need to work together, within a cost budget, in a real Quarkus application. Here's how we built one that reviews a 2900-line pull request for $0.45."
-msgstr ""
+msgstr "No momento em que escrevo isto, o projeto LangChain4j já recebeu 1.698 pull requests desde o início deste ano. Analisá-los todos dá muito trabalho, e queríamos um sistema autônomo para nos ajudar. Mas um único padrão não é suficiente: o roteamento, o debate, a votação e a reflexão precisam funcionar em conjunto, dentro de um orçamento de custos, em uma aplicação Quarkus real. Veja a seguir como criamos um sistema que analisa uma solicitação de pull de 2.900 linhas por US$ 0,45."
 
+#. mt: deepl
+#, fuzzy
 msgid "In previous articles we discussed why no single agentic pattern can cover all use cases, introducing a https://quarkus.io/blog/agentic-ai-patterns/[generic `Planner` abstraction] to define custom orchestration strategies, and we showed how the https://quarkus.io/blog/introducing-voting-pattern/[voting pattern and dynamic chat model selection] make an agentic system more reliable and more cost-efficient. Each of those articles focused on one pattern, applied to a deliberately small example. This time we want to see what happens when many of these patterns have to work together in a real application, with real costs, real failures, and a human who wants to have the last word."
-msgstr ""
+msgstr "Em artigos anteriores, discutimos por que nenhum padrão de agente isolado pode abranger todos os casos de uso, apresentando uma link:https://quarkus.io/blog/agentic-ai-patterns/[abstração genérica de “Planner”] para definir estratégias de orquestração personalizadas, e demonstramos como o link:https://quarkus.io/blog/introducing-voting-pattern/[padrão de votação e a seleção dinâmica de modelos de chat] tornam um sistema de agentes mais confiável e mais econômico. Cada um desses artigos se concentrou em um padrão, aplicado a um exemplo deliberadamente simples. Desta vez, queremos observar o que ocorre quando muitos desses padrões precisam atuar em conjunto em uma aplicação real, com custos reais, falhas reais e um ser humano que deseja ter a palavra final."
 
+#. mt: deepl
+#, fuzzy
 msgid "Given a pull request, the reviewer produces a report saying what is good, what is wrong and what could be improved, with every problem anchored to a file and a line of the diff. It also gives a score from 0 to 10 for usefulness, correctness, conciseness, security, test coverage, maintainability, API and documentation, and PR hygiene, plus an overall score with its confidence, and a verdict: `APPROVE`, `COMMENT` or `REQUEST_CHANGES`."
-msgstr ""
+msgstr "Diante de uma solicitação de pull, o revisor elabora um relatório indicando o que está correto, o que está errado e o que poderia ser melhorado, com cada problema associado a um arquivo e a uma linha do diff. Além disso, atribui uma pontuação de 0 a 10 para utilidade, correção, concisão, segurança, cobertura de testes, facilidade de manutenção, API e documentação, e “higiene” do pull request, além de uma pontuação geral com seu nível de confiança e um veredicto: `APROVAR` , `COMENTAR` ou `SOLICITAR_ALTERAÇÕES` ."
 
+#. mt: deepl
+#, fuzzy
 msgid "It only reads GitHub, with a read-only token, and never writes to it: its output is a Markdown report, the same report in JSON, and an HTML trace of the execution of its agents."
-msgstr ""
+msgstr "Ele apenas faz leitura no GitHub, por meio de um token somente leitura, e nunca grava nele: sua saída consiste em um relatório em Markdown, o mesmo relatório em JSON e um registro em HTML da execução de seus agentes."
 
+#. mt: deepl
+#, fuzzy
 msgid "The reviewer is a Quarkus application built with the Quarkus LangChain4j extensions, version 1.15 on LangChain4j 1.21: `quarkus-langchain4j-agentic` for the agents, the Anthropic and OpenAI extensions for the chat models, `quarkus-langchain4j-typesafe` for the decision model (where https://typesafe.ai[TypeSafe] is the company behind the Jev decision models), and `quarkus-github-api` to read GitHub."
-msgstr ""
+msgstr "O revisor é um aplicativo Quarkus desenvolvido com as extensões Quarkus LangChain4j, versão 1.15, baseadas no LangChain4j 1.21: `quarkus-langchain4j-agentic` para os agentes, as extensões Anthropic e OpenAI para os modelos de chat, `quarkus-langchain4j-typesafe` para o modelo de decisão (sendo que link:https://typesafe.ai[a TypeSafe] é a empresa responsável pelos modelos de decisão Jev) e `quarkus-github-api` para acessar o GitHub."
 
+#. mt: deepl
+#, fuzzy
 msgid "The agents are plain Java interfaces written with the declarative agentic API: the extension finds them at build time, validates how they are wired together and registers each of them as a CDI bean. The reviewer can be used both from the command line and from a local web interface. Let's see how it works."
-msgstr ""
+msgstr "Os agentes são interfaces Java simples, escritas com a API declarativa de agentes: a extensão as identifica durante a compilação, valida como estão interligadas e registra cada uma delas como um bean CDI. O revisor pode ser utilizado tanto pela linha de comando quanto por meio de uma interface web local. Vamos ver como isso funciona."
 
+#. mt: deepl
+#, fuzzy
 msgid "When designing an agentic system, it is tempting to hand everything to a supervisor and let an LLM decide what to do next. For a reviewer this would be a poor choice: we want every review to fetch the same data, to run the checks that matter and to produce a report with the same structure, and we want to be able to test all of this. For this reason, the root of the reviewer is a plain sequence, and model judgment lives inside its steps, where it is actually needed."
-msgstr ""
+msgstr "Ao projetar um sistema autônomo, é tentador delegar tudo a um supervisor e deixar que um LLM decida o que fazer a seguir. Para um revisor, essa seria uma escolha inadequada: queremos que cada revisão obtenha os mesmos dados, execute as verificações necessárias e produza um relatório com a mesma estrutura, além de podermos testar tudo isso. Por esse motivo, a raiz do revisor é uma sequência simples, e o julgamento do modelo reside em suas etapas, onde é realmente necessário."
 
+#. mt: deepl
+#, fuzzy
 msgid "There is nothing to implement behind this interface. Quarkus LangChain4j detects it at build time, checks that every parameter an agent reads is the output key of another agent or an input of the root, and registers the whole system as a CDI bean, so that running a review is one injection away:"
-msgstr ""
+msgstr "Não há nada a ser implementado por trás dessa interface. O Quarkus LangChain4j a detecta no momento da compilação, verifica se cada parâmetro que um agente lê é a chave de saída de outro agente ou uma entrada da raiz e registra todo o sistema como um bean CDI, de modo que a execução de uma revisão requer apenas uma injeção:"
 
+#. mt: deepl
+#, fuzzy
 msgid "A parameter named after a key that no agent produces fails the build, with the message `No agent provides an output key named '...'`, instead of failing a review."
-msgstr ""
+msgstr "Um parâmetro cujo nome corresponde a uma chave que nenhum agente produz faz com que a compilação falhe, com a mensagem `“Nenhum agente fornece uma chave de saída chamada '…​'”` , em vez de fazer com que a revisão falhe."
 
+#. mt: deepl
+#, fuzzy
 msgid "Many of these subagents don't use an LLM at all. Fetching the pull request, parsing and classifying its diff, validating the findings and rendering the report are better done by plain code, which in the declarative API is simply a static method annotated with `@Agent`. For instance, this non-AI agent renders the description of the pull request that all the reviewers read:"
-msgstr ""
+msgstr "Muitos desses subagentes nem sequer utilizam um LLM. Buscar a solicitação de pull, analisar e classificar suas diferenças, validar os resultados e gerar o relatório são tarefas melhor realizadas por código simples, o que, na API declarativa, é simplesmente um método estático anotado com `@Agent` . Por exemplo, este agente não baseado em IA gera a descrição da solicitação de pull que todos os revisores leem:"
 
+#. mt: deepl
+#, fuzzy
 msgid "Two ways to read GitHub: structured fetch vs. tool-calling agents"
-msgstr ""
+msgstr "Duas formas de acessar o GitHub: busca estruturada versus agentes que acionam ferramentas"
 
+#. mt: deepl
+#, fuzzy
 msgid "The reviewer reads GitHub through the https://github.com/hub4j/github-api[hub4j] client that the https://github.com/quarkiverse/quarkus-github-api[`quarkus-github-api`] extension brings, with a read-only token, in two different ways. The first agent of the sequence reads the pull request with its diff, commits, CI checks, previous reviews and linked issue through a small `GitHubReads` interface: there is no point in asking an LLM what to fetch, when the answer is always the same."
-msgstr ""
+msgstr "O revisor acessa o GitHub por meio do cliente link:https://github.com/hub4j/github-api[hub4j] fornecido pela extensão link:https://github.com/quarkiverse/quarkus-github-api[quarkus-github-api] , utilizando um token somente leitura, de duas maneiras diferentes. O primeiro agente da sequência lê a solicitação de pull com seu diff, commits, verificações de CI, revisões anteriores e issue vinculado por meio de uma pequena interface `do GitHubReads` : não faz sentido perguntar a um LLM o que deve ser buscado, quando a resposta é sempre a mesma."
 
+#. mt: deepl
+#, fuzzy
 msgid "Conversely, the agents that need to explore the repository, like the context gatherer collecting the code around the change, get five read-only tools: the `@Tool` methods of a CDI bean, reading files, searching code, reading commits and issues, that the agent declares with `@ToolBox`:"
-msgstr ""
+msgstr "Por outro lado, os agentes que precisam explorar o repositório, como o coletor de contexto que reúne o código relacionado à alteração, recebem cinco ferramentas somente para leitura: os métodos `@Tool` de um bean CDI, leitura de arquivos, pesquisa de código, leitura de commits e issues, que o agente declara com `@ToolBox` :"
 
+#. mt: deepl
+#, fuzzy
 msgid "Quarkus LangChain4j generates the executors of these tools at build time, and lets a wrapper bean see every tool call together with the invocation context of the agent call. The reviewer uses one to enforce a budget on the number of tool calls per invocation, so that a curious agent cannot spend the whole review budget browsing the repository. Read-only access is a matter of construction: the interface has no write method, and the bean exposes exactly these five read tools."
-msgstr ""
+msgstr "O Quarkus LangChain4j gera os executores dessas ferramentas durante a compilação e permite que um bean wrapper visualize todas as chamadas às ferramentas juntamente com o contexto de invocação da chamada do agente. O revisor utiliza um deles para impor um limite ao número de chamadas às ferramentas por invocação, de modo que um agente curioso não possa esgotar todo o orçamento de revisão navegando pelo repositório. O acesso somente leitura é uma questão de implementação: a interface não possui nenhum método de gravação, e o bean expõe exatamente essas cinco ferramentas de leitura."
 
+#. mt: deepl
+#, fuzzy
 msgid "Moreover, this agent runs only when the triage agent says that the diff alone is not enough to understand the change: it is the subagent of a `@ConditionalAgent` whose activation condition reads the `PrSummary` produced by the triage."
-msgstr ""
+msgstr "Além disso, esse agente é executado apenas quando o agente de triagem indica que o diff, por si só, não é suficiente para compreender a alteração: trata-se do subagente de um `@ConditionalAgent` cuja condição de ativação consulta o `PrSummary` gerado pela triagem."
 
+#. mt: deepl
+#, fuzzy
 msgid "Choosing the reviewers with a decision model"
-msgstr ""
+msgstr "Seleção dos revisores por meio de um modelo de decisão"
 
+#. mt: deepl
+#, fuzzy
 msgid "The heart of the review is a panel of five specialized reviewers: correctness, security, design, tests, and documentation and API. Running all of them on every pull request would be a waste: a fix in a README doesn't need a security review, and a dependency bump doesn't need a design review. We could ask an LLM which reviewers to run, but every routing decision would cost a full LLM call whose textual answer has to be parsed, and it would say nothing about how sure the LLM was about its choice."
-msgstr ""
+msgstr "O cerne da revisão é um painel de cinco revisores especializados: correção, segurança, projeto, testes e documentação e API. Executar todos eles em cada pull request seria um desperdício: uma correção no README não precisa de uma revisão de segurança, e uma atualização de dependência não precisa de uma revisão de projeto. Poderíamos perguntar a um LLM quais revisores devem ser acionados, mas cada decisão de encaminhamento custaria uma chamada completa ao LLM, cuja resposta textual teria de ser analisada, e isso não diria nada sobre o grau de certeza do LLM quanto à sua escolha."
 
+#. mt: deepl
+#, fuzzy
 msgid "This is a job for a https://docs.langchain4j.dev/tutorials/decision-models[decision model]: a model that doesn't generate text, but answers typed questions about an input, returning the probability of each possible answer. The https://docs.langchain4j.dev/tutorials/agents/#decision-router-agentic-pattern[decision router pattern] uses one to choose among its subagents: given an activation threshold, it asks in a single call whether each subagent should handle the request, and then runs in parallel all those whose probability of \"yes\" reaches the threshold."
-msgstr ""
+msgstr "Essa é uma tarefa para um link:https://docs.langchain4j.dev/tutorials/decision-models[modelo de decisão] : um modelo que não gera texto, mas responde a perguntas digitadas sobre uma entrada, retornando a probabilidade de cada resposta possível. link:https://docs.langchain4j.dev/tutorials/agents/#decision-router-agentic-pattern[O padrão de roteador de decisão] utiliza um modelo desse tipo para escolher entre seus subagentes: dado um limiar de ativação, ele consulta, em uma única chamada, se cada subagente deve atender à solicitação e, em seguida, executa em paralelo todos aqueles cuja probabilidade de “sim” atinge o limiar."
 
+#. mt: deepl
+#, fuzzy
 msgid "The decision model reads the arguments of the router agent and the descriptions of its subagents. Here the argument is a compact routing input made of a few flags computed by a non-AI agent: whether the change touches production code, tests, security-sensitive code, the public API or the build files, and whether it is documentation only. For this reason, the description of each reviewer states the flags it needs:"
-msgstr ""
+msgstr "O modelo de decisão analisa os argumentos do agente roteador e as descrições de seus subagentes. Nesse caso, o argumento é uma entrada de roteamento compacta composta por alguns indicadores calculados por um agente não baseado em IA: se a alteração afeta o código de produção, os testes, o código sensível à segurança, a API pública ou os arquivos de compilação, e se se trata apenas de documentação. Por esse motivo, a descrição de cada revisor indica os indicadores de que necessita:"
 
+#. mt: deepl
+#, fuzzy
 msgid "This made a big difference. We measured 25 routing decisions on five synthetic changes: with topic-style descriptions, a small decision model with 0.8 billion parameters running locally got 13 of them right; with the flags it got 22 at its best threshold, and a hosted decision model got all 25."
-msgstr ""
+msgstr "Isso fez uma grande diferença. Medimos 25 decisões de roteamento em cinco alterações sintéticas: com descrições no estilo “tópico”, um pequeno modelo de decisão com 0,8 bilhão de parâmetros, executado localmente, acertou 13 delas; com os indicadores, ele acertou 22 no seu melhor limiar, e um modelo de decisão hospedado acertou todas as 25."
 
+#. mt: deepl
+#, fuzzy
 msgid "Decision models are configured in `application.properties` like any other model, here with the `quarkus-langchain4j-typesafe` extension, both for the small model served locally and for the hosted one, and, like the chat models, they become beans qualified by their name, which is how the planner supplier above picks the local or the hosted one at each review:"
-msgstr ""
+msgstr "Os modelos de decisão são configurados no arquivo `application.properties` como qualquer outro modelo, neste caso, com a extensão `quarkus-langchain4j-typesafe` , tanto para o modelo pequeno servido localmente quanto para o hospedado e, assim como os modelos de bate-papo, tornam-se beans identificados por seu nome; é assim que o provedor do planejador acima seleciona o modelo local ou o hospedado a cada revisão:"
 
+#. mt: deepl
+#, fuzzy
 msgid "A small local model is free and fast, but it can be wrong, and some reviews are too important to be skipped. For this reason, a deterministic safety net follows the router: a `@ConditionalAgent` runs a fallback correctness review on production code, a security review on security-sensitive code, and a documentation review on documentation-only changes, whenever the router skipped them."
-msgstr ""
+msgstr "Um pequeno modelo local é gratuito e rápido, mas pode conter erros, e algumas revisões são importantes demais para serem ignoradas. Por esse motivo, uma rede de segurança determinística acompanha o roteador: um `@ConditionalAgent` executa uma revisão de correção de fallback no código de produção, uma revisão de segurança no código sensível à segurança e uma revisão de documentação nas alterações exclusivamente relacionadas à documentação, sempre que o roteador as ignorar."
 
+#. mt: deepl
+#, fuzzy
 msgid "Finally, very large pull requests don't fit in the token budget of the reviewers. The files left out of the main diff are split into chunks, and a `@ParallelMapperAgent` reviews all of them in parallel, one chunk reviewer per chunk."
-msgstr ""
+msgstr "Por fim, pull requests muito grandes não cabem no orçamento de tokens dos revisores. Os arquivos que ficam de fora do diff principal são divididos em partes, e um `@ParallelMapperAgent` revisa todas elas em paralelo, com um revisor por parte."
 
+#. mt: deepl
+#, fuzzy
 msgid "The reviewer panel: the decision router, the coverage floor and the chunked review of very large pull requests"
-msgstr ""
+msgstr "O painel de revisores: o roteador de decisões, o limite mínimo de cobertura e a revisão em partes de pull requests muito grandes"
 
+#. mt: deepl
+#, fuzzy
 msgid "Putting findings on trial: the debate pattern"
-msgstr ""
+msgstr "Colocando as descobertas em julgamento: o padrão do debate"
 
+#. mt: deepl
+#, fuzzy
 msgid "The reviewers return raw findings, each one with a category, a severity, a confidence, a file and a line. LLMs sometimes see problems that aren't there, so before reaching the report, the findings are validated by a non-AI agent: a finding must point at a file of the diff, at a line near a changed hunk, otherwise it is discarded. This removes hallucinated locations, and also anything smuggled into the prompts through the text of the pull request. Then duplicates reported by different reviewers are merged, and each finding gets an id, from F1 to Fn."
-msgstr ""
+msgstr "Os revisores enviam os resultados brutos, cada um com uma categoria, um nível de gravidade, um nível de confiança, um arquivo e uma linha. Os LLMs às vezes identificam problemas que não existem; portanto, antes de chegarem ao relatório, as descobertas são validadas por um agente não baseado em IA: uma descoberta deve apontar para um arquivo da comparação (diff) e para uma linha próxima a um trecho alterado; caso contrário, ela é descartada. Isso elimina localizações fantasiosas e também qualquer elemento introduzido clandestinamente nos prompts por meio do texto da solicitação de pull. Em seguida, as duplicatas relatadas por diferentes revisores são mescladas, e cada resultado recebe um ID, de F1 a Fn."
 
+#. mt: deepl
+#, fuzzy
 msgid "Some findings deserve a second look before being accepted: a high-severity finding reported with low confidence, or contradicted by another reviewer rating the same place as minor, is too important to be either trusted or ignored. These findings are put on trial with the https://docs.langchain4j.dev/tutorials/agents/#debate-agentic-pattern[debate pattern]: a prosecutor argues that the problem is real, a defender argues that it is not, both reading the changes of the file in question with read-only tools, and a judge decides."
-msgstr ""
+msgstr "Algumas descobertas merecem uma segunda análise antes de serem aceitas: uma descoberta de alta gravidade relatada com baixo nível de confiança, ou que seja contradita por outro revisor que classifique o mesmo ponto como de gravidade menor, é importante demais para ser considerada confiável ou ignorada. Essas descobertas são submetidas a um julgamento seguindo o link:https://docs.langchain4j.dev/tutorials/agents/#debate-agentic-pattern[padrão de debate] : um promotor argumenta que o problema é real, um defensor argumenta que não é, ambos analisando as alterações do arquivo em questão com ferramentas de leitura exclusiva, e um juiz decide."
 
+#. mt: deepl
+#, fuzzy
 msgid "The prosecutor and the defender argue in parallel for up to two rounds, each one reading the arguments of the other in the transcript of the debate, and the debate stops early when both end with the same word. Then the judge, always last, confirms the finding, rejects it, or lowers its severity. A finding that the debate could not settle stays in the report, but it no longer drives the verdict."
-msgstr ""
+msgstr "O promotor e o defensor argumentam em paralelo por até duas rodadas, cada um lendo os argumentos do outro na transcrição do debate, e o debate é encerrado antecipadamente quando ambos terminam com a mesma palavra. Em seguida, o juiz, sempre por último, confirma a conclusão, a rejeita ou atenua sua gravidade. Uma conclusão que o debate não tenha conseguido resolver permanece no relatório, mas deixa de influenciar o veredicto."
 
+#. mt: deepl
+#, fuzzy
 msgid "The contested findings are debated one at a time, inside a `@LoopAgent` that takes the next one at each iteration, and stops when there are no more contested findings or when the cost cap is reached."
-msgstr ""
+msgstr "As conclusões contestadas são analisadas uma a uma, dentro de um `@LoopAgent` que seleciona a próxima a cada iteração e interrompe o processo quando não houver mais conclusões contestadas ou quando o limite de custo for atingido."
 
+#. mt: deepl
+#, fuzzy
 msgid "Findings: the validation of the findings and the debates of the contested ones"
-msgstr ""
+msgstr "Conclusões: a validação das conclusões e os debates sobre as que foram contestadas"
 
+#. mt: deepl
+#, fuzzy
 msgid "Scoring: voting only when it matters"
-msgstr ""
+msgstr "Pontuação: votar apenas quando for relevante"
 
+#. mt: deepl
+#, fuzzy
 msgid "A scorer agent reads the surviving findings and proposes a score card, with a score and a rationale for each metric, a verdict and its reasoning."
-msgstr ""
+msgstr "Um agente de avaliação analisa os resultados finais e propõe um quadro de avaliação, com uma pontuação e uma justificativa para cada métrica, além de um veredicto e sua fundamentação."
 
+#. mt: deepl
+#, fuzzy
 msgid "A single scorer is usually enough, but when its card is borderline, we would rather have more opinions: this is exactly the use case of the voting pattern discussed in the https://quarkus.io/blog/introducing-voting-pattern/[previous article]. Here three scorers with different perspectives, neutral, skeptical and lenient, vote in parallel, and their score cards are aggregated by averaging the scores and taking the majority verdict:"
-msgstr ""
+msgstr "Um único avaliador geralmente é suficiente, mas quando sua avaliação é ambígua, preferimos contar com mais opiniões: esse é exatamente o caso de uso do modelo de votação discutido no link:https://quarkus.io/blog/introducing-voting-pattern/[artigo anterior] . Aqui, três avaliadores com perspectivas diferentes — neutro, cético e tolerante — votam em paralelo, e suas avaliações são agregadas por meio da média das pontuações e da adoção do veredicto da maioria:"
 
+#. mt: deepl
+#, fuzzy
 msgid "However, voting on every review would multiply the cost of scoring for no benefit when the first card is clear-cut. For this reason, the voting runs only when the draft is borderline: an overall score within half a point of the approval threshold, a verdict that the findings would make one step stricter on the strength of a finding of middling confidence, or a request for changes without any high-severity finding. A `@ConditionalAgent` makes this decision, also checking how much the review has cost so far:"
-msgstr ""
+msgstr "No entanto, votar em cada revisão multiplicaria o custo da avaliação sem trazer nenhum benefício, uma vez que o primeiro cartão é inequívoco. Por esse motivo, a votação ocorre apenas quando o rascunho estiver em situação limítrofe: uma pontuação geral dentro de meio ponto do limite de aprovação, um veredicto de que as conclusões tornariam a avaliação um nível mais rigorosa com base em uma conclusão de confiança moderada, ou uma solicitação de alterações sem nenhuma conclusão de alta gravidade. Um `@ConditionalAgent` toma essa decisão, verificando também quanto a revisão custou até o momento:"
 
+#. mt: deepl
+#, fuzzy
 msgid "The models propose, but a non-AI calibrator has the last word, and it can only make the outcome stricter. It caps the scores that the findings contradict, for instance a credible critical security finding caps the security score at 2.0, and it raises the verdict to the minimum that the findings require, so that a medium correctness finding means at least `COMMENT`."
-msgstr ""
+msgstr "Os modelos apresentam propostas, mas um calibrador não baseado em IA tem a palavra final, e isso só pode tornar o resultado mais rigoroso. Ele limita as pontuações que as constatações contradizem; por exemplo, uma constatação crítica de segurança confiável limita a pontuação de segurança a 2,0 e eleva o veredicto ao mínimo exigido pelas constatações, de modo que uma constatação de correção média signifique, no mínimo, `“COMENTÁRIO` ”."
 
+#. mt: deepl
+#, fuzzy
 msgid "Writing the report: a reflection loop"
-msgstr ""
+msgstr "Elaboração do relatório: um ciclo de reflexão"
 
+#. mt: deepl
+#, fuzzy
 msgid "The report writer produces only the prose: the summary, what is good and what could be improved. The findings, the scores and the verdict are rendered from the data by a non-AI assembler, so that the writer can neither invent a finding nor lose one."
-msgstr ""
+msgstr "O redator do relatório produz apenas o texto: o resumo, o que está bom e o que poderia ser melhorado. As conclusões, as pontuações e o veredicto são extraídos dos dados por um compilador que não utiliza IA, de modo que o redator não possa inventar uma conclusão nem omitir nenhuma."
 
+#. mt: deepl
+#, fuzzy
 msgid "A critic then rates the rendered report, and the writer rewrites it until the critic is satisfied, in a classic reflection loop:"
-msgstr ""
+msgstr "Em seguida, um crítico avalia o relatório elaborado, e o redator o reescreve até que o crítico fique satisfeito, em um ciclo clássico de reflexão:"
 
+#. mt: deepl
+#, fuzzy
 msgid "The bar is lowered after the first round, so that the loop converges, and a report that has been criticized is rewritten by a more capable model, as we will see in a moment."
-msgstr ""
+msgstr "O limite é reduzido após a primeira rodada, de modo que o ciclo converja, e um relatório que tenha sido criticado é reescrito por um modelo mais capaz, como veremos em breve."
 
+#. mt: deepl
+#, fuzzy
 msgid "Keeping the human in the loop"
-msgstr ""
+msgstr "Manter o ser humano informado"
 
+#. mt: deepl
+#, fuzzy
 msgid "By default the review runs unattended, but in interactive mode the human reviewer takes part in it at two points. Before the review, they can answer up to three clarification questions generated from the pull request, plus an open question about the areas to focus on, and their answers reach every reviewer. After the report is written, they can approve it, edit it with some notes, reject it, drop some findings, or contest them:"
-msgstr ""
+msgstr "Por padrão, a revisão é executada de forma automática, mas, no modo interativo, o revisor humano participa dela em dois momentos. Antes da revisão, ele pode responder a até três perguntas de esclarecimento geradas a partir da solicitação de pull, além de uma pergunta aberta sobre as áreas em que deve se concentrar, e suas respostas são encaminhadas a todos os revisores. Após a elaboração do relatório, ele pode aprová-lo, editá-lo com algumas anotações, rejeitá-lo, excluir algumas constatações ou contestá-las:"
 
+#. mt: deepl
+#, fuzzy
 msgid "Contesting a finding sends it to a debate, together with the notes of the human, and then scoring and writing run again. All these steps belong to a `@LoopAgent`, whose exit condition simply checks the decision of the human, with at most two contest rounds:"
-msgstr ""
+msgstr "A contestação de uma conclusão encaminha-a para um debate, juntamente com as anotações do avaliador humano, e, em seguida, a pontuação e a redação são executadas novamente. Todas essas etapas fazem parte de um `@LoopAgent` , cuja condição de saída verifica simplesmente a decisão do avaliador humano, com no máximo duas rodadas de contestação:"
 
+#. mt: deepl
+#, fuzzy
 msgid "The human-in-the-loop agent doesn't know whether the human is sitting in front of a terminal or of a browser: it talks to a `ReviewerConsole`, with one implementation reading the answers from the standard input and another one for the web interface. The latter publishes the question to the page of the review, and then blocks the review until the browser posts the answer:"
-msgstr ""
+msgstr "O agente “human-in-the-loop” não sabe se o usuário está diante de um terminal ou de um navegador: ele se comunica com um `ReviewerConsole` , sendo que uma implementação lê as respostas a partir da entrada padrão e outra é destinada à interface web. Esta última publica a pergunta na página da revisão e, em seguida, bloqueia a revisão até que o navegador envie a resposta:"
 
+#. mt: deepl
+#, fuzzy
 msgid "The right model for each agent, within a budget"
-msgstr ""
+msgstr "O modelo adequado para cada agente, dentro de um orçamento"
 
+#. mt: deepl
+#, fuzzy
 msgid "Not every agent needs the most capable model. The reviewer uses three tiers: a small model for the triage, the checklists and the critic, a medium model for judging code, scoring and writing, and a large model only when there is evidence that it is needed: a high-risk or large change, security-sensitive code, a critical contested finding, a report that the critic didn't like, or an explicit request for a deep review."
-msgstr ""
+msgstr "Nem todo agente precisa do modelo mais avançado. O revisor utiliza três níveis: um modelo pequeno para a triagem, as listas de verificação e o crítico; um modelo médio para avaliar o código, atribuir notas e redigir; e um modelo grande apenas quando houver indícios de que ele é necessário: uma alteração de alto risco ou de grande porte, código sensível à segurança, uma constatação crítica contestada, um relatório que não agradou ao revisor ou uma solicitação explícita de uma revisão aprofundada."
 
+#. mt: deepl
+#, fuzzy
 msgid "The tiers are named models, a feature of Quarkus LangChain4j: each `quarkus.langchain4j.<name>` block in `application.properties` becomes a `ChatModel` bean qualified with `@ModelName`, here one per provider and tier, Anthropic and OpenAI:"
-msgstr ""
+msgstr "As camadas são denominadas “modelos”, um recurso do Quarkus LangChain4j: cada bloco `quarkus.langchain4j.<nome>` no `arquivo application.properties` se torna um bean `ChatModel` qualificado com `@ModelName` , neste caso, um por provedor e por camada, Anthropic e OpenAI:"
 
+#. mt: deepl
+#, fuzzy
 msgid "Each agent then selects its model at every invocation, through the https://docs.langchain4j.dev/tutorials/agents/#dynamic-chat-model-selection[dynamic chat model selection] also discussed in the previous article. The `@ChatModelSupplier` method receives both a CDI bean, marked `@CdiBean`, a catalog that is nothing more than an `Instance<ChatModel>` selecting the model beans by name, and the `AgenticScope`, which tells whether the evidence for an escalation is there:"
-msgstr ""
+msgstr "Cada agente, então, seleciona seu modelo a cada invocação, por meio da link:https://docs.langchain4j.dev/tutorials/agents/#dynamic-chat-model-selection[seleção dinâmica de modelos de chat] , também abordada no artigo anterior. O método `@ChatModelSupplier` recebe tanto um bean CDI, marcado `com @CdiBean` , quanto um catálogo que nada mais é do que uma `instância de <ChatModel>` que seleciona os beans de modelo pelo nome, e o `AgenticScope` , que indica se há indícios para uma escalação:"
 
+#. mt: deepl
+#, fuzzy
 msgid "A `ChatModelListener` bean, which the extension attaches to every configured model, prices every call as it happens, including each round trip of the tool-using agents, and a soft cost cap, 2 USD by default, governs all the optional work: once it is reached, voting, debates and escalations are skipped. The review always completes, and its report lists what was skipped."
-msgstr ""
+msgstr "Um bean `ChatModelListener` , que a extensão associa a cada modelo configurado, calcula o custo de cada chamada à medida que ela ocorre, incluindo cada ida e volta dos agentes que utilizam a ferramenta, e um limite de custo flexível — de 2 dólares americanos por padrão — rege todo o trabalho opcional: uma vez atingido esse limite, votações, debates e escalações são ignorados. A revisão é sempre concluída, e seu relatório lista o que foi ignorado."
 
+#. mt: deepl
+#, fuzzy
 msgid "Why transient failures don&#8217;t kill the review"
-msgstr ""
+msgstr "Por que as falhas passageiras não comprometem a revisão"
 
+#. mt: deepl
+#, fuzzy
 msgid "Model calls fail: rate limits, timeouts, malformed answers, an exhausted account. Since the `AgenticScope` is shared by the whole tree of agents, a single `@ErrorHandler` on the root, a static method whose signature the extension checks at build time like every supplier and condition, sees the failures of all of them:"
-msgstr ""
+msgstr "Falhas nas chamadas de modelo: limites de taxa, tempos limite excedidos, respostas inválidas, conta esgotada. Como o `AgenticScope` é compartilhado por toda a árvore de agentes, um único `@ErrorHandler` na raiz — um método estático cuja assinatura a extensão verifica no momento da compilação, assim como todos os fornecedores e condições — detecta as falhas de todos eles:"
 
+#. mt: deepl
+#, fuzzy
 msgid "It retries a transient failure once. When a reviewer, a voter, a debater or the router keeps failing, it replaces its output with a neutral fallback, like a reviewer with no findings, and the report discloses it among its limitations."
-msgstr ""
+msgstr "O sistema tenta novamente uma falha transitória uma vez. Quando um revisor, um votante, um debatedor ou o roteador continua apresentando falhas, ele substitui sua saída por uma alternativa neutra, como um revisor sem constatações, e o relatório divulga isso entre suas limitações."
 
+#. mt: deepl
+#, fuzzy
 msgid "On the other hand, it stops the run at once on an account problem, like an invalid key or no credit left, where degrading every agent one after another would be pointless, and when the failing agent is one without which there can be no review, like the fetcher or the scorer."
-msgstr ""
+msgstr "Por outro lado, ele interrompe a execução imediatamente em caso de um problema na conta, como uma chave inválida ou saldo insuficiente, situação em que seria inútil desativar cada agente um por um, e quando o agente com falha é aquele sem o qual não é possível realizar a revisão, como o coletor ou o avaliador."
 
+#. mt: deepl
+#, fuzzy
 msgid "Two front ends on the same core"
-msgstr ""
+msgstr "Duas interfaces na mesma plataforma"
 
+#. mt: deepl
+#, fuzzy
 msgid "The command line and the web interface run reviews through the same `ReviewService` bean, into which Quarkus injects the agentic system, as shown above. The picocli commands and the REST resources are CDI beans as well, so each front end is a thin layer that injects the service."
-msgstr ""
+msgstr "A linha de comando e a interface web executam revisões por meio do mesmo bean `ReviewService` , no qual o Quarkus injeta o sistema agentic, conforme mostrado acima. Os comandos do picocli e os recursos REST também são beans CDI; portanto, cada front-end é uma camada fina que injeta o serviço."
 
+#. mt: deepl
+#, fuzzy
 msgid "The command line is built with the `quarkus-picocli` extension, and has subcommands to review a pull request, to start the web interface, and to evaluate the reviewer against a set of past pull requests labeled from their outcome:"
-msgstr ""
+msgstr "A linha de comando foi desenvolvida com a extensão `quarkus-picocli` e possui subcomandos para revisar uma solicitação de pull, iniciar a interface web e avaliar o revisor com base em um conjunto de solicitações de pull anteriores classificadas de acordo com seu resultado:"
 
+#. mt: deepl
+#, fuzzy
 msgid "The application is packaged as an uber-jar and installed as a JBang alias, so that `pr-reviewer` is just another command on the `PATH`."
-msgstr ""
+msgstr "O aplicativo é empacotado como um uber-jar e instalado como um alias do JBang, de modo que `o pr-reviewer` passe a ser apenas mais um comando no `PATH` ."
 
+#. mt: deepl
+#, fuzzy
 msgid "The `serve` subcommand starts a local web interface built with Qute templates and htmx, with no JavaScript build at all: a form with the same options of the command line, the past reports, and a page following each review live."
-msgstr ""
+msgstr "O subcomando `“serve”` inicia uma interface web local criada com modelos do Qute e htmx, sem nenhuma compilação de JavaScript: um formulário com as mesmas opções da linha de comando, os relatórios anteriores e uma página que acompanha cada revisão em tempo real."
 
+#. mt: deepl
+#, fuzzy
 msgid "An `AgentListener` bean, which the extension attaches to every agent, publishes the start and the end of each agent, with its model, its duration and the running cost of the review, and the page receives them as server-sent events. In interactive mode, the same page shows the clarification questions first, and then the report with a checkbox to contest and one to drop each finding."
-msgstr ""
+msgstr "Um bean `AgentListener` , que a extensão associa a cada agente, publica o início e o fim de cada agente, juntamente com seu modelo, sua duração e o custo de execução da revisão, e a página os recebe como eventos enviados pelo servidor. No modo interativo, a mesma página exibe primeiro as perguntas de esclarecimento e, em seguida, o relatório com uma caixa de seleção para contestar e outra para descartar cada constatação."
 
+#. mt: deepl
+#, fuzzy
 msgid "What happens when you review a 2900-line PR for $0.45"
-msgstr ""
+msgstr "O que acontece quando se analisa um PR de 2.900 linhas por US$ 0,45?"
 
+#. mt: deepl
+#, fuzzy
 msgid "Let's try the reviewer on a real pull request, https://github.com/langchain4j/langchain4j/pull/6731[langchain4j#6731], one of ours, which allows any agent or agentic pattern to declare its own activation condition, so that a single agent no longer needs to be wrapped in a `@ConditionalAgent`, as the context gatherer above is. An extract of the report produced by the reviewer for this pull request follows."
-msgstr ""
+msgstr "Vamos testar o revisor em uma solicitação de pull real, link:https://github.com/langchain4j/langchain4j/pull/6731[a langchain4j#6731] , uma das nossas, que permite que qualquer agente ou padrão de agente declare sua própria condição de ativação, de modo que um único agente não precise mais ser encapsulado em um `@ConditionalAgent` , como é o caso do coletor de contexto acima. Segue abaixo um trecho do relatório gerado pelo revisor para esta solicitação de pull."
 
+#. mt: deepl
+#, fuzzy
 msgid "A review rendered by the web interface"
-msgstr ""
+msgstr "Uma avaliação apresentada pela interface da web"
 
+#. mt: deepl
+#, fuzzy
 msgid "The same report also scores the pull request, with a score from 0 to 10 for each metric, and an overall score with its confidence, and a verdict: `APPROVE`, `COMMENT` or `REQUEST_CHANGES`. The scores are produced by the scorers, and the verdict is the result of the calibrator."
-msgstr ""
+msgstr "O mesmo relatório também atribui uma pontuação à solicitação de pull, com uma nota de 0 a 10 para cada métrica, além de uma pontuação geral acompanhada de seu nível de confiança e um veredicto: `APROVAR` , `COMENTAR` ou `SOLICITAR_ALTERAÇÕES` . As pontuações são atribuídas pelos avaliadores, e o veredicto é resultado do calibrador."
 
+#. mt: deepl
+#, fuzzy
 msgid "The scores produced by the reviewers"
-msgstr ""
+msgstr "As notas atribuídas pelos avaliadores"
 
+#. mt: deepl
+#, fuzzy
 msgid "It is a large change, about 2900 added and 300 deleted lines across 56 files, and we reviewed it using the OpenAI models and the small local decision model for the routing."
-msgstr ""
+msgstr "Trata-se de uma grande alteração, com cerca de 2.900 linhas adicionadas e 300 excluídas em 56 arquivos, e a revisamos utilizando os modelos da OpenAI e o pequeno modelo de decisão local para o roteamento."
 
+#. mt: deepl
+#, fuzzy
 msgid "Making `PrReviewSystem` extend `MonitoredAgent` allows us to save the trace of every review in an HTML page, which shows the topology of the system and the history of its executions:"
-msgstr ""
+msgstr "Fazer com que `o PrReviewSystem` herde de `MonitoredAgent` nos permite salvar o rastramento de cada revisão em uma página HTML, que mostra a topologia do sistema e o histórico de suas execuções:"
 
+#. mt: deepl
+#, fuzzy
 msgid "The execution of the review of langchain4j#6731"
-msgstr ""
+msgstr "A execução da revisão do langchain4j#6731"
 
+#. mt: deepl
+#, fuzzy
 msgid "The review: routing, findings and a debate"
-msgstr ""
+msgstr "A análise: abordagem, conclusões e um debate"
 
+#. mt: deepl
+#, fuzzy
 msgid "This execution shows almost all the patterns we discussed at work. The triage classified the change as a large, high-risk feature that could be understood from the diff alone, so the context gatherer was skipped."
-msgstr ""
+msgstr "Essa execução mostra quase todos os padrões que discutimos no trabalho. A triagem classificou a alteração como um recurso de grande porte e alto risco que poderia ser compreendido apenas a partir do diff, de modo que a etapa de coleta de contexto foi ignorada."
 
+#. mt: deepl
+#, fuzzy
 msgid "The decision router selected all five reviewers, which ran in parallel, leaving nothing for the coverage floor to add; the correctness reviewer, escalated to the large model by the risk and the size of the change, took 3 minutes and 48 seconds, two thirds of the whole review, to report no finding at all."
-msgstr ""
+msgstr "O roteador de decisões selecionou todos os cinco revisores, que atuaram em paralelo, não deixando nada a ser acrescentado pelo limite mínimo de cobertura; o revisor de correção, encaminhado ao modelo de grande porte devido ao risco e ao tamanho da alteração, levou 3 minutos e 48 segundos — dois terços de toda a revisão — para informar que não havia nenhuma irregularidade."
 
+#. mt: deepl
+#, fuzzy
 msgid "Seven files didn't fit in the token budget of the reviewers, five test classes, the documentation and the Revapi configuration, so the large diff gate handed them, as a single chunk, to a chunk reviewer."
-msgstr ""
+msgstr "Sete arquivos não se enquadraram no limite de tokens dos revisores — cinco classes de teste, a documentação e a configuração do Revapi —, de modo que o mecanismo de controle de grandes diferenças os encaminhou, como um único bloco, a um revisor de blocos."
 
+#. mt: deepl
+#, fuzzy
 msgid "The reviewers returned seven findings, all pointing at a valid location of the diff. One of them was contested: the documentation and API reviewer, running on the small model, reported as high severity, but with a confidence of 0.65, that adding a `skipped` component to the `AgentInvocation` record breaks binary compatibility. The prosecutor and the defender argued for the full two rounds, the defender reading the record and searching its usages in the repository, and the judge rejected the finding: the five-argument constructor is kept as an explicit overload, with the same JVM descriptor as the former canonical constructor, so the existing compiled callers still link."
-msgstr ""
+msgstr "Os revisores apresentaram sete constatações, todas indicando uma localização válida da diferença. Uma delas foi contestada: o revisor de documentação e API, executado no modelo reduzido, relatou — com gravidade alta, mas com um nível de confiança de 0,65 — que a adição de um componente `omitido` ao registro `AgentInvocation` rompe a compatibilidade binária. O promotor e o defensor debateram durante as duas rodadas completas, com o defensor lendo o registro e pesquisando suas utilizações no repositório, e o juiz rejeitou a constatação: o construtor de cinco argumentos é mantido como uma sobrecarga explícita, com o mesmo descritor JVM que o antigo construtor canônico, de modo que os chamadores compilados existentes ainda se vinculam."
 
+#. mt: deepl
+#, fuzzy
 msgid "Meanwhile, a real compatibility problem survived among the medium-severity findings, and it came from the chunk reviewer: the Revapi configuration suppresses the warning about the abstract `activationCondition` methods added to the public `AgenticService` and `SupervisorAgentService` interfaces, which breaks the source compatibility of anybody implementing them, while the description of the pull request claims that there is no breaking change."
-msgstr ""
+msgstr "Enquanto isso, um problema real de compatibilidade permaneceu entre as falhas de gravidade média, e ele foi identificado pelo revisor de blocos: a configuração do Revapi suprime o aviso sobre os métodos abstratos ``activationCondition`` adicionados às interfaces públicas ``AgenticService` ` e ``SupervisorAgentService`` , o que compromete a compatibilidade de código-fonte de quem quer que as implemente, enquanto a descrição da solicitação de pull afirma que não há nenhuma alteração que comprometa a compatibilidade."
 
+#. mt: deepl
+#, fuzzy
 msgid "Scoring and reporting: voting, reflection and the cost"
-msgstr ""
+msgstr "Avaliação e relatórios: votação, reflexão e o custo"
 
+#. mt: deepl
+#, fuzzy
 msgid "The first score card was borderline on two counts: an overall score of 6.8, within half a point of the approval threshold, and a request for changes without any high-severity finding left to back it. The three scorers then voted in parallel, all three for `REQUEST_CHANGES`, and the average of their cards was again 6.8, with a confidence of 0.5; the calibrator had nothing to correct."
-msgstr ""
+msgstr "O primeiro cartão de avaliação estava no limite em dois aspectos: uma pontuação geral de 6,8, a menos de meio ponto do limite de aprovação, e um pedido de alterações sem que houvesse nenhuma constatação de alta gravidade para fundamentá-lo. Os três avaliadores votaram então em paralelo, todos os três a favor de `REQUEST_CHANGES` , e a média de suas fichas foi novamente 6,8, com um nível de confiança de 0,5; o calibrador não teve nada a corrigir."
 
+#. mt: deepl
+#, fuzzy
 msgid "Finally, the report went through all the three rounds of the reflection loop: the critic rated the first draft 0.68, so the writer, escalated to the large model, rewrote it twice, but the critic rated the second draft 0.68 again and the third 0.28, and the loop stopped at its last iteration."
-msgstr ""
+msgstr "Por fim, o relatório passou por todas as três rodadas do ciclo de reflexão: o avaliador atribuiu nota 0,68 ao primeiro rascunho; então, o autor, com o apoio do modelo ampliado, reescreveu-o duas vezes, mas o avaliador atribuiu nota 0,68 novamente ao segundo rascunho e 0,28 ao terceiro, e o ciclo foi interrompido na última iteração."
 
+#. mt: deepl
+#, fuzzy
 msgid "Here the critic, on the small model, was the weak link of the review: it listed the findings themselves as the issues to fix, as if it had been asked to review the pull request rather than the report about it."
-msgstr ""
+msgstr "Nesse caso, o crítico, no modelo reduzido, foi o ponto fraco da revisão: ele listou as próprias conclusões como os problemas a serem corrigidos, como se tivesse sido solicitado a revisar a solicitação de incorporação, em vez do relatório sobre ela."
 
+#. mt: deepl
+#, fuzzy
 msgid "The whole review took 5 minutes and 49 seconds and cost $0.45."
-msgstr ""
+msgstr "A revisão toda levou 5 minutos e 49 segundos e custou US$ 0,45."
 
 #, fuzzy
 msgid "Conclusion"
 msgstr "Conclusão"
 
+#. mt: deepl
+#, fuzzy
 msgid "A real application needs more than one agentic pattern, and the reviewer uses many of those made available by LangChain4j: a sequence as its backbone, conditional agents as gates, a decision router choosing the reviewers, a parallel mapper for very large pull requests, debates for the doubtful findings, voting for the borderline scores, reflection loops for the report, and a human in the loop for the final decision."
-msgstr ""
+msgstr "Uma aplicação real requer mais de um padrão de agência, e o revisor utiliza muitos dos padrões disponibilizados pelo LangChain4j: uma sequência como espinha dorsal, agentes condicionais como portas de controle, um roteador de decisão que seleciona os revisores, um mapeador paralelo para pull requests de grande porte, debates para os resultados duvidosos, votação para as pontuações limítrofes, ciclos de reflexão para o relatório e a intervenção humana no processo para a decisão final."
 
+#. mt: deepl
+#, fuzzy
 msgid "What made them work together was not using any of them everywhere, but each one only where it pays off, while plain code does everything that doesn't need judgment: fetching, validating, calibrating, rendering. The same principle drives the choice of the models, with a small one by default, a larger one only when there is evidence that it is needed, and a decision model, instead of an LLM, for routing."
-msgstr ""
+msgstr "O que permitiu que funcionassem em conjunto não foi o uso de qualquer um deles em todos os contextos, mas sim a aplicação de cada um apenas onde fosse vantajoso, enquanto o código simples realiza todas as tarefas que não exigem julgamento: busca, validação, calibração e renderização. O mesmo princípio orienta a escolha dos modelos: um modelo pequeno por padrão, um maior apenas quando houver evidências de que é necessário e um modelo de decisão, em vez de um LLM, para o roteamento."
 
+#. mt: deepl
+#, fuzzy
 msgid "Quarkus LangChain4j is what turns these patterns into an application. The agent interfaces are detected and validated at build time and become beans, so the whole system is injected like any other service; chat models and decision models are named configurations, and what the agents choose from at run time is the set of beans the extension builds from them; the tools of the agents are the methods of a bean, with their executors generated at build time; the listener that prices every call and the one that feeds the web page are beans the extension attaches to every model and every agent; and the same core serves a command line and a web interface."
-msgstr ""
+msgstr "O Quarkus LangChain4j é o que transforma esses padrões em um aplicativo. As interfaces dos agentes são detectadas e validadas no momento da compilação e se tornam beans, de modo que todo o sistema é injetado como qualquer outro serviço; os modelos de bate-papo e os modelos de decisão são configurações nomeadas, e o que os agentes selecionam em tempo de execução é o conjunto de beans que a extensão cria a partir deles; as ferramentas dos agentes são os métodos de um bean, com seus executores gerados na fase de compilação; o ouvinte que avalia cada chamada e aquele que alimenta a página da web são beans que a extensão anexa a cada modelo e a cada agente; e o mesmo núcleo atende tanto à linha de comando quanto à interface web."
 
+#. mt: deepl
+#, fuzzy
 msgid "In the near future we plan to keep growing the set of agentic patterns available out-of-the-box, in LangChain4j and in its Quarkus extension, using real applications like this one to find out what is still missing. The reviewer is open source: clone https://github.com/mariofusco/langchain4j-pr-reviewer[the repository], try it on one of your own pull requests, and tell us what it finds, and what it gets wrong."
-msgstr ""
+msgstr "Em um futuro próximo, planejamos continuar ampliando o conjunto de padrões de agência disponíveis prontos para uso, no LangChain4j e em sua extensão para Quarkus, utilizando aplicações reais como esta para identificar o que ainda está faltando. O revisor é de código aberto: clone link:https://github.com/mariofusco/langchain4j-pr-reviewer[o repositório] , teste-o em uma de suas próprias solicitações de pull e nos informe o que ele detecta e quais erros ele comete."

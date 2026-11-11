@@ -6,265 +6,389 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: roq-plugin-l10n-adoc\n"
 
+#. mt: deepl
+#, fuzzy
 msgid "A short background on Trax"
-msgstr ""
+msgstr "Uma breve introdução sobre o Trax"
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "Quarkus turns up in places most people never think to look for it.\n"
 "This one lives on the ramp, in the hangar, and in the hands of the mechanic standing under a wing at 3am."
-msgstr ""
+msgstr "O Quarkus aparece em lugares onde a maioria das pessoas nem sequer pensaria em procurá-lo. Este aqui vive na rampa, no hangar e nas mãos do mecânico que está debaixo de uma asa às 3 da manhã."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "https://www.trax.aero/[Trax^] builds MRO software — Maintenance, Repair and Overhaul — for airlines, cargo operators and independent maintenance providers.\n"
 "If an aircraft is being worked on, something has to track it: the work orders, the task cards, the parts consumed, the sign-offs, the airworthiness records that a regulator can ask to see years later.\n"
 "Trax has been doing that for over 25 years, and today its systems cover thousands of aircraft for customers across dozens of countries."
-msgstr ""
+msgstr "link:https://www.trax.aero/[A Trax] desenvolve software de MRO — Manutenção, Reparo e Revisão — para companhias aéreas, operadoras de carga e prestadores de serviços de manutenção independentes. Quando uma aeronave está em manutenção, é necessário que haja um sistema para rastrear: as ordens de serviço, os cartões de tarefa, as peças utilizadas, as aprovações e os registros de aeronavegabilidade que um órgão regulador pode solicitar anos mais tarde. A Trax vem fazendo isso há mais de 25 anos e, atualmente, seus sistemas abrangem milhares de aeronaves para clientes em dezenas de países."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "Historically this was a heavyweight desktop application backed by a very large Oracle database.\n"
 "The modern push is *paperless* maintenance: get the mechanic off the clipboard and onto an iPad at the aircraft, and give the maintenance controller a live web dashboard instead of a report that was true ten minutes ago.\n"
 "That product line is called *eMobility*, and the technology behind it is a suite of Quarkus applications."
-msgstr ""
+msgstr "Historicamente, tratava-se de um aplicativo de desktop pesado, apoiado por um banco de dados Oracle de grande porte. A tendência atual é a manutenção *sem papel* : tirar o mecânico da prancheta e colocá-lo a trabalhar com um iPad diretamente na aeronave, e fornecer ao controlador de manutenção um painel de controle online em tempo real, em vez de um relatório que já estava desatualizado há dez minutos. Essa linha de produtos é chamada de *eMobility* , e a tecnologia por trás dela é um conjunto de aplicativos Quarkus."
 
+#. mt: deepl
+#, fuzzy
 msgid "The problem"
-msgstr ""
+msgstr "O problema"
 
+#. mt: deepl
+#, fuzzy
 msgid "These services have to serve two very different front ends:"
-msgstr ""
+msgstr "Esses serviços precisam atender a duas interfaces de usuário muito diferentes:"
 
+#. mt: deepl
+#, fuzzy
 msgid "A **React** web application used by maintenance control and line control staff on desktops."
-msgstr ""
+msgstr "Um aplicativo web *em React* utilizado pela equipe de controle de manutenção e de controle de linha em computadores."
 
+#. mt: deepl
+#, fuzzy
 msgid "A **Swift/SwiftUI iOS** application used by mechanics on iPads out at the aircraft."
-msgstr ""
+msgstr "Um aplicativo *para iOS desenvolvido em Swift/SwiftUI* utilizado por mecânicos em iPads durante o trabalho nas aeronaves."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "Both need the same data, and both need it to be *current*.\n"
 "When a work order changes status, when a flight's maintenance crew assignment moves, when a defect is raised against an aircraft, every connected client should know within seconds — without hammering the database with polling."
-msgstr ""
+msgstr "Ambos precisam dos mesmos dados, e ambos precisam que eles estejam *atualizados* . Quando uma ordem de serviço muda de status, quando a designação da equipe de manutenção de um voo é alterada, quando é registrado um defeito em uma aeronave, todos os clientes conectados devem ser informados em questão de segundos — sem sobrecarregar o banco de dados com consultas repetidas."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "The wrinkle is that the system of record is the existing Oracle ERP database, and a great deal of what writes to it is *not* our service.\n"
 "Other Trax applications, batch jobs, and integrations all write to the same tables.\n"
 "We cannot simply fire an event from our own code after a transaction commits, because most of the interesting changes do not originate in our code at all."
-msgstr ""
+msgstr "O problema é que o sistema de registro é o banco de dados Oracle ERP existente, e grande parte do que é gravado nele *não* provém do nosso serviço. Outras aplicações do Trax, tarefas em lote e integrações também gravam nas mesmas tabelas. Não podemos simplesmente disparar um evento a partir de nosso próprio código após a confirmação de uma transação, pois a maioria das alterações relevantes não se origina de forma alguma em nosso código."
 
+#. mt: deepl
+#, fuzzy
 msgid "So the requirement became: **react to changes in the database itself, regardless of who made them, and fan them out to every connected client.**"
-msgstr ""
+msgstr "Assim, o requisito passou a ser: *reagir às alterações no próprio banco de dados, independentemente de quem as tenha feito, e distribuí-las a todos os clientes conectados.*"
 
+#. mt: deepl
+#, fuzzy
 msgid "The architecture"
-msgstr ""
+msgstr "A arquitetura"
 
+#. mt: deepl
+#, fuzzy
 msgid "The answer was change data capture, and Quarkus made every hop of it boring in the best possible way:"
-msgstr ""
+msgstr "A resposta foi a captura de alterações de dados, e o Quarkus tornou cada etapa desse processo monótona da melhor maneira possível:"
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "Debezium tails the Oracle redo log and publishes change events to Kafka.\n"
 "The Quarkus service consumes those topics with Kafka Streams, refreshes whatever cached view the change affects, and then broadcasts a compact \"something you care about changed\" message to every open WebSocket.\n"
 "Clients re-fetch only what they need over REST."
-msgstr ""
+msgstr "O Debezium monitora o log de redo do Oracle e publica eventos de alteração no Kafka. O serviço Quarkus consome esses tópicos por meio do Kafka Streams, atualiza qualquer visualização em cache afetada pela alteração e, em seguida, transmite uma mensagem concisa do tipo “algo de seu interesse foi alterado” para cada WebSocket aberto. Os clientes recuperam novamente apenas o que precisam por meio de REST."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "What I like about this shape is that the payload on the wire is deliberately *thin*.\n"
 "We are not trying to replicate the database into the browser — we are telling the client which slice of its state is now stale."
-msgstr ""
+msgstr "O que eu gosto nesse formato é que a carga útil transmitida pela rede é deliberadamente *reduzida* . Não estamos tentando replicar o banco de dados no navegador — estamos informando ao cliente qual parte de seu estado está desatualizada no momento."
 
+#. mt: deepl
+#, fuzzy
 msgid "Consuming CDC with Kafka Streams"
-msgstr ""
+msgstr "Utilização do CDC com o Kafka Streams"
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "The `quarkus-kafka-streams` extension gives you a `Topology` producer and Quarkus handles the lifecycle.\n"
 "We wanted adding a new captured table to be a one-class change, so the topology is assembled by discovering CDI beans:"
-msgstr ""
+msgstr "A extensão `quarkus-kafka-streams` oferece um produtor `de topologia` , e o Quarkus gerencia o ciclo de vida. Queríamos que a adição de uma nova tabela capturada fosse uma alteração que envolvesse apenas uma classe; por isso, a topologia é montada por meio da detecção de beans CDI:"
 
+#. mt: deepl
+#, fuzzy
 msgid "Every handler extends a small base class that takes care of the serdes, the error handling and the logging context, so the subclass only has to say which topic it wants and what to do with a record:"
-msgstr ""
+msgstr "Cada manipulador estende uma pequena classe base que se encarrega do serdes, do tratamento de erros e do contexto de registro em log; assim, a subclasse precisa apenas indicar qual tópico deseja e o que fazer com um registro:"
 
+#. mt: deepl
+#, fuzzy
 msgid "A concrete handler for the work order table is then almost entirely business logic:"
-msgstr ""
+msgstr "Um manipulador concreto para a tabela de ordens de serviço consiste, então, quase inteiramente em lógica de negócios:"
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "Adding capture for a new table is: write one handler, add one topic property.\n"
 "CDI discovery does the rest — there is no registry to remember to update, which is exactly the kind of thing that rots in a long-lived codebase."
-msgstr ""
+msgstr "Para adicionar a captura a uma nova tabela, basta: escrever um manipulador e adicionar uma propriedade de tópico. A descoberta do CDI cuida do resto — não há nenhum registro que precise ser atualizado, o que é exatamente o tipo de coisa que se torna um problema em uma base de código de longa duração."
 
+#. mt: deepl
+#, fuzzy
 msgid "The topic names live in configuration rather than in the handlers, so a new capture never touches Java that is already working:"
-msgstr ""
+msgstr "Os nomes dos tópicos estão definidos na configuração, e não nos manipuladores; portanto, uma nova captura nunca afeta o código Java que já está em funcionamento:"
 
+#. mt: deepl
+#, fuzzy
 msgid "The `${HOSTNAME}` in the application id is the detail worth stopping on."
-msgstr ""
+msgstr "O `${HOSTNAME}` no ID do aplicativo é o detalhe que merece uma atenção especial."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "Kafka Streams derives the consumer group from the application id, and a consumer group *divides* partitions among its members.\n"
 "That is exactly what you want when you are processing work — and exactly what you do not want here.\n"
 "If every pod shared one application id, a change event would be delivered to one pod, and only the users connected to that pod would ever hear about it.\n"
 "We need the opposite: every pod must see every record, so it can notify the browsers and iPads holding open WebSockets against *it*.\n"
 "This is a broadcast, not a work queue, so each pod needs a consumer group of its own."
-msgstr ""
+msgstr "O Kafka Streams determina o grupo de consumidores a partir do ID da aplicação, e um grupo de consumidores *divide* as partições entre seus membros. Isso é exatamente o que o senhor deseja ao processar tarefas — e exatamente o que o senhor não deseja neste caso. Se cada pod compartilhasse um único ID de aplicativo, um evento de alteração seria entregue a um único pod, e somente os usuários conectados a esse pod tomariam conhecimento dele. Precisamos do contrário: cada pod deve ver todos os registros, para que possa notificar os navegadores e iPads que mantêm WebSockets abertos com *ele* . Trata-se de uma transmissão, não de uma fila de trabalho; portanto, cada pod precisa de um grupo de consumidores próprio."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "The container runtime hands us a unique value for free.\n"
 "Kubernetes sets `HOSTNAME` to the pod name, and pod names are unique within a namespace — a Deployment appends a random suffix, a StatefulSet an ordinal — so two replicas of the same Deployment land in different consumer groups without any coordination between them.\n"
 "Docker does the same thing with the container id.\n"
 "No config to template per replica, no init container to generate an identity."
-msgstr ""
+msgstr "O ambiente de execução do contêiner nos fornece um valor único de forma automática. O Kubernetes define `HOSTNAME` como o nome do pod, e os nomes dos pods são únicos dentro de um namespace — um Deployment acrescenta um sufixo aleatório, um StatefulSet, um ordinal — de modo que duas réplicas do mesmo Deployment são alocadas em grupos de consumidores diferentes, sem qualquer coordenação entre elas. O Docker faz o mesmo com o ID do contêiner. Não há configuração de modelo por réplica, nem contêiner de inicialização para gerar uma identidade."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "Uniqueness alone is not the whole reason, though.\n"
 "A random UUID regenerated at boot would also be unique — and that is precisely the problem.\n"
 "Every restart would strand the old consumer group with its committed offsets and its state store directory, and the pod would come back as a stranger.\n"
 "`HOSTNAME` is *stable for the life of the pod*, so a container that crashes and restarts in place rejoins the same group and picks up where it left off.\n"
 "Unique across pods, stable across restarts: those are the two properties an application id actually needs, and the pod name has both."
-msgstr ""
+msgstr "No entanto, a exclusividade por si só não é a única razão. Um UUID aleatório regenerado na inicialização também seria exclusivo — e esse é precisamente o problema. Cada reinicialização deixaria o antigo grupo de consumidores isolado com seus offsets confirmados e seu diretório de armazenamento de estado, e o pod voltaria como um elemento estranho. `O HOSTNAME` permanece *estável durante toda a vida útil do pod* ; assim, um contêiner que trave e seja reiniciado no mesmo local volta a integrar-se ao mesmo grupo e retoma de onde parou. Único entre os pods, estável entre reinicializações: essas são as duas propriedades de que um identificador de aplicativo realmente precisa, e o nome do pod possui ambas."
 
+#. mt: deepl
+#, fuzzy
 msgid "Pushing to clients with WebSockets Next"
-msgstr ""
+msgstr "Envio de dados aos clientes com WebSockets – Próximo"
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "On the other end, `quarkus-websockets-next` turned out to be a genuine pleasure.\n"
 "The endpoint is a plain CDI bean with annotated methods:"
-msgstr ""
+msgstr "Por outro lado, `o quarkus-websockets-next` revelou-se um verdadeiro prazer. O endpoint é um simples bean CDI com métodos anotados:"
 
+#. mt: deepl
+#, fuzzy
 msgid "Two small details in there solved real production problems."
-msgstr ""
+msgstr "Dois pequenos detalhes ali resolveram problemas reais de produção."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "First, keeping a connection alive through corporate firewalls and airport Wi-Fi needs two different mechanisms, because the two clients are not equally capable.\n"
 "A native client can send RFC 6455 ping control frames, and `@OnPingMessage` / `@OnPongMessage` hand those to you directly.\n"
 "JavaScript in the browser has no API to send a ping frame at all, so the React client sends a literal `\"ping\"` text message instead and `@OnTextMessage` answers it.\n"
 "Two keepalive strategies, one endpoint, no branching in the transport layer.\n"
 "On the server side, Quarkus sends its own pings for us:"
-msgstr ""
+msgstr "Em primeiro lugar, manter uma conexão ativa através de firewalls corporativos e redes Wi-Fi de aeroportos requer dois mecanismos diferentes, pois os dois clientes não possuem as mesmas capacidades. Um cliente nativo pode enviar quadros de controle de ping conforme a RFC 6455, e `@OnPingMessage` / `@OnPongMessage` os encaminham diretamente a você. O JavaScript no navegador não possui nenhuma API para enviar um quadro de ping; portanto, o cliente React envia, em vez disso, uma mensagem de texto com `a palavra “ping”` , e `@OnTextMessage` responde a ela. Duas estratégias de manutenção de conexão, um único endpoint, sem ramificações na camada de transporte. No lado do servidor, o Quarkus envia seus próprios pings para nós:"
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "Second, `@OnError` gets a real exception rather than a swallowed one.\n"
 "`HttpClosedException` just means someone closed their laptop lid, so we log it at warn and move on, while anything else gets a full stack trace.\n"
 "Before we separated those two cases, the logs were unreadable."
-msgstr ""
+msgstr "Em segundo lugar, `@OnError` recebe uma exceção real, em vez de uma que foi suprimida. `A HttpClosedException` significa apenas que alguém fechou a tampa do laptop; por isso, registramos isso no nível “warn” e seguimos em frente, enquanto qualquer outra situação recebe um rastreamento completo da pilha. Antes de separarmos esses dois casos, os registros eram ilegíveis."
 
+#. mt: deepl
+#, fuzzy
 msgid "Broadcasting uses the injectable `OpenConnections` bean:"
-msgstr ""
+msgstr "A transmissão utiliza o bean `OpenConnections` injetável:"
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "`OpenConnections` is iterable, and the handshake request is available on each connection, so routing a message to just one application's clients is a filter on a query parameter.\n"
 "No session registry of our own, no `ConcurrentHashMap` of connection ids to maintain."
-msgstr ""
+msgstr "`O OpenConnections` é iterável, e a solicitação de handshake está disponível em cada conexão; portanto, encaminhar uma mensagem apenas para os clientes de um determinado aplicativo consiste em aplicar um filtro a um parâmetro de consulta. Não há necessidade de manter um registro de sessões próprio nem `um ConcurrentHashMap` com IDs de conexão."
 
+#. mt: deepl
+#, fuzzy
 msgid "The message itself is intentionally small — an id, a timestamp, and a set of enum values naming what changed:"
-msgstr ""
+msgstr "A mensagem em si é intencionalmente curta — um ID, um carimbo de data/hora e um conjunto de valores de enumeração que indicam o que foi alterado:"
 
+#. mt: deepl
+#, fuzzy
 msgid "So a CDC event on the work order table ends up as `updates: [\"WORK_ORDER\"]` plus a little metadata naming the aircraft and station, and the React app invalidates exactly one TanStack Query cache key."
-msgstr ""
+msgstr "Assim, um evento do CDC na tabela de ordens de serviço resulta em `atualizações: [\"WORK_ORDER\"]` , além de alguns metadados que identificam a aeronave e a estação, e o aplicativo React invalida exatamente uma chave do cache do TanStack Query."
 
+#. mt: deepl
+#, fuzzy
 msgid "Debouncing the firehose"
-msgstr ""
+msgstr "Eliminando o rebote do fluxo intenso de dados"
 
+#. mt: deepl
+#, fuzzy
 msgid "Here is the lesson we learned the hard way, and it is not a Quarkus problem — it is a CDC problem."
-msgstr ""
+msgstr "Esta é a lição que aprendemos da maneira mais difícil, e não se trata de um problema do Quarkus — trata-se de um problema do CDC."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "Change data capture is *chatty*.\n"
 "One human action in the ERP can be a multi-statement transaction touching the same row several times, and a batch job can rewrite thousands of rows in a few seconds.\n"
 "Forwarding every one of those to the browser meant a React app re-rendering itself into the ground and an iPad burning battery for no reason."
-msgstr ""
+msgstr "A captura de dados de alteração gera *muito tráfego* . Uma ação realizada por um usuário no ERP pode ser uma transação com várias instruções que afeta a mesma linha várias vezes, e um trabalho em lote pode reescrever milhares de linhas em poucos segundos. Encaminhar cada uma dessas alterações para o navegador significaria que um aplicativo React ficaria reiniciando a renderização incessantemente e que a bateria de um iPad se esgotaria sem motivo."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "So updates are coalesced before they leave the building.\n"
 "Handlers do not broadcast directly; they enqueue into a per-type map keyed by the record's natural identity, and a shared trailing timer flushes the whole batch a second later:"
-msgstr ""
+msgstr "Assim, as atualizações são agrupadas antes de saírem do prédio. Os manipuladores não transmitem diretamente; eles colocam em fila em um mapa específico para cada tipo, indexado pela identidade natural do registro, e um temporizador comum, no final do processo, libera todo o lote um segundo depois:"
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "Because the pending map is keyed by identity, five updates to the same work order inside the window collapse to one.\n"
 "Because the timer is shared and trailing, a burst across several tables still produces a single `SocketMessage` carrying every affected type.\n"
 "A thousand-row batch job becomes one notification instead of a thousand."
-msgstr ""
+msgstr "Como o mapa de pendências é indexado por identidade, cinco atualizações na mesma ordem de serviço dentro da janela são agrupadas em uma única. Como o temporizador é compartilhado e funciona de forma acumulativa, uma sequência de atualizações em várias tabelas ainda gera uma única `SocketMessage` contendo todos os tipos afetados. Um trabalho em lote de mil linhas se transforma em uma única notificação, em vez de mil."
 
+#. mt: deepl
+#, fuzzy
 msgid "When the iPad is asleep"
-msgstr ""
+msgstr "Quando o iPad está em modo de suspensão"
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "A WebSocket is only useful while the app is in the foreground.\n"
 "Mechanics put the iPad down, walk around the aircraft, and come back.\n"
 "So the same event that broadcasts over WebSockets also fans out to Apple Push Notification Service, driven by CDI events so the notification path never blocks the caller:"
-msgstr ""
+msgstr "Um WebSocket só é útil enquanto o aplicativo estiver em primeiro plano. Os mecânicos colocam o iPad de lado, percorrem a aeronave e voltam. Assim, o mesmo evento que é transmitido por meio de WebSockets também é distribuído para o Serviço de Notificações Push da Apple, acionado por eventos CDI, de modo que o caminho da notificação nunca bloqueie o chamador:"
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "`@ObservesAsync` from ArC is the whole implementation of \"do this off the request thread\".\n"
 "No executor to configure, no thread pool to tune, no `@Async` annotation processor."
-msgstr ""
+msgstr "`O @ObservesAsync` do ArC representa a implementação completa do conceito “execute isso fora da thread da solicitação”. Não é necessário configurar nenhum executor, ajustar nenhum pool de threads nem utilizar nenhum processador de anotações `@Async` ."
 
+#. mt: deepl
+#, fuzzy
 msgid "One OpenAPI contract, two generated clients"
-msgstr ""
+msgstr "Um contrato OpenAPI, dois clientes gerados"
 
+#. mt: deepl
+#, fuzzy
 msgid "This is the part the front-end teams care about most."
-msgstr ""
+msgstr "Essa é a parte com a qual as equipes de front-end mais se preocupam."
 
+#. mt: deepl
+#, fuzzy
 msgid "`quarkus-smallrye-openapi` generates the specification from the JAX-RS resources and the `@Schema` annotations, and one property makes it a build artifact rather than a runtime curiosity:"
-msgstr ""
+msgstr "`O `quarkus-smallrye-openapi`` gera a especificação a partir dos recursos JAX-RS e das anotações ``@Schema`` , e uma propriedade faz com que ele seja um artefato de compilação, em vez de uma curiosidade em tempo de execução:"
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "The generated `openapi.json` is committed alongside the code, which means it is reviewed in the same pull request as the endpoint change.\n"
 "Both clients are generated from that one file."
-msgstr ""
+msgstr "O arquivo `openapi.json` gerado é enviado junto com o código, o que significa que ele é revisado na mesma solicitação de pull que a alteração do endpoint. Ambos os clientes são gerados a partir desse único arquivo."
 
+#. mt: deepl
+#, fuzzy
 msgid "For iOS:"
-msgstr ""
+msgstr "Para iOS:"
 
+#. mt: deepl
+#, fuzzy
 msgid "For React, https://orval.dev/[Orval^] emits TanStack Query hooks:"
-msgstr ""
+msgstr "Para o React, link:https://orval.dev/[o Orval] disponibiliza os hooks de consulta do TanStack:"
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "The effect is that a Java developer renaming a field breaks the Swift build and the TypeScript build, at compile time, instead of at an airport.\n"
 "`@Schema` annotations on the DTOs are not documentation busywork — they are the input to two code generators, and the `SocketUpdate` enum above lands in both clients as a real type."
-msgstr ""
+msgstr "O resultado é que, quando um desenvolvedor Java renomeia um campo, isso interrompe a compilação do Swift e do TypeScript, em tempo de compilação, e não em um aeroporto. As anotações `@Schema` nos DTOs não são um trabalho burocrático de documentação — elas servem de entrada para dois geradores de código, e a enumeração `SocketUpdate` acima aparece em ambos os clientes como um tipo real."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "Error responses are standardized too.\n"
 "The https://github.com/quarkiverse/quarkus-http-problem[quarkus-http-problem^] extension gives us RFC 7807 problem details across the whole API, with tracing identifiers folded in:"
-msgstr ""
+msgstr "As respostas de erro também são padronizadas. A extensão link:https://github.com/quarkiverse/quarkus-http-problem[quarkus-http-problem] fornece detalhes de problemas de acordo com a RFC 7807 em toda a API, com identificadores de rastreamento incorporados:"
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "So a Bean Validation failure comes back as a `422` with a machine-readable body, and the `traceId` in it is the same one in the Grafana trace.\n"
 "When a mechanic reports \"it said something went wrong\", support has a trace id to paste."
-msgstr ""
+msgstr "Portanto, uma falha no Bean Validation é retornada como um `código 422` com um corpo legível por máquina, e o `traceId` nele contido é o mesmo do rastreamento no Grafana. Quando um técnico relata que “apareceu uma mensagem indicando que algo deu errado”, a equipe de suporte tem um traceId para inserir."
 
+#. mt: deepl
+#, fuzzy
 msgid "The rest of the stack"
-msgstr ""
+msgstr "O restante da pilha"
 
+#. mt: deepl
+#, fuzzy
 msgid "Because everything is a Quarkus extension, a lot of what would normally be infrastructure work was configuration:"
-msgstr ""
+msgstr "Como tudo é uma extensão do Quarkus, grande parte do que normalmente seria um trabalho de infraestrutura consistia em configuração:"
 
+#. mt: deepl
+#, fuzzy
 msgid "**`quarkus-hibernate-orm-panache` + `quarkus-jdbc-oracle`** against the existing Oracle schema, with a snake-case physical naming strategy so the Java entities read like Java and the tables stay as the ERP defined them decades ago."
-msgstr ""
+msgstr "*quarkus-hibernate-orm-panache + quarkus-jdbc-oracle* em relação ao esquema Oracle existente, com uma estratégia de nomenclatura física em “snake-case”, de modo que as entidades Java tenham uma sintaxe semelhante à do Java e as tabelas permaneçam conforme foram definidas pelo ERP há décadas."
 
+#. mt: deepl
+#, fuzzy
 msgid "**`quarkus-cache`** and the Hibernate second-level cache for reference data — aircraft master, locations, gates, profiles — warmed at startup and invalidated by the CDC handlers. Reference data that changes twice a year should not be a database round trip on every request."
-msgstr ""
+msgstr "*O quarkus-cache* e o cache de segundo nível do Hibernate para dados de referência — cadastro de aeronaves, locais, portões, perfis — são pré-carregados na inicialização e invalidados pelos manipuladores do CDC. Dados de referência que são alterados duas vezes por ano não devem exigir uma ida e volta ao banco de dados a cada solicitação."
 
+#. mt: deepl
+#, fuzzy
 msgid "**`quarkus-oidc`** with Keycloak, mapping OIDC token claims onto the fine-grained permissions already modeled in the ERP."
-msgstr ""
+msgstr "*quarkus-oidc* com Keycloak, mapeando as reivindicações dos tokens OIDC para as permissões detalhadas já modeladas no ERP."
 
+#. mt: deepl
+#, fuzzy
 msgid "**`quarkus-micrometer-opentelemetry`** and **`quarkus-micrometer-registry-prometheus`**, pointed at a Grafana LGTM stack. JDBC telemetry, scheduler metrics and WebSocket metrics are all one property each."
-msgstr ""
+msgstr "*quarkus-micrometer-opentelemetry* e *quarkus-micrometer-registry-prometheus* , direcionados para uma pilha LGTM do Grafana. A telemetria JDBC, as métricas do agendador e as métricas do WebSocket correspondem, cada uma, a uma única propriedade."
 
+#. mt: deepl
+#, fuzzy
 msgid "**`quarkus-scheduler`**, **`quarkus-qute`**, **`quarkus-amazon-s3`** and a couple of Quarkiverse PDF extensions for the reporting and document side."
-msgstr ""
+msgstr "*quarkus-scheduler* , *quarkus-qute* , *quarkus-amazon-s3* e algumas extensões em PDF do Quarkiverse para a área de relatórios e documentos."
 
+#. mt: deepl
+#, fuzzy
 msgid "**`quarkus-smallrye-health`** and **`quarkus-info`** so the platform team gets liveness, readiness and build metadata without us writing an endpoint."
-msgstr ""
+msgstr "*quarkus-smallrye-health* e *quarkus-info* , para que a equipe da plataforma obtenha metadados sobre disponibilidade, prontidão e compilação sem que precisemos criar um endpoint."
 
 #, fuzzy
 msgid "Conclusion"
 msgstr "Conclusão"
 
+#. mt: deepl
+#, fuzzy
 msgid "The thing that stands out to me about this project is how *little* of it is plumbing."
-msgstr ""
+msgstr "O que mais me chama a atenção neste projeto é o quão *pouca* parte dele envolve encanamento."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "The hard parts of the problem are genuinely hard: capturing changes from an Oracle database you do not exclusively own, getting them to a mechanic's iPad reliably enough that they trust it, and keeping two independently-built front ends in lockstep with a Java API.\n"
 "But the code that solves those problems is a topology producer, a handful of handler classes, one annotated WebSocket endpoint and a build property that writes an OpenAPI file to disk."
-msgstr ""
+msgstr "As partes mais complexas do problema são realmente complexas: capturar alterações de um banco de dados Oracle do qual o senhor não é o único proprietário, enviá-las para o iPad de um mecânico com confiabilidade suficiente para que ele confie nelas e manter duas interfaces de usuário desenvolvidas de forma independente em sincronia com uma API Java. Mas o código que resolve esses problemas consiste em um gerador de topologia, algumas classes de manipuladores, um endpoint WebSocket anotado e uma propriedade de compilação que grava um arquivo OpenAPI no disco."
 
+#. mt: deepl
+#, fuzzy
 msgid ""
 "Kafka Streams, WebSockets, CDI events, OIDC, OpenTelemetry, Oracle and OpenAPI are one dependency each and one consistent configuration file, and they all show up together in Dev UI when something is not behaving.\n"
 "That is the Quarkus pitch, and on this project it held up."
-msgstr ""
+msgstr "Kafka Streams, WebSockets, eventos CDI, OIDC, OpenTelemetry, Oracle e OpenAPI representam, cada um, uma única dependência e um único arquivo de configuração consistente, e todos eles aparecem juntos na interface de usuário de desenvolvimento quando algo não está funcionando corretamente. Esse é o argumento de venda do Quarkus, e, neste projeto, ele se confirmou."

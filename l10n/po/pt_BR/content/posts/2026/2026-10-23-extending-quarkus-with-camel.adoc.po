@@ -9,212 +9,350 @@ msgstr ""
 msgid "Introduction"
 msgstr "Introdução"
 
+#. mt: deepl
+#, fuzzy
 msgid "You built a standard Quarkus application: REST endpoints, a service layer, a database. Then you are given a new requirement: \"When an order is placed, send an event to Kafka so the analytics team can track it.\" A week later another one: \"Also notify the partner loyalty system via their REST API and make sure to handle it properly when their API is down.\" And another one: \"The partner is going to start sending us CSV order files.\"..."
-msgstr ""
+msgstr "O senhor desenvolveu um aplicativo Quarkus padrão: pontos de extremidade REST, uma camada de serviços e um banco de dados. Em seguida, recebeu um novo requisito: “Quando um pedido for feito, envie um evento para o Kafka para que a equipe de análise possa acompanhá-lo.” Uma semana depois, surge outro: “Notifique também o sistema de fidelidade do parceiro por meio de sua API REST e certifique-se de lidar com a situação adequadamente caso a API dele esteja indisponível.” E mais um: “O parceiro começará a nos enviar arquivos CSV de pedidos.”…​"
 
+#. mt: deepl
+#, fuzzy
 msgid "Each of these requirements is an integration task, and Quarkus already gives you building blocks for all of them: Reactive Messaging for Kafka, the REST client with fault tolerance for the loyalty API, a scheduled job for file polling."
-msgstr ""
+msgstr "Cada um desses requisitos constitui uma tarefa de integração, e o Quarkus já oferece os componentes básicos para todos eles: Reactive Messaging para o Kafka, o cliente REST com tolerância a falhas para a API de fidelidade e uma tarefa agendada para a verificação de arquivos."
 
+#. mt: deepl
+#, fuzzy
 msgid "But you could also hand all three to Apache Camel, which covers them with a single model. Retry with backoff, error policies, JSON and CSV conversion, file polling that moves handled files aside: each one is a built-in step you declare on a route, a line at a time, in the same vocabulary whichever system you are talking to."
-msgstr ""
+msgstr "Mas também seria possível delegar todas as três tarefas ao Apache Camel, que as abrange por meio de um único modelo. Repetição de tentativas com backoff, políticas de erro, conversão de JSON e CSV, sondagem de arquivos que move os arquivos processados para um local separado: cada uma delas é uma etapa integrada que o senhor declara em uma rota, uma linha por vez, utilizando o mesmo vocabulário, independentemente do sistema com o qual o senhor esteja se comunicando."
 
+#. mt: deepl
+#, fuzzy
 msgid "And it runs inside the application you already have. https://camel.apache.org/camel-quarkus/next/[Camel Quarkus] packages over 300 of Camel's https://camel.apache.org/components/next/[components] as Quarkus extensions, as natural to use as any other CDI bean."
-msgstr ""
+msgstr "Além disso, ele é executado dentro da aplicação que o senhor já possui. link:https://camel.apache.org/camel-quarkus/next/[O Camel Quarkus] inclui mais de 300 link:https://camel.apache.org/components/next/[componentes] do Camel como extensões do Quarkus, tão fáceis de usar quanto qualquer outro bean CDI."
 
+#. mt: deepl
+#, fuzzy
 msgid "In this post we start from a working Quarkus REST application and progressively extend it with three integration capabilities using Camel. You'll see exactly what changes in your existing code and what stays untouched."
-msgstr ""
+msgstr "Nesta postagem, partiremos de um aplicativo REST do Quarkus já em funcionamento e o ampliaremos gradualmente com três recursos de integração utilizando o Camel. O(a) senhor(a) verá exatamente o que muda no seu código existente e o que permanece inalterado."
 
+#. mt: deepl
+#, fuzzy
 msgid "The starting point"
-msgstr ""
+msgstr "O ponto de partida"
 
+#. mt: deepl
+#, fuzzy
 msgid "Here's what we're starting with: a simple order management REST API."
-msgstr ""
+msgstr "Eis por onde vamos começar: uma API REST simples para gerenciamento de pedidos."
 
+#. mt: deepl
+#, fuzzy
 msgid "`Order` is a POJO with four fields (`id`, `customer`, `type`, `amount`), a no-arg constructor and an all-args one. `OrderRepository` is an `@ApplicationScoped` CDI bean that stores orders in memory."
-msgstr ""
+msgstr "`Order` é um POJO com quatro campos ( `id` , `cliente` , `tipo` , `valor` ), um construtor sem argumentos e outro com todos os argumentos. `OrderRepository` é um bean CDI `com escopo @ApplicationScoped` que armazena pedidos na memória."
 
+#. mt: deepl
+#, fuzzy
 msgid "Start it up and make sure it works:"
-msgstr ""
+msgstr "Ligue o aparelho e verifique se está funcionando:"
 
+#. mt: deepl
+#, fuzzy
 msgid "You should get:"
-msgstr ""
+msgstr "O resultado deverá ser:"
 
+#. mt: deepl
+#, fuzzy
 msgid "Now let's extend it."
-msgstr ""
+msgstr "Agora, vamos ampliá-lo."
 
+#. mt: deepl
+#, fuzzy
 msgid "Adding Camel to the project"
-msgstr ""
+msgstr "Incorporando o Camel ao projeto"
 
+#. mt: deepl
+#, fuzzy
 msgid "Add the Camel Quarkus extensions we'll need:"
-msgstr ""
+msgstr "Adicione as extensões do Camel Quarkus de que precisaremos:"
 
+#. mt: deepl
+#, fuzzy
 msgid "If you don't have the https://quarkus.io/guides/cli-tooling[Quarkus CLI] you can add directly in your `pom.xml`:"
-msgstr ""
+msgstr "Caso não possua o link:https://quarkus.io/guides/cli-tooling[CLI do Quarkus] , você pode adicioná-lo diretamente no seu `pom.xml` :"
 
+#. mt: deepl
+#, fuzzy
 msgid "the `quarkus-camel-bom` to `<dependencyManagement>` so versions are managed:"
-msgstr ""
+msgstr "Adicione o `quarkus-camel-bom` ao `<dependencyManagement>` para que as versões sejam gerenciadas:"
 
+#. mt: deepl
+#, fuzzy
 msgid "the dependencies:"
-msgstr ""
+msgstr "as dependências:"
 
+#. mt: deepl
+#, fuzzy
 msgid "If you have Podman or Docker running, Quarkus Dev Services will start a Kafka broker automatically. Camel Quarkus extensions are built like any other Quarkus extension, so dev mode, Dev Services, configuration and native image all work the way you already expect."
-msgstr ""
+msgstr "Caso o Podman ou o Docker estejam em execução, o Quarkus Dev Services iniciará um broker do Kafka automaticamente. As extensões do Camel para o Quarkus são desenvolvidas da mesma forma que qualquer outra extensão do Quarkus; portanto, o modo de desenvolvimento, o Dev Services, a configuração e a imagem nativa funcionam exatamente como o senhor já espera."
 
+#. mt: deepl
+#, fuzzy
 msgid "Camel routes are CDI beans that extend `RouteBuilder`. Quarkus discovers them like any other bean:"
-msgstr ""
+msgstr "As rotas Camel são beans do CDI que estendem a classe ``RouteBuilder`` . O Quarkus as identifica da mesma forma que qualquer outro bean:"
 
+#. mt: deepl
+#, fuzzy
 msgid "At this point, nothing has changed in your existing code. Your REST endpoints, services, and beans are unaffected."
-msgstr ""
+msgstr "Neste momento, nada mudou em seu código existente. Seus endpoints REST, serviços e beans não foram afetados."
 
+#. mt: deepl
+#, fuzzy
 msgid "Sending order events to Kafka"
-msgstr ""
+msgstr "Envio de eventos de pedidos ao Kafka"
 
+#. mt: deepl
+#, fuzzy
 msgid "*The first requirement:* every time an order is placed, publish an event to a Kafka topic so downstream systems (analytics, warehouse, notifications) can react to it."
-msgstr ""
+msgstr "*O primeiro requisito:* sempre que um pedido for feito, publique um evento em um tópico do Kafka para que os sistemas a jusante (análise, data warehouse, notificações) possam reagir a ele."
 
+#. mt: deepl
+#, fuzzy
 msgid "Using Camel, the change to your existing code is two lines:"
-msgstr ""
+msgstr "Com o Camel, a alteração no seu código atual consiste em duas linhas:"
 
+#. mt: deepl
+#, fuzzy
 msgid "`ProducerTemplate` is Camel's bridge from your existing code into a Camel route. A _route_ in Camel is a processing pipeline: it starts from an input (a URI like `direct:`, `kafka:`, or `file:`), applies a chain of steps (transformation, filtering, logging) and then sends the result to one or more outputs. Think of it as a method chain that wires I/O and processing together in one place. In Camel Quarkus, `ProducerTemplate` is automatically available as a CDI bean. You just need to `@Inject` it. The `sendBody` call pushes the order object into the `direct:order-placed` endpoint, which is the entry point of your Camel route."
-msgstr ""
+msgstr "`O ProducerTemplate` é a ponte do Camel que conecta seu código existente a uma rota do Camel. Uma _rota_ no Camel é um pipeline de processamento: ela começa a partir de uma entrada (uma URI como `direct:` , `kafka:` ou `file:` ), aplica uma cadeia de etapas (transformação, filtragem, registro em log) e, em seguida, envia o resultado para uma ou mais saídas. Pense nisso como uma cadeia de métodos que integra E/S e processamento em um único local. No Camel Quarkus, `o ProducerTemplate` está automaticamente disponível como um bean CDI. Basta utilizá-lo com `a anotação @Inject` . A chamada `sendBody` envia o objeto order para o endpoint `direct:order-placed` , que é o ponto de entrada da sua rota do Camel."
 
+#. mt: deepl
+#, fuzzy
 msgid "Here's that Camel route we need to add:"
-msgstr ""
+msgstr "Aqui está a rota Camel que precisamos adicionar:"
 
+#. mt: deepl
+#, fuzzy
 msgid "The Camel route does three steps: receive the order, serialize it to JSON, send it to Kafka."
-msgstr ""
+msgstr "A rota do Camel segue três etapas: receber o pedido, serializá-lo em JSON e enviá-lo ao Kafka."
 
+#. mt: deepl
+#, fuzzy
 msgid "And the Kafka configuration to add in `application.properties`:"
-msgstr ""
+msgstr "E a configuração do Kafka a ser adicionada ao arquivo `application.properties` :"
 
+#. mt: deepl
+#, fuzzy
 msgid "Dev Services injects the broker address it started into `kafka.bootstrap.servers`, and `camel.component.kafka.brokers` passes it on to the Camel Kafka component, falling back to `localhost:9092` against an external broker."
-msgstr ""
+msgstr "O Dev Services insere o endereço do broker com o qual foi iniciado em ``kafka.bootstrap.servers` `, e ``camel.component.kafka.brokers` ` o repassa ao componente Camel Kafka, recorrendo ao ``localhost:9092` ` caso não haja um broker externo disponível."
 
+#. mt: deepl
+#, fuzzy
 msgid "*Try it*, create an order and watch the console:"
-msgstr ""
+msgstr "*Experimente* , crie um pedido e observe o console:"
 
+#. mt: deepl
+#, fuzzy
 msgid "In the logs:"
-msgstr ""
+msgstr "Nos registros:"
 
+#. mt: deepl
+#, fuzzy
 msgid "Your order is persisted _and_ published to Kafka."
-msgstr ""
+msgstr "Seu pedido foi salvo _e_ publicado no Kafka."
 
+#. mt: deepl
+#, fuzzy
 msgid "*Extensions used:* `camel-quarkus-kafka`, `camel-quarkus-jackson`, `camel-quarkus-direct`"
-msgstr ""
+msgstr "*Extensões utilizadas:* `camel-quarkus-kafka` , `camel-quarkus-jackson` , `camel-quarkus-direct`"
 
+#. mt: deepl
+#, fuzzy
 msgid "Notifying the loyalty system"
-msgstr ""
+msgstr "Notificação ao sistema de fidelidade"
 
+#. mt: deepl
+#, fuzzy
 msgid "*The second requirement:* also call the partner's loyalty API over HTTP so customers earn points when they place an order. The partner's API is unreliable, so you need to handle retries with backoff."
-msgstr ""
+msgstr "*O segundo requisito:* chamar também a API de fidelidade do parceiro via HTTP para que os clientes ganhem pontos ao fazerem um pedido. A API do parceiro não é confiável; portanto, é necessário lidar com as tentativas de reconexão utilizando o mecanismo de backoff."
 
+#. mt: deepl
+#, fuzzy
 msgid "The order event Camel route already handles the Kafka step. Let's add the loyalty notification: three more lines in the same route, plus an error policy:"
-msgstr ""
+msgstr "A rota Camel do evento “order” já lida com a etapa do Kafka. Vamos adicionar a notificação de fidelidade: mais três linhas na mesma rota, além de uma política de erros:"
 
+#. mt: deepl
+#, fuzzy
 msgid "The body is still the JSON produced by `marshal().json()` for Kafka, so `setHeader` tags the outgoing request as `application/json` for the partner API."
-msgstr ""
+msgstr "O corpo continua sendo o JSON gerado pela função `marshal().json()` para o Kafka; portanto, `o setHeader` marca a solicitação de saída como `application/json` para a API parceira."
 
+#. mt: deepl
+#, fuzzy
 msgid "The `onException` block retries any failed step up to 3 times with exponential backoff (1s, 2s, 4s). If the loyalty API returns a 500 or the connection times out, Camel retries automatically. `handled(true)` means that if all attempts fail, the error is logged and the route moves on. The order is still safely persisted, since that happened before the Camel call. Note that the policy covers every step in the route, the Kafka send included, not just the HTTP call."
-msgstr ""
+msgstr "O bloco ``onException`` repete qualquer etapa com falha até 3 vezes, com recuo exponencial (1 s, 2 s, 4 s). Se a API de fidelidade retornar um código 500 ou se a conexão atingir o tempo limite, o Camel repete a tentativa automaticamente. `handled(true)` significa que, caso todas as tentativas falhem, o erro é registrado e a rota segue em frente. A ordem ainda é mantida com segurança, uma vez que isso ocorreu antes da chamada do Camel. Observe que a política abrange todas as etapas da rota, incluindo o envio para o Kafka, e não apenas a chamada HTTP."
 
+#. mt: deepl
+#, fuzzy
 msgid "The route injects the partner's host from configuration with `@ConfigProperty`:"
-msgstr ""
+msgstr "A rota injeta o host do parceiro a partir da configuração com `@ConfigProperty` :"
 
+#. mt: deepl
+#, fuzzy
 msgid "If you want to integrate another external service later, you can add one more `.to(\"http://...\")` line."
-msgstr ""
+msgstr "Caso deseje integrar outro serviço externo posteriormente, poderá adicionar mais uma linha do tipo `.to(\"http://…​\")` ."
 
+#. mt: deepl
+#, fuzzy
 msgid "*Try it*, create another order and watch both integrations fire:"
-msgstr ""
+msgstr "*Experimente* : crie outro pedido e observe como ambas as integrações são acionadas:"
 
+#. mt: deepl
+#, fuzzy
 msgid "The two integrations are triggered from a single `sendBody` call."
-msgstr ""
+msgstr "As duas integrações são acionadas a partir de uma única chamada `ao `sendBody`` ."
 
+#. mt: deepl
+#, fuzzy
 msgid "*Extension used:* `camel-quarkus-http`"
-msgstr ""
+msgstr "*Extensão utilizada:* `camel-quarkus-http`"
 
+#. mt: deepl
+#, fuzzy
 msgid "Ingesting files from a partner"
-msgstr ""
+msgstr "Importação de arquivos de um parceiro"
 
+#. mt: deepl
+#, fuzzy
 msgid "*The third requirement:* a partner drops CSV order files into a directory. The application should parse each file, ingest the orders, and move the original to a `done` directory. The failed files go to a `failed` directory."
-msgstr ""
+msgstr "*O terceiro requisito:* um parceiro salva arquivos de pedidos no formato CSV em um diretório. O aplicativo deve analisar cada arquivo, processar os pedidos e mover o arquivo original para um diretório `de “concluídos` ”. Os arquivos com falha são movidos para um diretório `de “falhas` ”."
 
+#. mt: deepl
+#, fuzzy
 msgid "File ingestion has a lot of small details: polling, partial writes, moving handled files aside, keeping failures separate."
-msgstr ""
+msgstr "A importação de arquivos envolve muitos pequenos detalhes: sondagem, gravações parciais, deslocamento dos arquivos já processados para um local separado e isolamento das falhas."
 
+#. mt: deepl
+#, fuzzy
 msgid "The whole thing is one self-contained route:"
-msgstr ""
+msgstr "O percurso todo é um único trajeto independente:"
 
+#. mt: deepl
+#, fuzzy
 msgid "The consumer polls the directory; `readLock`, `move` and `moveFailed` on the URI cover the other three. Camel's built-in `CsvDataFormat` parses the file content into rows, skipping the header. After `split(body())`, each exchange carries one row as a `List<String>`. `orderConverter` is a small bean that maps each row to an `Order`:"
-msgstr ""
+msgstr "O consumidor consulta o diretório; os métodos `readLock` , `move` e `moveFailed` no URI abrangem os outros três. `O CsvDataFormat` integrado ao Camel analisa o conteúdo do arquivo em linhas, ignorando o cabeçalho. Após `split(body())` , cada troca transporta uma linha como uma `List<String>` . `O orderConverter` é um pequeno bean que mapeia cada linha para um `Order` :"
 
+#. mt: deepl
+#, fuzzy
 msgid "`orderRepository` is your existing CDI bean, referenced by name. For Camel to look up the bean by name, add `@Named(\"orderRepository\")` to `OrderRepository`. Since `.bean(\"name\")` resolves the method reflectively, also add `@RegisterForReflection` so the lookup keeps working in native mode."
-msgstr ""
+msgstr "`orderRepository` é o seu bean CDI existente, referenciado pelo nome. Para que o Camel localize o bean pelo nome, adicione `@Named(\"orderRepository\")` ao `OrderRepository` . Como `.bean(\"name\")` resolve o método de forma reflexiva, adicione também `@RegisterForReflection` para que a localização continue funcionando no modo nativo."
 
+#. mt: deepl
+#, fuzzy
 msgid "*Try it*, from the directory where you started `mvn quarkus:dev`, drop a CSV file and verify:"
-msgstr ""
+msgstr "*Experimente o seguinte* : no diretório em que você executou o comando ``mvn quarkus:dev` `, coloque um arquivo CSV e verifique:"
 
+#. mt: deepl
+#, fuzzy
 msgid "You'll see the orders from the CSV file alongside any you created via the REST API. The original file has been moved to `orders/done/`. A malformed file would go to `orders/failed/` instead."
-msgstr ""
+msgstr "O senhor verá os pedidos do arquivo CSV juntamente com aqueles que o senhor criou por meio da API REST. O arquivo original foi movido para a `pasta orders/done/.` Um arquivo com formato incorreto seria encaminhado para `a pasta orders/failed/.`"
 
+#. mt: deepl
+#, fuzzy
 msgid "*Extensions used:* `camel-quarkus-file`, `camel-quarkus-csv`, `camel-quarkus-bean`"
-msgstr ""
+msgstr "*Extensões utilizadas:* `camel-quarkus-file` , `camel-quarkus-csv` , `camel-quarkus-bean`"
 
+#. mt: deepl
+#, fuzzy
 msgid "How the two fit together"
-msgstr ""
+msgstr "Como os dois se encaixam"
 
+#. mt: deepl
+#, fuzzy
 msgid "In the code you already had, this is all that changed:"
-msgstr ""
+msgstr "No código que o senhor já possuía, isso foi tudo o que mudou:"
 
+#. mt: deepl
+#, fuzzy
 msgid "`@Inject ProducerTemplate producerTemplate` in `OrderResource`"
-msgstr ""
+msgstr "`@Inject ProducerTemplate producerTemplate` em `OrderResource`"
 
+#. mt: deepl
+#, fuzzy
 msgid "`producerTemplate.sendBody(\"direct:order-placed\", order)` in `OrderResource`"
-msgstr ""
+msgstr "`producerTemplate.sendBody(\"direct:order-placed\", order)` no `OrderResource`"
 
+#. mt: deepl
+#, fuzzy
 msgid "`@Named(\"orderRepository\")` and `@RegisterForReflection` on `OrderRepository`"
-msgstr ""
+msgstr "`@Named(\"orderRepository\")` e `@RegisterForReflection` no `OrderRepository`"
 
+#. mt: deepl
+#, fuzzy
 msgid "Everything else is new classes sitting alongside the old ones."
-msgstr ""
+msgstr "Todo o restante consiste em novas classes que coexistem com as antigas."
 
+#. mt: deepl
+#, fuzzy
 msgid "Beyond that, the two sides share one runtime. Any bean annotated `@Named` or `@Identifier` is reachable from a route with `.bean(\"beanName\")`, or by type with `.bean(MyService.class)`. Your JAX-RS endpoints keep being served by Quarkus HTTP, and routes using `platform-http` can share that same server. Camel settings go in the same `application.properties` under the `camel.*` namespace, and `quarkus dev` hot-reloads a route like any other class."
-msgstr ""
+msgstr "Além disso, os dois lados compartilham um único ambiente de execução. Qualquer bean anotado `com @Named` ou `@Identifier` pode ser acessado a partir de uma rota com `.bean(\"nomeDoBean\")` ou por tipo com `.bean(MyService.class)` . Seus endpoints JAX-RS continuam sendo atendidos pelo Quarkus HTTP, e as rotas que utilizam `o platform-http` podem compartilhar esse mesmo servidor. As configurações do Camel são definidas no mesmo arquivo `application.properties` , no namespace `camel.*` , e `o Quarkus Dev` realiza a recarga dinâmica de uma rota da mesma forma que faria com qualquer outra classe."
 
+#. mt: deepl
+#, fuzzy
 msgid "In the end, the goal of this blog post was to show that Camel is easy to pick up and integrates seamlessly with Quarkus. Additionally it gets more valuable as the number of systems you integrate with grows. For a single Kafka topic, Reactive Messaging is enough. By the third integration, having the Camel route model and DSL is what makes the difference."
-msgstr ""
+msgstr "No fim das contas, o objetivo desta postagem no blog era mostrar que o Camel é fácil de aprender e se integra perfeitamente ao Quarkus. Além disso, ele se torna ainda mais valioso à medida que o número de sistemas com os quais você se integra aumenta. Para um único tópico do Kafka, o Reactive Messaging é suficiente. A partir da terceira integração, contar com o modelo de rota e a DSL do Camel é o que faz a diferença."
 
 msgid "Going further"
 msgstr "Indo mais longe"
 
+#. mt: deepl
+#, fuzzy
 msgid "This post covered three patterns, but the 300+ components available as Camel Quarkus extensions cover databases, cloud services, messaging systems, SaaS APIs, and protocols from FTP to AS2. Each follows the same model: add the `camel-quarkus-*` extension, use its URI in a route."
-msgstr ""
+msgstr "Esta publicação abordou três padrões, mas os mais de 300 componentes disponíveis como extensões do Camel Quarkus abrangem bancos de dados, serviços em nuvem, sistemas de mensagens, APIs de SaaS e protocolos que vão do FTP ao AS2. Cada um segue o mesmo modelo: adicione a extensão `camel-quarkus-*` e utilize sua URI em uma rota."
 
+#. mt: deepl
+#, fuzzy
 msgid "Camel implements the https://camel.apache.org/components/next/eips/enterprise-integration-patterns.html[Enterprise Integration Patterns]. Here are a few that would naturally extend this example:"
-msgstr ""
+msgstr "O Camel implementa os link:https://camel.apache.org/components/next/eips/enterprise-integration-patterns.html[Padrões de Integração Empresarial] . Aqui estão alguns que estenderiam naturalmente este exemplo:"
 
+#. mt: deepl
+#, fuzzy
 msgid "*Content-Based Router:* use `.choice().when()` to route priority orders to a fast-track queue and standard orders to the normal flow."
-msgstr ""
+msgstr "*Roteador baseado em conteúdo:* utilize `.choice().when()` para encaminhar pedidos prioritários para uma fila de atendimento rápido e pedidos padrão para o fluxo normal."
 
+#. mt: deepl
+#, fuzzy
 msgid "*Wire Tap:* use `.wireTap(\"seda:audit\")` to send a copy of the order event to an audit log without slowing down the main route."
-msgstr ""
+msgstr "*Wire Tap:* utilize `.wireTap(\"seda:audit\")` para enviar uma cópia do evento de pedido para um registro de auditoria sem sobrecarregar a rota principal."
 
+#. mt: deepl
+#, fuzzy
 msgid "*Throttle:* use `.throttle(10)` to rate-limit calls to the partner loyalty API."
-msgstr ""
+msgstr "*Limitação de tráfego:* utilize `.throttle(10)` para limitar a taxa de chamadas à API de fidelidade do parceiro."
 
+#. mt: deepl
+#, fuzzy
 msgid "*Dead Letter Channel:* replace the `onException` log-and-swallow with `errorHandler(deadLetterChannel(\"file:orders/errors\"))` to persist failed order events to disk for later inspection or reprocessing."
-msgstr ""
+msgstr "*Canal de mensagens não entregues:* substitua o código `onException` que registra e ignora o erro por `errorHandler(deadLetterChannel(\"file:orders/errors\"))` para armazenar em disco os eventos de pedidos com falha, a fim de permitir sua análise ou reprocessamento posterior."
 
+#. mt: deepl
+#, fuzzy
 msgid "*More protocols:* need to call a SOAP service, send to an AMQP broker, or drop files on an SFTP server? Each has a Camel Quarkus extension."
-msgstr ""
+msgstr "*Mais protocolos:* precisa chamar um serviço SOAP, enviar dados para um broker AMQP ou transferir arquivos para um servidor SFTP? Cada um deles conta com uma extensão do Camel para Quarkus."
 
+#. mt: deepl
+#, fuzzy
 msgid "To explore more:"
-msgstr ""
+msgstr "Para saber mais:"
 
+#. mt: deepl
+#, fuzzy
 msgid "https://camel.apache.org/camel-quarkus/latest/[Camel Quarkus documentation]"
-msgstr ""
+msgstr "link:https://camel.apache.org/camel-quarkus/latest/[Documentação do Camel Quarkus]"
 
+#. mt: deepl
+#, fuzzy
 msgid "https://github.com/apache/camel-quarkus-examples[Camel Quarkus examples on GitHub]"
-msgstr ""
+msgstr "link:https://github.com/apache/camel-quarkus-examples[Exemplos do Camel Quarkus no GitHub]"
 
+#. mt: deepl
+#, fuzzy
 msgid "The companion sample project for this post is available on https://github.com/apache/camel-quarkus-examples/tree/main/quarkus-to-camel-quarkus[GitHub]. It has two modules: `quarkus-orders` (the starting point) and `camel-quarkus-orders` (the result). Clone it, then `cd camel-quarkus-orders && mvn quarkus:dev` to see both routes in action."
-msgstr ""
+msgstr "O projeto de exemplo que acompanha esta publicação está disponível no link:https://github.com/apache/camel-quarkus-examples/tree/main/quarkus-to-camel-quarkus[GitHub] . Ele possui dois módulos: `quarkus-orders` (o ponto de partida) e `camel-quarkus-orders` (o resultado). Clone-o e, em seguida, execute o comando ``cd camel-quarkus-orders && mvn quarkus:dev` ` para ver ambas as rotas em ação."
